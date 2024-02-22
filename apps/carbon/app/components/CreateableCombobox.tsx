@@ -102,11 +102,12 @@ const CreatableCombobox = forwardRef<HTMLButtonElement, CreatableComboboxProps>(
                     </CommandItem>
                   );
                 })}
-                {!isExactMatch && !!search && (
+                {!isExactMatch && search.trim() !== "" && (
                   <CommandItem
                     onSelect={() => {
                       props.onCreateOption?.(search);
                     }}
+                    value={search}
                   >
                     <span>Create</span>
                     <span className="ml-1 font-bold">{search}</span>

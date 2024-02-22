@@ -133,9 +133,9 @@ export const quotationLineValidator = withZod(
     replenishmentSystem: z.enum(["Buy", "Make"]),
     customerPartId: zfd.text(z.string().optional()),
     customerPartRevision: zfd.text(z.string().optional()),
-    unitOfMeasureCode: z
-      .string()
-      .min(1, { message: "Unit of measure is required" }),
+    unitOfMeasureCode: zfd.text(
+      z.string().min(1, { message: "Unit of measure is required" })
+    ),
   })
 );
 
