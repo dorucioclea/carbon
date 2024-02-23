@@ -10,6 +10,7 @@
     "start": "next start "
   },
   "dependencies": {
+    "@tabler/icons-react": "2.47.0",
     "clsx": "2.0.0",
     "framer-motion": "^10.13.1",
     "geist": "1.2.0",

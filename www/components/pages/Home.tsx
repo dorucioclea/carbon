@@ -3,9 +3,8 @@
 import { clamp, motion, useMotionValueEvent, useScroll } from "framer-motion";
 import Head from "next/head";
 import React, { useState } from "react";
-import { useWindowSize } from "../../hooks/useWindowSize";
 import Features from "../features";
-import Sticky from "../sticky";
+import MacbookScroll from "../macbook";
 
 function Gradient() {
   const { scrollYProgress } = useScroll();
@@ -27,51 +26,9 @@ function Gradient() {
 }
 
 function Hero() {
-  const { height, width } = useWindowSize();
-
-  if (!height) return null;
-  if (!width) return null;
-
   return (
-    <section>
-      <Sticky
-        cover
-        height={height}
-        width={width}
-        render={({ progress }) => {
-          return (
-            <div className="flex flex-col justify-between text-center">
-              <div>
-                <h1 className="max-w-5xl mx-auto text-7xl font-extrabold tracking-tighter leading-tighter sm:text-7xl lg:text-8xl xl:text-8xl">
-                  <span className="dark:bg-clip-text dark:text-transparent dark:bg-gradient-to-b dark:from-white  dark:to-zinc-400">
-                    ERP for
-                  </span>{" "}
-                  <span className="bg-gradient-to-r bg-clip-text text-transparent dark:bg-gradient-to-b dark:from-[#3ECF8E] dark:via-[#3ECF8E] dark:to-[#3ecfb2] from-black via-orange-600 to-amber-500 ">
-                    the builders
-                  </span>
-                </h1>
-                <p className="mt-6 nx-text-xl font-medium leading-tight text-black/60 dark:text-white/60 sm:nx-text-2xl md:nx-text-3xl lg:nx-text-4xl">
-                  Carbon is an open-source starting point for resource planning
-                </p>
-              </div>
-              <div className="flex fix-flex-col h-32 mt-4 md:mt-0 mb-6 md:mb-0 items-center justify-center gap-3 md:flex-row xl:flex-row">
-                <a
-                  className="flex items-center justify-center w-full px-8 py-3 text-base font-medium text-black no-underline bg-zinc-200 border border-zinc-300 dark:border-zinc-700 rounded-md dark:bg-zinc-800 dark:text-white betterhover:dark:hover:bg-zinc-800 betterhover:hover:bg-zinc-300 md:text-lg md:px-12 md:leading-6 fix-width-auto xl:w-auto"
-                  href="/learn/introduction"
-                >
-                  Learn
-                </a>
-                <a
-                  className="flex items-center justify-center w-full px-8 py-3 text-base font-medium text-white no-underline bg-zinc-800 border border-zinc-700 dark:border-zinc-200 rounded-md dark:bg-zinc-100 dark:text-black betterhover:dark:hover:bg-zinc-300 betterhover:hover:bg-zinc-700 md:text-lg md:px-12 md:leading-6 fix-width-auto xl:w-auto"
-                  href="/develop/getting-started"
-                >
-                  Develop
-                </a>
-              </div>
-            </div>
-          );
-        }}
-      />
+    <section className="overflow-hidden">
+      <MacbookScroll src={`/linear.webp`} showGradient={true} />
     </section>
   );
 }
