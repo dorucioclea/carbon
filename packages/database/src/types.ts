@@ -2926,6 +2926,7 @@ export interface Database {
           id: string;
           name: string;
           requiredAbility: string | null;
+          setupHours: number;
           updatedAt: string | null;
           updatedBy: string | null;
         };
@@ -2938,6 +2939,7 @@ export interface Database {
           id?: string;
           name: string;
           requiredAbility?: string | null;
+          setupHours?: number;
           updatedAt?: string | null;
           updatedBy?: string | null;
         };
@@ -2950,6 +2952,7 @@ export interface Database {
           id?: string;
           name?: string;
           requiredAbility?: string | null;
+          setupHours?: number;
           updatedAt?: string | null;
           updatedBy?: string | null;
         };
@@ -10343,9 +10346,13 @@ export interface Database {
           color: string;
           createdAt: string;
           createdBy: string;
+          defaultStandardFactor: Database["public"]["Enums"]["factor"];
           description: string | null;
           id: string;
+          laborRate: number;
           name: string;
+          overheadRate: number;
+          quotingRate: number;
           requiredAbility: string | null;
           updatedAt: string | null;
           updatedBy: string | null;
@@ -10355,9 +10362,13 @@ export interface Database {
           color?: string;
           createdAt?: string;
           createdBy: string;
+          defaultStandardFactor?: Database["public"]["Enums"]["factor"];
           description?: string | null;
           id?: string;
+          laborRate?: number;
           name: string;
+          overheadRate?: number;
+          quotingRate?: number;
           requiredAbility?: string | null;
           updatedAt?: string | null;
           updatedBy?: string | null;
@@ -10367,9 +10378,13 @@ export interface Database {
           color?: string;
           createdAt?: string;
           createdBy?: string;
+          defaultStandardFactor?: Database["public"]["Enums"]["factor"];
           description?: string | null;
           id?: string;
+          laborRate?: number;
           name?: string;
+          overheadRate?: number;
+          quotingRate?: number;
           requiredAbility?: string | null;
           updatedAt?: string | null;
           updatedBy?: string | null;

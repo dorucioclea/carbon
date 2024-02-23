@@ -22,6 +22,7 @@ export const path = {
       departments: `${api}/resources/departments`,
       employeeTypes: `${api}/users/employee-types`,
       emptyPermissions: `${api}/users/empty-permissions`,
+      equipmentTypes: `${api}/resources/equipment-types`,
       groupsByType: (type?: string) =>
         generatePath(`${api}/users/groups?type=${type}`),
       locations: `${api}/resources/locations`,
@@ -41,6 +42,7 @@ export const path = {
         generatePath(`${api}/purchasing/supplier-locations?supplierId=${id}`),
       workCells: (id: string) =>
         generatePath(`${api}/resources/work-cells?location=${id}`),
+      workCellTypes: `${api}/resources/work-cell-types`,
     },
     file: {
       previewImage: (bucket: string, path: string) =>
@@ -293,6 +295,12 @@ export const path = {
     newQuoteLine: (id: string) => generatePath(`${x}/quote/${id}/new`),
     newQuoteLineQuantity: (id: string, lineId: string) =>
       generatePath(`${x}/quote/${id}/lines/${lineId}/new`),
+    newQuoteOperation: (quoteId: string, lineId: string, parentId?: string) =>
+      generatePath(
+        `${x}/quote/${quoteId}/lines/${lineId}/operation/new${
+          parentId ? `?quoteAssemblyId=${parentId}` : ""
+        }`
+      ),
     newReceipt: `${x}/inventory/receipts/new`,
     newRequestForQuote: `${x}/rfq/new`,
     newShift: `${x}/resources/shifts/new`,
@@ -388,6 +396,10 @@ export const path = {
       generatePath(`${x}/quote/${id}/internal`),
     quoteLine: (quoteId: string, id: string) =>
       generatePath(`${x}/quote/${quoteId}/lines/${id}/details`),
+    quoteOperation: (quoteId: string, lineId: string, operationId: string) =>
+      generatePath(
+        `${x}/quote/${quoteId}/lines/${lineId}/operation/${operationId}`
+      ),
     quoteRelease: (id: string) => generatePath(`${x}/quote/${id}/release`),
     quotes: `${x}/sales/quotes`,
     receipt: (id: string) => generatePath(`${x}/inventory/receipts/${id}`),

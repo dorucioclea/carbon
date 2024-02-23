@@ -122,7 +122,7 @@ export default function QuotationRoute() {
           <BillOfMaterialExplorer />
         </VStack>
       </CollapsibleSidebar>
-      <VStack className="p-4">
+      <VStack className="p-2">
         <Menubar>
           <MenubarItem asChild>
             <a
@@ -133,6 +133,7 @@ export default function QuotationRoute() {
               Preview
             </a>
           </MenubarItem>
+          <MenubarItem>Release</MenubarItem>
         </Menubar>
 
         <Outlet />
@@ -171,18 +172,18 @@ const data: BillOfMaterialNode[] = [
     type: "parent",
     children: [
       {
-        id: "cnad6opvo0l053gabtp0",
+        id: "cnc03dgmu0l0h0gm0330",
         label: "P000000001",
         type: "line",
         children: [
           {
-            id: "cnad6opvo0l053gabtp0",
+            id: "cnc03dgmu0l0h0gm0330",
             // parentId: "cn9v3tldq0l1lvlkrqmg",
             label: "Assemblies",
             type: "assemblies",
           },
           {
-            id: "cnad6opvo0l053gabtp0",
+            id: "cnc03dgmu0l0h0gm0330",
             label: "Operations",
             type: "operations",
           },
@@ -299,7 +300,6 @@ const BillOfMaterialItem = ({
 
   switch (type) {
     case "assemblies":
-      console.log({ type, id, parentId, label });
       return (
         <Button
           variant="ghost"
@@ -334,14 +334,13 @@ const BillOfMaterialItem = ({
       );
     case "line":
       return (
-        <Button
-          variant="ghost"
-          className="flex-1 justify-start"
-          leftIcon={<AiOutlinePartition />}
-          asChild
-        >
+        <Button variant="ghost" className="flex-1 justify-between" asChild>
           <Link to={path.to.quoteLine(quoteId, id)} prefetch="intent">
-            {label}
+            <span className="flex justify-start">
+              <AiOutlinePartition className="w-4 h-4 mr-2" />
+              {label}
+            </span>
+            <span className="bg-orange-500 rounded-full h-2 w-2 inline-block ml-2" />
           </Link>
         </Button>
       );

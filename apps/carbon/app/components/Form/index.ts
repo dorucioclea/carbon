@@ -17,6 +17,7 @@ import DatePicker from "./DatePicker";
 import Department from "./Department";
 import Employee from "./Employee";
 import Employees from "./Employees";
+import EquipmentType from "./EquipmentType";
 import Hidden from "./Hidden";
 import Input from "./Input";
 import InputControlled from "./InputControlled";
@@ -33,6 +34,7 @@ import SelectControlled from "./SelectControlled";
 import Sequence from "./Sequence";
 import Service from "./Service";
 import Shift from "./Shift";
+import StandardFactor from "./StandardFactor";
 import Submit from "./Submit";
 import Supplier from "./Supplier";
 import SupplierContact from "./SupplierContact";
@@ -42,6 +44,7 @@ import TimePicker from "./TimePicker";
 import Timezone from "./Timezone";
 import User from "./User";
 import Users from "./Users";
+import WorkCellType from "./WorkCellType";
 
 export {
   Abilities,
@@ -63,6 +66,7 @@ export {
   Department,
   Employee,
   Employees,
+  EquipmentType,
   Hidden,
   Input,
   InputControlled,
@@ -79,6 +83,7 @@ export {
   Sequence,
   Service,
   Shift,
+  StandardFactor,
   Submit,
   Supplier,
   SupplierContact,
@@ -88,4 +93,5 @@ export {
   Timezone,
   User,
   Users,
+  WorkCellType,
 };

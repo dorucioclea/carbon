@@ -3,6 +3,20 @@ import { z } from "zod";
 import { zfd } from "zod-form-data";
 import { DataType } from "~/modules/users";
 
+export const standardFactorType = [
+  "Hours/Piece",
+  "Hours/100 Pieces",
+  "Hours/1000 Pieces",
+  "Minutes/Piece",
+  "Minutes/100 Pieces",
+  "Minutes/1000 Pieces",
+  "Pieces/Hour",
+  "Pieces/Minute",
+  "Seconds/Piece",
+  "Total Hours",
+  "Total Minutes",
+] as const;
+
 export const abilityValidator = withZod(
   z
     .object({
@@ -135,6 +149,9 @@ export const equipmentTypeValidator = withZod(
     description: z.string(),
     color: z.string(),
     requiredAbility: zfd.text(z.string().optional()),
+    setupHours: zfd.numeric(
+      z.number().min(0, { message: "Setup hours is required" })
+    ),
   })
 );
 
@@ -218,5 +235,11 @@ export const workCellTypeValidator = withZod(
     description: z.string(),
     color: z.string(),
     requiredAbility: zfd.text(z.string().optional()),
+    quotingRate: zfd.numeric(z.number().min(0)),
+    laborRate: zfd.numeric(z.number().min(0)),
+    overheadRate: zfd.numeric(z.number().min(0)),
+    defaultStandardFactor: z.enum(standardFactorType, {
+      errorMap: (issue, ctx) => ({ message: "Standard factor is required" }),
+    }),
   })
 );

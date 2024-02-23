@@ -1,9 +1,8 @@
-import { useDisclosure } from "@carbon/react";
-import { useMemo, useState } from "react";
-import { PartForm, type PartReplenishmentSystem } from "~/modules/parts";
+import { useMemo } from "react";
+import { type PartReplenishmentSystem } from "~/modules/parts";
 import { useParts } from "~/stores";
 import type { ComboboxProps } from "./Combobox";
-import CreatableCombobox from "./CreatableCombobox";
+import Combobox from "./Combobox";
 
 type PartSelectProps = Omit<ComboboxProps, "options"> & {
   partReplenishmentSystem?: PartReplenishmentSystem;
@@ -11,8 +10,6 @@ type PartSelectProps = Omit<ComboboxProps, "options"> & {
 
 const Part = ({ partReplenishmentSystem, ...props }: PartSelectProps) => {
   const [parts] = useParts();
-  const newPartsModal = useDisclosure();
-  const [createdPart, setCreatedPart] = useState<string>("");
 
   const options = useMemo(
     () =>
@@ -34,36 +31,7 @@ const Part = ({ partReplenishmentSystem, ...props }: PartSelectProps) => {
   );
 
   return (
-    <>
-      <CreatableCombobox
-        options={options}
-        {...props}
-        label={props?.label ?? "Part"}
-        onCreateOption={(option) => {
-          newPartsModal.onOpen();
-          setCreatedPart(option);
-        }}
-      />
-      {newPartsModal.isOpen && (
-        <PartForm
-          type="modal"
-          onClose={() => {
-            setCreatedPart("");
-            newPartsModal.onClose();
-          }}
-          initialValues={{
-            id: "",
-            name: createdPart,
-            description: "",
-            partType: "Inventory" as "Inventory",
-            replenishmentSystem: "Buy" as "Buy",
-            unitOfMeasureCode: "EA",
-            blocked: false,
-            active: false,
-          }}
-        />
-      )}
-    </>
+    <Combobox options={options} {...props} label={props?.label ?? "Part"} />
   );
 };
 

@@ -38,10 +38,10 @@ const IconSidebar = () => {
   }, new Set<string>());
 
   return (
-    <div className="h-full bg-background z-10 border-r border-border">
+    <div className="h-full bg-background z-10 border-r border-border p-2">
       <div>
         <TooltipProvider>
-          <VStack spacing={0} className="self-start sticky">
+          <VStack spacing={1} className="self-start sticky">
             {company?.logo ? (
               <Link
                 to="/"
@@ -54,13 +54,7 @@ const IconSidebar = () => {
                 />
               </Link>
             ) : (
-              <Button
-                isIcon
-                asChild
-                variant="ghost"
-                size="lg"
-                className="rounded-none"
-              >
+              <Button isIcon asChild variant="ghost" size="lg">
                 <Link to="/">
                   <BsFillHexagonFill />
                 </Link>
@@ -80,7 +74,6 @@ const IconSidebar = () => {
                       aria-label={link.name}
                       variant={isActive ? "primary" : "ghost"}
                       size="lg"
-                      className="rounded-none"
                     >
                       <Link to={link.to} prefetch="intent">
                         <link.icon />
