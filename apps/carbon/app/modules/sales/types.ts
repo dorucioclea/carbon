@@ -10,6 +10,8 @@ import type {
   getQuoteExternalDocuments,
   getQuoteLineQuantities,
   getQuoteLines,
+  getQuoteMaterials,
+  getQuoteOperation,
   getQuotes,
 } from "./sales.service";
 
@@ -56,5 +58,13 @@ export type QuotationLine = NonNullable<
 export type QuotationLineQuantity = NonNullable<
   Awaited<ReturnType<typeof getQuoteLineQuantities>>["data"]
 >[number];
+
+export type QuotationMaterial = NonNullable<
+  Awaited<ReturnType<typeof getQuoteMaterials>>["data"]
+>[number];
+
+export type QuotationOperation = NonNullable<
+  Awaited<ReturnType<typeof getQuoteOperation>>["data"]
+>;
 
 export type QuotationStatusType = Database["public"]["Enums"]["quoteStatus"];

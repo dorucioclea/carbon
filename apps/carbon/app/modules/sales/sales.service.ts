@@ -12,6 +12,7 @@ import type {
   customerValidator,
   quotationAssemblyValidator,
   quotationLineValidator,
+  quotationMaterialValidator,
   quotationOperationValidator,
   quotationValidator,
 } from "./sales.models";
@@ -66,6 +67,13 @@ export async function deleteQuoteLine(
   quoteLineId: string
 ) {
   return client.from("quoteLine").delete().eq("id", quoteLineId);
+}
+
+export async function deleteQuoteMaterial(
+  client: SupabaseClient<Database>,
+  quoteMaterialId: string
+) {
+  return client.from("quoteMaterial").delete().eq("id", quoteMaterialId);
 }
 
 export async function deleteQuoteOperation(
@@ -343,6 +351,33 @@ export async function getQuoteLineQuantities(
     .from("quoteLineQuantity")
     .select("*")
     .eq("quoteLineId", quoteLineId);
+}
+
+export async function getQuoteMaterials(
+  client: SupabaseClient<Database>,
+  quoteId: string
+) {
+  return client.from("quoteMaterial").select("*").eq("quoteId", quoteId);
+}
+
+export async function getQuoteMaterialsByLine(
+  client: SupabaseClient<Database>,
+  quoteLineId: string
+) {
+  return client
+    .from("quoteMaterial")
+    .select("*")
+    .eq("quoteLineId", quoteLineId);
+}
+
+export async function getQuoteMaterialsByOperation(
+  client: SupabaseClient<Database>,
+  quoteOperationId: string
+) {
+  return client
+    .from("quoteMaterial")
+    .select("*")
+    .eq("quoteOperationId", quoteOperationId);
 }
 
 export async function getQuoteOperation(
@@ -696,6 +731,38 @@ export async function upsertQuoteLine(
       .single();
   }
   return client.from("quoteLine").insert([quotationLine]).select("id").single();
+}
+
+export async function upsertQuoteMaterial(
+  client: SupabaseClient<Database>,
+  quotationMaterial:
+    | (Omit<TypeOfValidator<typeof quotationMaterialValidator>, "id"> & {
+        quoteId: string;
+        quoteLineId: string;
+        quoteOperationId: string;
+        createdBy: string;
+      })
+    | (Omit<TypeOfValidator<typeof quotationMaterialValidator>, "id"> & {
+        id: string;
+        quoteId: string;
+        quoteLineId: string;
+        quoteOperationId: string;
+        updatedBy: string;
+      })
+) {
+  if ("id" in quotationMaterial) {
+    return client
+      .from("quoteMaterial")
+      .update(sanitize(quotationMaterial))
+      .eq("id", quotationMaterial.id)
+      .select("id")
+      .single();
+  }
+  return client
+    .from("quoteMaterial")
+    .insert([quotationMaterial])
+    .select("id")
+    .single();
 }
 
 export async function upsertQuoteOperation(

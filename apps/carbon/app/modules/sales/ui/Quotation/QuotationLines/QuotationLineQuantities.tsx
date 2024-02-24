@@ -228,6 +228,7 @@ const QuotationLineQuantities = ({
             data={quotationLineQuantities}
             columns={columns}
             canEdit={canEdit && isEditable}
+            // @ts-ignore
             editableComponents={editableComponents}
             onNewRow={
               canEdit && isEditable

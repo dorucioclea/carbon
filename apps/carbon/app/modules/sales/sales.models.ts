@@ -106,6 +106,20 @@ export const quotationAssemblyValidator = withZod(
   })
 );
 
+export const quotationMaterialValidator = withZod(
+  z.object({
+    id: zfd.text(z.string().optional()),
+    quoteId: z.string(),
+    partId: z.string().min(1, { message: "Part is required" }),
+    quantity: zfd.numeric(
+      z.number().min(1, { message: "Quantity is required" })
+    ),
+    description: z.string().min(1, { message: "Description is required" }),
+    unitCost: zfd.numeric(z.number().min(0)),
+    unitOfMeasureCode: zfd.text(z.string().optional()),
+  })
+);
+
 export const quotationOperationValidator = withZod(
   z.object({
     id: zfd.text(z.string().optional()),
