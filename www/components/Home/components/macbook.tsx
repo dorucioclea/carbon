@@ -23,7 +23,7 @@ import type { MotionValue } from "framer-motion";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
-import { cn } from "../utils/cn";
+import { cn } from "../../../utils/cn";
 
 const MacbookScroll = ({
   showGradient,

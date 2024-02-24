@@ -107,7 +107,7 @@ const CreatableCombobox = forwardRef<HTMLButtonElement, CreatableComboboxProps>(
                     onSelect={() => {
                       props.onCreateOption?.(search);
                     }}
-                    value={search}
+                    value={search.trim()}
                   >
                     <span>Create</span>
                     <span className="ml-1 font-bold">{search}</span>

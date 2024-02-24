@@ -3,8 +3,7 @@
 import { clamp, motion, useMotionValueEvent, useScroll } from "framer-motion";
 import Head from "next/head";
 import React, { useState } from "react";
-import Features from "../features";
-import MacbookScroll from "../macbook";
+import { Features, MacbookScroll } from "./components";
 
 function Gradient() {
   const { scrollYProgress } = useScroll();

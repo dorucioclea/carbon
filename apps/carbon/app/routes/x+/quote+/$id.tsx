@@ -133,7 +133,7 @@ export default function QuotationRoute() {
               Preview
             </a>
           </MenubarItem>
-          <MenubarItem>Release</MenubarItem>
+          <MenubarItem isDisabled>Release</MenubarItem>
         </Menubar>
 
         <Outlet />
@@ -173,29 +173,11 @@ const data: BillOfMaterialNode[] = [
     children: [
       {
         id: "cnc03dgmu0l0h0gm0330",
-        label: "P000000001",
-        type: "line",
-        children: [
-          {
-            id: "cnc03dgmu0l0h0gm0330",
-            // parentId: "cn9v3tldq0l1lvlkrqmg",
-            label: "Assemblies",
-            type: "assemblies",
-          },
-          {
-            id: "cnc03dgmu0l0h0gm0330",
-            label: "Operations",
-            type: "operations",
-          },
-        ],
-      },
-      {
-        id: "2",
         label: "P00001233",
         type: "line",
         children: [
           {
-            id: "3",
+            id: "cnc03dgmu0l0h0gm0330",
             label: "Assemblies",
             type: "assemblies",
             children: [
@@ -246,7 +228,7 @@ const data: BillOfMaterialNode[] = [
             ],
           },
           {
-            id: "11",
+            id: "cnc03dgmu0l0h0gm0330",
             label: "Operations",
             type: "operations",
             children: [
@@ -340,7 +322,7 @@ const BillOfMaterialItem = ({
               <AiOutlinePartition className="w-4 h-4 mr-2" />
               {label}
             </span>
-            <span className="bg-orange-500 rounded-full h-2 w-2 inline-block ml-2" />
+            <span className="bg-green-500 rounded-full h-2 w-2 inline-block ml-2" />
           </Link>
         </Button>
       );

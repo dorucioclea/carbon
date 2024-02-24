@@ -3,8 +3,9 @@ import { redirect } from "@remix-run/node";
 import { useParams } from "@remix-run/react";
 import { validationError } from "remix-validated-form";
 import { useRouteData } from "~/hooks";
-import type { Quotation } from "~/modules/sales";
+import type { Quotation, QuotationAttachment } from "~/modules/sales";
 import {
+  QuotationDocuments,
   QuotationForm,
   quotationValidator,
   upsertQuote,
@@ -60,7 +61,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
 export default function QuotationBasicRoute() {
   const { id } = useParams();
   if (!id) throw new Error("Could not find id");
-  const quoteData = useRouteData<{ quotation: Quotation }>(path.to.quote(id));
+  const quoteData = useRouteData<{
+    quotation: Quotation;
+    internalDocuments: QuotationAttachment[];
+  }>(path.to.quote(id));
   if (!quoteData) throw new Error("Could not find quote data");
 
   const initialValues = {
@@ -78,5 +82,14 @@ export default function QuotationBasicRoute() {
     notes: quoteData?.quotation?.notes ?? "",
   };
 
-  return <QuotationForm initialValues={initialValues} />;
+  return (
+    <>
+      <QuotationForm initialValues={initialValues} />
+      <QuotationDocuments
+        id={id}
+        attachments={quoteData.internalDocuments}
+        isExternal={false}
+      />
+    </>
+  );
 }

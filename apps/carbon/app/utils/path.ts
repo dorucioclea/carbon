@@ -479,3 +479,7 @@ export const onboardingSequence = [
 export const getStoragePath = (bucket: string, path: string) => {
   return `${SUPABASE_API_URL}/storage/v1/object/public/${bucket}/${path}`;
 };
+
+export const requestReferrer = (request: Request) => {
+  return request.headers.get("referer");
+};
