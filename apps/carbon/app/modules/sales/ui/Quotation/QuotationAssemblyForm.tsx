@@ -14,7 +14,6 @@ import {
   HStack,
   IconButton,
   VStack,
-  cn,
 } from "@carbon/react";
 import { useNavigate, useParams } from "@remix-run/react";
 import { useState } from "react";
@@ -94,7 +93,7 @@ const QuotationAssemblyForm = ({
           : path.to.newQuoteAssembly(quoteId, lineId)
       }
     >
-      <Card className={cn(!isEditing && "mt-4")}>
+      <Card>
         <HStack className="w-full justify-between items-start">
           <CardHeader>
             <CardTitle>

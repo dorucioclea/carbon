@@ -172,12 +172,12 @@ const data: BillOfMaterialNode[] = [
     type: "parent",
     children: [
       {
-        id: "cnc03dgmu0l0h0gm0330",
+        id: "cncmajs9k0ldipluqngg",
         label: "P00001233",
         type: "line",
         children: [
           {
-            id: "cnc03dgmu0l0h0gm0330",
+            id: "cncmajs9k0ldipluqngg",
             label: "Assemblies",
             type: "assemblies",
             children: [
@@ -228,7 +228,7 @@ const data: BillOfMaterialNode[] = [
             ],
           },
           {
-            id: "cnc03dgmu0l0h0gm0330",
+            id: "cncmajs9k0ldipluqngg",
             label: "Operations",
             type: "operations",
             children: [
@@ -309,14 +309,17 @@ const BillOfMaterialItem = ({
         <Button
           variant="ghost"
           className="w-full justify-between text-muted-foreground"
+          asChild
         >
-          <span>{label}</span>
-          <IoMdAdd />
+          <Link to={path.to.newQuoteOperation(quoteId, id, parentId)}>
+            <span>{label}</span>
+            <IoMdAdd />
+          </Link>
         </Button>
       );
     case "line":
       return (
-        <Button variant="ghost" className="flex-1 justify-between" asChild>
+        <Button variant="primary" className="flex-1 justify-between" asChild>
           <Link to={path.to.quoteLine(quoteId, id)} prefetch="intent">
             <span className="flex justify-start">
               <AiOutlinePartition className="w-4 h-4 mr-2" />

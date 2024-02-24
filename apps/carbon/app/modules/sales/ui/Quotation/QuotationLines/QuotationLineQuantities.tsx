@@ -99,7 +99,7 @@ const QuotationLineQuantities = ({
       {
         accessorKey: "unitCostBase",
         header: "Unit Cost",
-        cell: (item) => formatter.format(item.getValue<number>()),
+        cell: ({ row }) => formatter.format(getUnitCost(row.original)),
       },
       {
         accessorKey: "unitTaxAmount",
@@ -111,7 +111,7 @@ const QuotationLineQuantities = ({
         cell: ({ row }) =>
           formatter.format(
             row.original.quantity *
-              (row.original.unitCostBase + row.original.unitTaxAmount)
+              (getUnitCost(row.original) + row.original.unitTaxAmount)
           ),
       },
       {
@@ -246,3 +246,12 @@ const QuotationLineQuantities = ({
 };
 
 export default QuotationLineQuantities;
+
+function getUnitCost(quantity: QuotationLineQuantity) {
+  return (
+    quantity.materialCost +
+    quantity.laborCost +
+    quantity.overheadCost +
+    quantity.additionalCost
+  );
+}

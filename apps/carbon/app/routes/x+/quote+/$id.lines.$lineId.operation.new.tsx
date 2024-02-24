@@ -1,11 +1,12 @@
-import type { ActionFunctionArgs } from "@remix-run/node";
 import { redirect, useParams } from "@remix-run/react";
-import { validationError } from "remix-validated-form";
 import { useUrlParams } from "~/hooks";
+
+import type { ActionFunctionArgs } from "@remix-run/node";
+import { validationError } from "remix-validated-form";
 import {
-  QuotationAssemblyForm,
-  quotationAssemblyValidator,
-  upsertQuoteAssembly,
+  QuotationOperationForm,
+  quotationOperationValidator,
+  upsertQuoteOperation,
 } from "~/modules/sales";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
@@ -23,7 +24,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   if (!quoteId) throw new Error("Could not find quoteId");
   if (!quoteLineId) throw new Error("Could not find quoteLineId");
 
-  const validation = await quotationAssemblyValidator.validate(
+  const validation = await quotationOperationValidator.validate(
     await request.formData()
   );
 
@@ -33,33 +34,36 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { id, ...data } = validation.data;
 
-  const createQuotationAssembly = await upsertQuoteAssembly(client, {
+  const createQuotationOperation = await upsertQuoteOperation(client, {
     quoteId,
     quoteLineId,
     ...data,
     createdBy: userId,
   });
 
-  if (createQuotationAssembly.error) {
+  if (createQuotationOperation.error) {
     return redirect(
-      path.to.newQuoteAssembly(quoteId, quoteLineId),
+      path.to.newQuoteOperation(quoteId, quoteLineId),
       await flash(
         request,
-        error(createQuotationAssembly.error, "Failed to create quote assembly")
+        error(
+          createQuotationOperation.error,
+          "Failed to create quote operation"
+        )
       )
     );
   }
 
-  const assemblyId = createQuotationAssembly.data.id;
-  if (assemblyId) {
-    return redirect(path.to.quoteAssembly(quoteId, quoteLineId, assemblyId));
+  const operationId = createQuotationOperation.data.id;
+  if (operationId) {
+    return redirect(path.to.quoteOperation(quoteId, quoteLineId, operationId));
   }
 }
 
-export default function NewQuoteAssembly() {
+export default function NewQuoteOperation() {
   const { id: quoteId, lineId } = useParams();
   const [params] = useUrlParams();
-  const parentAssemblyId = params.get("parentAssemblyId");
+  const quoteAssemblyId = params.get("parentOperationId");
 
   if (!quoteId) throw new Error("quoteId not found");
   if (!lineId) throw new Error("lineId not found");
@@ -67,11 +71,16 @@ export default function NewQuoteAssembly() {
   const initialValues = {
     quoteId,
     quoteLineId: lineId,
-    parentAssemblyId: parentAssemblyId ?? undefined,
-    partId: "",
+    quoteAssemblyId: quoteAssemblyId ?? undefined,
     description: "",
-    quantityPerParent: 1,
+    workCellTypeId: "",
+    productionStandard: 0,
+    quotingRate: 0,
+    laborRate: 0,
+    overheadRate: 0,
+    setupHours: 0,
+    standardFactor: "Total Hours" as "Total Hours",
   };
 
-  return <QuotationAssemblyForm initialValues={initialValues} />;
+  return <QuotationOperationForm initialValues={initialValues} />;
 }

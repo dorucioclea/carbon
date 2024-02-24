@@ -112,7 +112,9 @@ export const quotationOperationValidator = withZod(
     quoteAssemblyId: zfd.text(z.string().optional()),
     workCellTypeId: z.string().min(20, { message: "Work cell is required" }),
     equipmentTypeId: zfd.text(z.string().optional()),
-    description: zfd.text(z.string().optional()),
+    description: zfd.text(
+      z.string().min(0, { message: "Description is required" })
+    ),
     setupHours: zfd.numeric(z.number().min(0)),
     standardFactor: z.enum(standardFactorType, {
       errorMap: () => ({ message: "Standard factor is required" }),

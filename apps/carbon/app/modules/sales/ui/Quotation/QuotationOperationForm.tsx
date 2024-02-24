@@ -14,7 +14,6 @@ import {
   HStack,
   IconButton,
   VStack,
-  cn,
 } from "@carbon/react";
 import { useNavigate, useParams } from "@remix-run/react";
 import { useState } from "react";
@@ -84,7 +83,7 @@ const QuotationOperationForm = ({
 
     setWorkCellData({
       workCellTypeId,
-      description: data?.description ?? "",
+      description: data?.name ?? "",
       quotingRate: data?.quotingRate ?? 0,
       laborRate: data?.laborRate ?? 0,
       overheadRate: data?.overheadRate ?? 0,
@@ -127,7 +126,7 @@ const QuotationOperationForm = ({
           : path.to.newQuoteOperation(quoteId, lineId)
       }
     >
-      <Card className={cn(!isEditing && "mt-4")}>
+      <Card>
         <HStack className="w-full justify-between items-start">
           <CardHeader>
             <CardTitle>
@@ -190,7 +189,7 @@ const QuotationOperationForm = ({
               </VStack>
               <VStack>
                 <NumberControlled
-                  name="setupTime"
+                  name="setupHours"
                   label="Setup Time (hours)"
                   minValue={0}
                   value={equipmentData.setupHours}

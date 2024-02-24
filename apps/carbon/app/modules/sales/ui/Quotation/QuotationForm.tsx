@@ -47,7 +47,7 @@ const QuotationForm = ({ initialValues }: QuotationFormProps) => {
       defaultValues={initialValues}
       className="w-full"
     >
-      <Card className={cn(!isEditing && "mt-4")}>
+      <Card>
         <CardHeader>
           <CardTitle>{isEditing ? "Quote" : "New Quote"}</CardTitle>
           {!isEditing && (
