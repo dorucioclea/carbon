@@ -6,14 +6,14 @@ import type {
 } from "@supabase/supabase-js";
 import { Combobox } from "~/components";
 import type { EditableTableCellComponentProps } from "~/components/Editable";
-import type { QuotationLine } from "~/modules/sales";
+import type { QuotationMaterial } from "~/modules/sales";
 
-const EditableQuotationPart =
+const EditableQuotationMaterial =
   (
     mutation: (
       accessorKey: string,
       newValue: string,
-      row: QuotationLine
+      row: QuotationMaterial
     ) => Promise<PostgrestSingleResponse<unknown>>,
     options: {
       client?: SupabaseClient<Database>;
@@ -27,7 +27,7 @@ const EditableQuotationPart =
     accessorKey,
     onError,
     onUpdate,
-  }: EditableTableCellComponentProps<QuotationLine>) => {
+  }: EditableTableCellComponentProps<QuotationMaterial>) => {
     const { client, parts, userId } = options;
 
     const onPartChange = async (partId: string) => {
@@ -53,16 +53,16 @@ const EditableQuotationPart =
       onUpdate({
         partId: partId,
         description: part.data?.name,
+        unitCost: cost.data?.unitCost,
       });
 
       try {
         const { error } = await client
-          .from("quoteLine")
+          .from("quoteMaterial")
           .update({
             partId: partId,
             description: part.data?.name,
             unitCost: cost.data?.unitCost,
-            unitPrice: cost.data?.unitCost,
             updatedBy: userId,
           })
           .eq("id", row.id!);
@@ -86,5 +86,5 @@ const EditableQuotationPart =
     );
   };
 
-EditableQuotationPart.displayName = "EditableQuotationPart";
-export default EditableQuotationPart;
+EditableQuotationMaterial.displayName = "EditableQuotationMaterial";
+export default EditableQuotationMaterial;

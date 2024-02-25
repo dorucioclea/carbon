@@ -1,9 +1,11 @@
-import { Outlet, json, redirect, useLoaderData } from "@remix-run/react";
-import QuotationOperationForm from "~/modules/sales/ui/Quotation/QuotationOperationForm";
+import { json, redirect, useLoaderData } from "@remix-run/react";
 
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { validationError } from "remix-validated-form";
 import {
+  QuotationMaterialLines,
+  QuotationOperationForm,
+  getQuoteMaterialsByOperation,
   getQuoteOperation,
   quotationOperationValidator,
   upsertQuoteOperation,
@@ -23,7 +25,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!id) throw new Error("Could not find id");
   if (!operationId) throw new Error("Could not find operationId");
 
-  const operation = await getQuoteOperation(client, operationId);
+  const [operation, materials] = await Promise.all([
+    getQuoteOperation(client, operationId),
+    getQuoteMaterialsByOperation(client, operationId),
+  ]);
   if (operation.error) {
     return redirect(
       path.to.quote(id),
@@ -34,8 +39,19 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     );
   }
 
+  if (materials.error) {
+    return redirect(
+      path.to.quote(id),
+      await flash(
+        request,
+        error(materials.error, "Failed to load quote materials.")
+      )
+    );
+  }
+
   return json({
     quoteOperation: operation.data,
+    quoteMaterials: materials.data ?? [],
   });
 }
 
@@ -85,7 +101,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export default function QuoteOperation() {
-  const { quoteOperation } = useLoaderData<typeof loader>();
+  const { quoteOperation, quoteMaterials } = useLoaderData<typeof loader>();
 
   const initialValues = {
     id: quoteOperation.id,
@@ -106,7 +122,7 @@ export default function QuoteOperation() {
   return (
     <>
       <QuotationOperationForm initialValues={initialValues} />
-      <Outlet />
+      <QuotationMaterialLines quotationMaterials={quoteMaterials} />
     </>
   );
 }

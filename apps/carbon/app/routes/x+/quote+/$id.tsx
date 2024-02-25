@@ -172,12 +172,12 @@ const data: BillOfMaterialNode[] = [
     type: "parent",
     children: [
       {
-        id: "cncmajs9k0ldipluqngg",
+        id: "cndcil49k0l2as5uqnl0",
         label: "P00001233",
         type: "line",
         children: [
           {
-            id: "cncmajs9k0ldipluqngg",
+            id: "cndcil49k0l2as5uqnl0",
             label: "Assemblies",
             type: "assemblies",
             children: [
@@ -228,7 +228,7 @@ const data: BillOfMaterialNode[] = [
             ],
           },
           {
-            id: "cncmajs9k0ldipluqngg",
+            id: "cndcil49k0l2as5uqnl0",
             label: "Operations",
             type: "operations",
             children: [

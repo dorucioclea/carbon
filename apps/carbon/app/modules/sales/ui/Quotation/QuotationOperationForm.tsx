@@ -30,8 +30,9 @@ import {
   Submit,
   WorkCellType,
 } from "~/components/Form";
-import { usePermissions } from "~/hooks";
+import { usePermissions, useRouteData } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
+import type { Quotation } from "~/modules/sales";
 import { quotationOperationValidator } from "~/modules/sales";
 import type { TypeOfValidator } from "~/types/validators";
 import { path } from "~/utils/path";
@@ -56,6 +57,11 @@ const QuotationOperationForm = ({
   if (!lineId) throw new Error("lineId not found");
 
   const isEditing = initialValues.id !== undefined;
+
+  const routeData = useRouteData<{
+    quotation: Quotation;
+  }>(path.to.quote(quoteId));
+  const isEditable = ["Draft"].includes(routeData?.quotation?.status ?? "");
 
   const [workCellData, setWorkCellData] = useState<{
     workCellTypeId: string;
@@ -129,12 +135,11 @@ const QuotationOperationForm = ({
       <Card>
         <HStack className="w-full justify-between items-start">
           <CardHeader>
-            <CardTitle>
-              {isEditing ? "Quote Operation" : "New Operation"}
-            </CardTitle>
+            <CardTitle>{isEditing ? "Operation" : "New Operation"}</CardTitle>
             <CardDescription>
-              {!isEditing &&
-                "A quote operation is a distinct step in the production of a part. It can consume material"}
+              {isEditing
+                ? workCellData.description
+                : "A quote operation is a distinct step in the production of a part. It can consume material"}
             </CardDescription>
           </CardHeader>
           <CardAction>
@@ -197,13 +202,12 @@ const QuotationOperationForm = ({
                     setEquipmentData((d) => ({ ...d, setupHours: newValue }));
                   }}
                 />
-                <StandardFactor name="standardFactor" label="Standard Factor" />
-
                 <Number
                   name="productionStandard"
                   label="Production Standard"
                   minValue={0}
                 />
+                <StandardFactor name="standardFactor" label="Standard Factor" />
               </VStack>
               <VStack>
                 <NumberControlled
@@ -240,9 +244,10 @@ const QuotationOperationForm = ({
         <CardFooter>
           <Submit
             isDisabled={
-              isEditing
+              !isEditable ||
+              (isEditing
                 ? !permissions.can("update", "sales")
-                : !permissions.can("create", "sales")
+                : !permissions.can("create", "sales"))
             }
           >
             Save

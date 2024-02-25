@@ -13,19 +13,19 @@ import {
 } from "@carbon/react";
 import { Form, Outlet, useNavigate, useParams } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { IoMdTrash } from "react-icons/io";
 import { MdMoreHoriz } from "react-icons/md";
 import { EditableNumber } from "~/components/Editable";
 import Grid from "~/components/Grid";
-import { useRouteData } from "~/hooks";
+import { usePermissions, useRouteData, useUser } from "~/hooks";
+import { useSupabase } from "~/lib/supabase";
 import type {
   Quotation,
   QuotationLine,
   QuotationLineQuantity,
 } from "~/modules/sales";
 import { path } from "~/utils/path";
-import useQuotationQuantities from "./useQuotationQuantities";
 
 type QuotationLineQuantitiesProps = {
   quotationLine: QuotationLine;
@@ -52,7 +52,26 @@ const QuotationLineQuantities = ({
     currency: "USD",
   });
 
-  const { canEdit, canDelete, onCellEdit } = useQuotationQuantities();
+  const { id: userId } = useUser();
+  const { supabase } = useSupabase();
+  const permissions = usePermissions();
+
+  const canEdit = permissions.can("update", "sales");
+  const canDelete = permissions.can("delete", "sales");
+
+  const onCellEdit = useCallback(
+    async (id: string, value: unknown, row: QuotationLineQuantity) => {
+      if (!supabase) throw new Error("Supabase client not found");
+      return await supabase
+        .from("quoteLineQuantity")
+        .update({
+          [id]: value,
+          updatedBy: userId,
+        })
+        .eq("id", row.id!);
+    },
+    [supabase, userId]
+  );
 
   const isEditable = ["Draft"].includes(routeData?.quotation?.status ?? "");
   const isMade = quotationLine.replenishmentSystem === "Make";
@@ -129,7 +148,7 @@ const QuotationLineQuantities = ({
         cell: ({ row }) =>
           formatter.format(
             row.original.quantity *
-              (row.original.unitCostBase + row.original.unitTaxAmount) *
+              (getUnitCost(row.original) + row.original.unitTaxAmount) *
               (1 - row.original.discountPercentage / 100) *
               (1 + row.original.markupPercentage / 100)
           ),
@@ -216,7 +235,7 @@ const QuotationLineQuantities = ({
 
   return (
     <>
-      <Card className="w-full h-[50vh]">
+      <Card className="w-full">
         <HStack className="justify-between items-start">
           <CardHeader>
             <CardTitle>Line Prices</CardTitle>
@@ -226,9 +245,9 @@ const QuotationLineQuantities = ({
         <CardContent>
           <Grid<QuotationLineQuantity>
             data={quotationLineQuantities}
-            columns={columns}
             canEdit={canEdit && isEditable}
-            // @ts-ignore
+            columns={columns}
+            contained={false}
             editableComponents={editableComponents}
             onNewRow={
               canEdit && isEditable

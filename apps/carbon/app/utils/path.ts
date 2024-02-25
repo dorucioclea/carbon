@@ -301,6 +301,10 @@ export const path = {
           parentId ? `?quoteAssemblyId=${parentId}` : ""
         }`
       ),
+    newQuoteMaterial: (quoteId: string, lineId: string, operationId: string) =>
+      generatePath(
+        `${x}/quote/${quoteId}/lines/${lineId}/operation/${operationId}/material/new`
+      ),
     newReceipt: `${x}/inventory/receipts/new`,
     newRequestForQuote: `${x}/rfq/new`,
     newShift: `${x}/resources/shifts/new`,
@@ -396,6 +400,15 @@ export const path = {
       generatePath(`${x}/quote/${id}/internal`),
     quoteLine: (quoteId: string, id: string) =>
       generatePath(`${x}/quote/${quoteId}/lines/${id}/details`),
+    quoteMaterial: (
+      quoteId: string,
+      lineId: string,
+      operationId: string,
+      materialId: string
+    ) =>
+      generatePath(
+        `${x}/quote/${quoteId}/lines/${lineId}/operation/${operationId}/material/${materialId}`
+      ),
     quoteOperation: (quoteId: string, lineId: string, operationId: string) =>
       generatePath(
         `${x}/quote/${quoteId}/lines/${lineId}/operation/${operationId}`

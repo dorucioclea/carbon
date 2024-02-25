@@ -21,4 +21,4 @@ const $quotationStore = atom<Quote>({
   materials: [],
 });
 
-export const useParts = () => useNanoStore<Quote>($quotationStore);
+export const useQuotation = () => useNanoStore<Quote>($quotationStore);

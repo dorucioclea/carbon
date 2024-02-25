@@ -27,8 +27,9 @@ import {
   Part,
   Submit,
 } from "~/components/Form";
-import { usePermissions } from "~/hooks";
+import { usePermissions, useRouteData } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
+import type { Quotation } from "~/modules/sales";
 import { quotationAssemblyValidator } from "~/modules/sales";
 import type { TypeOfValidator } from "~/types/validators";
 import { path } from "~/utils/path";
@@ -81,6 +82,11 @@ const QuotationAssemblyForm = ({
     });
   };
 
+  const routeData = useRouteData<{
+    quotation: Quotation;
+  }>(path.to.quote(quoteId));
+  const isEditable = ["Draft"].includes(routeData?.quotation?.status ?? "");
+
   return (
     <ValidatedForm
       method="post"
@@ -96,12 +102,10 @@ const QuotationAssemblyForm = ({
       <Card>
         <HStack className="w-full justify-between items-start">
           <CardHeader>
-            <CardTitle>
-              {isEditing ? partData?.partId : "New Assembly"}
-            </CardTitle>
+            <CardTitle>{isEditing ? "Assembly" : "New Assembly"}</CardTitle>
             <CardDescription>
               {isEditing
-                ? partData?.description
+                ? partData?.partId
                 : "A quote assembly is a collection of operations, materials, and subassemblies that are used to build a product."}
             </CardDescription>
           </CardHeader>
@@ -172,9 +176,10 @@ const QuotationAssemblyForm = ({
         <CardFooter>
           <Submit
             isDisabled={
-              isEditing
+              !isEditable ||
+              (isEditing
                 ? !permissions.can("update", "sales")
-                : !permissions.can("create", "sales")
+                : !permissions.can("create", "sales"))
             }
           >
             Save

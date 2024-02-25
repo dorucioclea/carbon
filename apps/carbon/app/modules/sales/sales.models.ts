@@ -109,7 +109,6 @@ export const quotationAssemblyValidator = withZod(
 export const quotationMaterialValidator = withZod(
   z.object({
     id: zfd.text(z.string().optional()),
-    quoteId: z.string(),
     partId: z.string().min(1, { message: "Part is required" }),
     quantity: zfd.numeric(
       z.number().min(1, { message: "Quantity is required" })
