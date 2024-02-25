@@ -1,13 +1,12 @@
 import {
   Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
   HStack,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalDescription,
-  ModalFooter,
-  ModalHeader,
-  ModalTitle,
   VStack,
 } from "@carbon/react";
 import { getLocalTimeZone } from "@internationalized/date";
@@ -132,48 +131,44 @@ export default function OnboardingUser() {
   };
 
   return (
-    <Modal open>
-      <ModalContent>
-        <ValidatedForm
-          validator={onboardingCompanyValidator}
-          defaultValues={initialValues}
-          method="post"
-        >
-          <ModalHeader>
-            <ModalTitle>Now let's setup your company</ModalTitle>
-            <ModalDescription>
-              You can always change this later
-            </ModalDescription>
-          </ModalHeader>
-          <ModalBody>
-            <Hidden name="next" value={next} />
-            <VStack spacing={4}>
-              <Input name="name" label="Company Name" />
-              <Input name="addressLine1" label="Address" />
-              <Input name="city" label="City" />
-              <Input name="state" label="State" />
-              <Input name="postalCode" label="Zip Code" />
-            </VStack>
-          </ModalBody>
+    <Card className="max-w-lg">
+      <ValidatedForm
+        validator={onboardingCompanyValidator}
+        defaultValues={initialValues}
+        method="post"
+      >
+        <CardHeader>
+          <CardTitle>Now let's setup your company</CardTitle>
+          <CardDescription>You can always change this later</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Hidden name="next" value={next} />
+          <VStack spacing={4}>
+            <Input name="name" label="Company Name" />
+            <Input name="addressLine1" label="Address" />
+            <Input name="city" label="City" />
+            <Input name="state" label="State" />
+            <Input name="postalCode" label="Zip Code" />
+          </VStack>
+        </CardContent>
 
-          <ModalFooter>
-            <HStack>
-              <Button
-                variant="solid"
-                isDisabled={!previous}
-                size="md"
-                onClick={() => {
-                  onPrevious?.();
-                }}
-                tabIndex={-1}
-              >
-                Previous
-              </Button>
-              <Submit>Next</Submit>
-            </HStack>
-          </ModalFooter>
-        </ValidatedForm>
-      </ModalContent>
-    </Modal>
+        <CardFooter>
+          <HStack>
+            <Button
+              variant="solid"
+              isDisabled={!previous}
+              size="md"
+              onClick={() => {
+                onPrevious?.();
+              }}
+              tabIndex={-1}
+            >
+              Previous
+            </Button>
+            <Submit>Next</Submit>
+          </HStack>
+        </CardFooter>
+      </ValidatedForm>
+    </Card>
   );
 }

@@ -56,6 +56,7 @@ export const path = {
       company: `${onboarding}/company`,
       location: `${onboarding}/location`,
       root: `${onboarding}`,
+      theme: `${onboarding}/theme`,
       user: `${onboarding}/user`,
     },
     authenticatedRoot: x,
@@ -485,6 +486,7 @@ export const path = {
 } as const;
 
 export const onboardingSequence = [
+  path.to.onboarding.theme,
   path.to.onboarding.user,
   path.to.onboarding.company,
 ] as const;

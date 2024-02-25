@@ -1,12 +1,11 @@
 import {
   Button,
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
   HStack,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalTitle,
   VStack,
 } from "@carbon/react";
 import { redirect, type ActionFunctionArgs } from "@remix-run/node";
@@ -101,44 +100,42 @@ export default function OnboardingUser() {
   }
 
   return (
-    <Modal open>
-      <ModalContent>
-        <ValidatedForm
-          autoComplete="off"
-          validator={onboardingUserValidator}
-          defaultValues={initialValues}
-          method="post"
-        >
-          <ModalHeader>
-            <ModalTitle>First let's setup your account</ModalTitle>
-          </ModalHeader>
-          <ModalBody>
-            <Hidden name="next" value={next} />
-            <VStack spacing={4}>
-              <Input name="firstName" label="First Name" />
-              <Input name="lastName" label="Last Name" />
-              <Input autoComplete="off" name="email" label="Email" />
-              <Password autoComplete="off" name="password" label="Password" />
-            </VStack>
-          </ModalBody>
-          <ModalFooter>
-            <HStack>
-              <Button
-                variant="solid"
-                isDisabled={!previous}
-                size="md"
-                onClick={() => {
-                  onPrevious?.();
-                }}
-                tabIndex={-1}
-              >
-                Previous
-              </Button>
-              <Submit>Next</Submit>
-            </HStack>
-          </ModalFooter>
-        </ValidatedForm>
-      </ModalContent>
-    </Modal>
+    <Card className="max-w-lg">
+      <ValidatedForm
+        autoComplete="off"
+        validator={onboardingUserValidator}
+        defaultValues={initialValues}
+        method="post"
+      >
+        <CardHeader>
+          <CardTitle>Let's setup your account</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Hidden name="next" value={next} />
+          <VStack spacing={4}>
+            <Input name="firstName" label="First Name" />
+            <Input name="lastName" label="Last Name" />
+            <Input autoComplete="off" name="email" label="Email" />
+            <Password autoComplete="off" name="password" label="Password" />
+          </VStack>
+        </CardContent>
+        <CardFooter>
+          <HStack>
+            <Button
+              variant="solid"
+              isDisabled={!previous}
+              size="md"
+              onClick={() => {
+                onPrevious?.();
+              }}
+              tabIndex={-1}
+            >
+              Previous
+            </Button>
+            <Submit>Next</Submit>
+          </HStack>
+        </CardFooter>
+      </ValidatedForm>
+    </Card>
   );
 }
