@@ -34,11 +34,7 @@ import {
 import { usePermissions, useRouteData } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import type { Quotation } from "~/modules/sales";
-import {
-  quotationLineValidator,
-  quoteLineStatusType,
-  useQuotation,
-} from "~/modules/sales";
+import { quotationLineValidator, quoteLineStatusType } from "~/modules/sales";
 import type { TypeOfValidator } from "~/types/validators";
 import { path } from "~/utils/path";
 
@@ -50,9 +46,6 @@ const QuotationLineForm = ({ initialValues }: QuotationLineFormProps) => {
   const navigate = useNavigate();
   const permissions = usePermissions();
   const { supabase } = useSupabase();
-
-  const [quote] = useQuotation();
-  console.log({ storedQuote: quote });
 
   const { id } = useParams();
 

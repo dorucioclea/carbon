@@ -10,14 +10,16 @@ import {
   TooltipContent,
   TooltipTrigger,
   VStack,
-  useMount,
+  cn,
 } from "@carbon/react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
+import type { Params } from "@remix-run/react";
 import {
   Link,
   Outlet,
   useLoaderData,
+  useLocation,
   useNavigate,
   useParams,
 } from "@remix-run/react";
@@ -47,6 +49,7 @@ import { AiOutlinePartition } from "react-icons/ai";
 import { HiOutlineCube } from "react-icons/hi";
 import { LuClock } from "react-icons/lu";
 import { RxChevronDown } from "react-icons/rx";
+import { useQuotationMenu } from "~/modules/sales/ui/Quotation/useQuotation";
 
 export const handle: Handle = {
   breadcrumb: "Quotations",
@@ -109,6 +112,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function QuotationRoute() {
   const {
+    quotation,
     quotationLines,
     quotationAssemblies,
     quotationMaterials,
@@ -118,6 +122,7 @@ export default function QuotationRoute() {
 
   useEffect(() => {
     setQuotation({
+      quote: quotation,
       lines: quotationLines,
       assemblies: quotationAssemblies,
       materials: quotationMaterials,
@@ -129,6 +134,7 @@ export default function QuotationRoute() {
     quotationMaterials,
     quotationOperations,
     setQuotation,
+    quotation,
   ]);
 
   const navigate = useNavigate();
@@ -204,124 +210,129 @@ type BillOfMaterialNode = {
   parentId?: string;
   label: string;
   type: BillOfMaterialNodeType;
+  meta?: any;
   children?: BillOfMaterialNode[];
 };
 
-const data: BillOfMaterialNode[] = [
-  {
-    id: "0",
-    label: "QUO000001",
-    type: "parent",
-    children: [
-      {
-        id: "cneklo3nm0lgr74492e0",
-        label: "P00001233",
-        type: "line",
-        children: [
-          {
-            id: "cneklo3nm0lgr74492e0",
-            label: "Assemblies",
-            type: "assemblies",
-            children: [
-              {
-                id: "4",
-                label: "F5000123",
-                type: "assembly",
-                children: [
-                  {
-                    id: "5",
-                    label: "Assemblies",
-                    type: "assemblies",
-                    children: [],
-                  },
-                  {
-                    id: "6",
-                    label: "Operations",
-                    type: "operations",
-                    children: [
-                      {
-                        id: "7",
-                        label: "OP0003",
-                        type: "operation",
-                        children: [
-                          {
-                            id: "8",
-                            label: "Materials",
-                            type: "materials",
-                            children: [
-                              {
-                                id: "9",
-                                label: "RAW000001",
-                                type: "material",
-                              },
-                              {
-                                id: "10",
-                                label: "FAS000002",
-                                type: "material",
-                              },
-                            ],
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            id: "cneklo3nm0lgr74492e0",
-            label: "Operations",
-            type: "operations",
-            children: [
-              {
-                id: "12",
-                label: "OP0001",
-                type: "operation",
-                children: [
-                  {
-                    id: "13",
-                    label: "Materials",
-                    type: "materials",
-                    children: [
-                      {
-                        id: "14",
-                        label: "RAW000003",
-                        type: "material",
-                      },
-                    ],
-                  },
-                ],
-              },
-              {
-                id: "13",
-                label: "OP0002",
-                type: "operation",
-                children: [
-                  {
-                    id: "13",
-                    label: "Materials",
-                    type: "materials",
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-];
+// const data: BillOfMaterialNode[] = [
+//   {
+//     id: "0",
+//     label: "QUO000001",
+//     type: "parent",
+//     children: [
+//       {
+//         id: "cneklo3nm0lgr74492e0",
+//         label: "P00001233",
+//         type: "line",
+//         children: [
+//           {
+//             id: "cneklo3nm0lgr74492e0",
+//             label: "Assemblies",
+//             type: "assemblies",
+//             children: [
+//               {
+//                 id: "4",
+//                 label: "F5000123",
+//                 type: "assembly",
+//                 children: [
+//                   {
+//                     id: "5",
+//                     label: "Assemblies",
+//                     type: "assemblies",
+//                     children: [],
+//                   },
+//                   {
+//                     id: "6",
+//                     label: "Operations",
+//                     type: "operations",
+//                     children: [
+//                       {
+//                         id: "7",
+//                         label: "OP0003",
+//                         type: "operation",
+//                         children: [
+//                           {
+//                             id: "8",
+//                             label: "Materials",
+//                             type: "materials",
+//                             children: [
+//                               {
+//                                 id: "9",
+//                                 label: "RAW000001",
+//                                 type: "material",
+//                               },
+//                               {
+//                                 id: "10",
+//                                 label: "FAS000002",
+//                                 type: "material",
+//                               },
+//                             ],
+//                           },
+//                         ],
+//                       },
+//                     ],
+//                   },
+//                 ],
+//               },
+//             ],
+//           },
+//           {
+//             id: "cneklo3nm0lgr74492e0",
+//             label: "Operations",
+//             type: "operations",
+//             children: [
+//               {
+//                 id: "12",
+//                 label: "OP0001",
+//                 type: "operation",
+//                 children: [
+//                   {
+//                     id: "13",
+//                     label: "Materials",
+//                     type: "materials",
+//                     children: [
+//                       {
+//                         id: "14",
+//                         label: "RAW000003",
+//                         type: "material",
+//                       },
+//                     ],
+//                   },
+//                 ],
+//               },
+//               {
+//                 id: "13",
+//                 label: "OP0002",
+//                 type: "operation",
+//                 children: [
+//                   {
+//                     id: "13",
+//                     label: "Materials",
+//                     type: "materials",
+//                   },
+//                 ],
+//               },
+//             ],
+//           },
+//         ],
+//       },
+//     ],
+//   },
+// ];
 
 const BillOfMaterialItem = ({
   type,
   id,
   parentId,
   label,
-}: Omit<BillOfMaterialNode, "children">) => {
-  const { id: quoteId } = useParams();
-  if (!quoteId) throw new Error("id not found");
-
+  meta,
+  params,
+  pathname,
+}: Omit<BillOfMaterialNode, "children"> & {
+  params: Params<string>;
+  pathname: string;
+}) => {
+  let isActive = false;
   switch (type) {
     case "assemblies":
       return (
@@ -330,7 +341,7 @@ const BillOfMaterialItem = ({
           className="w-full justify-between text-muted-foreground"
           asChild
         >
-          <Link to={path.to.newQuoteAssembly(quoteId, id, parentId)}>
+          <Link to={path.to.newQuoteAssembly(params.id!, id, parentId)}>
             <span>{label}</span>
             <IoMdAdd />
           </Link>
@@ -353,21 +364,34 @@ const BillOfMaterialItem = ({
           className="w-full justify-between text-muted-foreground"
           asChild
         >
-          <Link to={path.to.newQuoteOperation(quoteId, id, parentId)}>
+          <Link to={path.to.newQuoteOperation(params.id!, id, parentId)}>
             <span>{label}</span>
             <IoMdAdd />
           </Link>
         </Button>
       );
     case "line":
+      isActive = pathname === path.to.quoteLine(params.id!, id);
+      console.log(meta);
       return (
-        <Button variant="primary" className="flex-1 justify-between" asChild>
-          <Link to={path.to.quoteLine(quoteId, id)} prefetch="intent">
+        <Button
+          variant={isActive ? "primary" : "ghost"}
+          className="flex-1 justify-between"
+          asChild
+        >
+          <Link to={path.to.quoteLine(params.id!, id)} prefetch="intent">
             <span className="flex justify-start">
               <AiOutlinePartition className="w-4 h-4 mr-2" />
               {label}
             </span>
-            <span className="bg-green-500 rounded-full h-2 w-2 inline-block ml-2" />
+            <span
+              className={cn(
+                "rounded-full h-2 w-2 inline-block ml-2",
+                meta?.status === "Complete" && "bg-green-500",
+                meta?.status === "In Progress" && "bg-orange-500",
+                meta?.status === "Draft" && "bg-zinc-500"
+              )}
+            />
           </Link>
         </Button>
       );
@@ -402,9 +426,14 @@ const BillOfMaterialItem = ({
         </Button>
       );
     case "parent":
+      isActive = pathname === path.to.quoteDetails(id);
       return (
-        <Button variant="ghost" className="flex-1 justify-start" asChild>
-          <Link to={path.to.quote(quoteId)} prefetch="intent">
+        <Button
+          variant={isActive ? "primary" : "ghost"}
+          className="flex-1 justify-start"
+          asChild
+        >
+          <Link to={path.to.quote(params.id!)} prefetch="intent">
             {label}
           </Link>
         </Button>
@@ -415,23 +444,13 @@ const BillOfMaterialItem = ({
 };
 
 const BillOfMaterialExplorer = () => {
-  const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>(
-    {}
-  );
+  const { pathname } = useLocation();
+  const params = useParams();
+  if (!params.id) throw new Error("id not found");
 
-  useMount(() => {
-    const map: Record<string, boolean> = {};
-    const traverse = (node: BillOfMaterialNode[]) => {
-      node.forEach((n) => {
-        map[n.id] = true; // open all nodes by default;
-        if (n.children) {
-          traverse(n.children);
-        }
-      });
-    };
-
-    traverse(data);
-    setExpandedNodes(map);
+  const menu = useQuotationMenu() as BillOfMaterialNode[];
+  const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({
+    [params.id]: true,
   });
 
   const toggleNode = (id: string) => {
@@ -442,10 +461,10 @@ const BillOfMaterialExplorer = () => {
   };
 
   const renderBillOfMaterial = (
-    data: BillOfMaterialNode[],
+    menu: BillOfMaterialNode[],
     level: number = 0
   ) => {
-    return data.map((node) => {
+    return menu.map((node) => {
       return (
         <div className="w-full" role="group" key={node.id}>
           <HStack
@@ -474,6 +493,9 @@ const BillOfMaterialExplorer = () => {
               id={node.id}
               label={node.label}
               parentId={node.parentId}
+              params={params}
+              pathname={pathname}
+              meta={node.meta}
             />
           </HStack>
           {node.children &&
@@ -486,7 +508,7 @@ const BillOfMaterialExplorer = () => {
 
   return (
     <div className="w-full h-full overflow-auto" role="tree">
-      {renderBillOfMaterial(data)}
+      {renderBillOfMaterial(menu)}
     </div>
   );
 };
