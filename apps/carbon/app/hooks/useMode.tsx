@@ -22,7 +22,7 @@ export function useMode() {
   const optimisticMode = useOptimisticMode();
   const routeData = useRouteData<{ mode: Mode }>(path.to.root);
 
-  let mode = routeData?.mode ?? "light";
+  let mode = routeData?.mode ?? "dark";
 
   if (optimisticMode && optimisticMode !== "system") {
     mode = optimisticMode;

@@ -25,7 +25,8 @@ const Part = ({ partReplenishmentSystem, ...props }: PartSelectProps) => {
         })
         .map((part) => ({
           value: part.id,
-          label: `${part.id} - ${part.name}`,
+          label: part.id,
+          helper: part.name,
         })) ?? [],
     [partReplenishmentSystem, parts]
   );

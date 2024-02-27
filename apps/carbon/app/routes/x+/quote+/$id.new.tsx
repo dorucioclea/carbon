@@ -83,6 +83,7 @@ export default function NewQuotationLineRoute() {
     description: "",
     replenishmentSystem: "" as "Buy" | "Make",
     unitOfMeasureCode: "",
+    status: "Draft" as "Draft",
   };
 
   return <QuotationLineForm initialValues={initialValues} />;

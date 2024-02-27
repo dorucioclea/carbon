@@ -11,7 +11,7 @@ import {
 import { Form } from "@remix-run/react";
 
 type ConfirmDeleteProps = {
-  action: string;
+  action?: string;
   isOpen?: boolean;
   name: string;
   text: string;

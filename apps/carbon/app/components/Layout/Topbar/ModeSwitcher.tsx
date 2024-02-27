@@ -7,7 +7,7 @@ import { path } from "~/utils/path";
 
 const ModeSwitcher = () => {
   const mode = useMode();
-  const nextMode = mode === "light" ? "dark" : "light";
+  const nextMode = mode === "dark" ? "light" : "dark";
   const modeLabel = {
     light: <BiSun />,
     dark: <BiMoon />,
@@ -17,10 +17,17 @@ const ModeSwitcher = () => {
   const fetcher = useFetcher<typeof action>();
 
   return (
-    <fetcher.Form action={path.to.root} method="post">
+    <fetcher.Form
+      action={path.to.root}
+      method="post"
+      onSubmit={() => {
+        document.body.removeAttribute("style");
+      }}
+    >
       <input type="hidden" name="mode" value={nextMode} />
+
       <IconButton
-        icon={modeLabel[mode]}
+        icon={modeLabel[nextMode]}
         aria-label="Light Mode"
         variant="ghost"
         type="submit"

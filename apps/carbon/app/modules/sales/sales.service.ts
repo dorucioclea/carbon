@@ -69,6 +69,13 @@ export async function deleteQuoteLine(
   return client.from("quoteLine").delete().eq("id", quoteLineId);
 }
 
+export async function deleteQuoteLineQuantity(
+  client: SupabaseClient<Database>,
+  id: string
+) {
+  return client.from("quoteLineQuantity").delete().eq("id", id);
+}
+
 export async function deleteQuoteMaterial(
   client: SupabaseClient<Database>,
   quoteMaterialId: string
@@ -308,7 +315,7 @@ export async function getQuoteAssembliesByLine(
     .eq("quoteLineId", quoteLineId);
 }
 
-export async function getQuoteAssembliesByQuote(
+export async function getQuoteAssemblies(
   client: SupabaseClient<Database>,
   quoteId: string
 ) {
@@ -401,7 +408,7 @@ export async function getQuoteOperationsByLine(
     .eq("quoteLineId", quoteLineId);
 }
 
-export async function getQuoteOperationsByQuote(
+export async function getQuoteOperations(
   client: SupabaseClient<Database>,
   quoteId: string
 ) {

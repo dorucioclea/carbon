@@ -9,7 +9,7 @@ import {
   VStack,
 } from "@carbon/react";
 import { redirect, type ActionFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { ValidatedForm, validationError } from "remix-validated-form";
 import { Hidden, Input, Password, Submit } from "~/components/Form";
 import { useOnboarding } from "~/hooks";
@@ -82,7 +82,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function OnboardingUser() {
   const { user } = useLoaderData<typeof loader>();
-  const { next, previous, onPrevious } = useOnboarding();
+  const { next, previous } = useOnboarding();
 
   const initialValues = {} as TypeOfValidator<typeof onboardingUserValidator>;
 
@@ -125,12 +125,12 @@ export default function OnboardingUser() {
               variant="solid"
               isDisabled={!previous}
               size="md"
-              onClick={() => {
-                onPrevious?.();
-              }}
+              asChild
               tabIndex={-1}
             >
-              Previous
+              <Link to={previous} prefetch="intent">
+                Previous
+              </Link>
             </Button>
             <Submit>Next</Submit>
           </HStack>

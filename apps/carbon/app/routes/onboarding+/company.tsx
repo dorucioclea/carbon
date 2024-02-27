@@ -11,7 +11,7 @@ import {
 } from "@carbon/react";
 import { getLocalTimeZone } from "@internationalized/date";
 import { json, redirect, type ActionFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { ValidatedForm, validationError } from "remix-validated-form";
 import { Hidden, Input, Submit } from "~/components/Form";
 import { useOnboarding } from "~/hooks";
@@ -118,9 +118,9 @@ export async function action({ request }: ActionFunctionArgs) {
   return redirect(next);
 }
 
-export default function OnboardingUser() {
+export default function OnboardingCompany() {
   const { company } = useLoaderData<typeof loader>();
-  const { next, previous, onPrevious } = useOnboarding();
+  const { next, previous } = useOnboarding();
 
   const initialValues = {
     name: company?.name ?? "",
@@ -158,12 +158,12 @@ export default function OnboardingUser() {
               variant="solid"
               isDisabled={!previous}
               size="md"
-              onClick={() => {
-                onPrevious?.();
-              }}
+              asChild
               tabIndex={-1}
             >
-              Previous
+              <Link to={previous} prefetch="intent">
+                Previous
+              </Link>
             </Button>
             <Submit>Next</Submit>
           </HStack>

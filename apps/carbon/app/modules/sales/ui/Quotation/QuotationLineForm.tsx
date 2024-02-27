@@ -14,6 +14,7 @@ import {
   HStack,
   IconButton,
   VStack,
+  cn,
 } from "@carbon/react";
 
 import { useNavigate, useParams } from "@remix-run/react";
@@ -26,13 +27,18 @@ import {
   Input,
   InputControlled,
   Part,
+  Select,
   SelectControlled,
   Submit,
 } from "~/components/Form";
 import { usePermissions, useRouteData } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import type { Quotation } from "~/modules/sales";
-import { quotationLineValidator } from "~/modules/sales";
+import {
+  quotationLineValidator,
+  quoteLineStatusType,
+  useQuotation,
+} from "~/modules/sales";
 import type { TypeOfValidator } from "~/types/validators";
 import { path } from "~/utils/path";
 
@@ -44,6 +50,9 @@ const QuotationLineForm = ({ initialValues }: QuotationLineFormProps) => {
   const navigate = useNavigate();
   const permissions = usePermissions();
   const { supabase } = useSupabase();
+
+  const [quote] = useQuotation();
+  console.log({ storedQuote: quote });
 
   const { id } = useParams();
 
@@ -208,6 +217,16 @@ const QuotationLineForm = ({ initialValues }: QuotationLineFormProps) => {
                         replenishmentSystem: newValue?.value,
                       }));
                   }}
+                />
+
+                <Select
+                  name="status"
+                  label="Status"
+                  options={quoteLineStatusType.map((s) => ({
+                    label: s,
+                    value: s,
+                  }))}
+                  className={cn(!isEditing && "sr-only")}
                 />
               </VStack>
             </div>

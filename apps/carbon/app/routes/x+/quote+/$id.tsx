@@ -14,17 +14,27 @@ import {
 } from "@carbon/react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Link, Outlet, useNavigate, useParams } from "@remix-run/react";
-import { useState } from "react";
+import {
+  Link,
+  Outlet,
+  useLoaderData,
+  useNavigate,
+  useParams,
+} from "@remix-run/react";
+import { useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
-import { CollapsibleSidebar } from "~/components/Layout/Navigation/CollapsibleSidebar";
+import { CollapsibleSidebar } from "~/components/Layout";
 import { getLocationsList } from "~/modules/resources";
 import {
   QuotationStatus,
   getQuote,
+  getQuoteAssemblies,
   getQuoteExternalDocuments,
   getQuoteInternalDocuments,
   getQuoteLines,
+  getQuoteMaterials,
+  getQuoteOperations,
+  useQuotation,
 } from "~/modules/sales";
 
 import { requirePermissions } from "~/services/auth";
@@ -54,12 +64,18 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const [
     quotation,
     quotationLines,
+    quotationAssemblies,
+    quotationMaterials,
+    quotationOperations,
     externalDocuments,
     internalDocuments,
     locations,
   ] = await Promise.all([
     getQuote(client, id),
     getQuoteLines(client, id),
+    getQuoteAssemblies(client, id),
+    getQuoteMaterials(client, id),
+    getQuoteOperations(client, id),
     getQuoteExternalDocuments(client, id),
     getQuoteInternalDocuments(client, id),
     getLocationsList(client),
@@ -78,6 +94,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   return json({
     quotation: quotation.data,
     quotationLines: quotationLines.data ?? [],
+    quotationAssemblies: quotationAssemblies.data ?? [],
+    quotationMaterials: quotationMaterials.data ?? [],
+    quotationOperations: quotationOperations.data ?? [],
     externalDocuments: externalDocuments.data ?? [],
     internalDocuments: internalDocuments.data ?? [],
     locations: locations.data ?? [],
@@ -89,6 +108,29 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function QuotationRoute() {
+  const {
+    quotationLines,
+    quotationAssemblies,
+    quotationMaterials,
+    quotationOperations,
+  } = useLoaderData<typeof loader>();
+  const [, setQuotation] = useQuotation();
+
+  useEffect(() => {
+    setQuotation({
+      lines: quotationLines,
+      assemblies: quotationAssemblies,
+      materials: quotationMaterials,
+      operations: quotationOperations,
+    });
+  }, [
+    quotationLines,
+    quotationAssemblies,
+    quotationMaterials,
+    quotationOperations,
+    setQuotation,
+  ]);
+
   const navigate = useNavigate();
   const { id } = useParams();
   if (!id) throw new Error("id not found");
@@ -172,12 +214,12 @@ const data: BillOfMaterialNode[] = [
     type: "parent",
     children: [
       {
-        id: "cndcil49k0l2as5uqnl0",
+        id: "cneklo3nm0lgr74492e0",
         label: "P00001233",
         type: "line",
         children: [
           {
-            id: "cndcil49k0l2as5uqnl0",
+            id: "cneklo3nm0lgr74492e0",
             label: "Assemblies",
             type: "assemblies",
             children: [
@@ -228,7 +270,7 @@ const data: BillOfMaterialNode[] = [
             ],
           },
           {
-            id: "cndcil49k0l2as5uqnl0",
+            id: "cneklo3nm0lgr74492e0",
             label: "Operations",
             type: "operations",
             children: [

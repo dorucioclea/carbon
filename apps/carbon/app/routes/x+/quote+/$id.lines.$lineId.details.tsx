@@ -90,6 +90,7 @@ export default function EditQuotationLineRoute() {
     replenishmentSystem: (quotationLine?.replenishmentSystem ?? "") as
       | "Buy"
       | "Make",
+    status: quotationLine?.status ?? "Draft",
     unitOfMeasureCode: quotationLine?.unitOfMeasureCode ?? "",
   };
 

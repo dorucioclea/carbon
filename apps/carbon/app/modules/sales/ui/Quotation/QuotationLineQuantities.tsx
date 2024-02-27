@@ -97,7 +97,7 @@ const QuotationLineQuantities = ({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem
-                    onClick={() => navigate(`delete/${row.original.id}`)}
+                    onClick={() => navigate(`${row.original.id}/delete`)}
                     disabled={!isEditable || !canDelete}
                   >
                     <DropdownMenuIcon icon={<IoMdTrash />} />
@@ -235,7 +235,10 @@ const QuotationLineQuantities = ({
 
   return (
     <>
-      <Card className="w-full">
+      <Card
+        className="w-full"
+        style={{ height: 196 + quotationLineQuantities.length * 44 }}
+      >
         <HStack className="justify-between items-start">
           <CardHeader>
             <CardTitle>Line Prices</CardTitle>
@@ -247,7 +250,6 @@ const QuotationLineQuantities = ({
             data={quotationLineQuantities}
             canEdit={canEdit && isEditable}
             columns={columns}
-            contained={false}
             editableComponents={editableComponents}
             onNewRow={
               canEdit && isEditable

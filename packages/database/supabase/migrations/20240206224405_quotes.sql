@@ -106,6 +106,7 @@ CREATE TABLE "quoteLineQuantity" (
   CONSTRAINT "quoteLineQuantity_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
+CREATE INDEX "quoteLineQuantity_quoteId_idx" ON "quoteLineQuantity" ("quoteId");
 CREATE INDEX "quoteLineQuantity_quoteLineId_idx" ON "quoteLineQuantity" ("quoteLineId");
 
 CREATE TABLE "quoteAssembly" (
@@ -190,6 +191,10 @@ CREATE TABLE "quoteMaterial" (
   CONSTRAINT "quoteMaterial_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "quoteMaterial_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
+
+CREATE INDEX "quoteMaterial_quoteId_idx" ON "quoteMaterial" ("quoteId");
+CREATE INDEX "quoteMaterial_quoteLineId_idx" ON "quoteMaterial" ("quoteLineId");
+CREATE INDEX "quoteMaterial_quoteOperationId_idx" ON "quoteMaterial" ("quoteOperationId");
 
 CREATE TABLE "quoteFavorite" (
   "quoteId" TEXT NOT NULL,

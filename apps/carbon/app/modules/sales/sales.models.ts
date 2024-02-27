@@ -144,6 +144,9 @@ export const quotationLineValidator = withZod(
     id: zfd.text(z.string().optional()),
     quoteId: z.string(),
     partId: z.string().min(1, { message: "Part is required" }),
+    status: z.enum(quoteLineStatusType, {
+      errorMap: () => ({ message: "Status is required" }),
+    }),
     description: z.string().min(1, { message: "Description is required" }),
     replenishmentSystem: z.enum(["Buy", "Make"]),
     customerPartId: zfd.text(z.string().optional()),

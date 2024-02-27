@@ -9,6 +9,7 @@ import {
   getQuoteOperation,
   quotationOperationValidator,
   upsertQuoteOperation,
+  useQuotation,
 } from "~/modules/sales";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
@@ -102,6 +103,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function QuoteOperation() {
   const { quoteOperation, quoteMaterials } = useLoaderData<typeof loader>();
+  const [quote] = useQuotation();
+  console.log({ storedQuote: quote });
 
   const initialValues = {
     id: quoteOperation.id,

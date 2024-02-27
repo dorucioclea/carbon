@@ -29,7 +29,7 @@ const Select = ({ name, label, helperText, ...props }: SelectProps) => {
   };
 
   return (
-    <FormControl isInvalid={!!error}>
+    <FormControl isInvalid={!!error} className={props.className}>
       {label && <FormLabel htmlFor={name}>{label}</FormLabel>}
       <input
         {...getInputProps({

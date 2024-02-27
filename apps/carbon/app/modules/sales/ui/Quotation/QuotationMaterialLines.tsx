@@ -18,7 +18,11 @@ import {
 import Grid from "~/components/Grid";
 import { usePermissions, useRouteData, useUser } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
-import type { Quotation, QuotationMaterial } from "~/modules/sales";
+import {
+  useQuotation,
+  type Quotation,
+  type QuotationMaterial,
+} from "~/modules/sales";
 import { useParts } from "~/stores/parts";
 import { path } from "~/utils/path";
 
@@ -29,9 +33,12 @@ type QuotationMaterialLinesProps = {
 const QuotationMaterialLines = ({
   quotationMaterials,
 }: QuotationMaterialLinesProps) => {
-  const { id, lineId } = useParams();
+  const { id, lineId, operationId } = useParams();
   if (!id) throw new Error("id not found");
   if (!lineId) throw new Error("lineId not found");
+  if (!operationId) throw new Error("operationId not found");
+
+  const [, setQuotation] = useQuotation();
 
   const { id: userId } = useUser();
   const { supabase } = useSupabase();
@@ -124,7 +131,10 @@ const QuotationMaterialLines = ({
 
   return (
     <>
-      <Card className="w-full">
+      <Card
+        className="w-full"
+        style={{ height: 196 + quotationMaterials.length * 44 }}
+      >
         <HStack className="justify-between items-start">
           <CardHeader>
             <CardTitle>Materials</CardTitle>
@@ -144,6 +154,14 @@ const QuotationMaterialLines = ({
             contained={false}
             editableComponents={editableComponents}
             onNewRow={() => navigate("material/new")}
+            onDataChange={(data) =>
+              setQuotation((prev) => ({
+                ...prev,
+                materials: prev.materials
+                  .filter((m) => m.quoteOperationId !== operationId)
+                  .concat(data),
+              }))
+            }
           />
         </CardContent>
       </Card>
