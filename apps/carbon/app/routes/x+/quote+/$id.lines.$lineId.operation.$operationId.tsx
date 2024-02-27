@@ -121,7 +121,10 @@ export default function QuoteOperation() {
 
   return (
     <>
-      <QuotationOperationForm initialValues={initialValues} />
+      <QuotationOperationForm
+        key={initialValues.id}
+        initialValues={initialValues}
+      />
       <QuotationMaterialLines quotationMaterials={quoteMaterials} />
     </>
   );

@@ -97,7 +97,10 @@ export default function QuoteAssembly() {
 
   return (
     <>
-      <QuotationAssemblyForm initialValues={initialValues} />
+      <QuotationAssemblyForm
+        key={initialValues.id}
+        initialValues={initialValues}
+      />
       <Outlet />
     </>
   );

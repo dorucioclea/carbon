@@ -96,7 +96,7 @@ export default function EditQuotationLineRoute() {
 
   return (
     <>
-      <QuotationLineForm initialValues={initialValues} />
+      <QuotationLineForm key={initialValues.id} initialValues={initialValues} />
       <QuotationLineQuantities
         quotationLine={quotationLine}
         quotationLineQuantities={quotationLineQuantities}
