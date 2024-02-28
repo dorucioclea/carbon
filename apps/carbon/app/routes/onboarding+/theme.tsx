@@ -77,7 +77,6 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function OnboardingTheme() {
   const { theme: initialTheme } = useLoaderData<typeof loader>();
-  console.log(initialTheme);
 
   const [theme, setTheme] = useState<ThemeValue>(initialTheme);
   const mode = useMode();
