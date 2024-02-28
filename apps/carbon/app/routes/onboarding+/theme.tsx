@@ -78,7 +78,7 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function OnboardingTheme() {
   const { theme: initialTheme } = useLoaderData<typeof loader>();
 
-  const [theme, setTheme] = useState<ThemeValue>(initialTheme);
+  const [theme, setTheme] = useState<ThemeValue>(initialTheme as "zinc");
   const mode = useMode();
 
   const onThemeChange = (t: Theme) => {
@@ -106,7 +106,7 @@ export default function OnboardingTheme() {
       <ValidatedForm
         method="post"
         validator={themeValidator}
-        defaultValues={{ theme: initialTheme }}
+        defaultValues={{ theme: initialTheme as "zinc" }}
       >
         <CardHeader>
           <CardTitle>Choose your style</CardTitle>
