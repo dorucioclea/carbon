@@ -3,8 +3,8 @@ import { json, redirect, useNavigate, useParams } from "@remix-run/react";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { ConfirmDelete } from "~/components/Modals";
 import { useRouteData } from "~/hooks";
-import type { QuotationAssembly } from "~/modules/sales";
-import { deleteQuoteAssembly } from "~/modules/sales";
+import type { QuotationOperation } from "~/modules/sales";
+import { deleteQuoteOperation } from "~/modules/sales";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { assertIsPost } from "~/utils/http";
@@ -17,19 +17,19 @@ export async function action({ request, params }: ActionFunctionArgs) {
     update: "sales",
   });
 
-  const { id: quoteId, lineId: quoteLineId, assemblyId } = params;
+  const { id: quoteId, lineId: quoteLineId, operationId } = params;
   if (!quoteId) throw new Error("Could not find quoteId");
   if (!quoteLineId) throw new Error("Could not find quoteLineId");
-  if (!assemblyId) throw new Error("Could not find assemblyId");
+  if (!operationId) throw new Error("Could not find operationId");
 
-  const deleteAssembly = await deleteQuoteAssembly(client, assemblyId);
+  const deleteOperation = await deleteQuoteOperation(client, operationId);
 
-  if (deleteAssembly.error) {
+  if (deleteOperation.error) {
     return json(
       path.to.quoteLine(quoteId, quoteLineId),
       await flash(
         request,
-        error(deleteAssembly.error, "Failed to update quote assembly")
+        error(deleteOperation.error, "Failed to update quote operation")
       )
     );
   }
@@ -37,26 +37,25 @@ export async function action({ request, params }: ActionFunctionArgs) {
   return redirect(path.to.quoteLine(quoteId, quoteLineId));
 }
 
-export default function DeleteQuoteAssembly() {
+export default function DeleteQuoteOperation() {
   const navigate = useNavigate();
 
-  const { id, lineId, assemblyId } = useParams();
+  const { id, lineId, operationId } = useParams();
   if (!id) throw new Error("id not found");
   if (!lineId) throw new Error("lineId not found");
-  if (!assemblyId) throw new Error("assemblyId not found");
+  if (!operationId) throw new Error("operationId not found");
 
-  const routeData = useRouteData<{ quoteAssembly: QuotationAssembly }>(
-    path.to.quoteAssembly(id, lineId, assemblyId)
+  const routeData = useRouteData<{ quoteOperation: QuotationOperation }>(
+    path.to.quoteOperation(id, lineId, operationId)
   );
 
-  if (!routeData?.quoteAssembly) throw new Error("quote assembly not found");
+  if (!routeData?.quoteOperation) throw new Error("quote operation not found");
 
   return (
     <ConfirmDelete
-      action={path.to.deleteQuoteAssembly(id, lineId, assemblyId)}
-      name={routeData?.quoteAssembly.partId}
-      text={`Are you sure you want to delete the assembly: ${routeData?.quoteAssembly.partId}? This cannot be undone.`}
-      onCancel={() => navigate(path.to.quoteAssembly(id, lineId, assemblyId))}
+      name={routeData.quoteOperation.description ?? "Operation"}
+      text={`Are you sure you want to delete the operation? This cannot be undone.`}
+      onCancel={() => navigate(path.to.quoteOperation(id, lineId, operationId))}
     />
   );
 }

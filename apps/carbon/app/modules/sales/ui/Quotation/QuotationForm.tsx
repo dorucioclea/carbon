@@ -93,7 +93,6 @@ const QuotationForm = ({ initialValues }: QuotationFormProps) => {
                 {isEditing && (
                   <>
                     <DatePicker name="expirationDate" label="Expiration Date" />
-
                     <TextArea name="notes" label="Notes" />
                   </>
                 )}

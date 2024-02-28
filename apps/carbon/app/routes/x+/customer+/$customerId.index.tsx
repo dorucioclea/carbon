@@ -69,5 +69,5 @@ export default function CustomerEditRoute() {
     taxId: routeData?.customer?.taxId ?? "",
   };
 
-  return <CustomerForm initialValues={initialValues} />;
+  return <CustomerForm key={initialValues.id} initialValues={initialValues} />;
 }

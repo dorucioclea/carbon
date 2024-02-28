@@ -81,5 +81,7 @@ export default function PurchaseOrderBasicRoute() {
     notes: orderData?.purchaseOrder?.notes ?? "",
   };
 
-  return <PurchaseOrderForm initialValues={initialValues} />;
+  return (
+    <PurchaseOrderForm key={initialValues.id} initialValues={initialValues} />
+  );
 }

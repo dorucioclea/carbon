@@ -27,7 +27,7 @@ import {
   Part,
   Submit,
 } from "~/components/Form";
-import { usePermissions, useRouteData } from "~/hooks";
+import { usePermissions, useRouteData, useUrlParams } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import type { Quotation } from "~/modules/sales";
 import { quotationAssemblyValidator } from "~/modules/sales";
@@ -52,6 +52,9 @@ const QuotationAssemblyForm = ({
   const { id: quoteId, lineId } = useParams();
   if (!quoteId) throw new Error("quoteId not found");
   if (!lineId) throw new Error("lineId not found");
+
+  const [params] = useUrlParams();
+  const parentAssemblyId = params.get("parentAssemblyId");
 
   const isEditing = initialValues.id !== undefined;
 
@@ -139,7 +142,10 @@ const QuotationAssemblyForm = ({
         </HStack>
         <CardContent>
           <Hidden name="id" />
-          <Hidden name="parentAssemblyId" />
+          <Hidden
+            name="parentAssemblyId"
+            value={parentAssemblyId ?? undefined}
+          />
           <Hidden name="unitOfMeasureCode" value={partData?.uom} />
           <VStack>
             <div className="grid w-full gap-x-8 gap-y-2 grid-cols-1 md:grid-cols-3">

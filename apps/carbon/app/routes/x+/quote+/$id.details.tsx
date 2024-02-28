@@ -84,7 +84,7 @@ export default function QuotationBasicRoute() {
 
   return (
     <>
-      <QuotationForm initialValues={initialValues} />
+      <QuotationForm key={initialValues.id} initialValues={initialValues} />
       <QuotationDocuments
         id={id}
         attachments={quoteData.internalDocuments}

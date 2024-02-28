@@ -108,5 +108,7 @@ export default function EditSupplierContactRoute() {
     birthday: contact?.contact?.birthday ?? undefined,
   };
 
-  return <SupplierContactForm initialValues={initialValues} />;
+  return (
+    <SupplierContactForm key={initialValues.id} initialValues={initialValues} />
+  );
 }

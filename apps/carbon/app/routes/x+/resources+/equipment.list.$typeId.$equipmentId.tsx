@@ -58,6 +58,7 @@ export default function EditEquipmentRoute() {
 
   return (
     <EquipmentForm
+      key={`${equipment.id}${typeId}`}
       initialValues={{
         id: equipment?.id,
         name: equipment?.name ?? "",

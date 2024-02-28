@@ -92,6 +92,7 @@ export default function EditDocumentRoute() {
 
   return (
     <DocumentForm
+      key={initialValues.id}
       initialValues={initialValues}
       ownerId={document.createdBy ?? ""}
     />

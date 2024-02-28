@@ -131,6 +131,7 @@ export default function EditEmployeeTypesRoute() {
 
   return (
     <EmployeeTypeForm
+      key={initialValues.id}
       // @ts-expect-error
       initialValues={initialValues}
     />

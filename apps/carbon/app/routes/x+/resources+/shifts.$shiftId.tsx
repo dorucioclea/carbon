@@ -87,5 +87,5 @@ export default function ShiftRoute() {
     sunday: shift.sunday,
   };
 
-  return <ShiftForm initialValues={initialValues} />;
+  return <ShiftForm key={initialValues.id} initialValues={initialValues} />;
 }

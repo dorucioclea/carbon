@@ -114,9 +114,7 @@ const QuotationLineForm = ({ initialValues }: QuotationLineFormProps) => {
       <Card>
         <HStack className="w-full justify-between items-start">
           <CardHeader>
-            <CardTitle>
-              {isEditing ? partData?.partId : "New Quote Line"}
-            </CardTitle>
+            <CardTitle>{isEditing ? "Quote Line" : "New Quote Line"}</CardTitle>
             <CardDescription>
               {isEditing
                 ? partData?.description

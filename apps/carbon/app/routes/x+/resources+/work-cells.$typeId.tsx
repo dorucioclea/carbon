@@ -92,5 +92,11 @@ export default function EditAttributeCategoryRoute() {
     defaultStandardFactor: workCellType?.defaultStandardFactor ?? "Total Hours",
   };
 
-  return <WorkCellTypeForm onClose={onClose} initialValues={initialValues} />;
+  return (
+    <WorkCellTypeForm
+      key={initialValues.id}
+      onClose={onClose}
+      initialValues={initialValues}
+    />
+  );
 }

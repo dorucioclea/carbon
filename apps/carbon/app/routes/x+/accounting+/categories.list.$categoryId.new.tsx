@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from "@remix-run/react";
-import { AccountSubcategoryForm ,
+import {
+  AccountSubcategoryForm,
   accountSubcategoryValidator,
   upsertAccountSubcategory,
 } from "~/modules/accounting";

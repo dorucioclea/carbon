@@ -85,6 +85,10 @@ export default function EditAccountCategoryRoute() {
   };
 
   return (
-    <AccountCategoryForm onClose={onClose} initialValues={initialValues} />
+    <AccountCategoryForm
+      key={initialValues.id}
+      onClose={onClose}
+      initialValues={initialValues}
+    />
   );
 }

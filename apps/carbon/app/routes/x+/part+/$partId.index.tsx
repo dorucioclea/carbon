@@ -65,5 +65,5 @@ export default function PartBasicRoute() {
     active: partData.partSummary?.active ?? false,
   };
 
-  return <PartForm initialValues={initialValues} />;
+  return <PartForm key={initialValues.id} initialValues={initialValues} />;
 }

@@ -89,5 +89,11 @@ export default function EditAttributeCategoryRoute() {
     setupHours: equipmentType?.setupHours ?? 0,
   };
 
-  return <EquipmentTypeForm onClose={onClose} initialValues={initialValues} />;
+  return (
+    <EquipmentTypeForm
+      key={initialValues.id}
+      onClose={onClose}
+      initialValues={initialValues}
+    />
+  );
 }

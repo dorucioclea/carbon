@@ -118,10 +118,10 @@ export default function QuotationRoute() {
     quotationMaterials,
     quotationOperations,
   } = useLoaderData<typeof loader>();
-  const [, setQuotation] = useQuotation();
+  const [quote, setQuote] = useQuotation();
 
   useEffect(() => {
-    setQuotation({
+    setQuote({
       quote: quotation,
       lines: quotationLines,
       assemblies: quotationAssemblies,
@@ -133,7 +133,7 @@ export default function QuotationRoute() {
     quotationAssemblies,
     quotationMaterials,
     quotationOperations,
-    setQuotation,
+    setQuote,
     quotation,
   ]);
 
@@ -146,9 +146,9 @@ export default function QuotationRoute() {
       <CollapsibleSidebar width={260}>
         <VStack className="border-b border-border p-4" spacing={1}>
           <Heading size="h3" noOfLines={1}>
-            QUO000001
+            {quote.quote?.quoteId}
           </Heading>
-          <QuotationStatus status="Draft" />
+          {quote.quote && <QuotationStatus status={quote.quote?.status} />}
         </VStack>
         <VStack className="border-b border-border p-2" spacing={0}>
           <HStack className="w-full justify-between">
@@ -252,10 +252,10 @@ type BillOfMaterialNode = {
 //                         type: "operation",
 //                         children: [
 //                           {
-//                             id: "8",
-//                             label: "Materials",
-//                             type: "materials",
-//                             children: [
+// id: "8",
+// label: "Materials",
+// type: "materials",
+// children: [
 //                               {
 //                                 id: "9",
 //                                 label: "RAW000001",
@@ -352,9 +352,14 @@ const BillOfMaterialItem = ({
         <Button
           variant="ghost"
           className="w-full justify-between text-muted-foreground"
+          asChild
         >
-          <span>{label}</span>
-          <IoMdAdd />
+          <Link
+            to={path.to.newQuoteMaterial(params.id!, meta.quoteLineId, meta.id)}
+          >
+            <span>{label}</span>
+            <IoMdAdd />
+          </Link>
         </Button>
       );
     case "operations":
@@ -372,7 +377,7 @@ const BillOfMaterialItem = ({
       );
     case "line":
       isActive = pathname === path.to.quoteLine(params.id!, id);
-      console.log(meta);
+
       return (
         <Button
           variant={isActive ? "primary" : "ghost"}
@@ -396,23 +401,42 @@ const BillOfMaterialItem = ({
         </Button>
       );
     case "assembly":
+      isActive =
+        pathname ===
+        path.to.quoteAssembly(params.id!, meta.quoteLineId, meta.id);
       return (
         <Button
           leftIcon={<AiOutlinePartition />}
-          variant="ghost"
+          variant={isActive ? "primary" : "ghost"}
           className="flex-1 justify-start"
+          asChild
         >
-          {label}
+          <Link
+            to={path.to.quoteAssembly(params.id!, meta.quoteLineId, meta.id)}
+            prefetch="intent"
+          >
+            {label}
+          </Link>
         </Button>
       );
     case "operation":
+      isActive = [
+        path.to.quoteOperation(params.id!, meta.quoteLineId, meta.id),
+        path.to.newQuoteMaterial(params.id!, meta.quoteLineId, meta.id),
+      ].includes(pathname);
       return (
         <Button
           leftIcon={<LuClock />}
-          variant="ghost"
+          variant={isActive ? "primary" : "ghost"}
           className="flex-1 justify-start"
+          asChild
         >
-          {label}
+          <Link
+            to={path.to.quoteOperation(params.id!, meta.quoteLineId, meta.id)}
+            prefetch="intent"
+          >
+            {label}
+          </Link>
         </Button>
       );
     case "material":
@@ -421,8 +445,13 @@ const BillOfMaterialItem = ({
           leftIcon={<HiOutlineCube />}
           variant="ghost"
           className="flex-1 justify-start"
+          asChild
         >
-          {label}
+          <Link
+            to={path.to.quoteOperation(params.id!, meta.quoteLineId, parentId!)}
+          >
+            {label}
+          </Link>
         </Button>
       );
     case "parent":
@@ -449,6 +478,7 @@ const BillOfMaterialExplorer = () => {
   if (!params.id) throw new Error("id not found");
 
   const menu = useQuotationMenu() as BillOfMaterialNode[];
+
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({
     [params.id]: true,
   });
@@ -482,7 +512,9 @@ const BillOfMaterialExplorer = () => {
               style={{
                 transition: "transform .25s ease",
                 transform:
-                  expandedNodes[node.id] || !node.children
+                  expandedNodes[node.id] ||
+                  !node.children ||
+                  node.children?.length === 0
                     ? undefined
                     : "rotate(-0.25turn)",
               }}

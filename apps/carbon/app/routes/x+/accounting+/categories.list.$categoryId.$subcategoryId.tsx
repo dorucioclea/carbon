@@ -50,6 +50,10 @@ export default function EditAccountSubcategoryRoute() {
   };
 
   return (
-    <AccountSubcategoryForm initialValues={initialValues} onClose={onClose} />
+    <AccountSubcategoryForm
+      key={initialValues.id}
+      initialValues={initialValues}
+      onClose={onClose}
+    />
   );
 }

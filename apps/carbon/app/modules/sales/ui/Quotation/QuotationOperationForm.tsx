@@ -30,7 +30,7 @@ import {
   Submit,
   WorkCellType,
 } from "~/components/Form";
-import { usePermissions, useRouteData } from "~/hooks";
+import { usePermissions, useRouteData, useUrlParams } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import type { Quotation } from "~/modules/sales";
 import { quotationOperationValidator } from "~/modules/sales";
@@ -55,6 +55,9 @@ const QuotationOperationForm = ({
   const { id: quoteId, lineId } = useParams();
   if (!quoteId) throw new Error("quoteId not found");
   if (!lineId) throw new Error("lineId not found");
+
+  const [params] = useUrlParams();
+  const quoteAssemblyId = params.get("quoteAssemblyId");
 
   const isEditing = initialValues.id !== undefined;
 
@@ -164,7 +167,7 @@ const QuotationOperationForm = ({
         </HStack>
         <CardContent>
           <Hidden name="id" />
-          <Hidden name="quoteAssemblyId" />
+          <Hidden name="quoteAssemblyId" value={quoteAssemblyId ?? undefined} />
 
           <VStack>
             <div className="grid w-full gap-x-8 gap-y-2 grid-cols-1 md:grid-cols-3">

@@ -95,6 +95,7 @@ export default function EditReceiptsRoute() {
 
   return (
     <ReceiptForm
+      key={initialValues.id}
       // @ts-ignore
       initialValues={initialValues}
       status={receipt.status}

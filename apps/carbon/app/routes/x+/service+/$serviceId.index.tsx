@@ -64,5 +64,5 @@ export default function ServiceDetailsRoute() {
     blocked: routeData.service?.blocked ?? false,
   };
 
-  return <ServiceForm initialValues={initialValues} />;
+  return <ServiceForm key={initialValues.id} initialValues={initialValues} />;
 }

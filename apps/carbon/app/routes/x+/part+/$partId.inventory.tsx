@@ -170,6 +170,7 @@ export default function PartInventoryRoute() {
   };
   return (
     <PartInventoryForm
+      key={initialValues.partId}
       initialValues={initialValues}
       quantities={quantities}
       locations={sharedPartsData?.locations ?? []}
