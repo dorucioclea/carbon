@@ -13,7 +13,7 @@ import {
 import { themes, type Theme } from "@carbon/utils";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { RxCheck } from "react-icons/rx";
 import { ValidatedForm, validationError } from "remix-validated-form";
@@ -99,7 +99,7 @@ export default function OnboardingTheme() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode]);
 
-  const { next, previous, onPrevious } = useOnboarding();
+  const { next, previous } = useOnboarding();
 
   return (
     <Card className="max-w-lg">
@@ -159,12 +159,12 @@ export default function OnboardingTheme() {
                 variant="solid"
                 isDisabled={!previous}
                 size="md"
-                onClick={() => {
-                  onPrevious?.();
-                }}
+                asChild
                 tabIndex={-1}
               >
-                Previous
+                <Link to={previous} prefetch="intent">
+                  Previous
+                </Link>
               </Button>
             )}
 
