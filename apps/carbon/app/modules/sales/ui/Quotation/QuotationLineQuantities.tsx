@@ -18,14 +18,15 @@ import { IoMdTrash } from "react-icons/io";
 import { MdMoreHoriz } from "react-icons/md";
 import { EditableNumber } from "~/components/Editable";
 import Grid from "~/components/Grid";
-import { usePermissions, useRouteData, useUser } from "~/hooks";
+import { usePermissions, useUser } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
-import type {
-  Quotation,
-  QuotationLine,
-  QuotationLineQuantity,
+import {
+  useQuotation,
+  type QuotationLine,
+  type QuotationLineQuantity,
 } from "~/modules/sales";
 import { path } from "~/utils/path";
+import { useQuotationLinePriceEffects } from "./useQuotation";
 
 type QuotationLineQuantitiesProps = {
   quotationLine: QuotationLine;
@@ -42,9 +43,8 @@ const QuotationLineQuantities = ({
 
   const navigate = useNavigate();
 
-  const routeData = useRouteData<{
-    quotation: Quotation;
-  }>(path.to.quote(id));
+  const [quotation] = useQuotation();
+  const lineEffects = useQuotationLinePriceEffects();
 
   // TODO: use the currency of the quote
   const formatter = new Intl.NumberFormat("en-US", {
@@ -73,7 +73,7 @@ const QuotationLineQuantities = ({
     [supabase, userId]
   );
 
-  const isEditable = ["Draft"].includes(routeData?.quotation?.status ?? "");
+  const isEditable = ["Draft"].includes(quotation?.quote?.status ?? "");
   const isMade = quotationLine.replenishmentSystem === "Make";
 
   const columns = useMemo<ColumnDef<QuotationLineQuantity>[]>(() => {

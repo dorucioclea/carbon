@@ -19,12 +19,106 @@ type Quote = {
   materials: QuotationMaterial[];
 };
 
+type Effect = (quantity: number) => number;
+
+type LinePriceEffects = {
+  materialCost: Effect[];
+  laborCost: Effect[];
+  overheadCost: Effect[];
+  setupHours: Effect[];
+  productionHours: Effect[];
+};
+
 const $quotationStore = atom<Quote>({
   quote: undefined,
   lines: [],
   assemblies: [],
   operations: [],
   materials: [],
+});
+
+const defaultItems = {
+  assemblies: [],
+  operations: [],
+};
+
+const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
+  // vroom vroom
+  if (!store.quote) return [];
+  const linePriceEffects: Record<string, LinePriceEffects> = {};
+
+  const itemsByLineId: Record<
+    string,
+    {
+      assemblies: QuotationAssembly[];
+      operations: QuotationOperation[];
+    }
+  > = {};
+
+  store.assemblies.forEach((assembly) => {
+    if (!itemsByLineId[assembly.quoteLineId]) {
+      itemsByLineId[assembly.quoteLineId] = defaultItems;
+    }
+    itemsByLineId[assembly.quoteLineId].assemblies.push(assembly);
+  });
+
+  store.operations.forEach((operation) => {
+    if (!itemsByLineId[operation.quoteLineId]) {
+      itemsByLineId[operation.quoteLineId] = defaultItems;
+    }
+    itemsByLineId[operation.quoteLineId].operations.push(operation);
+  });
+
+  const materialsByOperationId = store.materials.reduce<
+    Record<string, QuotationMaterial[]>
+  >((acc, material) => {
+    if (!acc[material.quoteOperationId]) {
+      acc[material.quoteOperationId] = [];
+    }
+    acc[material.quoteOperationId].push(material);
+    return acc;
+  }, {});
+
+  store.lines.forEach((line) => {
+    linePriceEffects[line.id] = {
+      materialCost: [],
+      laborCost: [],
+      overheadCost: [],
+      setupHours: [],
+      productionHours: [],
+    };
+
+    const assembliesById = itemsByLineId[line.id].assemblies.reduce<
+      Record<string, QuotationAssembly>
+    >((acc, assembly) => {
+      acc[assembly.id] = assembly;
+      return acc;
+    }, {});
+
+    const extendedQuantitiesPerAssembly: Record<string, number> = {};
+
+    itemsByLineId[line.id].assemblies.forEach((assembly: QuotationAssembly) => {
+      let quantity = assembly.quantityPerParent ?? 1;
+      let asm = assembliesById[assembly.id];
+      while (asm.parentAssemblyId) {
+        // memoize the results
+        if (extendedQuantitiesPerAssembly[asm.parentAssemblyId]) {
+          quantity *= extendedQuantitiesPerAssembly[asm.parentAssemblyId];
+          break;
+        }
+
+        const parent = assembliesById[asm.parentAssemblyId];
+        quantity *= parent.quantityPerParent ?? 1;
+        asm = parent;
+      }
+
+      extendedQuantitiesPerAssembly[assembly.id] = quantity;
+    });
+
+    console.log({ extendedQuantitiesPerAssembly });
+  });
+
+  return true;
 });
 
 const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
@@ -82,10 +176,7 @@ const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
 
   store.assemblies.forEach((assembly) => {
     if (!itemsByLineId[assembly.quoteLineId]) {
-      itemsByLineId[assembly.quoteLineId] = {
-        assemblies: [],
-        operations: [],
-      };
+      itemsByLineId[assembly.quoteLineId] = defaultItems;
     }
     itemsByLineId[assembly.quoteLineId].assemblies.push({
       id: assembly.id,
@@ -98,10 +189,7 @@ const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
 
   store.operations.forEach((operation) => {
     if (!itemsByLineId[operation.quoteLineId]) {
-      itemsByLineId[operation.quoteLineId] = {
-        assemblies: [],
-        operations: [],
-      };
+      itemsByLineId[operation.quoteLineId] = defaultItems;
     }
     itemsByLineId[operation.quoteLineId].operations.push({
       id: operation.id,
@@ -202,3 +290,5 @@ function traverseTree(
 
 export const useQuotation = () => useNanoStore<Quote>($quotationStore);
 export const useQuotationMenu = () => useValue($quotationMenuStore);
+export const useQuotationLinePriceEffects = () =>
+  useValue($quotationLinePriceEffects);

@@ -11,18 +11,13 @@ import type { BillOfMaterialNode } from "~/modules/shared";
 import { path } from "~/utils/path";
 import { useQuotationMenu } from "./useQuotation";
 
-const QuotationExplorerItem = ({
-  type,
-  id,
-  parentId,
-  label,
-  meta,
-  params,
-  pathname,
-}: Omit<BillOfMaterialNode, "children"> & {
-  params: Params<string>;
-  pathname: string;
-}) => {
+const QuotationExplorerItem = (
+  node: Omit<BillOfMaterialNode, "children"> & {
+    params: Params<string>;
+    pathname: string;
+  }
+) => {
+  const { type, id, parentId, label, meta, params, pathname } = node;
   let isActive = false;
   switch (type) {
     case "assemblies":
@@ -159,7 +154,9 @@ const QuotationExplorerItem = ({
         </Button>
       );
     default:
-      throw new Error(`unknown type: ${type}`);
+      throw new Error(
+        `unknown type: ${type} for node: ${JSON.stringify(node, null, 2)}`
+      );
   }
 };
 
@@ -187,7 +184,7 @@ const QuotationExplorer = () => {
   ) => {
     return menu.map((node) => {
       return (
-        <div className="w-full" role="group" key={node.id}>
+        <div className="w-full" role="group" key={`${node.id}-${node.type}`}>
           <HStack
             className="items-stretch w-full"
             spacing={0}
