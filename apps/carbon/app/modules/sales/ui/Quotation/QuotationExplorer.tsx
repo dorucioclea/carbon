@@ -27,7 +27,13 @@ const QuotationExplorerItem = (
           className="w-full justify-between text-muted-foreground"
           asChild
         >
-          <Link to={path.to.newQuoteAssembly(params.id!, id, parentId)}>
+          <Link
+            to={path.to.newQuoteAssembly(
+              params.id!,
+              meta.quoteLineId,
+              parentId
+            )}
+          >
             <span>{label}</span>
             <IoMdAdd />
           </Link>
@@ -55,7 +61,13 @@ const QuotationExplorerItem = (
           className="w-full justify-between text-muted-foreground"
           asChild
         >
-          <Link to={path.to.newQuoteOperation(params.id!, id, parentId)}>
+          <Link
+            to={path.to.newQuoteOperation(
+              params.id!,
+              meta.quoteLineId,
+              parentId
+            )}
+          >
             <span>{label}</span>
             <IoMdAdd />
           </Link>
@@ -166,6 +178,7 @@ const QuotationExplorer = () => {
   if (!params.id) throw new Error("id not found");
 
   const menu = useQuotationMenu() as BillOfMaterialNode[];
+  console.log({ menu });
 
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({
     [params.id]: true,
@@ -184,7 +197,7 @@ const QuotationExplorer = () => {
   ) => {
     return menu.map((node) => {
       return (
-        <div className="w-full" role="group" key={`${node.id}-${node.type}`}>
+        <div className="w-full" role="group" key={`${node.id}:${node.type}`}>
           <HStack
             className="items-stretch w-full"
             spacing={0}

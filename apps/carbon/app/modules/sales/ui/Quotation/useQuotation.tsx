@@ -42,6 +42,14 @@ const defaultItems = {
   operations: [],
 };
 
+const defaultEffects = {
+  materialCost: [],
+  laborCost: [],
+  overheadCost: [],
+  setupHours: [],
+  productionHours: [],
+};
+
 const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
   // vroom vroom
   if (!store.quote) return [];
@@ -80,13 +88,7 @@ const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
   }, {});
 
   store.lines.forEach((line) => {
-    linePriceEffects[line.id] = {
-      materialCost: [],
-      laborCost: [],
-      overheadCost: [],
-      setupHours: [],
-      productionHours: [],
-    };
+    linePriceEffects[line.id] = defaultEffects;
 
     const assembliesById = itemsByLineId[line.id].assemblies.reduce<
       Record<string, QuotationAssembly>
@@ -115,10 +117,122 @@ const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
       extendedQuantitiesPerAssembly[assembly.id] = quantity;
     });
 
-    console.log({ extendedQuantitiesPerAssembly });
-  });
+    itemsByLineId[line.id].operations.forEach(
+      (operation: QuotationOperation) => {
+        const materials = materialsByOperationId[operation.id] ?? [];
+        const extendedQuantityPerAssembly = operation.quoteAssemblyId
+          ? extendedQuantitiesPerAssembly[operation.quoteAssemblyId] ?? 1
+          : 1;
 
-  return true;
+        const materialCost = materials.reduce(
+          (acc, material: QuotationMaterial) => {
+            return acc + (material.quantity ?? 0) * (material.unitCost ?? 0);
+          },
+          0
+        );
+
+        linePriceEffects[line.id].materialCost.push((quantity) => {
+          return materialCost * quantity * extendedQuantityPerAssembly;
+        });
+
+        if (operation.setupHours) {
+          linePriceEffects[line.id].setupHours.push((_quantity) => {
+            return operation.setupHours;
+          });
+          linePriceEffects[line.id].laborCost.push((_quantity) => {
+            return operation.setupHours * (operation.laborRate ?? 0);
+          });
+          linePriceEffects[line.id].overheadCost.push((_quantity) => {
+            return operation.setupHours * (operation.overheadRate ?? 0);
+          });
+        }
+
+        if (operation.productionStandard) {
+          let hoursPerProductionStandard = 0;
+          switch (operation.standardFactor) {
+            case "Hours/Piece":
+              hoursPerProductionStandard = operation.productionStandard;
+              break;
+            case "Hours/100 Pieces":
+              hoursPerProductionStandard = operation.productionStandard / 100;
+              break;
+            case "Hours/1000 Pieces":
+              hoursPerProductionStandard = operation.productionStandard / 1000;
+              break;
+            case "Minutes/Piece":
+              hoursPerProductionStandard = operation.productionStandard / 60;
+              break;
+            case "Minutes/100 Pieces":
+              hoursPerProductionStandard =
+                operation.productionStandard / 100 / 60;
+              break;
+            case "Minutes/1000 Pieces":
+              hoursPerProductionStandard =
+                operation.productionStandard / 1000 / 60;
+              break;
+            case "Pieces/Hour":
+              hoursPerProductionStandard = 1 / operation.productionStandard;
+              break;
+            case "Pieces/Minute":
+              hoursPerProductionStandard =
+                1 / (operation.productionStandard / 60);
+              break;
+            case "Seconds/Piece":
+              hoursPerProductionStandard = operation.productionStandard / 3600;
+              break;
+            case "Total Hours":
+              hoursPerProductionStandard = operation.productionStandard;
+              break;
+            case "Total Minutes":
+              hoursPerProductionStandard = operation.productionStandard / 60;
+              break;
+            default:
+              break;
+          }
+
+          if (
+            ["Total Hours", "Total Minutes"].includes(operation.standardFactor)
+          ) {
+            linePriceEffects[line.id].productionHours.push((_quantity) => {
+              return hoursPerProductionStandard;
+            });
+            linePriceEffects[line.id].laborCost.push((_quantity) => {
+              return hoursPerProductionStandard * (operation.laborRate ?? 0);
+            });
+            linePriceEffects[line.id].overheadCost.push((_quantity) => {
+              return hoursPerProductionStandard * (operation.overheadRate ?? 0);
+            });
+          } else {
+            linePriceEffects[line.id].productionHours.push((quantity) => {
+              return (
+                hoursPerProductionStandard *
+                quantity *
+                extendedQuantityPerAssembly
+              );
+            });
+            linePriceEffects[line.id].laborCost.push((quantity) => {
+              return (
+                hoursPerProductionStandard *
+                quantity *
+                extendedQuantityPerAssembly *
+                (operation.laborRate ?? 0)
+              );
+            });
+            linePriceEffects[line.id].overheadCost.push((quantity) => {
+              return (
+                hoursPerProductionStandard *
+                quantity *
+                extendedQuantityPerAssembly *
+                (operation.overheadRate ?? 0)
+              );
+            });
+          }
+        }
+      }
+    );
+
+    return linePriceEffects;
+  });
 });
 
 const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
@@ -199,7 +313,7 @@ const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
       meta: operation,
       children: [
         {
-          id: operation.id,
+          id: `${operation.id}-materials`,
           label: "Materials",
           type: "materials",
           meta: operation,
@@ -227,7 +341,7 @@ const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
         meta: line,
         children: [
           {
-            id: line.id,
+            id: `${line.id}-assemblies`,
             label: "Assemblies",
             type: "assemblies",
             children: itemsByLineId[line.id]?.assemblies
@@ -238,14 +352,16 @@ const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
                   }) as BillOfMaterialNode[]),
                 ]
               : [],
+            meta: line,
           },
           {
-            id: line.id,
+            id: `${line.id}-operations`,
             label: "Operations",
             type: "operations",
             children: itemsByLineId[line.id]?.operations.filter(
               (operation) => operation.parentId === undefined
             ) as BillOfMaterialNode[],
+            meta: line,
           },
         ],
       })),
@@ -256,22 +372,26 @@ const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
     if (node.type === "assembly") {
       node.children = [
         {
-          id: node.meta.quoteLineId,
+          id: `${node.id}-assemblies`,
           parentId: node.id,
           label: "Assemblies",
           type: "assemblies",
-          children: node.children,
+          children: node.children ? [...node.children] : [],
+          meta: node.meta,
         },
         {
-          id: node.meta.quoteLineId,
+          id: `${node.id}-operations`,
           parentId: node.id,
           label: "Operations",
           type: "operations",
           children: operationsByAssemblyId[node.id] ?? [],
+          meta: node.meta,
         },
       ];
     }
   });
+
+  console.log({ store });
 
   return menu;
 });
