@@ -26,6 +26,7 @@ import {
   type QuotationLineQuantity,
 } from "~/modules/sales";
 import { path } from "~/utils/path";
+import { useQuotationLinePriceEffects } from "./useQuotation";
 
 type QuotationLineQuantitiesProps = {
   quotationLine: QuotationLine;
@@ -43,8 +44,8 @@ const QuotationLineQuantities = ({
   const navigate = useNavigate();
 
   const [quotation] = useQuotation();
-  // const lineEffects = useQuotationLinePriceEffects();
-  // console.log({ lineEffects });
+  const lineEffects = useQuotationLinePriceEffects();
+  console.log({ lineEffects });
 
   // TODO: use the currency of the quote
   const formatter = new Intl.NumberFormat("en-US", {

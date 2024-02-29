@@ -53,9 +53,9 @@ const defaultEffects = {
 const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
   // vroom vroom
   if (!store.quote) return [];
-  const linePriceEffects: Record<string, LinePriceEffects> = {};
+  let linePriceEffects: Record<string, LinePriceEffects> = {};
 
-  const itemsByLineId: Record<
+  let itemsByLineId: Record<
     string,
     {
       assemblies: QuotationAssembly[];
@@ -77,7 +77,7 @@ const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
     itemsByLineId[operation.quoteLineId].operations.push(operation);
   });
 
-  const materialsByOperationId = store.materials.reduce<
+  let materialsByOperationId = store.materials.reduce<
     Record<string, QuotationMaterial[]>
   >((acc, material) => {
     if (!acc[material.quoteOperationId]) {
@@ -90,14 +90,14 @@ const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
   store.lines.forEach((line) => {
     linePriceEffects[line.id] = defaultEffects;
 
-    const assembliesById = itemsByLineId[line.id].assemblies.reduce<
+    let assembliesById = itemsByLineId[line.id].assemblies.reduce<
       Record<string, QuotationAssembly>
     >((acc, assembly) => {
       acc[assembly.id] = assembly;
       return acc;
     }, {});
 
-    const extendedQuantitiesPerAssembly: Record<string, number> = {};
+    let extendedQuantitiesPerAssembly: Record<string, number> = {};
 
     itemsByLineId[line.id].assemblies.forEach((assembly: QuotationAssembly) => {
       let quantity = assembly.quantityPerParent ?? 1;
@@ -109,7 +109,7 @@ const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
           break;
         }
 
-        const parent = assembliesById[asm.parentAssemblyId];
+        let parent = assembliesById[asm.parentAssemblyId];
         quantity *= parent.quantityPerParent ?? 1;
         asm = parent;
       }
@@ -119,12 +119,12 @@ const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
 
     itemsByLineId[line.id].operations.forEach(
       (operation: QuotationOperation) => {
-        const materials = materialsByOperationId[operation.id] ?? [];
-        const extendedQuantityPerAssembly = operation.quoteAssemblyId
+        let materials = materialsByOperationId[operation.id] ?? [];
+        let extendedQuantityPerAssembly = operation.quoteAssemblyId
           ? extendedQuantitiesPerAssembly[operation.quoteAssemblyId] ?? 1
           : 1;
 
-        const materialCost = materials.reduce(
+        let materialCost = materials.reduce(
           (acc, material: QuotationMaterial) => {
             return acc + (material.quantity ?? 0) * (material.unitCost ?? 0);
           },
@@ -230,15 +230,14 @@ const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
         }
       }
     );
-
-    return linePriceEffects;
   });
+  return linePriceEffects;
 });
 
 const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
   if (!store.quote) return [];
 
-  const materialsByOperationId = store.materials.reduce<
+  let materialsByOperationId = store.materials.reduce<
     Record<string, QuotationMaterial[]>
   >((acc, material) => {
     if (!acc[material.quoteOperationId]) {
@@ -248,7 +247,7 @@ const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
     return acc;
   }, {});
 
-  const operationsByAssemblyId = store.operations.reduce<
+  let operationsByAssemblyId = store.operations.reduce<
     Record<string, BillOfMaterialNode[]>
   >((acc, operation) => {
     if (!operation?.quoteAssemblyId) return acc;
@@ -280,7 +279,7 @@ const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
     return acc;
   }, {});
 
-  const itemsByLineId: Record<
+  let itemsByLineId: Record<
     string,
     {
       assemblies: BillOfMaterialNode[];
@@ -329,7 +328,7 @@ const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
     });
   });
 
-  const menu: BillOfMaterialNode[] = [
+  let menu: BillOfMaterialNode[] = [
     {
       id: store.quote.id!,
       label: store.quote.quoteId!,
@@ -370,13 +369,14 @@ const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
 
   traverseTree(menu, (node) => {
     if (node.type === "assembly") {
+      let currentChildren = node.children ? [...node.children] : [];
       node.children = [
         {
           id: `${node.id}-assemblies`,
           parentId: node.id,
           label: "Assemblies",
           type: "assemblies",
-          children: node.children ? [...node.children] : [],
+          children: currentChildren,
           meta: node.meta,
         },
         {
@@ -390,8 +390,6 @@ const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
       ];
     }
   });
-
-  console.log({ store });
 
   return menu;
 });
