@@ -4,12 +4,12 @@
     "ts-jest": "^26.5.0"
   },
   "devDependencies": {
-    "eslint-config-carbon": "2.0.1"
+    "eslint-config-carbon": "*"
   },
   "license": "MIT",
   "private": true,
   "scripts": {
     "clean": "rimraf node_modules"
   },
-  "version": "2.0.1"
+  "version": "*"
 }

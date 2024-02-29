@@ -11,7 +11,7 @@
     "@tailwindcss/line-clamp": "^0.4.4",
     "@tailwindcss/typography": "^0.5.10",
     "autoprefixer": "10.4.14",
-    "eslint-config-carbon": "2.0.1",
+    "eslint-config-carbon": "*",
     "postcss": "^8.4.33",
     "tailwind-merge": "2.2.1",
     "tailwind-scrollbar": "^3.0.5",
@@ -23,5 +23,5 @@
   "scripts": {
     "clean": "rm -rf node_modules"
   },
-  "version": "2.0.1"
+  "version": "*"
 }

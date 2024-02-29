@@ -1,12 +1,12 @@
 {
   "name": "carbon",
   "dependencies": {
-    "@carbon/database": "2.0.1",
-    "@carbon/documents": "2.0.1",
-    "@carbon/logger": "2.0.1",
-    "@carbon/react": "2.0.1",
-    "@carbon/redis": "2.0.1",
-    "@carbon/utils": "2.0.1",
+    "@carbon/database": "*",
+    "@carbon/documents": "*",
+    "@carbon/logger": "*",
+    "@carbon/react": "*",
+    "@carbon/redis": "*",
+    "@carbon/utils": "*",
     "@internationalized/date": "^3.3.0",
     "@nanostores/react": "^0.7.1",
     "@react-email/components": "0.0.14",
@@ -65,11 +65,11 @@
     "tailwind-scrollbar-hide": "^1.1.7",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.4",
-    "zod-form-data": "2.0.1"
+    "zod-form-data": "*"
   },
   "devDependencies": {
-    "@carbon/tailwind": "2.0.1",
-    "@carbon/tsconfig": "2.0.1",
+    "@carbon/tailwind": "*",
+    "@carbon/tsconfig": "*",
     "@types/nprogress": "^0.2.0",
     "@types/react": "^18.2.33",
     "@types/react-dom": "^18.2.14",

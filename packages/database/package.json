@@ -1,13 +1,13 @@
 {
   "name": "@carbon/database",
   "devDependencies": {
-    "@carbon/tsconfig": "2.0.1",
+    "@carbon/tsconfig": "*",
     "@supabase/supabase-js": "^2.39.3",
     "@types/node": "^18.15.1",
     "@types/uuid": "^8.3.4",
     "dotenv": "16.3.1",
     "eslint": "^8.23.1",
-    "eslint-config-carbon": "2.0.1",
+    "eslint-config-carbon": "*",
     "npm-run-all": "^4.1.5",
     "rimraf": "^5.0.5",
     "supabase": "1.145.4",
@@ -43,5 +43,5 @@
   },
   "sideEffects": false,
   "types": "./dist/index.d.ts",
-  "version": "2.0.1"
+  "version": "*"
 }

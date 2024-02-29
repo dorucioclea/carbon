@@ -16,13 +16,13 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@carbon/tsconfig": "2.0.1",
+    "@carbon/tsconfig": "*",
     "@types/jest": "^26.0.22",
     "@types/node": "^18.15.1",
     "@types/react": "^18.2.33",
     "@types/react-dom": "^18.2.14",
     "autoprefixer": "10.4.14",
-    "eslint-config-carbon": "2.0.1",
+    "eslint-config-carbon": "*",
     "postcss": "^8.4.33",
     "tailwindcss": "3.3.2",
     "typescript": "^5.2.2"
