@@ -1,5 +1,24 @@
 import type { getNotes } from "./shared.service";
 
+export type BillOfMaterialNodeType =
+  | "parent"
+  | "line"
+  | "assemblies"
+  | "operations"
+  | "materials"
+  | "assembly"
+  | "operation"
+  | "material";
+
+export type BillOfMaterialNode = {
+  id: string;
+  parentId?: string;
+  label: string;
+  type: BillOfMaterialNodeType;
+  meta?: any;
+  children?: BillOfMaterialNode[];
+};
+
 export type Note = NonNullable<
   Awaited<ReturnType<typeof getNotes>>["data"]
 >[number];

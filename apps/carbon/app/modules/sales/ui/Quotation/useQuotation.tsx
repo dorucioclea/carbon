@@ -9,25 +9,7 @@ import type {
   QuotationMaterial,
   QuotationOperation,
 } from "~/modules/sales";
-
-type BillOfMaterialNodeType =
-  | "parent"
-  | "line"
-  | "assemblies"
-  | "operations"
-  | "materials"
-  | "assembly"
-  | "operation"
-  | "material";
-
-type BillOfMaterialNode = {
-  id: string;
-  parentId?: string;
-  label: string;
-  type: BillOfMaterialNodeType;
-  meta?: any;
-  children?: BillOfMaterialNode[];
-};
+import type { BillOfMaterialNode } from "~/modules/shared";
 
 type Quote = {
   quote?: Quotation;
@@ -80,7 +62,7 @@ const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
           children: materialsByOperationId[operation.id]?.map((material) => ({
             id: material.id,
             parentId: operation.id,
-            label: material.partId,
+            label: material.description,
             type: "material",
             meta: material,
           })),
@@ -108,7 +90,7 @@ const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
     itemsByLineId[assembly.quoteLineId].assemblies.push({
       id: assembly.id,
       parentId: assembly.parentAssemblyId ?? undefined,
-      label: assembly.partId,
+      label: assembly.description,
       type: "assembly",
       meta: assembly,
     });
@@ -136,7 +118,7 @@ const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
           children: materialsByOperationId[operation.id]?.map((material) => ({
             id: material.id,
             parentId: operation.id,
-            label: material.partId,
+            label: material.description,
             type: "material",
             meta: material,
           })),
@@ -152,7 +134,7 @@ const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
       type: "parent",
       children: store.lines.map<BillOfMaterialNode>((line) => ({
         id: line.id,
-        label: line.partId,
+        label: line.description,
         type: "line",
         meta: line,
         children: [
@@ -160,12 +142,14 @@ const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
             id: line.id,
             label: "Assemblies",
             type: "assemblies",
-            children: [
-              ...(arrayToTree(itemsByLineId[line.id]?.assemblies, {
-                id: "id",
-                dataField: null,
-              }) as BillOfMaterialNode[]),
-            ],
+            children: itemsByLineId[line.id]?.assemblies
+              ? [
+                  ...(arrayToTree(itemsByLineId[line.id].assemblies, {
+                    id: "id",
+                    dataField: null,
+                  }) as BillOfMaterialNode[]),
+                ]
+              : [],
           },
           {
             id: line.id,
