@@ -90,7 +90,7 @@ const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
     itemsByLineId[assembly.quoteLineId].assemblies.push({
       id: assembly.id,
       parentId: assembly.parentAssemblyId ?? undefined,
-      label: assembly.description,
+      label: assembly.description ?? assembly.partId,
       type: "assembly",
       meta: assembly,
     });

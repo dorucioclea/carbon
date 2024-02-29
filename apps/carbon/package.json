@@ -1,25 +1,12 @@
 {
   "name": "carbon",
-  "private": true,
-  "license": "Apache-2.0",
-  "sideEffects": false,
-  "scripts": {
-    "build": "remix build",
-    "dev": "run-p dev:remix dev:trigger",
-    "dev:remix": "PORT=3000 remix dev",
-    "dev:trigger": "wait-on http://localhost:3000/healthcheck && npx --yes @trigger.dev/cli@latest dev",
-    "start": "remix-serve ./build/index.js",
-    "clean": "rimraf .cache .turbo node_modules dist build",
-    "lint": "TIMING=1 eslint \"app/**/*.ts*\"",
-    "types": "tsc"
-  },
   "dependencies": {
-    "@carbon/database": "*",
-    "@carbon/documents": "*",
-    "@carbon/logger": "*",
-    "@carbon/react": "*",
-    "@carbon/redis": "*",
-    "@carbon/utils": "*",
+    "@carbon/database": "2.0.1",
+    "@carbon/documents": "2.0.1",
+    "@carbon/logger": "2.0.1",
+    "@carbon/react": "2.0.1",
+    "@carbon/redis": "2.0.1",
+    "@carbon/utils": "2.0.1",
     "@internationalized/date": "^3.3.0",
     "@nanostores/react": "^0.7.1",
     "@react-email/components": "0.0.14",
@@ -73,7 +60,7 @@
     "remix-flat-routes": "^0.5.10",
     "remix-validated-form": "^5.1.5",
     "resend": "^3.1.0",
-    "tailwind-merge": "^2.2.0",
+    "tailwind-merge": "2.2.1",
     "tailwind-scrollbar": "^3.0.5",
     "tailwind-scrollbar-hide": "^1.1.7",
     "tailwindcss-animate": "^1.0.7",
@@ -81,25 +68,38 @@
     "zod-form-data": "2.0.1"
   },
   "devDependencies": {
-    "@carbon/tailwind": "*",
-    "@carbon/tsconfig": "*",
+    "@carbon/tailwind": "2.0.1",
+    "@carbon/tsconfig": "2.0.1",
     "@types/nprogress": "^0.2.0",
-    "@types/react": "^18.2.17",
-    "@types/react-dom": "^18.2.7",
-    "autoprefixer": "^10.4.13",
+    "@types/react": "^18.2.33",
+    "@types/react-dom": "^18.2.14",
+    "autoprefixer": "10.4.14",
     "cross-env": "7.0.3",
     "nodemon": "^3.0.1",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.33",
-    "tailwind-scrollbar": "^3.0.1",
+    "tailwind-scrollbar": "^3.0.5",
     "tailwindcss": "3.3.2",
     "typescript": "^5.2.2",
     "wait-on": "7.2.0"
   },
-  "trigger.dev": {
-    "endpointId": "carbon-erp-wzkF"
-  },
   "engines": {
     "node": ">=18"
+  },
+  "license": "Apache-2.0",
+  "private": true,
+  "scripts": {
+    "build": "remix build",
+    "clean": "rimraf .cache .turbo node_modules dist build",
+    "dev": "run-p dev:remix dev:trigger",
+    "dev:remix": "PORT=3000 remix dev",
+    "dev:trigger": "wait-on http://localhost:3000/healthcheck && npx --yes @trigger.dev/cli@latest dev",
+    "lint": "TIMING=1 eslint \"app/**/*.ts*\"",
+    "start": "remix-serve ./build/index.js",
+    "types": "tsc"
+  },
+  "sideEffects": false,
+  "trigger.dev": {
+    "endpointId": "carbon-erp-wzkF"
   }
 }
