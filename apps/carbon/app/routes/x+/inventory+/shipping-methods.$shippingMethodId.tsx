@@ -81,5 +81,7 @@ export default function EditShippingMethodsRoute() {
     trackingUrl: shippingMethod?.trackingUrl ?? "",
   };
 
-  return <ShippingMethodForm initialValues={initialValues} />;
+  return (
+    <ShippingMethodForm key={initialValues.id} initialValues={initialValues} />
+  );
 }

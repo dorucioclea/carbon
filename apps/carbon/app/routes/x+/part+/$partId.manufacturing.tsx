@@ -92,5 +92,10 @@ export default function PartManufacturingRoute() {
     lotSize: partManufacturing.lotSize ?? 0,
   };
 
-  return <PartManufacturingForm initialValues={initialValues} />;
+  return (
+    <PartManufacturingForm
+      key={initialValues.partId}
+      initialValues={initialValues}
+    />
+  );
 }

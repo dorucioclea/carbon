@@ -66,21 +66,21 @@ VALUES (
     "required": [
       "apiKey"
     ]
-  }'::json),
-  (
-  'google-places-v2', 
-  'Google Places',
-  'Autocomplete addresses with Google Places API',
-  '/integrations/google-places.png',
-  '{
-    "type": "object",
-    "properties": {
-      "apiKey": {
-        "type": "string"
-      }
-    },
-    "required": [
-      "apiKey"
-    ]
   }'::json);
+  -- (
+  -- 'google-places-v2', 
+  -- 'Google Places',
+  -- 'Autocomplete addresses with Google Places API',
+  -- '/integrations/google-places.png',
+  -- '{
+  --   "type": "object",
+  --   "properties": {
+  --     "apiKey": {
+  --       "type": "string"
+  --     }
+  --   },
+  --   "required": [
+  --     "apiKey"
+  --   ]
+  -- }'::json);
 

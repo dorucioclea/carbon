@@ -117,5 +117,10 @@ export default function EditPurchaseInvoiceLineRoute() {
     shelfId: purchaseInvoiceLine?.shelfId ?? "",
   };
 
-  return <PurchaseInvoiceLineForm initialValues={initialValues} />;
+  return (
+    <PurchaseInvoiceLineForm
+      key={initialValues.id}
+      initialValues={initialValues}
+    />
+  );
 }

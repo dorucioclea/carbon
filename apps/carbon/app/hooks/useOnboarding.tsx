@@ -1,4 +1,3 @@
-import { useNavigate } from "@remix-run/react";
 import { path } from "~/utils/path";
 import { useRouteData } from "./useRouteData";
 
@@ -10,8 +9,6 @@ export function useOnboarding() {
     previousPath: string;
   }>(path.to.onboarding.root);
 
-  const navigate = useNavigate();
-
   if (!routeData) {
     throw new Error("useOnboarding must be used within an onboarding route");
   }
@@ -21,8 +18,5 @@ export function useOnboarding() {
     onboardingSteps: routeData?.onboardingSteps,
     next: routeData?.nextPath,
     previous: routeData?.previousPath,
-    onPrevious: routeData?.previousPath
-      ? () => navigate(routeData.previousPath)
-      : undefined,
   };
 }

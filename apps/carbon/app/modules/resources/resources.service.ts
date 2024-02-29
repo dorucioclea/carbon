@@ -8,9 +8,11 @@ import { setGenericQueryFilters } from "~/utils/query";
 import { sanitize } from "~/utils/supabase";
 import type {
   employeeJobValidator,
+  equipmentTypeValidator,
   equipmentValidator,
   locationValidator,
   partnerValidator,
+  workCellTypeValidator,
 } from "./resources.models";
 
 export async function deleteAbility(
@@ -405,9 +407,7 @@ export async function getEquipmentType(
 ) {
   return client
     .from("equipmentType")
-    .select(
-      "id, name, color, description, requiredAbility, equipment(id, name, location(id, name))"
-    )
+    .select("*, equipment(id, name, location(id, name))")
     .eq("active", true)
     .eq("id", equipmentTypeId)
     .single();
@@ -437,6 +437,10 @@ export async function getEquipmentTypes(
   }
 
   return query;
+}
+
+export async function getEquipmentTypesList(client: SupabaseClient<Database>) {
+  return client.from("equipmentType").select("id, name").order("name");
 }
 
 export async function getHoliday(
@@ -539,64 +543,6 @@ export async function getPartners(
   return query;
 }
 
-export async function getShift(
-  client: SupabaseClient<Database>,
-  shiftId: string
-) {
-  return client
-    .from("shift")
-    .select(
-      `id, name, startTime, endTime, locationId,
-      monday, tuesday, wednesday, thursday, friday, saturday, sunday, 
-      employeeShift(user(id, fullName, avatarUrl)), location(name, timezone)`
-    )
-    .eq("id", shiftId)
-    .eq("active", true)
-    .single();
-}
-
-export async function getShifts(
-  client: SupabaseClient<Database>,
-  args: GenericQueryFilters & { name: string | null; location: string | null }
-) {
-  let query = client
-    .from("shift")
-    .select(
-      `id, name, startTime, endTime, locationId, 
-      monday, tuesday, wednesday, thursday, friday, saturday, sunday,
-      employeeShift(user(id, fullName, avatarUrl)), location(name, timezone)`,
-      {
-        count: "exact",
-      }
-    )
-    .eq("active", true)
-    .eq("employeeShift.user.active", true);
-
-  if (args?.name) {
-    query = query.ilike("name", `%${args.name}%`);
-  }
-
-  if (args.location) {
-    query = query.eq("locationId", args.location);
-  }
-
-  query = setGenericQueryFilters(query, args, "locationId");
-  return query;
-}
-
-export async function getShiftsList(
-  client: SupabaseClient<Database>,
-  locationId: string | null
-) {
-  let query = client.from("shift").select(`id, name`).eq("active", true);
-
-  if (locationId) {
-    query = query.eq("locationId", locationId);
-  }
-
-  return query.order("name");
-}
-
 type UserAttributeId = string;
 
 export type PersonAttributeValue = {
@@ -696,6 +642,64 @@ export async function getPeople(
   };
 }
 
+export async function getShift(
+  client: SupabaseClient<Database>,
+  shiftId: string
+) {
+  return client
+    .from("shift")
+    .select(
+      `id, name, startTime, endTime, locationId,
+      monday, tuesday, wednesday, thursday, friday, saturday, sunday, 
+      employeeShift(user(id, fullName, avatarUrl)), location(name, timezone)`
+    )
+    .eq("id", shiftId)
+    .eq("active", true)
+    .single();
+}
+
+export async function getShifts(
+  client: SupabaseClient<Database>,
+  args: GenericQueryFilters & { name: string | null; location: string | null }
+) {
+  let query = client
+    .from("shift")
+    .select(
+      `id, name, startTime, endTime, locationId, 
+      monday, tuesday, wednesday, thursday, friday, saturday, sunday,
+      employeeShift(user(id, fullName, avatarUrl)), location(name, timezone)`,
+      {
+        count: "exact",
+      }
+    )
+    .eq("active", true)
+    .eq("employeeShift.user.active", true);
+
+  if (args?.name) {
+    query = query.ilike("name", `%${args.name}%`);
+  }
+
+  if (args.location) {
+    query = query.eq("locationId", args.location);
+  }
+
+  query = setGenericQueryFilters(query, args, "locationId");
+  return query;
+}
+
+export async function getShiftsList(
+  client: SupabaseClient<Database>,
+  locationId: string | null
+) {
+  let query = client.from("shift").select(`id, name`).eq("active", true);
+
+  if (locationId) {
+    query = query.eq("locationId", locationId);
+  }
+
+  return query.order("name");
+}
+
 export async function getWorkCell(
   client: SupabaseClient<Database>,
   workCellId: string
@@ -734,9 +738,7 @@ export async function getWorkCellType(
 ) {
   return client
     .from("workCellType")
-    .select(
-      "id, name, color, description, requiredAbility, workCell(id, name, location(id, name), department(id, name))"
-    )
+    .select("*, workCell(id, name, location(id, name), department(id, name))")
     .eq("active", true)
     .eq("id", workCellTypeId)
     .single();
@@ -766,6 +768,10 @@ export async function getWorkCellTypes(
   }
 
   return query;
+}
+
+export async function getWorkCellTypesList(client: SupabaseClient<Database>) {
+  return client.from("workCellType").select("id, name").order("name");
 }
 
 export async function insertAbility(
@@ -1076,21 +1082,13 @@ export async function upsertEquipment(
 export async function upsertEquipmentType(
   client: SupabaseClient<Database>,
   equipmentType:
-    | {
-        name: string;
-        description: string;
-        requiredAbility?: string;
-        color: string;
+    | (Omit<TypeOfValidator<typeof equipmentTypeValidator>, "id"> & {
         createdBy: string;
-      }
-    | {
+      })
+    | (Omit<TypeOfValidator<typeof equipmentTypeValidator>, "id"> & {
         id: string;
-        name: string;
-        description: string;
-        requiredAbility?: string;
-        color: string;
         updatedBy: string;
-      }
+      })
 ) {
   if ("id" in equipmentType) {
     const { id, ...update } = equipmentType;
@@ -1226,21 +1224,13 @@ export async function upsertWorkCell(
 export async function upsertWorkCellType(
   client: SupabaseClient<Database>,
   workCellType:
-    | {
-        name: string;
-        description: string;
-        color: string;
-        requiredAbility?: string;
+    | (Omit<TypeOfValidator<typeof workCellTypeValidator>, "id"> & {
         createdBy: string;
-      }
-    | {
+      })
+    | (Omit<TypeOfValidator<typeof workCellTypeValidator>, "id"> & {
         id: string;
-        name: string;
-        description: string;
-        color: string;
-        requiredAbility?: string;
         updatedBy: string;
-      }
+      })
 ) {
   if ("id" in workCellType) {
     const { id, ...update } = workCellType;

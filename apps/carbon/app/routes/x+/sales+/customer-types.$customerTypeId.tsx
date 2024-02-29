@@ -85,5 +85,7 @@ export default function EditCustomerTypesRoute() {
     color: customerType?.color ?? "#000000",
   };
 
-  return <CustomerTypeForm initialValues={initialValues} />;
+  return (
+    <CustomerTypeForm key={initialValues.id} initialValues={initialValues} />
+  );
 }

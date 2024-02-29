@@ -82,5 +82,5 @@ export default function PartnerRoute() {
     abilityId: partner.abilityId ?? "",
   };
 
-  return <PartnerForm initialValues={initialValues} />;
+  return <PartnerForm key={initialValues.id} initialValues={initialValues} />;
 }

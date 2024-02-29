@@ -45,6 +45,7 @@ const QuotationForm = ({ initialValues }: QuotationFormProps) => {
       method="post"
       validator={quotationValidator}
       defaultValues={initialValues}
+      className="w-full"
     >
       <Card>
         <CardHeader>
@@ -67,7 +68,7 @@ const QuotationForm = ({ initialValues }: QuotationFormProps) => {
             >
               <VStack>
                 <Customer
-                  autoFocus
+                  autoFocus={!isEditing}
                   name="customerId"
                   label="Customer"
                   onChange={(value) => setCustomer(value?.value as string)}
@@ -92,7 +93,6 @@ const QuotationForm = ({ initialValues }: QuotationFormProps) => {
                 {isEditing && (
                   <>
                     <DatePicker name="expirationDate" label="Expiration Date" />
-
                     <TextArea name="notes" label="Notes" />
                   </>
                 )}

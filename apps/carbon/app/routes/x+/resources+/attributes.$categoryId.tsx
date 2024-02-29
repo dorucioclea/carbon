@@ -88,6 +88,10 @@ export default function EditAttributeCategoryRoute() {
   };
 
   return (
-    <AttributeCategoryForm onClose={onClose} initialValues={initialValues} />
+    <AttributeCategoryForm
+      key={initialValues.id}
+      onClose={onClose}
+      initialValues={initialValues}
+    />
   );
 }

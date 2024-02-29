@@ -21,7 +21,7 @@ This can be done easily with the `useRealtime` hook:
 useRealtime("receipt");
 ```
 
-A smaller subset of the table can be listened to by passing a second argument. Here we listen for the rows with an `id` of `1`, `2`, or `3`:
+In practice, however, this approach is too heavy-handed. A better idea is to listen to smaller subset of the table can be listened to by passing a second argument. Here we listen for the rows with an `id` of `1`, `2`, or `3`:
 
 ```tsx
 useRealtime("receipt", "id=in.(1,2,3)");

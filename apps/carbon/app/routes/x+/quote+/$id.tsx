@@ -1,17 +1,40 @@
+import {
+  HStack,
+  Heading,
+  IconButton,
+  Input,
+  Menubar,
+  MenubarItem,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  VStack,
+} from "@carbon/react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Outlet, useLoaderData } from "@remix-run/react";
+import {
+  Outlet,
+  useLoaderData,
+  useNavigate,
+  useParams,
+} from "@remix-run/react";
 import { useEffect } from "react";
+import { IoMdAdd } from "react-icons/io";
+import { CollapsibleSidebar } from "~/components/Layout";
 import { getLocationsList } from "~/modules/resources";
 import {
-  QuotationHeader,
-  QuotationSidebar,
+  QuotationExplorer,
+  QuotationStatus,
   getQuote,
+  getQuoteAssemblies,
   getQuoteExternalDocuments,
   getQuoteInternalDocuments,
   getQuoteLines,
-  useQuotationTotals,
+  getQuoteMaterials,
+  getQuoteOperations,
+  useQuotation,
 } from "~/modules/sales";
+
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";
@@ -34,12 +57,18 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const [
     quotation,
     quotationLines,
+    quotationAssemblies,
+    quotationMaterials,
+    quotationOperations,
     externalDocuments,
     internalDocuments,
     locations,
   ] = await Promise.all([
     getQuote(client, id),
     getQuoteLines(client, id),
+    getQuoteAssemblies(client, id),
+    getQuoteMaterials(client, id),
+    getQuoteOperations(client, id),
     getQuoteExternalDocuments(client, id),
     getQuoteInternalDocuments(client, id),
     getLocationsList(client),
@@ -58,6 +87,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   return json({
     quotation: quotation.data,
     quotationLines: quotationLines.data ?? [],
+    quotationAssemblies: quotationAssemblies.data ?? [],
+    quotationMaterials: quotationMaterials.data ?? [],
+    quotationOperations: quotationOperations.data ?? [],
     externalDocuments: externalDocuments.data ?? [],
     internalDocuments: internalDocuments.data ?? [],
     locations: locations.data ?? [],
@@ -69,28 +101,81 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function QuotationRoute() {
-  const { quotationLines } = useLoaderData<typeof loader>();
-  const [, setQuotationTotals] = useQuotationTotals();
+  const {
+    quotation,
+    quotationLines,
+    quotationAssemblies,
+    quotationMaterials,
+    quotationOperations,
+  } = useLoaderData<typeof loader>();
+  const [quote, setQuote] = useQuotation();
 
   useEffect(() => {
-    const totals = quotationLines.reduce(
-      (acc, line) => {
-        acc.total += (line.quantity ?? 0) * (line.unitPrice ?? 0);
+    setQuote({
+      quote: quotation,
+      lines: quotationLines,
+      assemblies: quotationAssemblies,
+      materials: quotationMaterials,
+      operations: quotationOperations,
+    });
+  }, [
+    quotationLines,
+    quotationAssemblies,
+    quotationMaterials,
+    quotationOperations,
+    setQuote,
+    quotation,
+  ]);
 
-        return acc;
-      },
-      { total: 0 }
-    );
-    setQuotationTotals(totals);
-  }, [quotationLines, setQuotationTotals]);
+  const navigate = useNavigate();
+  const { id } = useParams();
+  if (!id) throw new Error("id not found");
 
   return (
-    <>
-      <QuotationHeader />
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_4fr] h-full w-full gap-4">
-        <QuotationSidebar />
+    <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] w-full">
+      <CollapsibleSidebar width={260}>
+        <VStack className="border-b border-border p-4" spacing={1}>
+          <Heading size="h3" noOfLines={1}>
+            {quote.quote?.quoteId}
+          </Heading>
+          {quote.quote && <QuotationStatus status={quote.quote?.status} />}
+        </VStack>
+        <VStack className="border-b border-border p-2" spacing={0}>
+          <HStack className="w-full justify-between">
+            <Input className="flex-1" placeholder="Search" size="sm" />
+            <Tooltip>
+              <TooltipTrigger>
+                <IconButton
+                  aria-label="Add Quote Line"
+                  variant="secondary"
+                  icon={<IoMdAdd />}
+                  onClick={() => navigate(path.to.newQuoteLine(id))}
+                />
+              </TooltipTrigger>
+              <TooltipContent>Add Quote Line</TooltipContent>
+            </Tooltip>
+          </HStack>
+        </VStack>
+        <VStack className="h-[calc(100vh-183px)] p-2 w-full">
+          <QuotationExplorer />
+        </VStack>
+      </CollapsibleSidebar>
+      <VStack className="p-2">
+        <Menubar>
+          <MenubarItem asChild>
+            <a
+              target="_blank"
+              href={path.to.file.quote("TODO")}
+              rel="noreferrer"
+            >
+              Preview
+            </a>
+          </MenubarItem>
+          <MenubarItem isDisabled>Release</MenubarItem>
+        </Menubar>
+
         <Outlet />
-      </div>
-    </>
+      </VStack>
+    </div>
   );
 }

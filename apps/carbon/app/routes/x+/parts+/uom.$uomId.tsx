@@ -79,5 +79,7 @@ export default function EditUnitOfMeasuresRoute() {
     code: unitOfMeasure?.code ?? "",
   };
 
-  return <UnitOfMeasureForm initialValues={initialValues} />;
+  return (
+    <UnitOfMeasureForm key={initialValues.id} initialValues={initialValues} />
+  );
 }

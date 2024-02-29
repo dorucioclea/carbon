@@ -47,6 +47,7 @@ export default function EditAttributeRoute() {
 
   return (
     <AttributeForm
+      key={`${attribute.id}${categoryId}`}
       initialValues={{
         id: attribute?.id,
         name: attribute?.name,

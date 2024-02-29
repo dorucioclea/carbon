@@ -69,5 +69,5 @@ export default function SupplierEditRoute() {
     taxId: routeData?.supplier?.taxId ?? "",
   };
 
-  return <SupplierForm initialValues={initialValues} />;
+  return <SupplierForm key={initialValues.id} initialValues={initialValues} />;
 }

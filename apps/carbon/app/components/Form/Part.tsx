@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { PartReplenishmentSystem } from "~/modules/parts";
+import { type PartReplenishmentSystem } from "~/modules/parts";
 import { useParts } from "~/stores";
 import type { ComboboxProps } from "./Combobox";
 import Combobox from "./Combobox";
@@ -16,16 +16,17 @@ const Part = ({ partReplenishmentSystem, ...props }: PartSelectProps) => {
       parts
         .filter((part) => {
           if (partReplenishmentSystem === "Buy") {
-            return part.replenishmentSystem === "Buy";
+            return ["Buy", "Buy and Make"].includes(part.replenishmentSystem);
           } else if (partReplenishmentSystem === "Make") {
-            return part.replenishmentSystem === "Make";
+            return ["Make", "Buy and Make"].includes(part.replenishmentSystem);
           } else {
             return true;
           }
         })
         .map((part) => ({
           value: part.id,
-          label: `${part.id} - ${part.name}`,
+          label: part.id,
+          helper: part.name,
         })) ?? [],
     [partReplenishmentSystem, parts]
   );

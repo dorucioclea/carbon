@@ -27,13 +27,10 @@ export async function action({ request }: ActionFunctionArgs) {
     return validationError(validation.error);
   }
 
-  const { name, description, color, requiredAbility } = validation.data;
+  const { id, ...data } = validation.data;
 
   const createEquipmentType = await upsertEquipmentType(client, {
-    name,
-    description,
-    color,
-    requiredAbility,
+    ...data,
     createdBy: userId,
   });
   if (createEquipmentType.error) {
@@ -57,6 +54,7 @@ export default function NewEquipmentTypeRoute() {
     name: "",
     description: "",
     color: "#000000",
+    setupHours: 0,
   };
 
   return <EquipmentTypeForm onClose={onClose} initialValues={initialValues} />;

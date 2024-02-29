@@ -3,7 +3,8 @@
   "extends": "@carbon/tsconfig/nextjs.json",
   "compilerOptions": {
     "rootDir": "pages",
-    "outDir": "dist"
+    "outDir": "dist",
+    "baseUrl": "."
   },
   "include": ["next-env.d.ts", "pages"]
 }

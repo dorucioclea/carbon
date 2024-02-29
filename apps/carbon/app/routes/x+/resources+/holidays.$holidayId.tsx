@@ -83,5 +83,5 @@ export default function HolidayRoute() {
     date: holiday.date,
   };
 
-  return <HolidayForm initialValues={initialValues} />;
+  return <HolidayForm key={initialValues.id} initialValues={initialValues} />;
 }

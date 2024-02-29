@@ -22,7 +22,7 @@ import { convertKbToString } from "@carbon/utils";
 import { useRevalidator } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { BsFillPenFill, BsStar, BsStarFill } from "react-icons/bs";
+import { BsBookmark, BsBookmarkFill, BsFillPenFill } from "react-icons/bs";
 import { IoMdAdd, IoMdTrash } from "react-icons/io";
 import { RxCheck } from "react-icons/rx";
 import { VscOpenPreview } from "react-icons/vsc";
@@ -150,12 +150,12 @@ const DocumentsTable = memo(({ data, count, labels }: DocumentsTableProps) => {
         cell: ({ row }) => (
           <HStack>
             {row.original.favorite ? (
-              <BsStarFill
+              <BsBookmarkFill
                 className="cursor-pointer w-4 h-4 text-yellow-400"
                 onClick={() => onFavorite(row.original)}
               />
             ) : (
-              <BsStar
+              <BsBookmark
                 className="cursor-pointer w-4 h-4 text-muted-foreground"
                 onClick={() => onFavorite(row.original)}
               />
@@ -305,7 +305,7 @@ const DocumentsTable = memo(({ data, count, labels }: DocumentsTableProps) => {
     return [
       // {
       //   label: "Add to Favorites",
-      //   icon: <BsStar />,
+      //   icon: <BsBookmark />,
       //   onClick: (selected: Document[]) => {
       //     console.log("move to favorites", selected);
       //   },
@@ -364,7 +364,7 @@ const DocumentsTable = memo(({ data, count, labels }: DocumentsTableProps) => {
             onFavorite(row);
           }}
         >
-          <MenuIcon icon={<BsStar />} />
+          <MenuIcon icon={<BsBookmark />} />
           Favorite
         </MenuItem>
         <MenuItem

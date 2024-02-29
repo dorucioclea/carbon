@@ -64,7 +64,7 @@ export async function action({ request }: ActionFunctionArgs) {
       await flash(request, error(update.error, "Failed to update theme"))
     );
 
-  return json({}, await flash(request, success("Updated theme.")));
+  return json({}, await flash(request, success("Updated theme")));
 }
 
 export default function Theme() {

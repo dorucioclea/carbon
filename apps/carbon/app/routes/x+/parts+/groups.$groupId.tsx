@@ -78,5 +78,5 @@ export default function EditPartGroupsRoute() {
     description: partGroup?.description ?? "",
   };
 
-  return <PartGroupForm initialValues={initialValues} />;
+  return <PartGroupForm key={initialValues.id} initialValues={initialValues} />;
 }

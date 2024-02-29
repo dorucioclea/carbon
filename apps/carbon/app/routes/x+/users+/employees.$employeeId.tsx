@@ -114,6 +114,7 @@ export default function UsersEmployeeRoute() {
 
   return (
     <EmployeePermissionsForm
+      key={initialValues.id}
       name={`${employee?.user?.firstName} ${employee?.user?.lastName}`}
       employeeTypes={employeeTypes}
       // @ts-ignore

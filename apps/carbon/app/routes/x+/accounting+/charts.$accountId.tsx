@@ -84,5 +84,7 @@ export default function EditChartOfAccountsRoute() {
     directPosting: account?.directPosting ?? false,
   };
 
-  return <ChartOfAccountForm initialValues={initialValues} />;
+  return (
+    <ChartOfAccountForm key={initialValues.id} initialValues={initialValues} />
+  );
 }

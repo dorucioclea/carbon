@@ -96,6 +96,7 @@ export default function PartSalePriceRoute() {
 
   return (
     <PartSalePriceForm
+      key={initialValues.partId}
       initialValues={initialValues}
       unitOfMeasures={sharedPartData?.unitOfMeasures ?? []}
     />

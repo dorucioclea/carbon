@@ -6,28 +6,20 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  FormControl,
-  FormLabel,
   HStack,
-  Input,
-  NumberDecrementStepper,
-  NumberField,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputGroup,
-  NumberInputStepper,
   VStack,
 } from "@carbon/react";
 
 import { useFetcher, useNavigate, useParams } from "@remix-run/react";
 import { useEffect, useMemo, useState } from "react";
-import { LuChevronDown, LuChevronUp } from "react-icons/lu";
 import { ValidatedForm } from "remix-validated-form";
 import {
   Account,
   ComboboxControlled,
   Hidden,
+  InputControlled,
   Number,
+  NumberControlled,
   Part,
   Select,
   Service,
@@ -231,7 +223,7 @@ const PurchaseOrderLineForm = ({
           <DrawerBody>
             <Hidden name="id" />
             <Hidden name="purchaseOrderId" />
-            <Hidden name="description" value={partData.description} />
+
             <VStack spacing={4}>
               <Select
                 name="purchaseOrderLineType"
@@ -283,46 +275,31 @@ const PurchaseOrderLineForm = ({
                 // TODO: implement Fixed Asset
                 <Select name="assetId" label="Asset" options={[]} />
               )}
-              <FormControl>
-                <FormLabel>Description</FormLabel>
-                <Input
-                  value={partData.description}
-                  onChange={(e) =>
-                    setPartData((d) => ({ ...d, description: e.target.value }))
-                  }
-                />
-              </FormControl>
+              <InputControlled
+                name="description"
+                label="Description"
+                value={partData.description}
+                onChange={(newValue) =>
+                  setPartData((d) => ({ ...d, description: newValue }))
+                }
+              />
               {type !== "Comment" && (
                 <>
                   <Number name="purchaseQuantity" label="Quantity" />
                   {/* 
                 // TODO: implement this and replace the UoM in PartForm */}
                   {/* <UnitOfMeasure name="unitOfMeasureCode" label="Unit of Measure" value={uom} /> */}
-                  <FormControl>
-                    <FormLabel htmlFor="unitPrice">Unit Cost</FormLabel>
-                    <NumberField
-                      name="unitPrice"
-                      value={partData.unitPrice}
-                      onChange={(value) =>
-                        setPartData((d) => ({
-                          ...d,
-                          unitPrice: value,
-                        }))
-                      }
-                    >
-                      <NumberInputGroup className="relative">
-                        <NumberInput />
-                        <NumberInputStepper>
-                          <NumberIncrementStepper>
-                            <LuChevronUp size="1em" strokeWidth="3" />
-                          </NumberIncrementStepper>
-                          <NumberDecrementStepper>
-                            <LuChevronDown size="1em" strokeWidth="3" />
-                          </NumberDecrementStepper>
-                        </NumberInputStepper>
-                      </NumberInputGroup>
-                    </NumberField>
-                  </FormControl>
+                  <NumberControlled
+                    name="unitPrice"
+                    label="Unit Price"
+                    value={partData.unitPrice}
+                    onChange={(value) =>
+                      setPartData((d) => ({
+                        ...d,
+                        unitPrice: value,
+                      }))
+                    }
+                  />
                   {["Part", "Service"].includes(type) && (
                     <ComboboxControlled
                       name="locationId"

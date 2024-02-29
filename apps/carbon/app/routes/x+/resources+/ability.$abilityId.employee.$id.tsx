@@ -117,6 +117,7 @@ export default function EmployeeAbilityRoute() {
 
   return (
     <EmployeeAbilityForm
+      key={`${initialValues.employeeId}${abilityId}`}
       ability={routeData?.ability}
       initialValues={initialValues}
       weeks={routeData?.weeks ?? 4}

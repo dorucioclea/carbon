@@ -86,5 +86,5 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function PartCostingRoute() {
   const { partCost } = useLoaderData<typeof loader>();
-  return <PartCostingForm initialValues={partCost} />;
+  return <PartCostingForm key={partCost.partId} initialValues={partCost} />;
 }

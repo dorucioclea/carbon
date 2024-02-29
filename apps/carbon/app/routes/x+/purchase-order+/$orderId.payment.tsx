@@ -111,11 +111,12 @@ export default function PurchaseOrderPaymentRoute() {
       purchaseOrderPayment.invoiceSupplierContactId ?? undefined,
     paymentTermId: purchaseOrderPayment.paymentTermId ?? undefined,
     paymentComplete: purchaseOrderPayment.paymentComplete ?? undefined,
-    currencyCode: purchaseOrderPayment.currencyCode ?? "USD",
+    currencyCode: (purchaseOrderPayment.currencyCode ?? "USD") as "USD",
   };
 
   return (
     <PurchaseOrderPaymentForm
+      key={initialValues.id}
       initialValues={initialValues}
       paymentTerms={paymentTerms}
     />
