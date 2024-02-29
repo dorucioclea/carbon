@@ -5,7 +5,7 @@ CREATE FUNCTION public.create_work_cell_type_search_result()
 RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO public.search(name, description, entity, uuid, link)
-  VALUES (new.id, new.id || ' ' || new.name || ' ' || COALESCE(new.description, ''), 'Part', new.id, '/x/resources/work-cells/' || new.id);
+  VALUES (new.name, COALESCE(new.description, ''), 'Resource', new.id, '/x/resources/work-cells/' || new.id);
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -18,8 +18,8 @@ CREATE FUNCTION public.update_work_cell_type_search_result()
 RETURNS TRIGGER AS $$
 BEGIN
   IF (old.name <> new.name OR old.description <> new.description) THEN
-    UPDATE public.search SET name = new.name, description = new.id || ' ' || new.name || ' ' || COALESCE(new.description, '')
-    WHERE entity = 'Part' AND uuid = new.id;
+    UPDATE public.search SET name = new.name, description = COALESCE(new.description, '')
+    WHERE entity = 'Resource' AND uuid = new.id;
   END IF;
   RETURN new;
 END;
@@ -32,7 +32,7 @@ CREATE TRIGGER update_work_cell_type_search_result
 CREATE FUNCTION public.delete_work_cell_type_search_result()
 RETURNS TRIGGER AS $$
 BEGIN
-  DELETE FROM public.search WHERE entity = 'Part' AND uuid = old.id;
+  DELETE FROM public.search WHERE entity = 'Resource' AND uuid = old.id;
   RETURN old;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -47,7 +47,7 @@ CREATE FUNCTION public.create_equipment_type_search_result()
 RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO public.search(name, description, entity, uuid, link)
-  VALUES (new.id, new.id || ' ' || new.name || ' ' || COALESCE(new.description, ''), 'Part', new.id, '/x/resources/equipment/' || new.id);
+  VALUES (new.name,COALESCE(new.description, ''), 'Resource', new.id, '/x/resources/equipment/' || new.id);
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -60,8 +60,8 @@ CREATE FUNCTION public.update_equipment_type_search_result()
 RETURNS TRIGGER AS $$
 BEGIN
   IF (old.name <> new.name OR old.description <> new.description) THEN
-    UPDATE public.search SET name = new.name, description = new.id || ' ' || new.name || ' ' || COALESCE(new.description, '')
-    WHERE entity = 'Part' AND uuid = new.id;
+    UPDATE public.search SET name = new.name, description =  COALESCE(new.description, '')
+    WHERE entity = 'Resource' AND uuid = new.id;
   END IF;
   RETURN new;
 END;
@@ -74,7 +74,7 @@ CREATE TRIGGER update_equipment_type_search_result
 CREATE FUNCTION public.delete_equipment_type_search_result()
 RETURNS TRIGGER AS $$
 BEGIN
-  DELETE FROM public.search WHERE entity = 'Part' AND uuid = old.id;
+  DELETE FROM public.search WHERE entity = 'Resource' AND uuid = old.id;
   RETURN old;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
