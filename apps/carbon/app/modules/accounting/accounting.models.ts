@@ -222,12 +222,7 @@ export const currencyValidator = withZod(
     id: zfd.text(z.string().optional()),
     name: z.string().min(1, { message: "Name is required" }),
     code: z.string().min(1, { message: "Code is required" }),
-    symbol: zfd.text(
-      z
-        .string()
-        .max(1, { message: "Symbol can only be one character" })
-        .optional()
-    ),
+    symbol: z.string().min(1, { message: "Symbol is required" }),
     decimalPlaces: zfd.numeric(z.number().min(0).max(4)),
     exchangeRate: zfd.numeric(
       z.number().min(0, { message: "Rate is required" })

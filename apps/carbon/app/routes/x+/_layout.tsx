@@ -21,6 +21,10 @@ import {
 } from "~/services/session.server";
 import { path } from "~/utils/path";
 
+export function links() {
+  return [{ rel: "stylesheet", href: "/assets/theme.css" }];
+}
+
 export async function loader({ request }: LoaderFunctionArgs) {
   const { accessToken, expiresAt, expiresIn, userId } =
     await requireAuthSession(request, { verify: true });

@@ -375,7 +375,7 @@ export async function getCurrencies(
     query = query.ilike("name", `%${args.name}%`);
   }
 
-  query = setGenericQueryFilters(query, args);
+  query = setGenericQueryFilters(query, args, "isBaseCurrency", false);
   return query;
 }
 
