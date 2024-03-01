@@ -290,7 +290,7 @@ export async function getQuotes(
     query = query.contains("partIds", [args.partId]);
   }
 
-  query = setGenericQueryFilters(query, args, "id", false);
+  query = setGenericQueryFilters(query, args, "favorite", false);
   return query;
 }
 

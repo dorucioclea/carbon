@@ -214,7 +214,6 @@ const QuotationExplorer = () => {
   if (!params.id) throw new Error("id not found");
 
   const [quote] = useQuotation();
-  console.log({ quote });
 
   const tree = useMemo(() => {
     if (!quote.quote) return [];

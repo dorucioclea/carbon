@@ -46,7 +46,6 @@ const defaultEffects: LinePriceEffects = {
 const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
   // vroom vroom
   if (!store.quote) return [];
-  let linePriceEffects: Record<string, LinePriceEffects> = Object.create(null);
 
   const assembliesByLineId = store.assemblies?.reduce<
     Record<string, QuotationAssembly[]>
@@ -78,8 +77,10 @@ const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
     return acc;
   }, {});
 
-  store.lines?.forEach((line) => {
-    linePriceEffects[line.id] = defaultEffects;
+  const linePriceEffects = store?.lines?.reduce<
+    Record<string, LinePriceEffects>
+  >((effects, line) => {
+    effects[line.id] = { ...defaultEffects };
 
     let assembliesById = assembliesByLineId[line.id]?.reduce<
       Record<string, QuotationAssembly>
@@ -88,15 +89,15 @@ const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
       return acc;
     }, {});
 
-    let extendedQuantitiesPerAssembly: Record<string, number> = {};
-
-    assembliesByLineId[line.id]?.forEach((assembly: QuotationAssembly) => {
+    const extendedQuantitiesPerAssembly = assembliesByLineId[line.id]?.reduce<
+      Record<string, number>
+    >((acc, assembly: QuotationAssembly) => {
       let quantity = assembly.quantityPerParent ?? 1;
       let asm = assembliesById[assembly.id];
       while (asm.parentAssemblyId) {
         // memoize the results
-        if (extendedQuantitiesPerAssembly[asm.parentAssemblyId]) {
-          quantity *= extendedQuantitiesPerAssembly[asm.parentAssemblyId];
+        if (acc[asm.parentAssemblyId]) {
+          quantity *= acc[asm.parentAssemblyId];
           break;
         }
 
@@ -105,8 +106,9 @@ const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
         asm = parent;
       }
 
-      extendedQuantitiesPerAssembly[assembly.id] = quantity;
-    });
+      acc[assembly.id] = quantity;
+      return acc;
+    }, {});
 
     operationsByLineId[line.id]?.forEach((operation: QuotationOperation) => {
       let materials = materialsByOperationId[operation.id] ?? [];
@@ -121,23 +123,23 @@ const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
         0
       );
 
-      linePriceEffects[line.id].materialCost.push((quantity) => {
+      effects[line.id].materialCost.push((quantity) => {
         return materialCost * quantity * extendedQuantityPerAssembly;
       });
 
       if (operation.setupHours) {
-        linePriceEffects[line.id].setupHours.push((_quantity) => {
+        effects[line.id].setupHours.push((_quantity) => {
           return operation.setupHours;
         });
         if (operation.quotingRate) {
-          linePriceEffects[line.id].overheadCost.push((_quantity) => {
+          effects[line.id].overheadCost.push((_quantity) => {
             return operation.setupHours * (operation.quotingRate ?? 0);
           });
         } else {
-          linePriceEffects[line.id].laborCost.push((_quantity) => {
+          effects[line.id].laborCost.push((_quantity) => {
             return operation.setupHours * (operation.laborRate ?? 0);
           });
-          linePriceEffects[line.id].overheadCost.push((_quantity) => {
+          effects[line.id].overheadCost.push((_quantity) => {
             return operation.setupHours * (operation.overheadRate ?? 0);
           });
         }
@@ -189,23 +191,23 @@ const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
         if (
           ["Total Hours", "Total Minutes"].includes(operation.standardFactor)
         ) {
-          linePriceEffects[line.id].productionHours.push((_quantity) => {
+          effects[line.id].productionHours.push((_quantity) => {
             return hoursPerProductionStandard;
           });
           if (operation.quotingRate) {
-            linePriceEffects[line.id].overheadCost.push((_quantity) => {
+            effects[line.id].overheadCost.push((_quantity) => {
               return hoursPerProductionStandard * (operation.quotingRate ?? 0);
             });
           } else {
-            linePriceEffects[line.id].laborCost.push((_quantity) => {
+            effects[line.id].laborCost.push((_quantity) => {
               return hoursPerProductionStandard * (operation.laborRate ?? 0);
             });
-            linePriceEffects[line.id].overheadCost.push((_quantity) => {
+            effects[line.id].overheadCost.push((_quantity) => {
               return hoursPerProductionStandard * (operation.overheadRate ?? 0);
             });
           }
         } else {
-          linePriceEffects[line.id].productionHours.push((quantity) => {
+          effects[line.id].productionHours.push((quantity) => {
             return (
               hoursPerProductionStandard *
               quantity *
@@ -213,7 +215,7 @@ const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
             );
           });
           if (operation.quotingRate) {
-            linePriceEffects[line.id].overheadCost.push((quantity) => {
+            effects[line.id].overheadCost.push((quantity) => {
               return (
                 hoursPerProductionStandard *
                 quantity *
@@ -222,7 +224,7 @@ const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
               );
             });
           } else {
-            linePriceEffects[line.id].laborCost.push((quantity) => {
+            effects[line.id].laborCost.push((quantity) => {
               return (
                 hoursPerProductionStandard *
                 quantity *
@@ -230,7 +232,7 @@ const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
                 (operation.laborRate ?? 0)
               );
             });
-            linePriceEffects[line.id].overheadCost.push((quantity) => {
+            effects[line.id].overheadCost.push((quantity) => {
               return (
                 hoursPerProductionStandard *
                 quantity *
@@ -242,7 +244,9 @@ const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
         }
       }
     });
-  });
+    return effects;
+  }, {});
+
   return linePriceEffects;
 });
 
