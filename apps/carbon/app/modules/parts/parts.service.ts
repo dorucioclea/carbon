@@ -60,7 +60,9 @@ export async function getPartGroups(
   }
 
   if (args) {
-    query = setGenericQueryFilters(query, args, "name");
+    query = setGenericQueryFilters(query, args, [
+      { column: "name", ascending: true },
+    ]);
   }
 
   return query;
@@ -77,7 +79,9 @@ export async function getPartGroupsList(
   }
 
   if (args) {
-    query = setGenericQueryFilters(query, args, "name");
+    query = setGenericQueryFilters(query, args, [
+      { column: "name", ascending: true },
+    ]);
   }
 
   return query;
@@ -154,7 +158,9 @@ export async function getParts(
     query = query.contains("supplierIds", [args.supplierId]);
   }
 
-  query = setGenericQueryFilters(query, args, "id");
+  query = setGenericQueryFilters(query, args, [
+    { column: "id", ascending: true },
+  ]);
   return query;
 }
 
@@ -257,7 +263,9 @@ export async function getServices(
     query = query.contains("supplierIds", [args.supplierId]);
   }
 
-  query = setGenericQueryFilters(query, args, "id");
+  query = setGenericQueryFilters(query, args, [
+    { column: "id", ascending: true },
+  ]);
   return query;
 }
 
@@ -329,7 +337,9 @@ export async function getUnitOfMeasures(
     query = query.ilike("name", `%${args.name}%`);
   }
 
-  query = setGenericQueryFilters(query, args, "name");
+  query = setGenericQueryFilters(query, args, [
+    { column: "name", ascending: true },
+  ]);
   return query;
 }
 

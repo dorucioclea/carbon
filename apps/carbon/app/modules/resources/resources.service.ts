@@ -153,7 +153,9 @@ export async function getAbilities(
     query = query.ilike("name", `%${args.name}%`);
   }
 
-  query = setGenericQueryFilters(query, args, "name");
+  query = setGenericQueryFilters(query, args, [
+    { column: "name", ascending: true },
+  ]);
   return query;
 }
 
@@ -234,7 +236,9 @@ export async function getAttributeCategories(
   }
 
   if (args) {
-    query = setGenericQueryFilters(query, args, "name");
+    query = setGenericQueryFilters(query, args, [
+      { column: "name", ascending: true },
+    ]);
   }
 
   return query;
@@ -292,7 +296,9 @@ export async function getContractors(
   }
 
   if (args) {
-    query = setGenericQueryFilters(query, args, "supplierName");
+    query = setGenericQueryFilters(query, args, [
+      { column: "supplierName", ascending: true },
+    ]);
   }
 
   return query;
@@ -324,7 +330,9 @@ export async function getDepartments(
   }
 
   if (args) {
-    query = setGenericQueryFilters(query, args, "name");
+    query = setGenericQueryFilters(query, args, [
+      { column: "name", ascending: true },
+    ]);
   }
 
   return query;
@@ -433,7 +441,9 @@ export async function getEquipmentTypes(
   }
 
   if (args) {
-    query = setGenericQueryFilters(query, args, "name");
+    query = setGenericQueryFilters(query, args, [
+      { column: "name", ascending: true },
+    ]);
   }
 
   return query;
@@ -467,7 +477,9 @@ export async function getHolidays(
   }
 
   if (args) {
-    query = setGenericQueryFilters(query, args, "date");
+    query = setGenericQueryFilters(query, args, [
+      { column: "date", ascending: true },
+    ]);
   }
 
   return query;
@@ -495,7 +507,9 @@ export async function getLocations(
   }
 
   if (args) {
-    query = setGenericQueryFilters(query, args, "name");
+    query = setGenericQueryFilters(query, args, [
+      { column: "name", ascending: true },
+    ]);
   }
 
   return query;
@@ -533,7 +547,9 @@ export async function getPartners(
   }
 
   if (args) {
-    query = setGenericQueryFilters(query, args, "supplierName");
+    query = setGenericQueryFilters(query, args, [
+      { column: "supplierName", ascending: true },
+    ]);
   }
 
   return query;
@@ -580,7 +596,9 @@ export async function getShifts(
     query = query.eq("locationId", args.location);
   }
 
-  query = setGenericQueryFilters(query, args, "locationId");
+  query = setGenericQueryFilters(query, args, [
+    { column: "locationId", ascending: true },
+  ]);
   return query;
 }
 
@@ -762,7 +780,9 @@ export async function getWorkCellTypes(
   }
 
   if (args) {
-    query = setGenericQueryFilters(query, args, "name");
+    query = setGenericQueryFilters(query, args, [
+      { column: "name", ascending: true },
+    ]);
   }
 
   return query;

@@ -131,7 +131,9 @@ export async function getAccounts(
     query = query.ilike("name", `%${args.search}%`);
   }
 
-  query = setGenericQueryFilters(query, args, "name");
+  query = setGenericQueryFilters(query, args, [
+    { column: "name", ascending: true },
+  ]);
   return query;
 }
 
@@ -185,7 +187,9 @@ export async function getAccountCategories(
     query = query.eq("incomeBalance", args.incomeBalance);
   }
 
-  query = setGenericQueryFilters(query, args, "category");
+  query = setGenericQueryFilters(query, args, [
+    { column: "category", ascending: true },
+  ]);
   return query;
 }
 
@@ -226,7 +230,9 @@ export async function getAccountSubcategories(
     query = query.ilike("name", `%${args.name}%`);
   }
 
-  query = setGenericQueryFilters(query, args, "name");
+  query = setGenericQueryFilters(query, args, [
+    { column: "name", ascending: true },
+  ]);
   return query;
 }
 
@@ -298,7 +304,9 @@ export async function getChartOfAccounts(
     accountsQuery = accountsQuery.eq("incomeBalance", args.incomeBalance);
   }
 
-  accountsQuery = setGenericQueryFilters(accountsQuery, args, "number");
+  accountsQuery = setGenericQueryFilters(accountsQuery, args, [
+    { column: "number", ascending: true },
+  ]);
 
   let transactionsQuery = client.rpc("journalLinesByAccountNumber", {
     from_date:
@@ -449,7 +457,9 @@ export async function getInventoryPostingGroups(
     query = query.eq("locationId", args.location);
   }
 
-  query = setGenericQueryFilters(query, args, "partGroupId", false);
+  query = setGenericQueryFilters(query, args, [
+    { column: "partGroupId", ascending: false },
+  ]);
   return query;
 }
 
@@ -481,7 +491,9 @@ export async function getPaymentTerms(
     query = query.ilike("name", `%${args.name}%`);
   }
 
-  query = setGenericQueryFilters(query, args, "name");
+  query = setGenericQueryFilters(query, args, [
+    { column: "name", ascending: true },
+  ]);
   return query;
 }
 
@@ -536,7 +548,9 @@ export async function getPurchasingPostingGroups(
     query = query.eq("supplierTypeId", args.supplierType);
   }
 
-  query = setGenericQueryFilters(query, args, "partGroupId", false);
+  query = setGenericQueryFilters(query, args, [
+    { column: "partGroupId", ascending: false },
+  ]);
   return query;
 }
 
@@ -583,7 +597,9 @@ export async function getSalesPostingGroups(
     query = query.eq("customerTypeId", args.customerType);
   }
 
-  query = setGenericQueryFilters(query, args, "partGroupId", false);
+  query = setGenericQueryFilters(query, args, [
+    { column: "partGroupId", ascending: false },
+  ]);
   return query;
 }
 
