@@ -9,7 +9,7 @@ import QuotationMaterialForm from "./QuotationMaterialForm";
 import QuotationMaterialLines from "./QuotationMaterialLines";
 import QuotationOperationForm from "./QuotationOperationForm";
 import QuotationStatus from "./QuotationStatus";
-import { useQuotation } from "./useQuotation";
+import { useQuotation, useQuotationLinePriceEffects } from "./useQuotation";
 export {
   QuotationAssemblyForm,
   QuotationDocuments,
@@ -23,4 +23,5 @@ export {
   QuotationOperationForm,
   QuotationStatus,
   useQuotation,
+  useQuotationLinePriceEffects,
 };
