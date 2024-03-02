@@ -21,6 +21,7 @@ import {
 import { useEffect } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { CollapsibleSidebar } from "~/components/Layout";
+import { useSupabase } from "~/lib/supabase";
 import { getLocationsList } from "~/modules/resources";
 import {
   QuotationExplorer,
@@ -101,6 +102,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function QuotationRoute() {
+  const { supabase } = useSupabase();
   const {
     quotation,
     quotationLines,
@@ -112,6 +114,7 @@ export default function QuotationRoute() {
 
   useEffect(() => {
     setQuote({
+      client: supabase,
       quote: quotation,
       lines: quotationLines,
       assemblies: quotationAssemblies,
@@ -125,6 +128,7 @@ export default function QuotationRoute() {
     quotationOperations,
     setQuote,
     quotation,
+    supabase,
   ]);
 
   const navigate = useNavigate();

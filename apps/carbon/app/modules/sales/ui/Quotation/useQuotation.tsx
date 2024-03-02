@@ -1,4 +1,5 @@
-import { useStore as useValue } from "@nanostores/react";
+import type { Database } from "@carbon/database";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { atom, computed } from "nanostores";
 import { useNanoStore } from "~/hooks";
 import type {
@@ -9,7 +10,8 @@ import type {
   QuotationOperation,
 } from "~/modules/sales";
 
-type Quote = {
+type QuoteStore = {
+  client?: SupabaseClient<Database>;
   quote?: Quotation;
   lines: QuotationLine[];
   assemblies: QuotationAssembly[];
@@ -27,7 +29,8 @@ type LinePriceEffects = {
   productionHours: Effect[];
 };
 
-const $quotationStore = atom<Quote>({
+const $quotationStore = atom<QuoteStore>({
+  client: undefined,
   quote: undefined,
   lines: [],
   assemblies: [],
@@ -35,17 +38,9 @@ const $quotationStore = atom<Quote>({
   materials: [],
 });
 
-const defaultEffects: LinePriceEffects = {
-  materialCost: [],
-  laborCost: [],
-  overheadCost: [],
-  setupHours: [],
-  productionHours: [],
-};
-
-const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
-  // vroom vroom
-  if (!store.quote) return [];
+const $quotationLinePriceEffects = computed($quotationStore, (store) => {
+  if (!store.quote || !store.client)
+    return {} as Record<string, LinePriceEffects>;
 
   const assembliesByLineId = store.assemblies?.reduce<
     Record<string, QuotationAssembly[]>
@@ -80,7 +75,13 @@ const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
   const linePriceEffects = store?.lines?.reduce<
     Record<string, LinePriceEffects>
   >((effects, line) => {
-    effects[line.id] = { ...defaultEffects };
+    effects[line.id] = {
+      materialCost: [],
+      laborCost: [],
+      overheadCost: [],
+      setupHours: [],
+      productionHours: [],
+    };
 
     let assembliesById = assembliesByLineId[line.id]?.reduce<
       Record<string, QuotationAssembly>
@@ -250,6 +251,4 @@ const $quotationLinePriceEffects = computed($quotationStore, (store: Quote) => {
   return linePriceEffects;
 });
 
-export const useQuotation = () => useNanoStore<Quote>($quotationStore);
-export const useQuotationLinePriceEffects = () =>
-  useValue($quotationLinePriceEffects);
+export const useQuotation = () => useNanoStore<QuoteStore>($quotationStore);
