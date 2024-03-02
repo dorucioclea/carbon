@@ -7823,6 +7823,7 @@ export type Database = {
           overheadCost: number;
           productionHours: number;
           quantity: number;
+          quoteId: string;
           quoteLineId: string;
           scrapPercentage: number;
           setupHours: number;
@@ -7845,6 +7846,7 @@ export type Database = {
           overheadCost?: number;
           productionHours?: number;
           quantity?: number;
+          quoteId: string;
           quoteLineId: string;
           scrapPercentage?: number;
           setupHours?: number;
@@ -7867,6 +7869,7 @@ export type Database = {
           overheadCost?: number;
           productionHours?: number;
           quantity?: number;
+          quoteId?: string;
           quoteLineId?: string;
           scrapPercentage?: number;
           setupHours?: number;

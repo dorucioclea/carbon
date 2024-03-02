@@ -12,18 +12,19 @@ export async function action({ request, params }: ActionFunctionArgs) {
     create: "sales",
   });
 
-  const { id, lineId } = params;
-  if (!id) throw new Error("Could not find id");
-  if (!lineId) throw new Error("Could not find lineId");
+  const { id: quoteId, lineId: quoteLineId } = params;
+  if (!quoteId) throw new Error("Could not find quoteId");
+  if (!quoteLineId) throw new Error("Could not find quoteLineId");
 
   const createQuoteQuantity = await insertQuoteLineQuantity(client, {
-    quoteLineId: lineId,
+    quoteId,
+    quoteLineId: quoteLineId,
     createdBy: userId,
   });
 
   if (createQuoteQuantity.error) {
     return redirect(
-      path.to.quoteLine(id, lineId),
+      path.to.quoteLine(quoteId, quoteLineId),
       await flash(
         request,
         error(
@@ -34,5 +35,5 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(path.to.quoteLine(id, lineId));
+  return redirect(path.to.quoteLine(quoteId, quoteLineId));
 }

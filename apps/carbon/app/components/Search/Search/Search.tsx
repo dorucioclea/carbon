@@ -177,9 +177,9 @@ const SearchModal = ({
             {Object.entries(staticResults).map(([module, submodules]) => (
               <>
                 <CommandGroup heading={module} key={module}>
-                  {submodules.map((submodule) => (
+                  {submodules.map((submodule, index) => (
                     <CommandItem
-                      key={`${submodule.to}-${submodule.name}`}
+                      key={`${submodule.to}-${submodule.name}-${index}`}
                       onSelect={() => onSelect(submodule)}
                       value={`${module} ${submodule.name}`}
                     >

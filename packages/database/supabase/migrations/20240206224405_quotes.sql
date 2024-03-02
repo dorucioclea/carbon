@@ -80,6 +80,7 @@ CREATE INDEX "quoteLine_quoteId_idx" ON "quoteLine" ("quoteId");
 
 CREATE TABLE "quoteLineQuantity" (
   "id" TEXT NOT NULL DEFAULT xid(),
+  "quoteId" TEXT NOT NULL,
   "quoteLineId" TEXT NOT NULL,
   "quantity" NUMERIC(10, 2) NOT NULL DEFAULT 0,
   "scrapPercentage" NUMERIC(5, 2) NOT NULL DEFAULT 0,

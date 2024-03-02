@@ -2,7 +2,6 @@ import type { ActionFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { validationError } from "remix-validated-form";
 import { useUser } from "~/hooks";
-import type { QuotationStatus } from "~/modules/sales";
 import {
   QuotationForm,
   quotationValidator,
@@ -69,11 +68,11 @@ export default function QuotationNewRoute() {
     ownerId: user.id,
     locationId: user.defaults.locationId,
     description: "",
-    status: "Draft" as QuotationStatus,
+    status: "Draft" as "Draft",
   };
 
   return (
-    <div className="w-1/2 max-w-[720px] min-w-[420px] mx-auto">
+    <div className="w-1/2 max-w-[720px] min-w-[420px] mx-auto pt-4">
       {/* @ts-expect-error */}
       <QuotationForm initialValues={initialValues} />
     </div>

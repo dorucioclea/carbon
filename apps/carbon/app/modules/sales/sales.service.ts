@@ -505,6 +505,7 @@ export async function insertCustomerLocation(
 export async function insertQuoteLineQuantity(
   client: SupabaseClient<Database>,
   quoteLineQuantity: {
+    quoteId: string;
     quoteLineId: string;
     quantity?: number;
     createdBy: string;

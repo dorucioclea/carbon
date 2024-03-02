@@ -3,6 +3,7 @@ import { useStore as useValue } from "@nanostores/react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { atom, computed, task } from "nanostores";
 import { useNanoStore } from "~/hooks";
+import logger from "~/lib/logger";
 import type {
   Quotation,
   QuotationAssembly,
@@ -39,12 +40,27 @@ const $quotationStore = atom<QuoteStore>({
   materials: [],
 });
 
+const defaultLinePriceEffectsResult = {} as Record<string, LinePriceEffects>;
+
 const $quotationLinePriceEffects = computed($quotationStore, (store) =>
   task(async () => {
-    if (!store.quote || !store.client)
-      return {} as Record<string, LinePriceEffects>;
+    if (!store.quote?.id || !store.client) return defaultLinePriceEffectsResult;
 
-    // TODO: fetch quoteLineQuantities
+    const quoteLineQuantities = await store.client
+      .from("quoteLineQuantity")
+      .select("*")
+      .eq("quoteId", store.quote.id);
+
+    console.log("quoteLineQuantities", quoteLineQuantities);
+
+    if (quoteLineQuantities.error) {
+      logger.error(quoteLineQuantities.error);
+      return defaultLinePriceEffectsResult;
+    }
+
+    if (!quoteLineQuantities.data || !quoteLineQuantities.data.length) {
+      return defaultLinePriceEffectsResult;
+    }
 
     const assembliesByLineId = store.assemblies?.reduce<
       Record<string, QuotationAssembly[]>
@@ -256,7 +272,51 @@ const $quotationLinePriceEffects = computed($quotationStore, (store) =>
       return effects;
     }, {});
 
-    // TODO: update quoteLineQuantities with the effects
+    console.log("linePriceEffects", linePriceEffects);
+    for await (const lineQuantity of quoteLineQuantities.data) {
+      const quantity = lineQuantity.quantity ?? 0;
+      const effects = linePriceEffects[lineQuantity.quoteLineId];
+
+      const materialCost = effects?.materialCost.reduce(
+        (acc, effect) => acc + effect(quantity),
+        0
+      );
+
+      const laborCost = effects?.laborCost.reduce(
+        (acc, effect) => acc + effect(quantity),
+        0
+      );
+
+      const overheadCost = effects?.overheadCost.reduce(
+        (acc, effect) => acc + effect(quantity),
+        0
+      );
+
+      const setupHours = effects?.setupHours.reduce(
+        (acc, effect) => acc + effect(quantity),
+        0
+      );
+
+      const productionHours = effects?.productionHours.reduce(
+        (acc, effect) => acc + effect(quantity),
+        0
+      );
+
+      const update = await store.client
+        .from("quoteLineQuantity")
+        .update({
+          materialCost,
+          laborCost,
+          overheadCost,
+          setupHours,
+          productionHours,
+        })
+        .eq("id", lineQuantity.id);
+
+      if (update.error) {
+        logger.error(update.error);
+      }
+    }
 
     return linePriceEffects;
   })
