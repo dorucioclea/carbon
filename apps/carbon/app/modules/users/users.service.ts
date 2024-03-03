@@ -44,7 +44,9 @@ export async function getCustomers(
     query = query.eq("user.active", args.active);
   }
 
-  query = setGenericQueryFilters(query, args, "user(lastName)");
+  query = setGenericQueryFilters(query, args, [
+    { column: "user(lastName)", ascending: true },
+  ]);
   return query;
 }
 
@@ -86,7 +88,9 @@ export async function getEmployees(
     query = query.eq("user.active", args.active);
   }
 
-  query = setGenericQueryFilters(query, args, "user(lastName)");
+  query = setGenericQueryFilters(query, args, [
+    { column: "user(lastName)", ascending: true },
+  ]);
   return query;
 }
 
@@ -114,7 +118,9 @@ export async function getEmployeeTypes(
   }
 
   if (args) {
-    query = setGenericQueryFilters(query, args, "name");
+    query = setGenericQueryFilters(query, args, [
+      { column: "name", ascending: true },
+    ]);
   }
 
   return query;
@@ -194,7 +200,9 @@ export async function getSuppliers(
     query = query.eq("user.active", args.active);
   }
 
-  query = setGenericQueryFilters(query, args, "user(lastName)");
+  query = setGenericQueryFilters(query, args, [
+    { column: "user(lastName)", ascending: true },
+  ]);
   return query;
 }
 

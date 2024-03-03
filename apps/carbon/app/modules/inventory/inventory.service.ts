@@ -55,7 +55,9 @@ export async function getReceipts(
     query = query.eq("locationId", args.location);
   }
 
-  query = setGenericQueryFilters(query, args, "receiptId", false);
+  query = setGenericQueryFilters(query, args, [
+    { column: "receiptId", ascending: false },
+  ]);
   return query;
 }
 
@@ -101,7 +103,9 @@ export async function getShippingMethods(
     query = query.ilike("name", `%${args.name}%`);
   }
 
-  query = setGenericQueryFilters(query, args, "name");
+  query = setGenericQueryFilters(query, args, [
+    { column: "name", ascending: true },
+  ]);
   return query;
 }
 

@@ -193,7 +193,9 @@ export async function getCustomers(
     query = query.eq("customerStatusId", args.status);
   }
 
-  query = setGenericQueryFilters(query, args, "name");
+  query = setGenericQueryFilters(query, args, [
+    { column: "name", ascending: true },
+  ]);
   return query;
 }
 
@@ -214,7 +216,9 @@ export async function getCustomerStatuses(
   }
 
   if (args) {
-    query = setGenericQueryFilters(query, args, "name");
+    query = setGenericQueryFilters(query, args, [
+      { column: "name", ascending: true },
+    ]);
   }
 
   return query;
@@ -244,7 +248,9 @@ export async function getCustomerTypes(
   }
 
   if (args) {
-    query = setGenericQueryFilters(query, args, "name");
+    query = setGenericQueryFilters(query, args, [
+      { column: "name", ascending: true },
+    ]);
   }
 
   return query;
@@ -290,7 +296,9 @@ export async function getQuotes(
     query = query.contains("partIds", [args.partId]);
   }
 
-  query = setGenericQueryFilters(query, args, "id", false);
+  query = setGenericQueryFilters(query, args, [
+    { column: "id", ascending: false },
+  ]);
   return query;
 }
 
