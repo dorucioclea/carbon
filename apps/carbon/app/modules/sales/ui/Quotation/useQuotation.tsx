@@ -23,7 +23,7 @@ type QuoteStore = {
 
 type Effect = (quantity: number) => number;
 
-type LinePriceEffects = {
+export type LinePriceEffects = {
   materialCost: Effect[];
   laborCost: Effect[];
   overheadCost: Effect[];
@@ -42,286 +42,310 @@ const $quotationStore = atom<QuoteStore>({
 
 const defaultLinePriceEffectsResult = {} as Record<string, LinePriceEffects>;
 
-const $quotationLinePriceEffects = computed($quotationStore, (store) =>
-  task(async () => {
-    if (!store.quote?.id || !store.client) return defaultLinePriceEffectsResult;
-
-    const quoteLineQuantities = await store.client
-      .from("quoteLineQuantity")
-      .select("*")
-      .eq("quoteId", store.quote.id);
-
-    console.log("quoteLineQuantities", quoteLineQuantities);
-
-    if (quoteLineQuantities.error) {
-      logger.error(quoteLineQuantities.error);
-      return defaultLinePriceEffectsResult;
+const $quotationLinePriceEffects = computed($quotationStore, (store) => {
+  const assembliesByLineId = store.assemblies?.reduce<
+    Record<string, QuotationAssembly[]>
+  >((acc, assembly) => {
+    if (!acc[assembly.quoteLineId]) {
+      acc[assembly.quoteLineId] = [];
     }
+    acc[assembly.quoteLineId].push(assembly);
+    return acc;
+  }, {});
 
-    if (!quoteLineQuantities.data || !quoteLineQuantities.data.length) {
-      return defaultLinePriceEffectsResult;
+  const operationsByLineId = store.operations?.reduce<
+    Record<string, QuotationOperation[]>
+  >((acc, operation) => {
+    if (!acc[operation.quoteLineId]) {
+      acc[operation.quoteLineId] = [];
     }
+    acc[operation.quoteLineId].push(operation);
+    return acc;
+  }, {});
 
-    const assembliesByLineId = store.assemblies?.reduce<
-      Record<string, QuotationAssembly[]>
+  let materialsByOperationId = store.materials?.reduce<
+    Record<string, QuotationMaterial[]>
+  >((acc, material) => {
+    if (!acc[material.quoteOperationId]) {
+      acc[material.quoteOperationId] = [];
+    }
+    acc[material.quoteOperationId].push(material);
+    return acc;
+  }, {});
+
+  const linePriceEffects = store?.lines?.reduce<
+    Record<string, LinePriceEffects>
+  >((effects, line) => {
+    effects[line.id] = {
+      materialCost: [],
+      laborCost: [],
+      overheadCost: [],
+      setupHours: [],
+      productionHours: [],
+    };
+
+    let assembliesById = assembliesByLineId[line.id]?.reduce<
+      Record<string, QuotationAssembly>
     >((acc, assembly) => {
-      if (!acc[assembly.quoteLineId]) {
-        acc[assembly.quoteLineId] = [];
-      }
-      acc[assembly.quoteLineId].push(assembly);
+      acc[assembly.id] = assembly;
       return acc;
     }, {});
 
-    const operationsByLineId = store.operations?.reduce<
-      Record<string, QuotationOperation[]>
-    >((acc, operation) => {
-      if (!acc[operation.quoteLineId]) {
-        acc[operation.quoteLineId] = [];
-      }
-      acc[operation.quoteLineId].push(operation);
-      return acc;
-    }, {});
-
-    let materialsByOperationId = store.materials?.reduce<
-      Record<string, QuotationMaterial[]>
-    >((acc, material) => {
-      if (!acc[material.quoteOperationId]) {
-        acc[material.quoteOperationId] = [];
-      }
-      acc[material.quoteOperationId].push(material);
-      return acc;
-    }, {});
-
-    const linePriceEffects = store?.lines?.reduce<
-      Record<string, LinePriceEffects>
-    >((effects, line) => {
-      effects[line.id] = {
-        materialCost: [],
-        laborCost: [],
-        overheadCost: [],
-        setupHours: [],
-        productionHours: [],
-      };
-
-      let assembliesById = assembliesByLineId[line.id]?.reduce<
-        Record<string, QuotationAssembly>
-      >((acc, assembly) => {
-        acc[assembly.id] = assembly;
-        return acc;
-      }, {});
-
-      const extendedQuantitiesPerAssembly = assembliesByLineId[line.id]?.reduce<
-        Record<string, number>
-      >((acc, assembly: QuotationAssembly) => {
-        let quantity = assembly.quantityPerParent ?? 1;
-        let asm = assembliesById[assembly.id];
-        while (asm.parentAssemblyId) {
-          // memoize the results
-          if (acc[asm.parentAssemblyId]) {
-            quantity *= acc[asm.parentAssemblyId];
-            break;
-          }
-
-          let parent = assembliesById[asm.parentAssemblyId];
-          quantity *= parent.quantityPerParent ?? 1;
-          asm = parent;
+    const extendedQuantitiesPerAssembly = assembliesByLineId[line.id]?.reduce<
+      Record<string, number>
+    >((acc, assembly: QuotationAssembly) => {
+      let quantity = assembly.quantityPerParent ?? 1;
+      let asm = assembliesById[assembly.id];
+      while (asm.parentAssemblyId) {
+        // memoize the results
+        if (acc[asm.parentAssemblyId]) {
+          quantity *= acc[asm.parentAssemblyId];
+          break;
         }
 
-        acc[assembly.id] = quantity;
-        return acc;
-      }, {});
+        let parent = assembliesById[asm.parentAssemblyId];
+        quantity *= parent.quantityPerParent ?? 1;
+        asm = parent;
+      }
 
-      operationsByLineId[line.id]?.forEach((operation: QuotationOperation) => {
-        let materials = materialsByOperationId[operation.id] ?? [];
-        let extendedQuantityPerAssembly = operation.quoteAssemblyId
-          ? extendedQuantitiesPerAssembly[operation.quoteAssemblyId] ?? 1
-          : 1;
+      acc[assembly.id] = quantity;
+      return acc;
+    }, {});
 
-        let materialCost = materials.reduce(
-          (acc, material: QuotationMaterial) => {
-            return acc + (material.quantity ?? 0) * (material.unitCost ?? 0);
-          },
-          0
-        );
+    operationsByLineId[line.id]?.forEach((operation: QuotationOperation) => {
+      let materials = materialsByOperationId[operation.id] ?? [];
+      let extendedQuantityPerAssembly = operation.quoteAssemblyId
+        ? extendedQuantitiesPerAssembly[operation.quoteAssemblyId] ?? 1
+        : 1;
 
-        effects[line.id].materialCost.push((quantity) => {
-          return materialCost * quantity * extendedQuantityPerAssembly;
+      let materialCost = materials.reduce(
+        (acc, material: QuotationMaterial) => {
+          return acc + (material.quantity ?? 0) * (material.unitCost ?? 0);
+        },
+        0
+      );
+
+      effects[line.id].materialCost.push((quantity) => {
+        return materialCost * quantity * extendedQuantityPerAssembly;
+      });
+
+      if (operation.setupHours) {
+        effects[line.id].setupHours.push((_quantity) => {
+          return operation.setupHours;
         });
+        if (operation.quotingRate) {
+          effects[line.id].overheadCost.push((_quantity) => {
+            return operation.setupHours * (operation.quotingRate ?? 0);
+          });
+        } else {
+          effects[line.id].laborCost.push((_quantity) => {
+            return operation.setupHours * (operation.laborRate ?? 0);
+          });
+          effects[line.id].overheadCost.push((_quantity) => {
+            return operation.setupHours * (operation.overheadRate ?? 0);
+          });
+        }
+      }
 
-        if (operation.setupHours) {
-          effects[line.id].setupHours.push((_quantity) => {
-            return operation.setupHours;
+      if (operation.productionStandard) {
+        let hoursPerProductionStandard = 0;
+        switch (operation.standardFactor) {
+          case "Hours/Piece":
+            hoursPerProductionStandard = operation.productionStandard;
+            break;
+          case "Hours/100 Pieces":
+            hoursPerProductionStandard = operation.productionStandard / 100;
+            break;
+          case "Hours/1000 Pieces":
+            hoursPerProductionStandard = operation.productionStandard / 1000;
+            break;
+          case "Minutes/Piece":
+            hoursPerProductionStandard = operation.productionStandard / 60;
+            break;
+          case "Minutes/100 Pieces":
+            hoursPerProductionStandard =
+              operation.productionStandard / 100 / 60;
+            break;
+          case "Minutes/1000 Pieces":
+            hoursPerProductionStandard =
+              operation.productionStandard / 1000 / 60;
+            break;
+          case "Pieces/Hour":
+            hoursPerProductionStandard = 1 / operation.productionStandard;
+            break;
+          case "Pieces/Minute":
+            hoursPerProductionStandard =
+              1 / (operation.productionStandard / 60);
+            break;
+          case "Seconds/Piece":
+            hoursPerProductionStandard = operation.productionStandard / 3600;
+            break;
+          case "Total Hours":
+            hoursPerProductionStandard = operation.productionStandard;
+            break;
+          case "Total Minutes":
+            hoursPerProductionStandard = operation.productionStandard / 60;
+            break;
+          default:
+            break;
+        }
+
+        if (
+          ["Total Hours", "Total Minutes"].includes(operation.standardFactor)
+        ) {
+          effects[line.id].productionHours.push((quantity) => {
+            return quantity * hoursPerProductionStandard;
           });
           if (operation.quotingRate) {
-            effects[line.id].overheadCost.push((_quantity) => {
-              return operation.setupHours * (operation.quotingRate ?? 0);
+            effects[line.id].overheadCost.push((quantity) => {
+              return (
+                quantity *
+                hoursPerProductionStandard *
+                (operation.quotingRate ?? 0)
+              );
             });
           } else {
-            effects[line.id].laborCost.push((_quantity) => {
-              return operation.setupHours * (operation.laborRate ?? 0);
+            effects[line.id].laborCost.push((quantity) => {
+              return (
+                quantity *
+                hoursPerProductionStandard *
+                (operation.laborRate ?? 0)
+              );
             });
-            effects[line.id].overheadCost.push((_quantity) => {
-              return operation.setupHours * (operation.overheadRate ?? 0);
+            effects[line.id].overheadCost.push((quantity) => {
+              return (
+                quantity *
+                hoursPerProductionStandard *
+                (operation.overheadRate ?? 0)
+              );
             });
           }
-        }
-
-        if (operation.productionStandard) {
-          let hoursPerProductionStandard = 0;
-          switch (operation.standardFactor) {
-            case "Hours/Piece":
-              hoursPerProductionStandard = operation.productionStandard;
-              break;
-            case "Hours/100 Pieces":
-              hoursPerProductionStandard = operation.productionStandard / 100;
-              break;
-            case "Hours/1000 Pieces":
-              hoursPerProductionStandard = operation.productionStandard / 1000;
-              break;
-            case "Minutes/Piece":
-              hoursPerProductionStandard = operation.productionStandard / 60;
-              break;
-            case "Minutes/100 Pieces":
-              hoursPerProductionStandard =
-                operation.productionStandard / 100 / 60;
-              break;
-            case "Minutes/1000 Pieces":
-              hoursPerProductionStandard =
-                operation.productionStandard / 1000 / 60;
-              break;
-            case "Pieces/Hour":
-              hoursPerProductionStandard = 1 / operation.productionStandard;
-              break;
-            case "Pieces/Minute":
-              hoursPerProductionStandard =
-                1 / (operation.productionStandard / 60);
-              break;
-            case "Seconds/Piece":
-              hoursPerProductionStandard = operation.productionStandard / 3600;
-              break;
-            case "Total Hours":
-              hoursPerProductionStandard = operation.productionStandard;
-              break;
-            case "Total Minutes":
-              hoursPerProductionStandard = operation.productionStandard / 60;
-              break;
-            default:
-              break;
-          }
-
-          if (
-            ["Total Hours", "Total Minutes"].includes(operation.standardFactor)
-          ) {
-            effects[line.id].productionHours.push((_quantity) => {
-              return hoursPerProductionStandard;
-            });
-            if (operation.quotingRate) {
-              effects[line.id].overheadCost.push((_quantity) => {
-                return (
-                  hoursPerProductionStandard * (operation.quotingRate ?? 0)
-                );
-              });
-            } else {
-              effects[line.id].laborCost.push((_quantity) => {
-                return hoursPerProductionStandard * (operation.laborRate ?? 0);
-              });
-              effects[line.id].overheadCost.push((_quantity) => {
-                return (
-                  hoursPerProductionStandard * (operation.overheadRate ?? 0)
-                );
-              });
-            }
-          } else {
-            effects[line.id].productionHours.push((quantity) => {
+        } else {
+          effects[line.id].productionHours.push((quantity) => {
+            return (
+              hoursPerProductionStandard *
+              quantity *
+              extendedQuantityPerAssembly
+            );
+          });
+          if (operation.quotingRate) {
+            effects[line.id].overheadCost.push((quantity) => {
               return (
                 hoursPerProductionStandard *
                 quantity *
-                extendedQuantityPerAssembly
+                extendedQuantityPerAssembly *
+                (operation.quotingRate ?? 0)
               );
             });
-            if (operation.quotingRate) {
-              effects[line.id].overheadCost.push((quantity) => {
-                return (
-                  hoursPerProductionStandard *
-                  quantity *
-                  extendedQuantityPerAssembly *
-                  (operation.quotingRate ?? 0)
-                );
-              });
-            } else {
-              effects[line.id].laborCost.push((quantity) => {
-                return (
-                  hoursPerProductionStandard *
-                  quantity *
-                  extendedQuantityPerAssembly *
-                  (operation.laborRate ?? 0)
-                );
-              });
-              effects[line.id].overheadCost.push((quantity) => {
-                return (
-                  hoursPerProductionStandard *
-                  quantity *
-                  extendedQuantityPerAssembly *
-                  (operation.overheadRate ?? 0)
-                );
-              });
-            }
+          } else {
+            effects[line.id].laborCost.push((quantity) => {
+              return (
+                hoursPerProductionStandard *
+                quantity *
+                extendedQuantityPerAssembly *
+                (operation.laborRate ?? 0)
+              );
+            });
+            effects[line.id].overheadCost.push((quantity) => {
+              return (
+                hoursPerProductionStandard *
+                quantity *
+                extendedQuantityPerAssembly *
+                (operation.overheadRate ?? 0)
+              );
+            });
           }
         }
-      });
-      return effects;
-    }, {});
-
-    console.log("linePriceEffects", linePriceEffects);
-    for await (const lineQuantity of quoteLineQuantities.data) {
-      const quantity = lineQuantity.quantity ?? 0;
-      const effects = linePriceEffects[lineQuantity.quoteLineId];
-
-      const materialCost = effects?.materialCost.reduce(
-        (acc, effect) => acc + effect(quantity),
-        0
-      );
-
-      const laborCost = effects?.laborCost.reduce(
-        (acc, effect) => acc + effect(quantity),
-        0
-      );
-
-      const overheadCost = effects?.overheadCost.reduce(
-        (acc, effect) => acc + effect(quantity),
-        0
-      );
-
-      const setupHours = effects?.setupHours.reduce(
-        (acc, effect) => acc + effect(quantity),
-        0
-      );
-
-      const productionHours = effects?.productionHours.reduce(
-        (acc, effect) => acc + effect(quantity),
-        0
-      );
-
-      const update = await store.client
-        .from("quoteLineQuantity")
-        .update({
-          materialCost,
-          laborCost,
-          overheadCost,
-          setupHours,
-          productionHours,
-        })
-        .eq("id", lineQuantity.id);
-
-      if (update.error) {
-        logger.error(update.error);
       }
-    }
+    });
+    return effects;
+  }, {});
 
-    return linePriceEffects;
-  })
+  return {
+    client: store.client,
+    quoteId: store.quote?.id ?? "",
+    effects: linePriceEffects,
+  };
+});
+
+const $quotationLinePriceEffectsUpdate = computed(
+  $quotationLinePriceEffects,
+  (store) =>
+    task(async () => {
+      if (!store.quoteId || !store.client) return defaultLinePriceEffectsResult;
+
+      const quoteLineQuantities = await store.client
+        .from("quoteLineQuantity")
+        .select("*")
+        .eq("quoteId", store.quoteId);
+
+      if (quoteLineQuantities.error) {
+        logger.error(quoteLineQuantities.error);
+        return defaultLinePriceEffectsResult;
+      }
+
+      if (!quoteLineQuantities.data || !quoteLineQuantities.data.length) {
+        return defaultLinePriceEffectsResult;
+      }
+
+      for await (const lineQuantity of quoteLineQuantities.data) {
+        const quantity = lineQuantity.quantity ?? 0;
+        const effects = store.effects[lineQuantity.quoteLineId];
+
+        const update = getLinePriceUpdate(quantity, effects);
+
+        const { error } = await store.client
+          .from("quoteLineQuantity")
+          .update(update)
+          .eq("id", lineQuantity.id);
+
+        if (error) {
+          logger.error(error);
+        }
+      }
+    })
 );
+
+export function getLinePriceUpdate(
+  quantity: number,
+  effects: LinePriceEffects
+) {
+  const materialCost = effects?.materialCost.reduce(
+    (acc, effect) => acc + effect(quantity),
+    0
+  );
+
+  const laborCost = effects?.laborCost.reduce(
+    (acc, effect) => acc + effect(quantity),
+    0
+  );
+
+  const overheadCost = effects?.overheadCost.reduce(
+    (acc, effect) => acc + effect(quantity),
+    0
+  );
+
+  const setupHours = effects?.setupHours.reduce(
+    (acc, effect) => acc + effect(quantity),
+    0
+  );
+
+  const productionHours = effects?.productionHours.reduce(
+    (acc, effect) => acc + effect(quantity),
+    0
+  );
+
+  return {
+    materialCost,
+    laborCost,
+    overheadCost,
+    setupHours,
+    productionHours,
+  };
+}
 
 export const useQuotation = () => useNanoStore<QuoteStore>($quotationStore);
 export const useQuotationLinePriceEffects = () =>
   useValue($quotationLinePriceEffects);
+export const useQuotationLinePriceEffectsUpdate = () =>
+  useValue($quotationLinePriceEffectsUpdate);

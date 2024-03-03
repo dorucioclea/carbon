@@ -34,7 +34,7 @@ import {
   getQuoteMaterials,
   getQuoteOperations,
   useQuotation,
-  useQuotationLinePriceEffects,
+  useQuotationLinePriceEffectsUpdate,
 } from "~/modules/sales";
 
 import { requirePermissions } from "~/services/auth";
@@ -113,7 +113,7 @@ export default function QuotationRoute() {
   } = useLoaderData<typeof loader>();
 
   const [quote, setQuote] = useQuotation();
-  useQuotationLinePriceEffects();
+  useQuotationLinePriceEffectsUpdate();
 
   useEffect(() => {
     setQuote({
