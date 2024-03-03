@@ -184,7 +184,6 @@ const $quotationLinePriceEffects = computed($quotationStore, (store) => {
           case "Seconds/Piece":
             hoursPerProductionStandard = operation.productionStandard / 3600;
             break;
-
           default:
             break;
         }
