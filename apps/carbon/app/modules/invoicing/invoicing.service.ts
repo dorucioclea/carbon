@@ -68,7 +68,7 @@ export async function getPurchaseInvoices(
   }
 
   query = setGenericQueryFilters(query, args, [
-    { column: "inoiceId", ascending: false },
+    { column: "invoiceId", ascending: false },
   ]);
   return query;
 }
