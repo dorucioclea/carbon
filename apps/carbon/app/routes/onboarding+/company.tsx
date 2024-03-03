@@ -1,18 +1,17 @@
 import {
   Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
   HStack,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalDescription,
-  ModalFooter,
-  ModalHeader,
-  ModalTitle,
   VStack,
 } from "@carbon/react";
 import { getLocalTimeZone } from "@internationalized/date";
 import { json, redirect, type ActionFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { ValidatedForm, validationError } from "remix-validated-form";
 import { Hidden, Input, Submit } from "~/components/Form";
 import { useOnboarding } from "~/hooks";
@@ -119,9 +118,9 @@ export async function action({ request }: ActionFunctionArgs) {
   return redirect(next);
 }
 
-export default function OnboardingUser() {
+export default function OnboardingCompany() {
   const { company } = useLoaderData<typeof loader>();
-  const { next, previous, onPrevious } = useOnboarding();
+  const { next, previous } = useOnboarding();
 
   const initialValues = {
     name: company?.name ?? "",
@@ -132,48 +131,44 @@ export default function OnboardingUser() {
   };
 
   return (
-    <Modal open>
-      <ModalContent>
-        <ValidatedForm
-          validator={onboardingCompanyValidator}
-          defaultValues={initialValues}
-          method="post"
-        >
-          <ModalHeader>
-            <ModalTitle>Now let's setup your company</ModalTitle>
-            <ModalDescription>
-              You can always change this later
-            </ModalDescription>
-          </ModalHeader>
-          <ModalBody>
-            <Hidden name="next" value={next} />
-            <VStack spacing={4}>
-              <Input name="name" label="Company Name" />
-              <Input name="addressLine1" label="Address" />
-              <Input name="city" label="City" />
-              <Input name="state" label="State" />
-              <Input name="postalCode" label="Zip Code" />
-            </VStack>
-          </ModalBody>
+    <Card className="max-w-lg">
+      <ValidatedForm
+        validator={onboardingCompanyValidator}
+        defaultValues={initialValues}
+        method="post"
+      >
+        <CardHeader>
+          <CardTitle>Now let's setup your company</CardTitle>
+          <CardDescription>You can always change this later</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Hidden name="next" value={next} />
+          <VStack spacing={4}>
+            <Input name="name" label="Company Name" />
+            <Input name="addressLine1" label="Address" />
+            <Input name="city" label="City" />
+            <Input name="state" label="State" />
+            <Input name="postalCode" label="Zip Code" />
+          </VStack>
+        </CardContent>
 
-          <ModalFooter>
-            <HStack>
-              <Button
-                variant="solid"
-                isDisabled={!previous}
-                size="md"
-                onClick={() => {
-                  onPrevious?.();
-                }}
-                tabIndex={-1}
-              >
+        <CardFooter>
+          <HStack>
+            <Button
+              variant="solid"
+              isDisabled={!previous}
+              size="md"
+              asChild
+              tabIndex={-1}
+            >
+              <Link to={previous} prefetch="intent">
                 Previous
-              </Button>
-              <Submit>Next</Submit>
-            </HStack>
-          </ModalFooter>
-        </ValidatedForm>
-      </ModalContent>
-    </Modal>
+              </Link>
+            </Button>
+            <Submit>Next</Submit>
+          </HStack>
+        </CardFooter>
+      </ValidatedForm>
+    </Card>
   );
 }

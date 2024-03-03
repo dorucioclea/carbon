@@ -1,8 +1,5 @@
 {
   "name": "eslint-config-carbon",
-  "private": true,
-  "license": "MIT",
-  "main": "index.js",
   "dependencies": {
     "@babel/eslint-parser": "7.22.9",
     "@babel/preset-react": "7.22.5",
@@ -12,6 +9,8 @@
     "eslint-import-resolver-node": "0.3.6",
     "eslint-import-resolver-typescript": "^3.5.1"
   },
+  "license": "MIT",
+  "main": "index.js",
   "peerDependencies": {
     "@types/eslint": "^8.4.6",
     "eslint": "^8.23.1",
@@ -22,7 +21,9 @@
       "optional": true
     }
   },
+  "private": true,
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "version": "*"
 }

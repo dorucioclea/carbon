@@ -106,5 +106,5 @@ export default function UsersGroupRoute() {
     selections: group?.selections || [],
   };
 
-  return <GroupForm initialValues={initialValues} />;
+  return <GroupForm key={initialValues.id} initialValues={initialValues} />;
 }

@@ -15,6 +15,8 @@ import {
   Color,
   Hidden,
   Input,
+  Number,
+  StandardFactor,
   Submit,
   TextArea,
 } from "~/components/Form";
@@ -72,6 +74,13 @@ const WorkCellTypeForm = ({
                 name="requiredAbility"
                 label="Required Ability"
                 isClearable
+              />
+              <Number name="quotingRate" label="Quoting Rate" />
+              <Number name="laborRate" label="Labor Rate" />
+              <Number name="overheadRate" label="Overhead Rate" />
+              <StandardFactor
+                name="defaultStandardFactor"
+                label="Default Standard Factor"
               />
             </VStack>
           </DrawerBody>

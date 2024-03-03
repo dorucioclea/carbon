@@ -96,5 +96,10 @@ export default function EditSupplierLocationRoute() {
     postalCode: location?.address?.postalCode ?? "",
   };
 
-  return <SupplierLocationForm initialValues={initialValues} />;
+  return (
+    <SupplierLocationForm
+      key={initialValues.id}
+      initialValues={initialValues}
+    />
+  );
 }

@@ -139,6 +139,7 @@ export default function PurchaseOrderDeliveryRoute() {
 
   return (
     <PurchaseOrderDeliveryForm
+      key={initialValues.id}
       initialValues={initialValues}
       shippingMethods={shippingMethods}
       shippingTerms={shippingTerms}

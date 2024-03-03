@@ -83,5 +83,7 @@ export default function EditPaymentTermsRoute() {
       paymentTerm?.calculationMethod ?? ("Net" as PaymentTermCalculationMethod),
   };
 
-  return <PaymentTermForm initialValues={initialValues} />;
+  return (
+    <PaymentTermForm key={initialValues.id} initialValues={initialValues} />
+  );
 }

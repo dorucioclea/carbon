@@ -108,5 +108,7 @@ export default function EditCustomerContactRoute() {
     birthday: contact?.contact?.birthday ?? undefined,
   };
 
-  return <CustomerContactForm initialValues={initialValues} />;
+  return (
+    <CustomerContactForm key={initialValues.id} initialValues={initialValues} />
+  );
 }

@@ -89,5 +89,10 @@ export default function SupplierPaymentRoute() {
     currencyCode: supplierPayment?.currencyCode ?? "",
   };
 
-  return <SupplierPaymentForm initialValues={initialValues} />;
+  return (
+    <SupplierPaymentForm
+      key={initialValues.supplierId}
+      initialValues={initialValues}
+    />
+  );
 }

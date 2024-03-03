@@ -145,6 +145,7 @@ export default function PartPlanningRoute() {
 
   return (
     <PartPlanningForm
+      key={partPlanning.partId}
       initialValues={partPlanning}
       locations={sharedPartsData.locations ?? []}
     />

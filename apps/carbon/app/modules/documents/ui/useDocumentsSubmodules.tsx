@@ -1,4 +1,4 @@
-import { BsClock, BsFolder, BsFolderPlus, BsStar } from "react-icons/bs";
+import { BsBookmark, BsClock, BsFolder, BsFolderPlus } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
 import type { Route } from "~/types";
 import { path } from "~/utils/path";
@@ -25,7 +25,7 @@ const documentsRoutes: Route[] = [
     name: "Starred",
     to: path.to.documents,
     q: "starred",
-    icon: <BsStar />,
+    icon: <BsBookmark />,
   },
   {
     name: "Trash",

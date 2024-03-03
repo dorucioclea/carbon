@@ -85,5 +85,7 @@ export default function DepartmentRoute() {
     parentDepartmentId: department.parentDepartmentId ?? undefined,
   };
 
-  return <DepartmentForm initialValues={initialValues} />;
+  return (
+    <DepartmentForm key={initialValues.id} initialValues={initialValues} />
+  );
 }

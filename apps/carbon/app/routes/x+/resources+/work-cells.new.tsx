@@ -27,13 +27,10 @@ export async function action({ request }: ActionFunctionArgs) {
     return validationError(validation.error);
   }
 
-  const { name, description, color, requiredAbility } = validation.data;
+  const { id, ...data } = validation.data;
 
   const createWorkCellType = await upsertWorkCellType(client, {
-    name,
-    description,
-    color,
-    requiredAbility,
+    ...data,
     createdBy: userId,
   });
   if (createWorkCellType.error) {
@@ -57,6 +54,10 @@ export default function NewWorkCellTypeRoute() {
     name: "",
     description: "",
     color: "#000000",
+    quotingRate: 0,
+    laborRate: 0,
+    overheadRate: 0,
+    defaultStandardFactor: "Total Hours" as "Total Hours",
   };
 
   return <WorkCellTypeForm onClose={onClose} initialValues={initialValues} />;

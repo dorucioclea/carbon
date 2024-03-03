@@ -51,15 +51,12 @@ export async function action({ request }: ActionFunctionArgs) {
     return validationError(validation.error);
   }
 
-  const { id, name, color, description, requiredAbility } = validation.data;
+  const { id, ...data } = validation.data;
   if (!id) throw new Error("ID is was not found");
 
   const updateCategory = await upsertWorkCellType(client, {
     id,
-    name,
-    color,
-    description,
-    requiredAbility,
+    ...data,
     updatedBy: userId,
   });
   if (updateCategory.error) {
@@ -89,7 +86,17 @@ export default function EditAttributeCategoryRoute() {
     description: workCellType?.description ?? "",
     color: workCellType?.color ?? "#000000",
     requiredAbility: workCellType?.requiredAbility ?? undefined,
+    quotingRate: workCellType?.quotingRate ?? 0,
+    laborRate: workCellType?.laborRate ?? 0,
+    overheadRate: workCellType?.overheadRate ?? 0,
+    defaultStandardFactor: workCellType?.defaultStandardFactor ?? "Total Hours",
   };
 
-  return <WorkCellTypeForm onClose={onClose} initialValues={initialValues} />;
+  return (
+    <WorkCellTypeForm
+      key={initialValues.id}
+      onClose={onClose}
+      initialValues={initialValues}
+    />
+  );
 }

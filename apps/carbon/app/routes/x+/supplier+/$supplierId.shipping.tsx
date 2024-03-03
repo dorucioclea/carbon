@@ -91,5 +91,10 @@ export default function SupplierShippingRoute() {
     shippingTermId: supplierShipping?.shippingTermId ?? "",
   };
 
-  return <SupplierShippingForm initialValues={initialValues} />;
+  return (
+    <SupplierShippingForm
+      key={initialValues.supplierId}
+      initialValues={initialValues}
+    />
+  );
 }

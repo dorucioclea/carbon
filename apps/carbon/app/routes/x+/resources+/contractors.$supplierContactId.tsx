@@ -86,5 +86,7 @@ export default function ContractorRoute() {
     abilities: contractor.abilityIds ?? ([] as string[]),
   };
 
-  return <ContractorForm initialValues={initialValues} />;
+  return (
+    <ContractorForm key={initialValues.id} initialValues={initialValues} />
+  );
 }

@@ -48,12 +48,10 @@ const QuotationDocuments = ({
       <Card>
         <HStack className="justify-between items-start">
           <CardHeader>
-            <CardTitle>
-              {isExternal ? "External" : "Internal"} Attachments
-            </CardTitle>
+            <CardTitle>Documents</CardTitle>
           </CardHeader>
           <CardAction>
-            <QuotationDocumentForm isExternal={isExternal} id={id} />
+            <QuotationDocumentForm isExternal={false} id={id} />
           </CardAction>
         </HStack>
         <CardContent>

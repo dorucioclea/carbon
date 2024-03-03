@@ -51,15 +51,12 @@ export async function action({ request }: ActionFunctionArgs) {
     return validationError(validation.error);
   }
 
-  const { id, name, color, description, requiredAbility } = validation.data;
+  const { id, ...data } = validation.data;
   if (!id) throw new Error("ID is was not found");
 
   const updateCategory = await upsertEquipmentType(client, {
     id,
-    name,
-    color,
-    description,
-    requiredAbility,
+    ...data,
     updatedBy: userId,
   });
   if (updateCategory.error) {
@@ -89,7 +86,14 @@ export default function EditAttributeCategoryRoute() {
     description: equipmentType?.description ?? "",
     color: equipmentType?.color ?? "#000000",
     requiredAbility: equipmentType?.requiredAbility ?? undefined,
+    setupHours: equipmentType?.setupHours ?? 0,
   };
 
-  return <EquipmentTypeForm onClose={onClose} initialValues={initialValues} />;
+  return (
+    <EquipmentTypeForm
+      key={initialValues.id}
+      onClose={onClose}
+      initialValues={initialValues}
+    />
+  );
 }

@@ -81,5 +81,7 @@ export default function EditSequenceRoute() {
     suffix: sequence?.suffix ?? "",
   };
 
-  return <SequenceForm initialValues={initialValues} />;
+  return (
+    <SequenceForm key={initialValues.table} initialValues={initialValues} />
+  );
 }

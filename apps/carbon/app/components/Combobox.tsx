@@ -26,6 +26,7 @@ export type ComboboxProps = Omit<
   options: {
     label: string;
     value: string;
+    helper?: string;
   }[];
   isClearable?: boolean;
   isReadOnly?: boolean;
@@ -76,14 +77,27 @@ const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
               <CommandGroup>
                 {options.map((option) => (
                   <CommandItem
-                    value={option.label}
+                    value={
+                      typeof option.label === "string"
+                        ? option.label
+                        : undefined
+                    }
                     key={option.value}
                     onSelect={() => {
                       onChange?.(option.value);
                       setOpen(false);
                     }}
                   >
-                    {option.label}
+                    {option.helper ? (
+                      <div className="flex flex-col">
+                        <p>{option.label}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {option.helper}
+                        </p>
+                      </div>
+                    ) : (
+                      option.label
+                    )}
                     <RxCheck
                       className={cn(
                         "ml-auto h-4 w-4",

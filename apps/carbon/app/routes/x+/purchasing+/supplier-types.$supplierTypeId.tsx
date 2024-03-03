@@ -94,5 +94,7 @@ export default function EditSupplierTypesRoute() {
     color: supplierType.color ?? "#000000",
   };
 
-  return <SupplierTypeForm initialValues={initialValues} />;
+  return (
+    <SupplierTypeForm key={initialValues.id} initialValues={initialValues} />
+  );
 }

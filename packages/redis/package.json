@@ -1,23 +1,5 @@
 {
-  "version": "1.0.0",
   "name": "@carbon/redis",
-  "private": true,
-  "license": "MIT",
-  "sideEffects": false,
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist/**"
-  ],
-  "scripts": {
-    "build": "tsup",
-    "clean": "rimraf .turbo node_modules dist",
-    "db:start": "docker-compose up -d",
-    "db:kill": "docker-compose down",
-    "dev": "tsup --watch",
-    "lint": "TIMING=1 eslint \"src/**/*.ts*\""
-  },
   "dependencies": {
     "ioredis": "^5.2.4"
   },
@@ -26,12 +8,30 @@
     "@carbon/tsconfig": "*",
     "@types/ioredis": "^5.0.0",
     "@types/node": "^18.15.1",
-    "dotenv": "16.0.3",
+    "dotenv": "16.3.1",
     "eslint": "^8.23.1",
     "eslint-config-carbon": "*",
-    "rimraf": "^3.0.2",
+    "rimraf": "^5.0.5",
     "tsup": "^6.5.0",
     "tsx": "^3.12.1",
     "typescript": "^5.2.2"
-  }
+  },
+  "files": [
+    "dist/**"
+  ],
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "private": true,
+  "scripts": {
+    "build": "tsup",
+    "clean": "rimraf .turbo node_modules dist",
+    "db:kill": "docker-compose down",
+    "db:start": "docker-compose up -d",
+    "dev": "tsup --watch",
+    "lint": "TIMING=1 eslint \"src/**/*.ts*\""
+  },
+  "sideEffects": false,
+  "types": "./dist/index.d.ts",
+  "version": "*"
 }

@@ -27,12 +27,12 @@ export const employeeTypePermissionsDefinitions: Record<
   >
 > = {
   Admin: {
-    // Accounting: {
-    //   create: true,
-    //   update: true,
-    //   delete: true,
-    //   view: true,
-    // },
+    Accounting: {
+      create: true,
+      update: true,
+      delete: true,
+      view: true,
+    },
     Invoicing: {
       create: true,
       update: true,
@@ -113,12 +113,12 @@ export const employeeTypePermissionsDefinitions: Record<
     },
   },
   "Project Manager": {
-    // Accounting: {
-    //   create: false,
-    //   update: false,
-    //   delete: false,
-    //   view: false,
-    // },
+    Accounting: {
+      create: false,
+      update: false,
+      delete: false,
+      view: false,
+    },
     Invoicing: {
       create: false,
       update: false,
@@ -199,12 +199,12 @@ export const employeeTypePermissionsDefinitions: Record<
     },
   },
   Sales: {
-    // Accounting: {
-    //   create: false,
-    //   update: false,
-    //   delete: false,
-    //   view: false,
-    // },
+    Accounting: {
+      create: false,
+      update: false,
+      delete: false,
+      view: false,
+    },
     Invoicing: {
       create: false,
       update: false,

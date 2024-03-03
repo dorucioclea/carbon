@@ -91,6 +91,7 @@ export default function PurchaseInvoiceBasicRoute() {
 
   return (
     <PurchaseInvoiceForm
+      key={initialValues.id}
       initialValues={initialValues}
       paymentTerms={sharedData?.paymentTerms ?? []}
     />

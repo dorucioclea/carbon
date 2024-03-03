@@ -15,6 +15,7 @@ import {
   Color,
   Hidden,
   Input,
+  Number,
   Submit,
   TextArea,
 } from "~/components/Form";
@@ -73,6 +74,7 @@ const EquipmentTypeForm = ({
                 label="Required Ability"
                 isClearable
               />
+              <Number name="setupHours" label="Setup Hours" />
             </VStack>
           </DrawerBody>
           <DrawerFooter>

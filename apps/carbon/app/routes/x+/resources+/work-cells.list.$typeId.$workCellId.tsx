@@ -56,6 +56,7 @@ export default function EditWorkCellRoute() {
 
   return (
     <WorkCellForm
+      key={`${workCell?.id}${typeId}`}
       initialValues={{
         id: workCell?.id,
         name: workCell?.name ?? "",

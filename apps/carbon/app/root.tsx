@@ -85,7 +85,7 @@ export async function action({ request }: ActionFunctionArgs) {
 function Document({
   children,
   title = "Carbon ERP",
-  mode = "light",
+  mode = "dark",
 }: {
   children: React.ReactNode;
   title?: string;

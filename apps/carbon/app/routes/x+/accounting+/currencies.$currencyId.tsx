@@ -81,5 +81,5 @@ export default function EditCurrencysRoute() {
     isBaseCurrency: currency?.isBaseCurrency ?? false,
   };
 
-  return <CurrencyForm initialValues={initialValues} />;
+  return <CurrencyForm key={initialValues.id} initialValues={initialValues} />;
 }

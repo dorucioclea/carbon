@@ -4,7 +4,7 @@ import { GiSpeedometer } from "react-icons/gi";
 import { GoSync } from "react-icons/go";
 import { HiCode, HiFingerPrint } from "react-icons/hi";
 import { TbBuildingFactory2 } from "react-icons/tb";
-import { useGlowPointer } from "../hooks/useGlowPointer";
+import { useGlowPointer } from "../../../hooks/useGlowPointer";
 
 declare global {
   interface Window {
