@@ -89,7 +89,7 @@ export const themes = [
         "card-foreground": "0 0% 98%",
         popover: "0 0% 8.9%",
         "popover-foreground": "0 0% 98%",
-        primary: "0 0% 98%",
+        primary: "30 24% 81%",
         "primary-foreground": "0 0% 9%",
         secondary: "0 0% 14.9%",
         "secondary-foreground": "0 0% 98%",

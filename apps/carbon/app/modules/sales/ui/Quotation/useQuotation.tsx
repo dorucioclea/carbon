@@ -112,6 +112,8 @@ const $quotationLinePriceEffects = computed($quotationStore, (store) => {
       return acc;
     }, {});
 
+    console.log("extendedQuantitiesPerAssembly", extendedQuantitiesPerAssembly);
+
     operationsByLineId[line.id]?.forEach((operation: QuotationOperation) => {
       let materials = materialsByOperationId[operation.id] ?? [];
       let extendedQuantityPerAssembly = operation.quoteAssemblyId
@@ -150,6 +152,7 @@ const $quotationLinePriceEffects = computed($quotationStore, (store) => {
       if (operation.productionStandard) {
         let hoursPerProductionStandard = 0;
         switch (operation.standardFactor) {
+          case "Total Hours":
           case "Hours/Piece":
             hoursPerProductionStandard = operation.productionStandard;
             break;
@@ -159,6 +162,7 @@ const $quotationLinePriceEffects = computed($quotationStore, (store) => {
           case "Hours/1000 Pieces":
             hoursPerProductionStandard = operation.productionStandard / 1000;
             break;
+          case "Total Minutes":
           case "Minutes/Piece":
             hoursPerProductionStandard = operation.productionStandard / 60;
             break;
@@ -180,81 +184,42 @@ const $quotationLinePriceEffects = computed($quotationStore, (store) => {
           case "Seconds/Piece":
             hoursPerProductionStandard = operation.productionStandard / 3600;
             break;
-          case "Total Hours":
-            hoursPerProductionStandard = operation.productionStandard;
-            break;
-          case "Total Minutes":
-            hoursPerProductionStandard = operation.productionStandard / 60;
-            break;
+
           default:
             break;
         }
 
-        if (
-          ["Total Hours", "Total Minutes"].includes(operation.standardFactor)
-        ) {
-          effects[line.id].productionHours.push((quantity) => {
-            return quantity * hoursPerProductionStandard;
-          });
-          if (operation.quotingRate) {
-            effects[line.id].overheadCost.push((quantity) => {
-              return (
-                quantity *
-                hoursPerProductionStandard *
-                (operation.quotingRate ?? 0)
-              );
-            });
-          } else {
-            effects[line.id].laborCost.push((quantity) => {
-              return (
-                quantity *
-                hoursPerProductionStandard *
-                (operation.laborRate ?? 0)
-              );
-            });
-            effects[line.id].overheadCost.push((quantity) => {
-              return (
-                quantity *
-                hoursPerProductionStandard *
-                (operation.overheadRate ?? 0)
-              );
-            });
-          }
-        } else {
-          effects[line.id].productionHours.push((quantity) => {
+        effects[line.id].productionHours.push((quantity) => {
+          return (
+            hoursPerProductionStandard * quantity * extendedQuantityPerAssembly
+          );
+        });
+        if (operation.quotingRate) {
+          effects[line.id].overheadCost.push((quantity) => {
             return (
               hoursPerProductionStandard *
               quantity *
-              extendedQuantityPerAssembly
+              extendedQuantityPerAssembly *
+              (operation.quotingRate ?? 0)
             );
           });
-          if (operation.quotingRate) {
-            effects[line.id].overheadCost.push((quantity) => {
-              return (
-                hoursPerProductionStandard *
-                quantity *
-                extendedQuantityPerAssembly *
-                (operation.quotingRate ?? 0)
-              );
-            });
-          } else {
-            effects[line.id].laborCost.push((quantity) => {
-              return (
-                hoursPerProductionStandard *
-                quantity *
-                extendedQuantityPerAssembly *
-                (operation.laborRate ?? 0)
-              );
-            });
-            effects[line.id].overheadCost.push((quantity) => {
-              return (
-                hoursPerProductionStandard *
-                quantity *
-                extendedQuantityPerAssembly *
-                (operation.overheadRate ?? 0)
-              );
-            });
-          }
+        } else {
+          effects[line.id].laborCost.push((quantity) => {
+            return (
+              hoursPerProductionStandard *
+              quantity *
+              extendedQuantityPerAssembly *
+              (operation.laborRate ?? 0)
+            );
+          });
+          effects[line.id].overheadCost.push((quantity) => {
+            return (
+              hoursPerProductionStandard *
+              quantity *
+              extendedQuantityPerAssembly *
+              (operation.overheadRate ?? 0)
+            );
+          });
         }
       }
     });

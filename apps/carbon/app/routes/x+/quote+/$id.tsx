@@ -3,12 +3,14 @@ import {
   Heading,
   IconButton,
   Input,
+  Kbd,
   Menubar,
   MenubarItem,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
   VStack,
+  useKeyboardShortcuts,
 } from "@carbon/react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
@@ -18,7 +20,7 @@ import {
   useNavigate,
   useParams,
 } from "@remix-run/react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { CollapsibleSidebar } from "~/components/Layout";
 import { useSupabase } from "~/lib/supabase";
@@ -138,6 +140,14 @@ export default function QuotationRoute() {
   const { id } = useParams();
   if (!id) throw new Error("id not found");
 
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  useKeyboardShortcuts({
+    l: (event: KeyboardEvent) => {
+      event.stopPropagation();
+      buttonRef.current?.click();
+    },
+  });
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] w-full">
       <CollapsibleSidebar width={260}>
@@ -156,10 +166,13 @@ export default function QuotationRoute() {
                   aria-label="Add Quote Line"
                   variant="secondary"
                   icon={<IoMdAdd />}
+                  ref={buttonRef}
                   onClick={() => navigate(path.to.newQuoteLine(id))}
                 />
               </TooltipTrigger>
-              <TooltipContent>Add Quote Line</TooltipContent>
+              <TooltipContent>
+                Add Quote Line <Kbd>l</Kbd>
+              </TooltipContent>
             </Tooltip>
           </HStack>
         </VStack>

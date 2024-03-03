@@ -1,4 +1,14 @@
-import { Button, VStack, cn } from "@carbon/react";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  VStack,
+  cn,
+} from "@carbon/react";
 import type { Theme } from "@carbon/utils";
 import { themes } from "@carbon/utils";
 import { useEffect, useState } from "react";
@@ -38,51 +48,61 @@ const ThemeForm = ({ theme: defaultValues }: ThemeFormProps) => {
   }, [mode]);
 
   return (
-    <div className="w-full">
+    <Card>
       <ValidatedForm
         method="post"
         action={path.to.theme}
         validator={themeValidator}
         defaultValues={defaultValues}
       >
-        <VStack spacing={4} className="max-w-[520px]">
-          <Hidden name="theme" value={theme} />
-          <div className="grid grid-cols-3 gap-4">
-            {themes.map((t) => {
-              const isActive = theme === t.name;
-              return (
-                <Button
-                  key={t.name}
-                  variant="secondary"
-                  onClick={() => onThemeChange(t)}
-                  className={cn(
-                    "justify-start",
-                    isActive && "border-2 border-primary"
-                  )}
-                  style={
-                    {
-                      "--theme-primary": `hsl(${
-                        t?.activeColor[mode === "dark" ? "dark" : "light"]
-                      })`,
-                    } as React.CSSProperties
-                  }
-                >
-                  <span
+        <CardHeader>
+          <CardTitle>Theme</CardTitle>
+          <CardDescription>
+            This updates the theme for all users of the application
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <VStack spacing={4} className="max-w-[520px]">
+            <Hidden name="theme" value={theme} />
+            <div className="grid grid-cols-3 gap-4">
+              {themes.map((t) => {
+                const isActive = theme === t.name;
+                return (
+                  <Button
+                    key={t.name}
+                    variant="secondary"
+                    onClick={() => onThemeChange(t)}
                     className={cn(
-                      "mr-1 flex h-5 w-5 shrink-0 -translate-x-1 items-center justify-center rounded-full bg-[--theme-primary]"
+                      "justify-start",
+                      isActive && "border-2 border-primary"
                     )}
+                    style={
+                      {
+                        "--theme-primary": `hsl(${
+                          t?.activeColor[mode === "dark" ? "dark" : "light"]
+                        })`,
+                      } as React.CSSProperties
+                    }
                   >
-                    {isActive && <RxCheck className="h-4 w-4 text-white" />}
-                  </span>
-                  {t.label}
-                </Button>
-              );
-            })}
-          </div>
+                    <span
+                      className={cn(
+                        "mr-1 flex h-5 w-5 shrink-0 -translate-x-1 items-center justify-center rounded-full bg-[--theme-primary]"
+                      )}
+                    >
+                      {isActive && <RxCheck className="h-4 w-4 text-white" />}
+                    </span>
+                    {t.label}
+                  </Button>
+                );
+              })}
+            </div>
+          </VStack>
+        </CardContent>
+        <CardFooter>
           <Submit>Save</Submit>
-        </VStack>
+        </CardFooter>
       </ValidatedForm>
-    </div>
+    </Card>
   );
 };
 
