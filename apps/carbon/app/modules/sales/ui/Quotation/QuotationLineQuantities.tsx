@@ -260,11 +260,11 @@ const QuotationLineQuantities = ({
 export default QuotationLineQuantities;
 
 function getUnitCost(line: QuotationLineQuantity) {
-  return (
-    (line.materialCost +
-      line.laborCost +
-      line.overheadCost +
-      line.additionalCost) /
-    line.quantity
-  );
+  return line.quantity
+    ? (line.materialCost +
+        line.laborCost +
+        line.overheadCost +
+        line.additionalCost) /
+        line.quantity
+    : 0;
 }

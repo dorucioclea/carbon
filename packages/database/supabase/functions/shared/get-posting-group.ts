@@ -1,5 +1,5 @@
 import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.33.1";
-import { Database } from "../../../src/types.ts";
+import { Database } from "../lib/types.ts";
 
 export async function getInventoryPostingGroup(
   client: SupabaseClient<Database>,

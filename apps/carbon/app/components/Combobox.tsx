@@ -79,7 +79,7 @@ const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
                   <CommandItem
                     value={
                       typeof option.label === "string"
-                        ? option.label
+                        ? option.label + option.helper
                         : undefined
                     }
                     key={option.value}

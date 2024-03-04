@@ -5,7 +5,7 @@ import {
   PostgresIntrospector,
   PostgresQueryCompiler,
 } from "https://esm.sh/kysely@0.26.3";
-import { Database } from "../../../src/types.ts";
+import { Database } from "../lib/types.ts";
 import { PostgresDriver } from "../lib/driver.ts";
 
 type Tables = Database["public"]["Tables"];
