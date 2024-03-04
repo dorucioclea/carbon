@@ -138,7 +138,9 @@ export async function getDocuments(
     query = query.order("lastActivityAt", { ascending: false });
   }
 
-  query = setGenericQueryFilters(query, args);
+  query = setGenericQueryFilters(query, args, [
+    { column: "favorite", ascending: false },
+  ]);
 
   return query;
 }

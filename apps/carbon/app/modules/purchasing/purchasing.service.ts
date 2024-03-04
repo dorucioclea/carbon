@@ -153,8 +153,10 @@ export async function getPurchaseOrders(
   }
 
   query = setGenericQueryFilters(query, args, [
+    { column: "favorite", ascending: false },
     { column: "purchaseOrderId", ascending: false },
   ]);
+
   return query;
 }
 
@@ -248,6 +250,7 @@ export async function getRequestsForQuotes(
   }
 
   query = setGenericQueryFilters(query, args, [
+    { column: "favorite", ascending: false },
     { column: "id", ascending: false },
   ]);
   return query;

@@ -297,6 +297,7 @@ export async function getQuotes(
   }
 
   query = setGenericQueryFilters(query, args, [
+    { column: "favorite", ascending: false },
     { column: "id", ascending: false },
   ]);
   return query;
