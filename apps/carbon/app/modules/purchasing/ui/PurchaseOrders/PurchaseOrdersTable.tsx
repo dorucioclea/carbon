@@ -8,7 +8,7 @@ import {
 import { useFetcher, useFetchers } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo, useState } from "react";
-import { BsBookmark, BsBookmarkFill, BsFillPenFill } from "react-icons/bs";
+import { BsFillPenFill, BsPin, BsPinFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
 import { MdCallReceived } from "react-icons/md";
 import { Avatar, Table } from "~/components";
@@ -70,7 +70,7 @@ const PurchaseOrdersTable = memo(
                   <input type="hidden" name="id" value={row.original.id!} />
                   <input type="hidden" name="favorite" value="unfavorite" />
                   <button type="submit">
-                    <BsBookmarkFill
+                    <BsPinFill
                       className="text-yellow-400 cursor-pointer h-4 w-4"
                       type="submit"
                     />
@@ -84,7 +84,7 @@ const PurchaseOrdersTable = memo(
                   <input type="hidden" name="id" value={row.original.id!} />
                   <input type="hidden" name="favorite" value="favorite" />
                   <button type="submit">
-                    <BsBookmark
+                    <BsPin
                       className="text-yellow-400 cursor-pointer h-4 w-4"
                       type="submit"
                     />
