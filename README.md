@@ -1,6 +1,11 @@
 <p align="center"><a href="https://carbon.us.org" target="_blank"><img src="https://raw.githubusercontent.com/barbinbrad/carbon/main/www/public/logo-full.png" width="500" alt="Carbon Logo"></a></p>
 
-https://github.com/barbinbrad/carbon/assets/64510427/abc040a0-3899-47cf-924e-c5dd88097352
+<p align="center">
+<a href="https://www.loom.com/share/7b2dccab3d404b84aa8f08e5bfa21d16?sid=1c705b79-c6e0-4558-953a-a50fefff5788" target="_blank">
+  <img src="https://github.com/barbinbrad/carbon/assets/64510427/3659dc69-cb3a-45b6-944f-86dd1f513b67" width="70%" />
+</a>
+</p>
+
 
 # Carbon ERP
 
