@@ -22,6 +22,7 @@ const EditableQuotationLineQuantity =
     options: {
       client?: SupabaseClient<Database>;
       effects: LinePriceEffects;
+      isMade: boolean;
     }
   ) =>
   ({
@@ -33,11 +34,17 @@ const EditableQuotationLineQuantity =
   }: EditableTableCellComponentProps<QuotationLineQuantity>) => {
     const updateNumber = async (newValue: string) => {
       const quantity = Number(newValue);
-      const { client, effects } = options;
+      const { client, effects, isMade } = options;
 
-      const update = getLinePriceUpdate(quantity, effects);
+      const update = isMade
+        ? getLinePriceUpdate(quantity, effects)
+        : {
+            materialCost:
+              row.quantity === 0
+                ? row.materialCost
+                : (row.materialCost / row.quantity) * quantity,
+          };
 
-      console.log({ quantity, effects, update });
       // this is the optimistic update on the FE
       onUpdate({ quantity, ...update });
 

@@ -357,7 +357,8 @@ export async function getQuoteLineQuantities(
   return client
     .from("quoteLineQuantity")
     .select("*")
-    .eq("quoteLineId", quoteLineId);
+    .eq("quoteLineId", quoteLineId)
+    .order("createdAt");
 }
 
 export async function getQuoteMaterials(
@@ -508,6 +509,7 @@ export async function insertQuoteLineQuantity(
     quoteId: string;
     quoteLineId: string;
     quantity?: number;
+    materialCost?: number;
     createdBy: string;
   }
 ) {
@@ -516,22 +518,24 @@ export async function insertQuoteLineQuantity(
     return quoteLine;
   }
 
-  const partId = quoteLine.data?.partId;
-  const [partCost] = await Promise.all([
-    client.from("partCost").select("unitCost").eq("partId", partId).single(),
-  ]);
+  let materialCost = 0;
+  if (quoteLine.data?.replenishmentSystem === "Buy") {
+    const partId = quoteLine.data?.partId;
+    const [partCost] = await Promise.all([
+      client.from("partCost").select("unitCost").eq("partId", partId).single(),
+    ]);
 
-  if (partCost.error) {
-    return partCost;
+    if (partCost.error) {
+      return partCost;
+    }
+
+    materialCost = partCost.data?.unitCost;
   }
 
   return client.from("quoteLineQuantity").insert([
     {
       ...quoteLineQuantity,
-      materialCost:
-        quoteLine.data.replenishmentSystem === "Make"
-          ? partCost.data?.unitCost
-          : 0,
+      materialCost,
     },
   ]);
 }

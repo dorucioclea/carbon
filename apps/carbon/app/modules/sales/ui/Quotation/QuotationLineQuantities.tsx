@@ -48,7 +48,6 @@ const QuotationLineQuantities = ({
 
   const [quotation] = useQuotation();
   const linePriceEffects = useQuotationLinePriceEffects();
-  console.log("linePriceEffects", linePriceEffects);
 
   // TODO: use the currency of the quote
   const formatter = new Intl.NumberFormat("en-US", {
@@ -211,14 +210,18 @@ const QuotationLineQuantities = ({
       quantity: EditableQuotationLineQuantity(onCellEdit, {
         client: supabase,
         effects: linePriceEffects.effects[lineId],
+        isMade,
       }),
       additionalCost: EditableNumber(onCellEdit, { minValue: 0 }),
       discountPercentage: EditableNumber(onCellEdit, { minValue: 0 }),
       markupPercentage: EditableNumber(onCellEdit, { minValue: 0 }),
       unitTaxAmount: EditableNumber(onCellEdit, { minValue: 0 }),
       leadTime: EditableNumber(onCellEdit, { minValue: 0 }),
+      materialCost: isMade
+        ? undefined
+        : EditableNumber(onCellEdit, { minValue: 0 }),
     }),
-    [lineId, linePriceEffects.effects, onCellEdit, supabase]
+    [isMade, lineId, linePriceEffects.effects, onCellEdit, supabase]
   );
 
   const newRowButtonRef = useRef<HTMLButtonElement>(null);
@@ -240,6 +243,7 @@ const QuotationLineQuantities = ({
             data={quotationLineQuantities}
             canEdit={canEdit && isEditable}
             columns={columns}
+            // @ts-ignore
             editableComponents={editableComponents}
             onNewRow={
               canEdit && isEditable
