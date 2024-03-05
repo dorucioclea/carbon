@@ -1,6 +1,8 @@
 "use client";
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
+import type { VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
 import type {
   ComponentPropsWithoutRef,
   ElementRef,
@@ -26,7 +28,10 @@ const ModalOverlay = forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-50 bg-black/10 backdrop-blur-sm  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      // 'z-50 fixed h-full w-full left-0 top-0',
+      // 'bg-alternative/90 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+      "bg-alternative/90 backdrop-blur-sm",
+      "z-50 fixed inset-0 grid place-items-center overflow-y-auto data-open:animate-overlay-show data-closed:animate-overlay-hide",
       className
     )}
     {...props}
@@ -34,26 +39,54 @@ const ModalOverlay = forwardRef<
 ));
 ModalOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
+const ModalContentVariants = cva(
+  cn(
+    "p-6",
+    "relative z-50 grid w-full gap-4 border shadow-md dark:shadow-sm duration-200",
+    "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+    "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+    "data-[state=closed]:slide-out-to-left-[0%] data-[state=closed]:slide-out-to-top-[0%",
+    "data-[state=open]:slide-in-from-left-[0%] data-[state=open]:slide-in-from-top-[0%]",
+    "sm:rounded-lg md:w-full",
+    "bg-background"
+  ),
+  {
+    variants: {
+      size: {
+        tiny: `sm:align-middle sm:w-full sm:max-w-xs`,
+        small: `sm:align-middle sm:w-full sm:max-w-sm`,
+        medium: `sm:align-middle sm:w-full sm:max-w-lg`,
+        large: `sm:align-middle sm:w-full max-w-xl`,
+        xlarge: `sm:align-middle sm:w-full max-w-3xl`,
+        xxlarge: `sm:align-middle sm:w-full max-w-6xl`,
+        xxxlarge: `sm:align-middle sm:w-full max-w-7xl`,
+      },
+    },
+    defaultVariants: {
+      size: "medium",
+    },
+  }
+);
+
 const ModalContent = forwardRef<
   ElementRef<typeof DialogPrimitive.Content>,
-  ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
+  ComponentPropsWithoutRef<typeof DialogPrimitive.Content> &
+    VariantProps<typeof ModalContentVariants>
+>(({ className, children, size, ...props }, ref) => (
   <ModalPortal>
-    <ModalOverlay />
-    <DialogPrimitive.Content
-      ref={ref}
-      className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
-        className
-      )}
-      {...props}
-    >
-      {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-        <MdClose className="h-4 w-4 text-muted-foreground" />
-        <span className="sr-only">Close</span>
-      </DialogPrimitive.Close>
-    </DialogPrimitive.Content>
+    <ModalOverlay>
+      <DialogPrimitive.Content
+        ref={ref}
+        className={cn(ModalContentVariants({ size }), className)}
+        {...props}
+      >
+        {children}
+        <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-foreground-muted">
+          <MdClose className="h-4 w-4" />
+          <span className="sr-only">Close</span>
+        </DialogPrimitive.Close>
+      </DialogPrimitive.Content>
+    </ModalOverlay>
   </ModalPortal>
 ));
 ModalContent.displayName = DialogPrimitive.Content.displayName;
