@@ -32,8 +32,8 @@ type PhoneInputProps = InputProps & {
   isRequired?: boolean;
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value"> &
   Omit<ReactPhoneInput.Props<typeof ReactPhoneInput.default>, "onChange"> & {
-    onChange: (value: ReactPhoneInput.Value) => void;
-    value: ReactPhoneInput.Value;
+    onChange?: (value: ReactPhoneInput.Value) => void;
+    value?: ReactPhoneInput.Value;
   };
 
 const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
@@ -58,7 +58,10 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
          *
          * @param {E164Number | undefined} value - The entered value
          */
-        onChange={(value) => onChange(value || "")}
+        onChange={(value) =>
+          props.onChange ? props.onChange(value || "") : undefined
+        }
+        // onChange={(value) => onchange(value || "")}
         {...props}
       />
     </FormControl>
