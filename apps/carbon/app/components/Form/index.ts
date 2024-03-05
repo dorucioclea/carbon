@@ -26,7 +26,6 @@ import Number from "./Number";
 import NumberControlled from "./NumberControlled";
 import Part from "./Part";
 import Password from "./Password";
-import Phone from "./Phone";
 import PhoneInput from "./PhoneInput";
 import Radios from "./Radios";
 import RichText from "./RichText";
@@ -76,7 +75,6 @@ export {
   NumberControlled,
   Part,
   Password,
-  Phone,
   PhoneInput,
   Radios,
   RichText,
