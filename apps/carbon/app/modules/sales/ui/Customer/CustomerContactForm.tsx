@@ -16,6 +16,7 @@ import {
   Hidden,
   Input,
   Phone,
+  PhoneInput,
   Submit,
   TextArea,
 } from "~/components/Form";
@@ -73,6 +74,7 @@ const CustomerContactForm = ({ initialValues }: CustomerContactFormProps) => {
               <Input name="lastName" label="Last Name" />
               <Input name="email" label="Email" />
               <Input name="title" label="Title" />
+              <PhoneInput name="mobilePhone" label="Mobile Phone" />
               <Phone name="mobilePhone" label="Mobile Phone" />
               <Phone name="homePhone" label="Home Phone" />
               <Phone name="workPhone" label="Work Phone" />
