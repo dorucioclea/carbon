@@ -1,5 +1,3 @@
-// import { CheckIcon, ChevronsUpDown } from "lucide-react";
-
 import * as React from "react";
 
 import * as ReactPhoneInput from "react-phone-number-input";
@@ -25,7 +23,7 @@ import {
   cn,
 } from "@carbon/react";
 import { RxCaretSort, RxCheck } from "react-icons/rx";
-import { useField } from "remix-validated-form";
+import { useControlField, useField } from "remix-validated-form";
 const PhoneInputComponent = ReactPhoneInput.default;
 
 type PhoneInputProps = InputProps & {
@@ -44,6 +42,13 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
     PhoneInputProps
   >(({ name, label, isRequired, className, ...props }, ref) => {
     const { getInputProps, error } = useField(name);
+    const [value, setValue] = useControlField<string>(name);
+
+    const onChange = (value: string) => {
+      setValue(value);
+      props.onChange?.(value);
+    };
+
     return (
       <FormControl isInvalid={!!error} isRequired={isRequired}>
         {label && <FormLabel htmlFor={name}>{label}</FormLabel>}
@@ -53,13 +58,12 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
           flagComponent={FlagComponent}
           countrySelectComponent={CountrySelect}
           inputComponent={InputComponent}
-          defaultCountry="US"
           international
-          value={getInputProps({ id: name, ...props }).defaultValue}
           {...getInputProps({
             id: name,
             ...props,
           })}
+          value={value}
           /**
            * Handles the onChange event.
            *
@@ -69,9 +73,7 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
            *
            * @param {E164Number | undefined} value - The entered value
            */
-          onChange={(value) =>
-            props.onChange ? props.onChange(value || "") : undefined
-          }
+          onChange={onChange}
           {...props}
         />
         {error && <FormErrorMessage>{error}</FormErrorMessage>}
@@ -117,6 +119,7 @@ const CountrySelect = ({
     <Popover modal={true}>
       <PopoverTrigger asChild>
         <Button
+          type="button"
           variant={"ghost"}
           className={cn(
             "py-1 border flex gap-1 h-full rounded-e-none rounded-s-lg pr-1 pl-3"
