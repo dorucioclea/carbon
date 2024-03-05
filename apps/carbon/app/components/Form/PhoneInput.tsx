@@ -53,6 +53,8 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
           flagComponent={FlagComponent}
           countrySelectComponent={CountrySelect}
           inputComponent={InputComponent}
+          defaultCountry="US"
+          international
           value={getInputProps({ id: name, ...props }).defaultValue}
           {...getInputProps({
             id: name,
@@ -79,7 +81,13 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
 PhoneInput.displayName = "PhoneInput";
 
 const InputComponent = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, ...props }, ref) => <Input {...props} ref={ref} />
+  ({ className, ...props }, ref) => (
+    <Input
+      className={cn("rounded-s-none rounded-e-lg", className)}
+      {...props}
+      ref={ref}
+    />
+  )
 );
 InputComponent.displayName = "InputComponent";
 
