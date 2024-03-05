@@ -16,6 +16,7 @@ import {
   CommandItem,
   CommandList,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Input,
   Popover,
@@ -24,6 +25,7 @@ import {
   cn,
 } from "@carbon/react";
 import { RxCaretSort, RxCheck } from "react-icons/rx";
+import { useField } from "remix-validated-form";
 const PhoneInputComponent = ReactPhoneInput.default;
 
 type PhoneInputProps = InputProps & {
@@ -40,42 +42,44 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
   React.forwardRef<
     React.ElementRef<typeof ReactPhoneInput.default>,
     PhoneInputProps
-  >(({ name, label, isRequired, className, ...props }, ref) => (
-    <FormControl isRequired={isRequired}>
-      <FormLabel htmlFor={name}>{label}</FormLabel>
-      <PhoneInputComponent
-        ref={ref}
-        className={cn("flex", className)}
-        flagComponent={FlagComponent}
-        countrySelectComponent={CountrySelect}
-        inputComponent={InputComponent}
-        /**
-         * Handles the onChange event.
-         *
-         * react-phone-number-input might trigger the onChange event as undefined
-         * when a valid phone number is not entered. To prevent this,
-         * the value is coerced to an empty string.
-         *
-         * @param {E164Number | undefined} value - The entered value
-         */
-        onChange={(value) =>
-          props.onChange ? props.onChange(value || "") : undefined
-        }
-        // onChange={(value) => onchange(value || "")}
-        {...props}
-      />
-    </FormControl>
-  ));
+  >(({ name, label, isRequired, className, ...props }, ref) => {
+    const { getInputProps, error } = useField(name);
+    return (
+      <FormControl isInvalid={!!error} isRequired={isRequired}>
+        {label && <FormLabel htmlFor={name}>{label}</FormLabel>}
+        <PhoneInputComponent
+          ref={ref}
+          className={cn("flex", className)}
+          flagComponent={FlagComponent}
+          countrySelectComponent={CountrySelect}
+          inputComponent={InputComponent}
+          value={getInputProps({ id: name, ...props }).defaultValue}
+          {...getInputProps({
+            id: name,
+            ...props,
+          })}
+          /**
+           * Handles the onChange event.
+           *
+           * react-phone-number-input might trigger the onChange event as undefined
+           * when a valid phone number is not entered. To prevent this,
+           * the value is coerced to an empty string.
+           *
+           * @param {E164Number | undefined} value - The entered value
+           */
+          onChange={(value) =>
+            props.onChange ? props.onChange(value || "") : undefined
+          }
+          {...props}
+        />
+        {error && <FormErrorMessage>{error}</FormErrorMessage>}
+      </FormControl>
+    );
+  });
 PhoneInput.displayName = "PhoneInput";
 
 const InputComponent = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, ...props }, ref) => (
-    <Input
-      className={cn("rounded-s-none rounded-e-lg", className)}
-      {...props}
-      ref={ref}
-    />
-  )
+  ({ className, ...props }, ref) => <Input {...props} ref={ref} />
 );
 InputComponent.displayName = "InputComponent";
 
@@ -107,7 +111,7 @@ const CountrySelect = ({
         <Button
           variant={"ghost"}
           className={cn(
-            "py-1 flex gap-1 h-full rounded-e-none rounded-s-lg pr-1 pl-3"
+            "py-1 border flex gap-1 h-full rounded-e-none rounded-s-lg pr-1 pl-3"
           )}
           disabled={disabled}
         >

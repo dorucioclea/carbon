@@ -15,7 +15,6 @@ import {
   DatePicker,
   Hidden,
   Input,
-  Phone,
   PhoneInput,
   Submit,
   TextArea,
@@ -75,10 +74,9 @@ const CustomerContactForm = ({ initialValues }: CustomerContactFormProps) => {
               <Input name="email" label="Email" />
               <Input name="title" label="Title" />
               <PhoneInput name="mobilePhone" label="Mobile Phone" />
-              <Phone name="mobilePhone" label="Mobile Phone" />
-              <Phone name="homePhone" label="Home Phone" />
-              <Phone name="workPhone" label="Work Phone" />
-              <Phone name="fax" label="Fax" />
+              <PhoneInput name="homePhone" label="Home Phone" />
+              <PhoneInput name="workPhone" label="Work Phone" />
+              <PhoneInput name="fax" label="Fax" />
               <Input name="addressLine1" label="Address Line 1" />
               <Input name="addressLine2" label="Address Line 2" />
               <Input name="city" label="City" />
