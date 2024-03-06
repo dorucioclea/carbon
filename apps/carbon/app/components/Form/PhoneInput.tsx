@@ -1,9 +1,5 @@
-import * as React from "react";
-
 import * as ReactPhoneInput from "react-phone-number-input";
-
 import flags from "react-phone-number-input/flags";
-
 import type { InputProps } from "@carbon/react";
 import {
   Button,
@@ -24,65 +20,71 @@ import {
 } from "@carbon/react";
 import { RxCaretSort, RxCheck } from "react-icons/rx";
 import { useControlField, useField } from "remix-validated-form";
+import type {
+  ElementRef,
+  ForwardRefExoticComponent,
+  InputHTMLAttributes,
+} from "react";
+import { forwardRef, useCallback } from "react";
+
 const PhoneInputComponent = ReactPhoneInput.default;
 
 type PhoneInputProps = InputProps & {
   name: string;
   label?: string;
   isRequired?: boolean;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value"> &
+} & Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "value"> &
   Omit<ReactPhoneInput.Props<typeof ReactPhoneInput.default>, "onChange"> & {
     onChange?: (value: ReactPhoneInput.Value) => void;
     value?: ReactPhoneInput.Value;
   };
 
-const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
-  React.forwardRef<
-    React.ElementRef<typeof ReactPhoneInput.default>,
-    PhoneInputProps
-  >(({ name, label, isRequired, className, ...props }, ref) => {
-    const { getInputProps, error } = useField(name);
-    const [value, setValue] = useControlField<string>(name);
+const PhoneInput: ForwardRefExoticComponent<PhoneInputProps> = forwardRef<
+  ElementRef<typeof ReactPhoneInput.default>,
+  PhoneInputProps
+>(({ name, label, isRequired, className, ...props }, ref) => {
+  const { getInputProps, error } = useField(name);
+  const [value, setValue] = useControlField<string>(name);
 
-    const onChange = (value: string) => {
-      setValue(value);
-      props.onChange?.(value);
-    };
+  const onChange = (value: string) => {
+    setValue(value);
+    props.onChange?.(value);
+  };
 
-    return (
-      <FormControl isInvalid={!!error} isRequired={isRequired}>
-        {label && <FormLabel htmlFor={name}>{label}</FormLabel>}
-        <PhoneInputComponent
-          ref={ref}
-          className={cn("flex", className)}
-          flagComponent={FlagComponent}
-          countrySelectComponent={CountrySelect}
-          inputComponent={InputComponent}
-          international
-          {...getInputProps({
-            id: name,
-            ...props,
-          })}
-          value={value}
-          /**
-           * Handles the onChange event.
-           *
-           * react-phone-number-input might trigger the onChange event as undefined
-           * when a valid phone number is not entered. To prevent this,
-           * the value is coerced to an empty string.
-           *
-           * @param {E164Number | undefined} value - The entered value
-           */
-          onChange={onChange}
-          {...props}
-        />
-        {error && <FormErrorMessage>{error}</FormErrorMessage>}
-      </FormControl>
-    );
-  });
+  return (
+    <FormControl isInvalid={!!error} isRequired={isRequired}>
+      {label && <FormLabel htmlFor={name}>{label}</FormLabel>}
+      <PhoneInputComponent
+        ref={ref}
+        className={cn("flex", className)}
+        flagComponent={FlagComponent}
+        countrySelectComponent={CountrySelect}
+        inputComponent={InputComponent}
+        international
+        {...getInputProps({
+          id: name,
+          ...props,
+        })}
+        value={value}
+        /**
+         * Handles the onChange event.
+         *
+         * react-phone-number-input might trigger the onChange event as undefined
+         * when a valid phone number is not entered. To prevent this,
+         * the value is coerced to an empty string.
+         *
+         * @param {E164Number | undefined} value - The entered value
+         */
+        onChange={onChange}
+        {...props}
+      />
+      {error && <FormErrorMessage>{error}</FormErrorMessage>}
+    </FormControl>
+  );
+});
 PhoneInput.displayName = "PhoneInput";
 
-const InputComponent = React.forwardRef<HTMLInputElement, InputProps>(
+const InputComponent = forwardRef<HTMLInputElement, InputProps>(
   ({ className, ...props }, ref) => (
     <Input
       className={cn("rounded-s-none rounded-e-lg", className)}
@@ -108,7 +110,7 @@ const CountrySelect = ({
   onChange,
   options,
 }: CountrySelectProps) => {
-  const handleSelect = React.useCallback(
+  const handleSelect = useCallback(
     (country: ReactPhoneInput.Country) => {
       onChange(country);
     },
