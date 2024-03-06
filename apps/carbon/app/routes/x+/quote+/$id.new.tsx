@@ -51,6 +51,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const quoteLineId = createQuotationLine.data.id;
 
   const createQuoteQuantity = await insertQuoteLineQuantity(client, {
+    quoteId,
     quoteLineId,
     quantity: 1,
     createdBy: userId,

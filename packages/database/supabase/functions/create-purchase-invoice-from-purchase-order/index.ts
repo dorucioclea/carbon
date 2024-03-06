@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.175.0/http/server.ts";
 import { DB, getConnectionPool, getDatabaseClient } from "../lib/database.ts";
 
-import { Database } from "../../../src/types.ts";
+import { Database } from "../lib/types.ts";
 import { corsHeaders } from "../lib/headers.ts";
 import { getSupabaseServiceRole } from "../lib/supabase.ts";
 import { getNextSequence } from "../shared/get-next-sequence.ts";

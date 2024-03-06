@@ -1,7 +1,9 @@
+import type { Database } from "@carbon/database";
 import { useStore as useValue } from "@nanostores/react";
-import { atom, computed } from "nanostores";
-import { arrayToTree } from "performant-array-to-tree";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { atom, computed, task } from "nanostores";
 import { useNanoStore } from "~/hooks";
+import logger from "~/lib/logger";
 import type {
   Quotation,
   QuotationAssembly,
@@ -9,9 +11,9 @@ import type {
   QuotationMaterial,
   QuotationOperation,
 } from "~/modules/sales";
-import type { BillOfMaterialNode } from "~/modules/shared";
 
-type Quote = {
+type QuoteStore = {
+  client?: SupabaseClient<Database>;
   quote?: Quotation;
   lines: QuotationLine[];
   assemblies: QuotationAssembly[];
@@ -19,7 +21,18 @@ type Quote = {
   materials: QuotationMaterial[];
 };
 
-const $quotationStore = atom<Quote>({
+type Effect = (quantity: number) => number;
+
+export type LinePriceEffects = {
+  materialCost: Effect[];
+  laborCost: Effect[];
+  overheadCost: Effect[];
+  setupHours: Effect[];
+  productionHours: Effect[];
+};
+
+const $quotationStore = atom<QuoteStore>({
+  client: undefined,
   quote: undefined,
   lines: [],
   assemblies: [],
@@ -27,10 +40,30 @@ const $quotationStore = atom<Quote>({
   materials: [],
 });
 
-const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
-  if (!store.quote) return [];
+const defaultLinePriceEffectsResult = {} as Record<string, LinePriceEffects>;
 
-  const materialsByOperationId = store.materials.reduce<
+const $quotationLinePriceEffects = computed($quotationStore, (store) => {
+  const assembliesByLineId = store.assemblies?.reduce<
+    Record<string, QuotationAssembly[]>
+  >((acc, assembly) => {
+    if (!acc[assembly.quoteLineId]) {
+      acc[assembly.quoteLineId] = [];
+    }
+    acc[assembly.quoteLineId].push(assembly);
+    return acc;
+  }, {});
+
+  const operationsByLineId = store.operations?.reduce<
+    Record<string, QuotationOperation[]>
+  >((acc, operation) => {
+    if (!acc[operation.quoteLineId]) {
+      acc[operation.quoteLineId] = [];
+    }
+    acc[operation.quoteLineId].push(operation);
+    return acc;
+  }, {});
+
+  let materialsByOperationId = store.materials?.reduce<
     Record<string, QuotationMaterial[]>
   >((acc, material) => {
     if (!acc[material.quoteOperationId]) {
@@ -40,165 +73,246 @@ const $quotationMenuStore = computed($quotationStore, (store: Quote) => {
     return acc;
   }, {});
 
-  const operationsByAssemblyId = store.operations.reduce<
-    Record<string, BillOfMaterialNode[]>
-  >((acc, operation) => {
-    if (!operation?.quoteAssemblyId) return acc;
-    if (!acc[operation.quoteAssemblyId]) {
-      acc[operation.quoteAssemblyId] = [];
-    }
-    acc[operation.quoteAssemblyId].push({
-      id: operation.id,
-      parentId: operation.quoteAssemblyId ?? undefined,
-      label: operation.description ?? "Operation",
-      type: "operation",
-      meta: operation,
-      children: [
-        {
-          id: operation.id,
-          label: "Materials",
-          type: "materials",
-          meta: operation,
-          children: materialsByOperationId[operation.id]?.map((material) => ({
-            id: material.id,
-            parentId: operation.id,
-            label: material.description,
-            type: "material",
-            meta: material,
-          })),
-        },
-      ],
-    });
-    return acc;
-  }, {});
-
-  const itemsByLineId: Record<
-    string,
-    {
-      assemblies: BillOfMaterialNode[];
-      operations: BillOfMaterialNode[];
-    }
-  > = {};
-
-  store.assemblies.forEach((assembly) => {
-    if (!itemsByLineId[assembly.quoteLineId]) {
-      itemsByLineId[assembly.quoteLineId] = {
-        assemblies: [],
-        operations: [],
+  const linePriceEffects = store?.lines
+    ?.filter((line) => line.replenishmentSystem === "Make")
+    .reduce<Record<string, LinePriceEffects>>((effects, line) => {
+      effects[line.id] = {
+        materialCost: [],
+        laborCost: [],
+        overheadCost: [],
+        setupHours: [],
+        productionHours: [],
       };
-    }
-    itemsByLineId[assembly.quoteLineId].assemblies.push({
-      id: assembly.id,
-      parentId: assembly.parentAssemblyId ?? undefined,
-      label: assembly.description ?? assembly.partId,
-      type: "assembly",
-      meta: assembly,
-    });
-  });
 
-  store.operations.forEach((operation) => {
-    if (!itemsByLineId[operation.quoteLineId]) {
-      itemsByLineId[operation.quoteLineId] = {
-        assemblies: [],
-        operations: [],
-      };
-    }
-    itemsByLineId[operation.quoteLineId].operations.push({
-      id: operation.id,
-      parentId: operation.quoteAssemblyId ?? undefined,
-      label: operation.description ?? "Operation",
-      type: "operation",
-      meta: operation,
-      children: [
-        {
-          id: operation.id,
-          label: "Materials",
-          type: "materials",
-          meta: operation,
-          children: materialsByOperationId[operation.id]?.map((material) => ({
-            id: material.id,
-            parentId: operation.id,
-            label: material.description,
-            type: "material",
-            meta: material,
-          })),
-        },
-      ],
-    });
-  });
+      let assembliesById = assembliesByLineId[line.id]?.reduce<
+        Record<string, QuotationAssembly>
+      >((acc, assembly) => {
+        acc[assembly.id] = assembly;
+        return acc;
+      }, {});
 
-  const menu: BillOfMaterialNode[] = [
-    {
-      id: store.quote.id!,
-      label: store.quote.quoteId!,
-      type: "parent",
-      children: store.lines.map<BillOfMaterialNode>((line) => ({
-        id: line.id,
-        label: line.description,
-        type: "line",
-        meta: line,
-        children: [
-          {
-            id: line.id,
-            label: "Assemblies",
-            type: "assemblies",
-            children: itemsByLineId[line.id]?.assemblies
-              ? [
-                  ...(arrayToTree(itemsByLineId[line.id].assemblies, {
-                    id: "id",
-                    dataField: null,
-                  }) as BillOfMaterialNode[]),
-                ]
-              : [],
+      const extendedQuantitiesPerAssembly = assembliesByLineId[line.id]?.reduce<
+        Record<string, number>
+      >((acc, assembly: QuotationAssembly) => {
+        let quantity = assembly.quantityPerParent ?? 1;
+        let asm = assembliesById[assembly.id];
+        while (asm.parentAssemblyId) {
+          // memoize the results
+          if (acc[asm.parentAssemblyId]) {
+            quantity *= acc[asm.parentAssemblyId];
+            break;
+          }
+
+          let parent = assembliesById[asm.parentAssemblyId];
+          quantity *= parent.quantityPerParent ?? 1;
+          asm = parent;
+        }
+
+        acc[assembly.id] = quantity;
+        return acc;
+      }, {});
+
+      operationsByLineId[line.id]?.forEach((operation: QuotationOperation) => {
+        let materials = materialsByOperationId[operation.id] ?? [];
+        let extendedQuantityPerAssembly = operation.quoteAssemblyId
+          ? extendedQuantitiesPerAssembly[operation.quoteAssemblyId] ?? 1
+          : 1;
+
+        let materialCost = materials.reduce(
+          (acc, material: QuotationMaterial) => {
+            return acc + (material.quantity ?? 0) * (material.unitCost ?? 0);
           },
-          {
-            id: line.id,
-            label: "Operations",
-            type: "operations",
-            children: itemsByLineId[line.id]?.operations.filter(
-              (operation) => operation.parentId === undefined
-            ) as BillOfMaterialNode[],
-          },
-        ],
-      })),
-    },
-  ];
+          0
+        );
 
-  traverseTree(menu, (node) => {
-    if (node.type === "assembly") {
-      node.children = [
-        {
-          id: node.meta.quoteLineId,
-          parentId: node.id,
-          label: "Assemblies",
-          type: "assemblies",
-          children: node.children,
-        },
-        {
-          id: node.meta.quoteLineId,
-          parentId: node.id,
-          label: "Operations",
-          type: "operations",
-          children: operationsByAssemblyId[node.id] ?? [],
-        },
-      ];
-    }
-  });
+        effects[line.id].materialCost.push((quantity) => {
+          return materialCost * quantity * extendedQuantityPerAssembly;
+        });
 
-  return menu;
+        if (operation.setupHours) {
+          effects[line.id].setupHours.push((_quantity) => {
+            return operation.setupHours;
+          });
+          if (operation.quotingRate) {
+            effects[line.id].overheadCost.push((_quantity) => {
+              return operation.setupHours * (operation.quotingRate ?? 0);
+            });
+          } else {
+            effects[line.id].laborCost.push((_quantity) => {
+              return operation.setupHours * (operation.laborRate ?? 0);
+            });
+            effects[line.id].overheadCost.push((_quantity) => {
+              return operation.setupHours * (operation.overheadRate ?? 0);
+            });
+          }
+        }
+
+        if (operation.productionStandard) {
+          let hoursPerProductionStandard = 0;
+          switch (operation.standardFactor) {
+            case "Total Hours":
+            case "Hours/Piece":
+              hoursPerProductionStandard = operation.productionStandard;
+              break;
+            case "Hours/100 Pieces":
+              hoursPerProductionStandard = operation.productionStandard / 100;
+              break;
+            case "Hours/1000 Pieces":
+              hoursPerProductionStandard = operation.productionStandard / 1000;
+              break;
+            case "Total Minutes":
+            case "Minutes/Piece":
+              hoursPerProductionStandard = operation.productionStandard / 60;
+              break;
+            case "Minutes/100 Pieces":
+              hoursPerProductionStandard =
+                operation.productionStandard / 100 / 60;
+              break;
+            case "Minutes/1000 Pieces":
+              hoursPerProductionStandard =
+                operation.productionStandard / 1000 / 60;
+              break;
+            case "Pieces/Hour":
+              hoursPerProductionStandard = 1 / operation.productionStandard;
+              break;
+            case "Pieces/Minute":
+              hoursPerProductionStandard =
+                1 / (operation.productionStandard / 60);
+              break;
+            case "Seconds/Piece":
+              hoursPerProductionStandard = operation.productionStandard / 3600;
+              break;
+            default:
+              break;
+          }
+
+          effects[line.id].productionHours.push((quantity) => {
+            return (
+              hoursPerProductionStandard *
+              quantity *
+              extendedQuantityPerAssembly
+            );
+          });
+          if (operation.quotingRate) {
+            effects[line.id].overheadCost.push((quantity) => {
+              return (
+                hoursPerProductionStandard *
+                quantity *
+                extendedQuantityPerAssembly *
+                (operation.quotingRate ?? 0)
+              );
+            });
+          } else {
+            effects[line.id].laborCost.push((quantity) => {
+              return (
+                hoursPerProductionStandard *
+                quantity *
+                extendedQuantityPerAssembly *
+                (operation.laborRate ?? 0)
+              );
+            });
+            effects[line.id].overheadCost.push((quantity) => {
+              return (
+                hoursPerProductionStandard *
+                quantity *
+                extendedQuantityPerAssembly *
+                (operation.overheadRate ?? 0)
+              );
+            });
+          }
+        }
+      });
+      return effects;
+    }, {});
+
+  return {
+    client: store.client,
+    quoteId: store.quote?.id ?? "",
+    effects: linePriceEffects,
+  };
 });
 
-function traverseTree(
-  tree: BillOfMaterialNode[],
-  callback: (node: BillOfMaterialNode) => void
+const $quotationLinePriceEffectsUpdate = computed(
+  $quotationLinePriceEffects,
+  (store) =>
+    task(async () => {
+      if (!store.quoteId || !store.client) return defaultLinePriceEffectsResult;
+
+      const quoteLineQuantities = await store.client
+        .from("quoteLineQuantity")
+        .select("*")
+        .eq("quoteId", store.quoteId);
+
+      if (quoteLineQuantities.error) {
+        logger.error(quoteLineQuantities.error);
+        return defaultLinePriceEffectsResult;
+      }
+
+      if (!quoteLineQuantities.data || !quoteLineQuantities.data.length) {
+        return defaultLinePriceEffectsResult;
+      }
+
+      for await (const lineQuantity of quoteLineQuantities.data) {
+        const quantity = lineQuantity.quantity ?? 0;
+        const effects = store.effects[lineQuantity.quoteLineId];
+
+        // skip updates for parts that aren't make
+        if (!effects) continue;
+
+        const update = getLinePriceUpdate(quantity, effects);
+
+        const { error } = await store.client
+          .from("quoteLineQuantity")
+          .update(update)
+          .eq("id", lineQuantity.id);
+
+        if (error) {
+          logger.error(error);
+        }
+      }
+    })
+);
+
+export function getLinePriceUpdate(
+  quantity: number,
+  effects: LinePriceEffects
 ) {
-  tree.forEach((node) => {
-    callback(node);
-    if (node.children) {
-      traverseTree(node.children, callback);
-    }
-  });
+  const materialCost = effects?.materialCost.reduce(
+    (acc, effect) => acc + effect(quantity),
+    0
+  );
+
+  const laborCost = effects?.laborCost.reduce(
+    (acc, effect) => acc + effect(quantity),
+    0
+  );
+
+  const overheadCost = effects?.overheadCost.reduce(
+    (acc, effect) => acc + effect(quantity),
+    0
+  );
+
+  const setupHours = effects?.setupHours.reduce(
+    (acc, effect) => acc + effect(quantity),
+    0
+  );
+
+  const productionHours = effects?.productionHours.reduce(
+    (acc, effect) => acc + effect(quantity),
+    0
+  );
+
+  return {
+    materialCost,
+    laborCost,
+    overheadCost,
+    setupHours,
+    productionHours,
+  };
 }
 
-export const useQuotation = () => useNanoStore<Quote>($quotationStore);
-export const useQuotationMenu = () => useValue($quotationMenuStore);
+export const useQuotation = () => useNanoStore<QuoteStore>($quotationStore);
+export const useQuotationLinePriceEffects = () =>
+  useValue($quotationLinePriceEffects);
+export const useQuotationLinePriceEffectsUpdate = () =>
+  useValue($quotationLinePriceEffectsUpdate);

@@ -559,7 +559,6 @@ export async function getPartners(
   return query;
 }
 
-
 type UserAttributeId = string;
 
 export type PersonAttributeValue = {

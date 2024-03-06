@@ -38,7 +38,7 @@ const QuotationMaterialLines = ({
   if (!lineId) throw new Error("lineId not found");
   if (!operationId) throw new Error("operationId not found");
 
-  const [, setQuotation] = useQuotation();
+  const [, setQuote] = useQuotation();
 
   const { id: userId } = useUser();
   const { supabase } = useSupabase();
@@ -155,7 +155,7 @@ const QuotationMaterialLines = ({
             editableComponents={editableComponents}
             onNewRow={() => navigate("material/new")}
             onDataChange={(data) =>
-              setQuotation((prev) => ({
+              setQuote((prev) => ({
                 ...prev,
                 materials: prev.materials
                   .filter((m) => m.quoteOperationId !== operationId)

@@ -145,7 +145,7 @@ const SearchModal = ({
         if (!open) onClose();
       }}
     >
-      <ModalContent className="rounded-lg top-[10vh] translate-y-0 p-0">
+      <ModalContent className="rounded-lg translate-y-0 p-0">
         <Command className="rounded-lg border shadow-md">
           <CommandInput
             placeholder="Type a command or search..."
@@ -177,9 +177,9 @@ const SearchModal = ({
             {Object.entries(staticResults).map(([module, submodules]) => (
               <>
                 <CommandGroup heading={module} key={module}>
-                  {submodules.map((submodule) => (
+                  {submodules.map((submodule, index) => (
                     <CommandItem
-                      key={`${submodule.to}-${submodule.name}`}
+                      key={`${submodule.to}-${submodule.name}-${index}`}
                       onSelect={() => onSelect(submodule)}
                       value={`${module} ${submodule.name}`}
                     >

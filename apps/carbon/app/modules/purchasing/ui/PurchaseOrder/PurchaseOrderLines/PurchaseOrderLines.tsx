@@ -26,7 +26,7 @@ import {
   EditableText,
 } from "~/components/Editable";
 import Grid from "~/components/Grid";
-import { useRouteData, useUser } from "~/hooks";
+import { useRealtime, useRouteData, useUser } from "~/hooks";
 import type { PurchaseOrder, PurchaseOrderLine } from "~/modules/purchasing";
 import { usePurchaseOrderTotals } from "~/modules/purchasing";
 import type { ListItem } from "~/types";
@@ -36,6 +36,8 @@ import usePurchaseOrderLines from "./usePurchaseOrderLines";
 const PurchaseOrderLines = () => {
   const { orderId } = useParams();
   if (!orderId) throw new Error("orderId not found");
+
+  useRealtime("purchaseOrderLine", `purchaseOrderId=eq.${orderId}`);
 
   const navigate = useNavigate();
 

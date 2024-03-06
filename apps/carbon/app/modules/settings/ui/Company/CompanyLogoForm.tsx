@@ -64,7 +64,7 @@ const CompanyLogoForm = ({ company }: CompanyLogoFormProps) => {
   };
 
   return (
-    <VStack className="items-center px-8">
+    <VStack className="items-center p-4">
       {company?.logo ? (
         <img
           alt={`${company.name} Logo`}

@@ -16,14 +16,18 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { useCallback, useMemo, useRef } from "react";
 import { IoMdTrash } from "react-icons/io";
 import { MdMoreHoriz } from "react-icons/md";
-import { EditableNumber } from "~/components/Editable";
+import {
+  EditableNumber,
+  EditableQuotationLineQuantity,
+} from "~/components/Editable";
 import Grid from "~/components/Grid";
-import { usePermissions, useRouteData, useUser } from "~/hooks";
+import { usePermissions, useRealtime, useUser } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
-import type {
-  Quotation,
-  QuotationLine,
-  QuotationLineQuantity,
+import {
+  useQuotation,
+  useQuotationLinePriceEffects,
+  type QuotationLine,
+  type QuotationLineQuantity,
 } from "~/modules/sales";
 import { path } from "~/utils/path";
 
@@ -40,11 +44,12 @@ const QuotationLineQuantities = ({
   if (!id) throw new Error("id not found");
   if (!lineId) throw new Error("lineId not found");
 
+  useRealtime("quoteLineQuantity", `quoteLineId=eq.${lineId}`);
+
   const navigate = useNavigate();
 
-  const routeData = useRouteData<{
-    quotation: Quotation;
-  }>(path.to.quote(id));
+  const [quotation] = useQuotation();
+  const linePriceEffects = useQuotationLinePriceEffects();
 
   // TODO: use the currency of the quote
   const formatter = new Intl.NumberFormat("en-US", {
@@ -73,7 +78,7 @@ const QuotationLineQuantities = ({
     [supabase, userId]
   );
 
-  const isEditable = ["Draft"].includes(routeData?.quotation?.status ?? "");
+  const isEditable = ["Draft"].includes(quotation?.quote?.status ?? "");
   const isMade = quotationLine.replenishmentSystem === "Make";
 
   const columns = useMemo<ColumnDef<QuotationLineQuantity>[]>(() => {
@@ -163,11 +168,6 @@ const QuotationLineQuantities = ({
     if (isMade) {
       _columns.push(
         {
-          accessorKey: "scrapPercentage",
-          header: "Scrap Percentage",
-          cell: (item) => item.getValue() + "%",
-        },
-        {
           accessorKey: "setupHours",
           header: "Setup Hours",
           cell: (item) => item.getValue(),
@@ -189,14 +189,11 @@ const QuotationLineQuantities = ({
     if (isMade) {
       _columns.push(
         {
-          accessorKey: "laborCost",
-          header: "Labor Cost",
-          cell: (item) => formatter.format(item.getValue<number>()),
-        },
-        {
-          accessorKey: "overheadCost",
-          header: "Overhead Cost",
-          cell: (item) => formatter.format(item.getValue<number>()),
+          header: "Labor + Overhead Cost",
+          cell: ({ row }) =>
+            formatter.format(
+              row.original.laborCost + row.original.overheadCost
+            ),
         },
         {
           accessorKey: "additionalCost",
@@ -212,23 +209,21 @@ const QuotationLineQuantities = ({
 
   const editableComponents = useMemo(
     () => ({
-      quantity: EditableNumber(onCellEdit),
-      scrapPercentage: EditableNumber(onCellEdit, {
-        minValue: 0,
-        maxValue: 1,
+      quantity: EditableQuotationLineQuantity(onCellEdit, {
+        client: supabase,
+        effects: linePriceEffects.effects[lineId],
+        isMade,
       }),
-      setupHours: EditableNumber(onCellEdit, { minValue: 0 }),
-      productionHours: EditableNumber(onCellEdit, { minValue: 0 }),
-      materialCost: EditableNumber(onCellEdit, { minValue: 0 }),
-      laborCost: EditableNumber(onCellEdit, { minValue: 0 }),
-      overheadCost: EditableNumber(onCellEdit, { minValue: 0 }),
       additionalCost: EditableNumber(onCellEdit, { minValue: 0 }),
       discountPercentage: EditableNumber(onCellEdit, { minValue: 0 }),
       markupPercentage: EditableNumber(onCellEdit, { minValue: 0 }),
       unitTaxAmount: EditableNumber(onCellEdit, { minValue: 0 }),
       leadTime: EditableNumber(onCellEdit, { minValue: 0 }),
+      materialCost: isMade
+        ? undefined
+        : EditableNumber(onCellEdit, { minValue: 0 }),
     }),
-    [onCellEdit]
+    [isMade, lineId, linePriceEffects.effects, onCellEdit, supabase]
   );
 
   const newRowButtonRef = useRef<HTMLButtonElement>(null);
@@ -250,6 +245,7 @@ const QuotationLineQuantities = ({
             data={quotationLineQuantities}
             canEdit={canEdit && isEditable}
             columns={columns}
+            // @ts-ignore
             editableComponents={editableComponents}
             onNewRow={
               canEdit && isEditable
@@ -269,11 +265,12 @@ const QuotationLineQuantities = ({
 
 export default QuotationLineQuantities;
 
-function getUnitCost(quantity: QuotationLineQuantity) {
-  return (
-    quantity.materialCost +
-    quantity.laborCost +
-    quantity.overheadCost +
-    quantity.additionalCost
-  );
+function getUnitCost(line: QuotationLineQuantity) {
+  return line.quantity
+    ? (line.materialCost +
+        line.laborCost +
+        line.overheadCost +
+        line.additionalCost) /
+        line.quantity
+    : 0;
 }

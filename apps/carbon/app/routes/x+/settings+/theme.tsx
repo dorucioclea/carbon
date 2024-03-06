@@ -3,7 +3,6 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { validationError } from "remix-validated-form";
-import { PageTitle } from "~/components/Layout";
 import type { Theme as ThemeValue } from "~/modules/settings";
 import {
   ThemeForm,
@@ -75,12 +74,7 @@ export default function Theme() {
   };
 
   return (
-    <VStack spacing={0} className="bg-background p-8 h-full">
-      <PageTitle
-        title="Theme"
-        subtitle="Pick a style and color scheme that suits you best."
-      />
-
+    <VStack spacing={0} className="p-4 h-full">
       <ThemeForm theme={initialValues} />
     </VStack>
   );

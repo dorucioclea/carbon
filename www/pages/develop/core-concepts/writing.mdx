@@ -149,7 +149,7 @@ import { serve } from "https://deno.land/std@0.175.0/http/server.ts";
 import { format } from "https://deno.land/std@0.205.0/datetime/mod.ts";
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.33.1";
 
-import type { Database } from "../../../src/types.ts";
+import type { Database } from "../lib/types.ts";
 import { getConnectionPool, getDatabaseClient } from "../lib/database.ts";
 import { corsHeaders } from "../lib/headers.ts";
 import { getSupabaseServiceRole } from "../lib/supabase.ts";

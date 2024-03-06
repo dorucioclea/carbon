@@ -1,5 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.33.1";
-import type { Database } from "../../../src/types.ts";
+import type { Database } from "../lib/types.ts";
 
 export const getSupabase = (authorizationHeader: string | null) => {
   if (!authorizationHeader) throw new Error("Authorization header is required");

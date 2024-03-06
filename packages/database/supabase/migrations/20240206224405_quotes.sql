@@ -80,6 +80,7 @@ CREATE INDEX "quoteLine_quoteId_idx" ON "quoteLine" ("quoteId");
 
 CREATE TABLE "quoteLineQuantity" (
   "id" TEXT NOT NULL DEFAULT xid(),
+  "quoteId" TEXT NOT NULL,
   "quoteLineId" TEXT NOT NULL,
   "quantity" NUMERIC(10, 2) NOT NULL DEFAULT 0,
   "scrapPercentage" NUMERIC(5, 2) NOT NULL DEFAULT 0,
@@ -105,6 +106,8 @@ CREATE TABLE "quoteLineQuantity" (
   CONSTRAINT "quoteLineQuantity_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "quoteLineQuantity_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
+
+ALTER publication supabase_realtime ADD TABLE "quoteLineQuantity";
 
 CREATE INDEX "quoteLineQuantity_quoteLineId_idx" ON "quoteLineQuantity" ("quoteLineId");
 

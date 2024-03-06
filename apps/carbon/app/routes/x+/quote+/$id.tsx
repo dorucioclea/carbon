@@ -3,24 +3,28 @@ import {
   Heading,
   IconButton,
   Input,
+  Kbd,
   Menubar,
   MenubarItem,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
   VStack,
+  useKeyboardShortcuts,
 } from "@carbon/react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
+import type { ShouldRevalidateFunction } from "@remix-run/react";
 import {
   Outlet,
   useLoaderData,
   useNavigate,
   useParams,
 } from "@remix-run/react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { CollapsibleSidebar } from "~/components/Layout";
+import { useSupabase } from "~/lib/supabase";
 import { getLocationsList } from "~/modules/resources";
 import {
   QuotationExplorer,
@@ -33,6 +37,7 @@ import {
   getQuoteMaterials,
   getQuoteOperations,
   useQuotation,
+  useQuotationLinePriceEffectsUpdate,
 } from "~/modules/sales";
 
 import { requirePermissions } from "~/services/auth";
@@ -44,6 +49,20 @@ import { error } from "~/utils/result";
 export const handle: Handle = {
   breadcrumb: "Quotations",
   to: path.to.quotes,
+};
+
+export const shouldRevalidate: ShouldRevalidateFunction = ({
+  currentUrl,
+  currentParams,
+  nextUrl,
+}) => {
+  // we don't want to revalidate if we're making an update to the quote line quantities
+  // because it'll cause an infinite loop
+  return !(
+    currentUrl.pathname === nextUrl.pathname &&
+    "lineId" in currentParams &&
+    currentUrl.pathname.includes("details")
+  );
 };
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -101,6 +120,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function QuotationRoute() {
+  const { supabase } = useSupabase();
   const {
     quotation,
     quotationLines,
@@ -108,10 +128,13 @@ export default function QuotationRoute() {
     quotationMaterials,
     quotationOperations,
   } = useLoaderData<typeof loader>();
+
   const [quote, setQuote] = useQuotation();
+  useQuotationLinePriceEffectsUpdate();
 
   useEffect(() => {
     setQuote({
+      client: supabase,
       quote: quotation,
       lines: quotationLines,
       assemblies: quotationAssemblies,
@@ -125,14 +148,23 @@ export default function QuotationRoute() {
     quotationOperations,
     setQuote,
     quotation,
+    supabase,
   ]);
 
   const navigate = useNavigate();
   const { id } = useParams();
   if (!id) throw new Error("id not found");
 
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  useKeyboardShortcuts({
+    l: (event: KeyboardEvent) => {
+      event.stopPropagation();
+      buttonRef.current?.click();
+    },
+  });
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] w-full">
+    <div className="grid grid-cols-[auto_1fr] w-full">
       <CollapsibleSidebar width={260}>
         <VStack className="border-b border-border p-4" spacing={1}>
           <Heading size="h3" noOfLines={1}>
@@ -149,10 +181,13 @@ export default function QuotationRoute() {
                   aria-label="Add Quote Line"
                   variant="secondary"
                   icon={<IoMdAdd />}
+                  ref={buttonRef}
                   onClick={() => navigate(path.to.newQuoteLine(id))}
                 />
               </TooltipTrigger>
-              <TooltipContent>Add Quote Line</TooltipContent>
+              <TooltipContent>
+                Add Quote Line <Kbd>l</Kbd>
+              </TooltipContent>
             </Tooltip>
           </HStack>
         </VStack>

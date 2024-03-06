@@ -2,7 +2,6 @@ import { VStack } from "@carbon/react";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { validationError } from "remix-validated-form";
-import { PageTitle } from "~/components/Layout";
 import { useRouteData } from "~/hooks";
 import type { Company as CompanyType } from "~/modules/settings";
 import {
@@ -107,12 +106,8 @@ export default function Company() {
   };
 
   return (
-    <VStack spacing={0} className="bg-background p-8 h-full">
-      <PageTitle
-        title="Company"
-        subtitle="This information will be displayed on document headers."
-      />
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-8 w-full">
+    <VStack spacing={0} className="p-4 h-full">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 w-full">
         <CompanyForm company={initialValues} />
         <CompanyLogoForm company={company} />
       </div>
