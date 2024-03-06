@@ -152,7 +152,11 @@ export async function getPurchaseOrders(
     query = query.eq("supplierId", args.supplierId);
   }
 
-  query = setGenericQueryFilters(query, args, "purchaseOrderId", false);
+  query = setGenericQueryFilters(query, args, [
+    { column: "favorite", ascending: false },
+    { column: "purchaseOrderId", ascending: false },
+  ]);
+
   return query;
 }
 
@@ -245,7 +249,10 @@ export async function getRequestsForQuotes(
     query = query.contains("partIds", [args.partId]);
   }
 
-  query = setGenericQueryFilters(query, args, "id", false);
+  query = setGenericQueryFilters(query, args, [
+    { column: "favorite", ascending: false },
+    { column: "id", ascending: false },
+  ]);
   return query;
 }
 
@@ -352,7 +359,9 @@ export async function getSuppliers(
     query = query.eq("supplierStatusId", args.status);
   }
 
-  query = setGenericQueryFilters(query, args, "name");
+  query = setGenericQueryFilters(query, args, [
+    { column: "name", ascending: true },
+  ]);
   return query;
 }
 
@@ -373,7 +382,9 @@ export async function getSupplierStatuses(
   }
 
   if (args) {
-    query = setGenericQueryFilters(query, args, "name");
+    query = setGenericQueryFilters(query, args, [
+      { column: "name", ascending: true },
+    ]);
   }
 
   return query;
@@ -403,7 +414,9 @@ export async function getSupplierTypes(
   }
 
   if (args) {
-    query = setGenericQueryFilters(query, args, "name");
+    query = setGenericQueryFilters(query, args, [
+      { column: "name", ascending: true },
+    ]);
   }
 
   return query;
@@ -475,7 +488,9 @@ export async function getUninvoicedReceipts(
 
   if (args)
     if (args) {
-      query = setGenericQueryFilters(query, args, "name");
+      query = setGenericQueryFilters(query, args, [
+        { column: "name", ascending: true },
+      ]);
     }
 
   return query;

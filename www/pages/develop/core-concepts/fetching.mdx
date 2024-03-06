@@ -3,7 +3,7 @@ title: Data Fetching in Carbon ERP
 description: Conventions for fetching data in Carbon ERP
 ---
 
-import { Callout, Tabs, Tab } from "nextra-theme-docs";
+import { Callout, Tab, Tabs } from "nextra-theme-docs";
 
 # Fetching
 
@@ -106,7 +106,9 @@ export async function getPartners(
 
   if (args) {
     // sort by supplier name by default
-    query = setGenericQueryFilters(query, args, "supplier(name)");
+    query = setGenericQueryFilters(query, args, [
+      { column: "supplier(name)", ascending: false },
+    ]);
   }
 
   return query;

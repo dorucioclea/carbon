@@ -14,7 +14,7 @@
   "engines": {
     "node": ">=18"
   },
-  "license": "Apache-2.0",
+  "license": "Elastic",
   "lint-staged": {
     "(apps|packages|shared|www)/**/*.{js,ts,jsx,tsx}": [
       "prettier --write",
@@ -64,5 +64,8 @@
     "packages/*",
     "shared",
     "www"
-  ]
+  ],
+  "dependencies": {
+    "react-phone-number-input": "^3.3.9"
+  }
 }

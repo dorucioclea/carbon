@@ -67,7 +67,9 @@ export async function getPurchaseInvoices(
     query = query.eq("supplierId", args.supplierId);
   }
 
-  query = setGenericQueryFilters(query, args, "invoiceId", false);
+  query = setGenericQueryFilters(query, args, [
+    { column: "invoiceId", ascending: false },
+  ]);
   return query;
 }
 
