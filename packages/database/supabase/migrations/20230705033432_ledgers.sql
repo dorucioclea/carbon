@@ -59,6 +59,8 @@ CREATE TABLE "journal" (
   CONSTRAINT "journal_accountPeriodId_fkey" FOREIGN KEY ("accountingPeriodId") REFERENCES "accountingPeriod" ("id") ON DELETE RESTRICT
 );
 
+ALTER publication supabase_realtime ADD TABLE "journal";
+
 CREATE INDEX "journal_accountPeriodId_idx" ON "journal" ("accountingPeriodId");
 CREATE INDEX "journal_postingDate_idx" ON "journal" ("postingDate");
 
