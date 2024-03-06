@@ -107,6 +107,8 @@ CREATE TABLE "quoteLineQuantity" (
   CONSTRAINT "quoteLineQuantity_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
+ALTER publication supabase_realtime ADD TABLE "quoteLineQuantity";
+
 CREATE INDEX "quoteLineQuantity_quoteLineId_idx" ON "quoteLineQuantity" ("quoteLineId");
 
 CREATE TABLE "quoteAssembly" (

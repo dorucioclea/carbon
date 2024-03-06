@@ -195,6 +195,8 @@ CREATE TABLE "purchaseInvoiceLine" (
   CONSTRAINT "purchaseInvoiceLines_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
+ALTER publication supabase_realtime ADD TABLE "purchaseInvoiceLine";
+
 ALTER TABLE "purchaseInvoiceLine" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Employees with invoicing_view can view AP invoice lines" ON "purchaseInvoiceLine"

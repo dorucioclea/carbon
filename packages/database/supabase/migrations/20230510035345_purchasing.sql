@@ -292,6 +292,8 @@ CREATE TABLE "purchaseOrderLine" (
   CONSTRAINT "purchaseOrderLine_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
 );
 
+ALTER publication supabase_realtime ADD TABLE "purchaseOrderLine";
+
 CREATE TABLE "purchaseOrderPayment" (
   "id" TEXT NOT NULL,
   "invoiceSupplierId" TEXT,

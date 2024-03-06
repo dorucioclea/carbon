@@ -25,7 +25,7 @@ import {
   EditableText,
 } from "~/components/Editable";
 import Grid from "~/components/Grid";
-import { useRouteData, useUser } from "~/hooks";
+import { useRealtime, useRouteData, useUser } from "~/hooks";
 import type { PurchaseInvoice, PurchaseInvoiceLine } from "~/modules/invoicing";
 import { usePurchaseInvoiceTotals } from "~/modules/invoicing";
 import type { ListItem } from "~/types";
@@ -35,6 +35,8 @@ import usePurchaseInvoiceLines from "./usePurchaseInvoiceLines";
 const PurchaseInvoiceLines = () => {
   const { invoiceId } = useParams();
   if (!invoiceId) throw new Error("invoiceId not found");
+
+  useRealtime("purchaseInvoiceLine", `invoiceId=eq.${invoiceId}`);
 
   const navigate = useNavigate();
 

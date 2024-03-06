@@ -14,6 +14,7 @@ import {
 } from "@carbon/react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
+import type { ShouldRevalidateFunction } from "@remix-run/react";
 import {
   Outlet,
   useLoaderData,
@@ -48,6 +49,20 @@ import { error } from "~/utils/result";
 export const handle: Handle = {
   breadcrumb: "Quotations",
   to: path.to.quotes,
+};
+
+export const shouldRevalidate: ShouldRevalidateFunction = ({
+  currentUrl,
+  currentParams,
+  nextUrl,
+}) => {
+  // we don't want to revalidate if we're making an update to the quote line quantities
+  // because it'll cause an infinite loop
+  return !(
+    currentUrl.pathname === nextUrl.pathname &&
+    "lineId" in currentParams &&
+    currentUrl.pathname.includes("details")
+  );
 };
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -149,7 +164,7 @@ export default function QuotationRoute() {
   });
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] w-full">
+    <div className="grid grid-cols-[auto_1fr] w-full">
       <CollapsibleSidebar width={260}>
         <VStack className="border-b border-border p-4" spacing={1}>
           <Heading size="h3" noOfLines={1}>

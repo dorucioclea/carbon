@@ -58,7 +58,7 @@ const SupplierPaymentForm = ({ initialValues }: SupplierPaymentFormProps) => {
         </CardHeader>
         <CardContent>
           <Hidden name="supplierId" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-2 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-8 gap-y-2 w-full">
             <VStack>
               <Supplier
                 name="invoiceSupplierId"

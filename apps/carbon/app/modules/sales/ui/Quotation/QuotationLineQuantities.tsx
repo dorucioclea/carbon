@@ -21,7 +21,7 @@ import {
   EditableQuotationLineQuantity,
 } from "~/components/Editable";
 import Grid from "~/components/Grid";
-import { usePermissions, useUser } from "~/hooks";
+import { usePermissions, useRealtime, useUser } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import {
   useQuotation,
@@ -43,6 +43,8 @@ const QuotationLineQuantities = ({
   const { id, lineId } = useParams();
   if (!id) throw new Error("id not found");
   if (!lineId) throw new Error("lineId not found");
+
+  useRealtime("quoteLineQuantity", `quoteLineId=eq.${lineId}`);
 
   const navigate = useNavigate();
 
