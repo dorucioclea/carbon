@@ -71,7 +71,7 @@
   "jest": {
     "preset": "@carbon/jest/node"
   },
-  "license": "Elastic",
+  "license": "Apache-2.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "peerDependencies": {

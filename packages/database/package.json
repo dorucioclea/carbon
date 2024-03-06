@@ -19,7 +19,7 @@
   "files": [
     "dist/**"
   ],
-  "license": "Elastic",
+  "license": "Apache-2.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "private": true,
