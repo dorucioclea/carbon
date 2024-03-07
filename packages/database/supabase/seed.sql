@@ -245,7 +245,7 @@ VALUES
   ('51120', 'Customer Payment Discounts', 'Posting', 'cjgo71si60lg1aoj5pcg', NULL, 'Income Statement', 'Expense', 'Average', true, true, 'system'),
   ('51235', 'Rounding Account', 'Posting', 'cjgo71si60lg1aoj5pcg', NULL, 'Income Statement', 'Expense', 'Average', true, true, 'system'),
   ('51999', 'Interest, Total', 'End Total', 'cjgo71si60lg1aoj5pcg', NULL, 'Income Statement', 'Expense', 'Average',  false, true, 'system'),
-  ('79999', 'Income Statement, Total', 'Total', 'cjgo71si60lg1aoj5pag', NULL, 'Income Statement', null, 'Average', true, true, 'system'),
+  ('79999', 'Income Statement, Total', 'Total', 'cjgo71si60lg1aoj5pag', NULL, 'Income Statement', null, 'Average', false, true, 'system'),
   ('80000', 'Balance Sheet', 'Begin Total', NULL, NULL, 'Balance Sheet', null, 'Average', false, true, 'system'),
   ('80001', 'Assets', 'Begin Total', NULL, NULL, 'Balance Sheet', 'Asset', 'Average', false, true, 'system'),
   ('81000', 'Fixed Assets', 'Begin Total', NULL, NULL, 'Balance Sheet', 'Asset', 'Average', false, true, 'system'),

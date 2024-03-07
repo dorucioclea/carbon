@@ -9,6 +9,7 @@ import {
   VStack,
   useKeyboardShortcuts,
 } from "@carbon/react";
+import { prettifyKeyboardShortcut } from "@carbon/utils";
 import { Link, useMatches, useNavigate } from "@remix-run/react";
 import type { IconType } from "react-icons";
 
@@ -64,7 +65,7 @@ const DetailSidebar = ({ links }: DetailSidebarProps) => {
               </TooltipTrigger>
               {route.shortcut && (
                 <TooltipContent side="right">
-                  <HStack>{route.shortcut}</HStack>
+                  <HStack>{prettifyKeyboardShortcut(route.shortcut)}</HStack>
                 </TooltipContent>
               )}
             </Tooltip>

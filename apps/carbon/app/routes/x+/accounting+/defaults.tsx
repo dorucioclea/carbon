@@ -88,7 +88,7 @@ export default function AccountDefaultsRoute() {
   }>(path.to.accounting);
 
   return (
-    <VStack className="h-full p-4 overflow-y-auto">
+    <VStack className="bg-background h-full p-4 overflow-y-auto">
       <PageTitle
         title="Account Defaults"
         subtitle="These accounts will be used to prepopulate posting grous when a new customer type, supplier type, part group, or location is created."
