@@ -113,7 +113,7 @@ export default function OnboardingUser() {
         <CardContent>
           <Hidden name="next" value={next} />
           <VStack spacing={4}>
-            <Input name="firstName" label="First Name" />
+            <Input autoFocus name="firstName" label="First Name" />
             <Input name="lastName" label="Last Name" />
             <Input autoComplete="off" name="email" label="Email" />
             <Password autoComplete="off" name="password" label="Password" />

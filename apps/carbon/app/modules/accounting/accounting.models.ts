@@ -5,8 +5,8 @@ import { months } from "~/modules/shared";
 
 export const accountTypes = [
   "Posting",
-  "Heading",
-  // "Total",
+  // "Heading",
+  "Total",
   "Begin Total",
   "End Total",
 ] as const;
@@ -130,7 +130,7 @@ export const accountValidator = withZod(
     )
     .refine(
       (data) => {
-        if (!["Heading", "Begin Total", "End Total"].includes(data.type)) {
+        if (!["Total", "Begin Total", "End Total"].includes(data.type)) {
           return !!data.accountCategoryId;
         }
         return true;

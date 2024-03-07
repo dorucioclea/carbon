@@ -29,7 +29,7 @@ function addLevelsAndTotalsToAccounts(
   let hasHeading = false;
 
   accounts.forEach((account) => {
-    if (account.type === "End Total") {
+    if (["End Total", "Total"].includes(account.type)) {
       endTotalAccounts.push(account.number);
     }
 
@@ -42,14 +42,9 @@ function addLevelsAndTotalsToAccounts(
       beginTotalAccounts.push(account.number);
     }
 
-    if (account.type === "Heading") {
-      level = 0;
-      hasHeading = true;
-    }
-
     let totaling = "";
 
-    if (account.type === "End Total") {
+    if (["End Total", "Total"].includes(account.type)) {
       let startAccount = beginTotalAccounts.pop();
       let endAccount = endTotalAccounts.pop();
 
@@ -272,11 +267,30 @@ function getAccountTotal(
   const [start, end] = account.totaling.split("..");
   if (!start || !end) throw new Error("Invalid totaling");
 
-  accounts.forEach((account) => {
-    if (account.number >= start && account.number <= end) {
-      total += transactionsByAccount[account.number]?.[type] ?? 0;
-    }
-  });
+  // for End Total -- we just do a simple sum of all accounts between start and end
+  if (account.type === "End Total") {
+    accounts.forEach((account) => {
+      if (account.number >= start && account.number <= end) {
+        total += transactionsByAccount[account.number]?.[type] ?? 0;
+      }
+    });
+  }
+
+  // for Total -- we use accounting equation to calculate the total
+  if (account.type === "Total") {
+    accounts.forEach((account) => {
+      if (account.number >= start && account.number <= end) {
+        if (["Asset", "Revenue"].includes(account.class as string)) {
+          total += transactionsByAccount[account.number]?.[type] ?? 0;
+        }
+        if (
+          ["Liability", "Equity", "Expense"].includes(account.class as string)
+        ) {
+          total -= transactionsByAccount[account.number]?.[type] ?? 0;
+        }
+      }
+    });
+  }
 
   return total;
 }

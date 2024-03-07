@@ -51,16 +51,17 @@ const CreatableCombobox = forwardRef<HTMLButtonElement, CreatableComboboxProps>(
     },
     ref
   ) => {
+    const [open, setOpen] = useState(false);
     const [search, setSearch] = useState("");
     const isExactMatch = options.some((option) =>
-      [option.value.toLowerCase(), option.helper?.toLowerCase()].includes(
+      [option.label.toLowerCase(), option.helper?.toLowerCase()].includes(
         search.toLowerCase()
       )
     );
 
     return (
       <HStack spacing={1}>
-        <Popover>
+        <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <CommandTrigger
               size={size}
@@ -68,6 +69,7 @@ const CreatableCombobox = forwardRef<HTMLButtonElement, CreatableComboboxProps>(
               className={cn("min-w-[160px]", !value && "text-muted-foreground")}
               ref={ref}
               {...props}
+              onClick={() => setOpen(true)}
             >
               {value
                 ? options.find((option) => option.value === value)?.label
@@ -95,6 +97,7 @@ const CreatableCombobox = forwardRef<HTMLButtonElement, CreatableComboboxProps>(
                       key={option.value}
                       onSelect={() => {
                         if (!isSelected) onChange?.(option.value);
+                        setOpen(false);
                       }}
                     >
                       {option.helper ? (

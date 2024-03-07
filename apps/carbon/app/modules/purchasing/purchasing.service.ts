@@ -200,7 +200,8 @@ export async function getPurchaseOrderLines(
   return client
     .from("purchaseOrderLines")
     .select("*")
-    .eq("purchaseOrderId", purchaseOrderId);
+    .eq("purchaseOrderId", purchaseOrderId)
+    .order("createdAt", { ascending: true });
 }
 
 export async function getPurchaseOrderLine(

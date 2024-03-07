@@ -80,7 +80,8 @@ export async function getPurchaseInvoiceLines(
   return client
     .from("purchaseInvoiceLine")
     .select("*")
-    .eq("invoiceId", purchaseInvoiceId);
+    .eq("invoiceId", purchaseInvoiceId)
+    .order("createdAt", { ascending: true });
 }
 
 export async function getPurchaseInvoiceLine(

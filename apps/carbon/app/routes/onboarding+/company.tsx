@@ -144,7 +144,7 @@ export default function OnboardingCompany() {
         <CardContent>
           <Hidden name="next" value={next} />
           <VStack spacing={4}>
-            <Input name="name" label="Company Name" />
+            <Input autoFocus name="name" label="Company Name" />
             <Input name="addressLine1" label="Address" />
             <Input name="city" label="City" />
             <Input name="state" label="State" />
