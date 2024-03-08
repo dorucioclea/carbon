@@ -22,6 +22,7 @@ import { useNavigate, useParams } from "@remix-run/react";
 import { useState } from "react";
 import { BsDownload, BsThreeDotsVertical, BsUpload } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
+import type { z } from "zod";
 import {
   Hidden,
   Input,
@@ -35,11 +36,10 @@ import { usePermissions, useRouteData } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import type { Quotation } from "~/modules/sales";
 import { quotationLineValidator, quoteLineStatusType } from "~/modules/sales";
-import type { TypeOfValidator } from "~/types/validators";
 import { path } from "~/utils/path";
 
 type QuotationLineFormProps = {
-  initialValues: TypeOfValidator<typeof quotationLineValidator>;
+  initialValues: z.infer<typeof quotationLineValidator>;
 };
 
 const QuotationLineForm = ({ initialValues }: QuotationLineFormProps) => {

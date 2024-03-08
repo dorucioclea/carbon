@@ -1,4 +1,4 @@
-import { validationError } from "@carbon/remix-validated-form";
+import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { useParams } from "@remix-run/react";
@@ -23,7 +23,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { invoiceId } = params;
   if (!invoiceId) throw new Error("Could not find invoiceId");
 
-  const validation = await purchaseInvoiceLineValidator.validate(
+  const validation = await validator(purchaseInvoiceLineValidator).validate(
     await request.formData()
   );
 

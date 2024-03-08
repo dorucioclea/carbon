@@ -1,6 +1,6 @@
+import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { validationError } from "@carbon/remix-validated-form";
 import { insertSupplier, supplierValidator } from "~/modules/purchasing";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
@@ -13,7 +13,9 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "purchasing",
   });
 
-  const validation = await supplierValidator.validate(await request.formData());
+  const validation = await validator(supplierValidator).validate(
+    await request.formData()
+  );
 
   if (validation.error) {
     return validationError(validation.error);

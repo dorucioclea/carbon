@@ -11,14 +11,14 @@ import {
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useNavigate } from "@remix-run/react";
+import type { z } from "zod";
 import { Hidden, Input, Submit, TextArea } from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import { partGroupValidator } from "~/modules/parts";
-import type { TypeOfValidator } from "~/types/validators";
 import { path } from "~/utils/path";
 
 type PartGroupFormProps = {
-  initialValues: TypeOfValidator<typeof partGroupValidator>;
+  initialValues: z.infer<typeof partGroupValidator>;
 };
 
 const PartGroupForm = ({ initialValues }: PartGroupFormProps) => {

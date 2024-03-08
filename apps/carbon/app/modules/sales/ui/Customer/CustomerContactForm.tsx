@@ -11,6 +11,7 @@ import {
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useNavigate, useParams } from "@remix-run/react";
+import type { z } from "zod";
 import {
   DatePicker,
   Hidden,
@@ -21,11 +22,10 @@ import {
 } from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import { customerContactValidator } from "~/modules/sales";
-import type { TypeOfValidator } from "~/types/validators";
 import { path } from "~/utils/path";
 
 type CustomerContactFormProps = {
-  initialValues: TypeOfValidator<typeof customerContactValidator>;
+  initialValues: z.infer<typeof customerContactValidator>;
 };
 
 const CustomerContactForm = ({ initialValues }: CustomerContactFormProps) => {

@@ -19,6 +19,7 @@ import {
 } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
 import { useEffect, useMemo, useState } from "react";
+import type { z } from "zod";
 import {
   Hidden,
   Input,
@@ -31,11 +32,10 @@ import {
 import { usePermissions } from "~/hooks";
 import type { getWorkCellList } from "~/modules/resources";
 import { equipmentValidator } from "~/modules/resources";
-import type { TypeOfValidator } from "~/types/validators";
 import { path } from "~/utils/path";
 
 type EquipmentFormProps = {
-  initialValues: TypeOfValidator<typeof equipmentValidator>;
+  initialValues: z.infer<typeof equipmentValidator>;
   equipmentTypes: {
     id: string;
     name: string;

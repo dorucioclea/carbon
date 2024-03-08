@@ -12,14 +12,14 @@ import {
 
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useNavigate } from "@remix-run/react";
+import type { z } from "zod";
 import { Account, Hidden, Input, Select, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import { shippingMethodValidator } from "~/modules/inventory";
-import type { TypeOfValidator } from "~/types/validators";
 import { path } from "~/utils/path";
 
 type ShippingMethodFormProps = {
-  initialValues: TypeOfValidator<typeof shippingMethodValidator>;
+  initialValues: z.infer<typeof shippingMethodValidator>;
 };
 
 const ShippingMethodForm = ({ initialValues }: ShippingMethodFormProps) => {

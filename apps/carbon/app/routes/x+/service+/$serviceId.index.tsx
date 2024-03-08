@@ -1,4 +1,4 @@
-import { validationError } from "@carbon/remix-validated-form";
+import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { useParams } from "@remix-run/react";
@@ -21,7 +21,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   if (!serviceId) throw new Error("Could not find serviceId");
 
   // validate with partsValidator
-  const validation = await serviceValidator.validate(await request.formData());
+  const validation = await validator(serviceValidator).validate(
+    await request.formData()
+  );
 
   if (validation.error) {
     return validationError(validation.error);

@@ -1,4 +1,4 @@
-import { validationError } from "@carbon/remix-validated-form";
+import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import type {
@@ -32,7 +32,9 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "accounting",
   });
 
-  const validation = await accountValidator.validate(await request.formData());
+  const validation = await validator(accountValidator).validate(
+    await request.formData()
+  );
 
   if (validation.error) {
     return validationError(validation.error);

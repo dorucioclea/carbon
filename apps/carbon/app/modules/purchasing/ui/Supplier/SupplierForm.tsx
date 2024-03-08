@@ -13,15 +13,15 @@ import {
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
+import type { z } from "zod";
 import { Employee, Hidden, Input, Select, Submit } from "~/components/Form";
 import { usePermissions, useRouteData } from "~/hooks";
 import type { SupplierStatus, SupplierType } from "~/modules/purchasing";
 import { supplierValidator } from "~/modules/purchasing";
-import type { TypeOfValidator } from "~/types/validators";
 import { path } from "~/utils/path";
 
 type SupplierFormProps = {
-  initialValues: TypeOfValidator<typeof supplierValidator>;
+  initialValues: z.infer<typeof supplierValidator>;
   type?: "card" | "modal";
   onClose?: () => void;
 };

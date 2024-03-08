@@ -20,6 +20,7 @@ import { useNavigate, useParams } from "@remix-run/react";
 import { useState } from "react";
 import { BsDownload, BsThreeDotsVertical, BsUpload } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
+import type { z } from "zod";
 import {
   Hidden,
   InputControlled,
@@ -31,12 +32,9 @@ import { usePermissions, useRouteData, useUrlParams } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import type { Quotation } from "~/modules/sales";
 import { quotationAssemblyValidator } from "~/modules/sales";
-import type { TypeOfValidator } from "~/types/validators";
 import { path } from "~/utils/path";
 
-type QuotationAssemblyFormValues = TypeOfValidator<
-  typeof quotationAssemblyValidator
->;
+type QuotationAssemblyFormValues = z.infer<typeof quotationAssemblyValidator>;
 
 type QuotationAssemblyFormProps = {
   initialValues: QuotationAssemblyFormValues;

@@ -10,4 +10,4 @@ export * from "./server";
 export * from "./userFacingFormContext";
 export * from "./validation/createValidator";
 export * from "./validation/types";
-export * from "./withZod";
+export * from "./zod";

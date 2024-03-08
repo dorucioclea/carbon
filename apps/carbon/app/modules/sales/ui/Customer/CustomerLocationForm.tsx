@@ -12,14 +12,14 @@ import {
 
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useNavigate, useParams } from "@remix-run/react";
+import type { z } from "zod";
 import { Hidden, Input, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import { customerLocationValidator } from "~/modules/sales";
-import type { TypeOfValidator } from "~/types/validators";
 import { path } from "~/utils/path";
 
 type CustomerLocationFormProps = {
-  initialValues: TypeOfValidator<typeof customerLocationValidator>;
+  initialValues: z.infer<typeof customerLocationValidator>;
 };
 
 const CustomerLocationForm = ({ initialValues }: CustomerLocationFormProps) => {

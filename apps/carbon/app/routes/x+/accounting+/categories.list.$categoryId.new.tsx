@@ -5,7 +5,7 @@ import {
   upsertAccountSubcategory,
 } from "~/modules/accounting";
 
-import { validationError } from "@carbon/remix-validated-form";
+import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { requirePermissions } from "~/services/auth";
@@ -20,7 +20,7 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "accounting",
   });
 
-  const validation = await accountSubcategoryValidator.validate(
+  const validation = await validator(accountSubcategoryValidator).validate(
     await request.formData()
   );
 

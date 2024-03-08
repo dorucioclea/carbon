@@ -12,6 +12,7 @@ import {
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useNavigate, useParams } from "@remix-run/react";
 import { useMemo } from "react";
+import type { z } from "zod";
 import {
   Combobox,
   Hidden,
@@ -23,11 +24,10 @@ import {
 import { usePermissions, useRouteData } from "~/hooks";
 import type { UnitOfMeasureListItem } from "~/modules/parts";
 import { partSupplierValidator } from "~/modules/parts";
-import type { TypeOfValidator } from "~/types/validators";
 import { path } from "~/utils/path";
 
 type PartSupplierFormProps = {
-  initialValues: TypeOfValidator<typeof partSupplierValidator>;
+  initialValues: z.infer<typeof partSupplierValidator>;
 };
 
 const PartSupplierForm = ({ initialValues }: PartSupplierFormProps) => {

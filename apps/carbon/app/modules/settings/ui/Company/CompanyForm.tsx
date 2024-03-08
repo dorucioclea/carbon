@@ -8,13 +8,13 @@ import {
   VStack,
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
+import type { z } from "zod";
 import { Hidden, Input, Submit } from "~/components/Form";
 import { companyValidator } from "~/modules/settings";
-import type { TypeOfValidator } from "~/types/validators";
 import { path } from "~/utils/path";
 
 type CompanyFormProps = {
-  company: TypeOfValidator<typeof companyValidator>;
+  company: z.infer<typeof companyValidator>;
 };
 
 const CompanyForm = ({ company }: CompanyFormProps) => {

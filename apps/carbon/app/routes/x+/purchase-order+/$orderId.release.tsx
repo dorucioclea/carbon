@@ -1,5 +1,5 @@
 import { PurchaseOrderEmail } from "@carbon/documents";
-import { validationError } from "@carbon/remix-validated-form";
+import { validationError, validator } from "@carbon/remix-validated-form";
 import { renderAsync } from "@react-email/components";
 import { redirect, type ActionFunctionArgs } from "@remix-run/node";
 import { triggerClient } from "~/lib/trigger.server";
@@ -88,7 +88,7 @@ export async function action(args: ActionFunctionArgs) {
     );
   }
 
-  const validation = await purchaseOrderReleaseValidator.validate(
+  const validation = await validator(purchaseOrderReleaseValidator).validate(
     await request.formData()
   );
 

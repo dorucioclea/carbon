@@ -13,6 +13,7 @@ import {
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
 import { useState } from "react";
+import type { z } from "zod";
 import {
   Boolean,
   Combobox,
@@ -30,11 +31,10 @@ import {
   partTypes,
   partValidator,
 } from "~/modules/parts";
-import type { TypeOfValidator } from "~/types/validators";
 import { path } from "~/utils/path";
 
 type PartFormProps = {
-  initialValues: TypeOfValidator<typeof partValidator>;
+  initialValues: z.infer<typeof partValidator>;
   type?: "card" | "modal";
   onClose?: () => void;
 };

@@ -1,6 +1,6 @@
 // root.tsx
 import { Heading } from "@carbon/react";
-import { withZod } from "@carbon/remix-validated-form";
+import { validator } from "@carbon/remix-validated-form";
 import type {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -63,7 +63,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const validation = await withZod(modeValidator).validate(
+  const validation = await validator(modeValidator).validate(
     await request.formData()
   );
 

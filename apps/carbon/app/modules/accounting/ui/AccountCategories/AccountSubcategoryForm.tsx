@@ -14,15 +14,15 @@ import {
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useParams } from "@remix-run/react";
+import type { z } from "zod";
 import { Hidden, Input, Submit } from "~/components/Form";
 import { usePermissions, useRouteData } from "~/hooks";
 import type { AccountCategory } from "~/modules/accounting";
 import { accountSubcategoryValidator } from "~/modules/accounting";
-import type { TypeOfValidator } from "~/types/validators";
 import { path } from "~/utils/path";
 
 type AccountSubcategoryFormProps = {
-  initialValues: TypeOfValidator<typeof accountSubcategoryValidator>;
+  initialValues: z.infer<typeof accountSubcategoryValidator>;
   onClose: () => void;
 };
 

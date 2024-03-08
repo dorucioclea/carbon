@@ -9,6 +9,7 @@ import {
   cn,
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
+import type { z } from "zod";
 import {
   DatePicker,
   Hidden,
@@ -23,11 +24,8 @@ import {
   requestForQuoteStatusType,
   requestForQuoteValidator,
 } from "~/modules/purchasing";
-import type { TypeOfValidator } from "~/types/validators";
 
-type RequestForQuoteFormValues = TypeOfValidator<
-  typeof requestForQuoteValidator
->;
+type RequestForQuoteFormValues = z.infer<typeof requestForQuoteValidator>;
 
 type RequestForQuoteFormProps = {
   initialValues: RequestForQuoteFormValues;

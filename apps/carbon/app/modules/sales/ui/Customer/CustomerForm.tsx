@@ -13,6 +13,7 @@ import {
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
+import type { z } from "zod";
 import {
   Combobox,
   Employee,
@@ -24,11 +25,10 @@ import {
 import { usePermissions, useRouteData } from "~/hooks";
 import type { CustomerStatus, CustomerType } from "~/modules/sales";
 import { customerValidator } from "~/modules/sales";
-import type { TypeOfValidator } from "~/types/validators";
 import { path } from "~/utils/path";
 
 type CustomerFormProps = {
-  initialValues: TypeOfValidator<typeof customerValidator>;
+  initialValues: z.infer<typeof customerValidator>;
   type?: "card" | "modal";
   onClose?: () => void;
 };

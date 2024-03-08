@@ -14,6 +14,7 @@ import React, {
   useState,
 } from "react";
 import * as R from "remeda";
+import type { z } from "zod";
 import { useIsSubmitting, useIsValid } from "./hooks";
 import type { MultiValueMap } from "./internal/MultiValueMap";
 import { useMultiValueMap } from "./internal/MultiValueMap";
@@ -35,7 +36,8 @@ import {
   useDeepEqualsMemo,
   useIsomorphicLayoutEffect as useLayoutEffect,
 } from "./internal/util";
-import type { FieldErrors, Validator } from "./validation/types";
+import type { FieldErrors } from "./validation/types";
+import { validator as zodValidator } from "./zod";
 
 type DeepPartial<T> = T extends object
   ? {
@@ -64,7 +66,7 @@ export type FormProps<DataType, Subaction extends string | undefined> = {
   /**
    * A `Validator` object that describes how to validate the form.
    */
-  validator: Validator<DataType>;
+  validator: z.Schema<DataType> | z.ZodEffects<any> | z.ZodObject<any>;
   /**
    * A submit callback that gets called when the form is submitted
    * after all validations have been run.
@@ -303,7 +305,7 @@ export function ValidatedForm<
       defaultValues: providedDefaultValues ?? backendDefaultValues ?? {},
       subaction,
       registerReceiveFocus,
-      validator,
+      validator: zodValidator(validator),
     });
   }, [
     action,
@@ -360,7 +362,7 @@ export function ValidatedForm<
       formData.append(submitter.name, submitter.value);
     }
 
-    const result = await validator.validate(formData);
+    const result = await zodValidator(validator).validate(formData);
     if (result.error) {
       setFieldErrors(result.error.fieldErrors);
       endSubmit();

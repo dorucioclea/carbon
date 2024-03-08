@@ -1,4 +1,4 @@
-import { validationError } from "@carbon/remix-validated-form";
+import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
@@ -58,7 +58,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { personId } = params;
   if (!personId) throw new Error("No person ID provided");
 
-  const validation = await accountProfileValidator.validate(
+  const validation = await validator(accountProfileValidator).validate(
     await request.formData()
   );
 

@@ -1,7 +1,7 @@
 import type { Database } from "@carbon/database";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { z } from "zod";
 import { getSupplierPayment } from "~/modules/purchasing";
-import type { TypeOfValidator } from "~/types/validators";
 import type { GenericQueryFilters } from "~/utils/query";
 import { setGenericQueryFilters } from "~/utils/query";
 import { sanitize } from "~/utils/supabase";
@@ -98,17 +98,11 @@ export async function getPurchaseInvoiceLine(
 export async function upsertPurchaseInvoice(
   client: SupabaseClient<Database>,
   purchaseInvoice:
-    | (Omit<
-        TypeOfValidator<typeof purchaseInvoiceValidator>,
-        "id" | "invoiceId"
-      > & {
+    | (Omit<z.infer<typeof purchaseInvoiceValidator>, "id" | "invoiceId"> & {
         invoiceId: string;
         createdBy: string;
       })
-    | (Omit<
-        TypeOfValidator<typeof purchaseInvoiceValidator>,
-        "id" | "invoiceId"
-      > & {
+    | (Omit<z.infer<typeof purchaseInvoiceValidator>, "id" | "invoiceId"> & {
         id: string;
         invoiceId: string;
         updatedBy: string;
@@ -149,10 +143,10 @@ export async function upsertPurchaseInvoice(
 export async function upsertPurchaseInvoiceLine(
   client: SupabaseClient<Database>,
   purchaseInvoiceLine:
-    | (Omit<TypeOfValidator<typeof purchaseInvoiceLineValidator>, "id"> & {
+    | (Omit<z.infer<typeof purchaseInvoiceLineValidator>, "id"> & {
         createdBy: string;
       })
-    | (Omit<TypeOfValidator<typeof purchaseInvoiceLineValidator>, "id"> & {
+    | (Omit<z.infer<typeof purchaseInvoiceLineValidator>, "id"> & {
         id: string;
         updatedBy: string;
       })

@@ -13,6 +13,7 @@ import {
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useNavigate, useParams } from "@remix-run/react";
 import { useState } from "react";
+import type { z } from "zod";
 import {
   Hidden,
   InputControlled,
@@ -25,11 +26,10 @@ import { usePermissions, useRouteData } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import type { Quotation } from "~/modules/sales";
 import { quotationMaterialValidator } from "~/modules/sales";
-import type { TypeOfValidator } from "~/types/validators";
 import { path } from "~/utils/path";
 
 type QuotationMaterialFormProps = {
-  initialValues: TypeOfValidator<typeof quotationMaterialValidator>;
+  initialValues: z.infer<typeof quotationMaterialValidator>;
 };
 
 const QuotationMaterialForm = ({

@@ -84,13 +84,13 @@ The form is validated on the client-side before the form is submitted. If the fo
 On the server-side, we use the same validator in the `action` function to validate the form data. If the form data is invalid, we return the form with the errors. If the form data is valid, we call the service layer to perform the write.
 
 ```tsx
-import { validationError } from "@carbon/remix-validated-form";
+import { validationError, validator } from "@carbon/remix-validated-form";
 import { createPerson, personValidator } from "~/modules/people";
 
 export async function action({ request }: ActionFunctionArgs) {
   const { client } = await requirePermissions(request);
 
-  const validation = await personValidator.validate(await request.formData());
+  const validation = await validator(personValidator).validate(await request.formData());
 
   if (validation.error) {
     return validationError(validation.error);

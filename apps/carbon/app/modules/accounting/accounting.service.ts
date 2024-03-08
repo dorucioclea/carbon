@@ -1,7 +1,7 @@
 import type { Database } from "@carbon/database";
 import { getDateNYearsAgo } from "@carbon/utils";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { TypeOfValidator } from "~/types/validators";
+import type { z } from "zod";
 import type { GenericQueryFilters } from "~/utils/query";
 import { setGenericQueryFilters } from "~/utils/query";
 import { sanitize } from "~/utils/supabase";
@@ -621,35 +621,35 @@ export async function getSalesPostingGroups(
 
 export async function insertJournalLines(
   client: SupabaseClient<Database>,
-  journalLines: TypeOfValidator<typeof journalLineValidator>[]
+  journalLines: z.infer<typeof journalLineValidator>[]
 ) {
   return client.from("journalLedger").insert(journalLines);
 }
 
 export async function insertJournalEntry(
   client: SupabaseClient<Database>,
-  generalEntry: TypeOfValidator<typeof journalLineValidator>
+  generalEntry: z.infer<typeof journalLineValidator>
 ) {
   return client.from("generalLedger").insert([generalEntry]);
 }
 
 export async function insertPartEntries(
   client: SupabaseClient<Database>,
-  partEntries: TypeOfValidator<typeof partLedgerValidator>[]
+  partEntries: z.infer<typeof partLedgerValidator>[]
 ) {
   return client.from("partLedger").insert(partEntries);
 }
 
 export async function insertPartLedger(
   client: SupabaseClient<Database>,
-  partEntry: TypeOfValidator<typeof partLedgerValidator>
+  partEntry: z.infer<typeof partLedgerValidator>
 ) {
   return client.from("partLedger").insert([partEntry]);
 }
 
 export async function updateDefaultAccounts(
   client: SupabaseClient<Database>,
-  defaultAccounts: TypeOfValidator<typeof defaultAcountValidator> & {
+  defaultAccounts: z.infer<typeof defaultAcountValidator> & {
     updatedBy: string;
   }
 ) {
@@ -658,7 +658,7 @@ export async function updateDefaultAccounts(
 
 export async function updateFiscalYearSettings(
   client: SupabaseClient<Database>,
-  fiscalYearSettings: TypeOfValidator<typeof fiscalYearSettingsValidator> & {
+  fiscalYearSettings: z.infer<typeof fiscalYearSettingsValidator> & {
     updatedBy: string;
   }
 ) {
@@ -671,10 +671,10 @@ export async function updateFiscalYearSettings(
 export async function upsertAccount(
   client: SupabaseClient<Database>,
   account:
-    | (Omit<TypeOfValidator<typeof accountValidator>, "id"> & {
+    | (Omit<z.infer<typeof accountValidator>, "id"> & {
         createdBy: string;
       })
-    | (Omit<TypeOfValidator<typeof accountValidator>, "id"> & {
+    | (Omit<z.infer<typeof accountValidator>, "id"> & {
         id: string;
         updatedBy: string;
       })
@@ -693,10 +693,10 @@ export async function upsertAccount(
 export async function upsertAccountCategory(
   client: SupabaseClient<Database>,
   accountCategory:
-    | (Omit<TypeOfValidator<typeof accountCategoryValidator>, "id"> & {
+    | (Omit<z.infer<typeof accountCategoryValidator>, "id"> & {
         createdBy: string;
       })
-    | (Omit<TypeOfValidator<typeof accountCategoryValidator>, "id"> & {
+    | (Omit<z.infer<typeof accountCategoryValidator>, "id"> & {
         id: string;
         updatedBy: string;
       })
@@ -719,10 +719,10 @@ export async function upsertAccountCategory(
 export async function upsertAccountSubcategory(
   client: SupabaseClient<Database>,
   accountSubcategory:
-    | (Omit<TypeOfValidator<typeof accountSubcategoryValidator>, "id"> & {
+    | (Omit<z.infer<typeof accountSubcategoryValidator>, "id"> & {
         createdBy: string;
       })
-    | (Omit<TypeOfValidator<typeof accountSubcategoryValidator>, "id"> & {
+    | (Omit<z.infer<typeof accountSubcategoryValidator>, "id"> & {
         id: string;
         updatedBy: string;
       })
@@ -745,10 +745,10 @@ export async function upsertAccountSubcategory(
 export async function upsertCurrency(
   client: SupabaseClient<Database>,
   currency:
-    | (Omit<TypeOfValidator<typeof currencyValidator>, "id"> & {
+    | (Omit<z.infer<typeof currencyValidator>, "id"> & {
         createdBy: string;
       })
-    | (Omit<TypeOfValidator<typeof currencyValidator>, "id"> & {
+    | (Omit<z.infer<typeof currencyValidator>, "id"> & {
         id: string;
         updatedBy: string;
       })
@@ -774,10 +774,10 @@ export async function upsertCurrency(
 export async function upsertPaymentTerm(
   client: SupabaseClient<Database>,
   paymentTerm:
-    | (Omit<TypeOfValidator<typeof paymentTermValidator>, "id"> & {
+    | (Omit<z.infer<typeof paymentTermValidator>, "id"> & {
         createdBy: string;
       })
-    | (Omit<TypeOfValidator<typeof paymentTermValidator>, "id"> & {
+    | (Omit<z.infer<typeof paymentTermValidator>, "id"> & {
         id: string;
         updatedBy: string;
       })

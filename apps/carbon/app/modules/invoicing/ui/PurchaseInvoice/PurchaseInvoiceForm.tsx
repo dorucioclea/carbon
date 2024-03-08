@@ -10,6 +10,7 @@ import {
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useState } from "react";
+import type { z } from "zod";
 import {
   Currency,
   DatePicker,
@@ -27,11 +28,8 @@ import {
   purchaseInvoiceValidator,
 } from "~/modules/invoicing";
 import type { ListItem } from "~/types";
-import type { TypeOfValidator } from "~/types/validators";
 
-type PurchaseInvoiceFormValues = TypeOfValidator<
-  typeof purchaseInvoiceValidator
->;
+type PurchaseInvoiceFormValues = z.infer<typeof purchaseInvoiceValidator>;
 
 type PurchaseInvoiceFormProps = {
   initialValues: PurchaseInvoiceFormValues;
