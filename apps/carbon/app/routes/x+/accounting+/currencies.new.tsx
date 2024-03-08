@@ -1,6 +1,6 @@
+import { validationError } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { validationError } from "remix-validated-form";
 import {
   CurrencyForm,
   currencyValidator,

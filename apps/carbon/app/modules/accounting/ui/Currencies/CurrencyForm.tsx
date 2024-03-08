@@ -9,9 +9,9 @@ import {
   HStack,
   VStack,
 } from "@carbon/react";
+import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useNavigate } from "@remix-run/react";
 import { useState } from "react";
-import { ValidatedForm } from "remix-validated-form";
 import { Boolean, Hidden, Input, Number, Submit } from "~/components/Form";
 import { usePermissions, useRouteData } from "~/hooks";
 import type { Currency } from "~/modules/accounting";

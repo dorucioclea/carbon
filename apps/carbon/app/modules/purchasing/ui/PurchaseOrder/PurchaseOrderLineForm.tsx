@@ -10,9 +10,9 @@ import {
   VStack,
 } from "@carbon/react";
 
+import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher, useNavigate, useParams } from "@remix-run/react";
 import { useEffect, useMemo, useState } from "react";
-import { ValidatedForm } from "remix-validated-form";
 import {
   Account,
   ComboboxControlled,

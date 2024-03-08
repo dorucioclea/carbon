@@ -13,7 +13,7 @@ import {
 import { useNavigate } from "@remix-run/react";
 import { useState } from "react";
 
-import { ValidatedForm } from "remix-validated-form";
+import { ValidatedForm } from "@carbon/remix-validated-form";
 import {
   AccountCategory,
   AccountSubcategory,

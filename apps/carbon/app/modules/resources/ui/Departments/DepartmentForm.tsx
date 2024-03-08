@@ -10,8 +10,8 @@ import {
   VStack,
 } from "@carbon/react";
 
+import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useNavigate } from "@remix-run/react";
-import { ValidatedForm } from "remix-validated-form";
 import { Color, Department, Hidden, Input, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import { departmentValidator } from "~/modules/resources";

@@ -11,8 +11,8 @@ import {
   TabsTrigger,
   VStack,
 } from "@carbon/react";
+import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useNavigate } from "@remix-run/react";
-import { ValidatedForm } from "remix-validated-form";
 import { Select, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import type { AccountListItem } from "~/modules/accounting";

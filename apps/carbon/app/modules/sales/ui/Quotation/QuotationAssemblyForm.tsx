@@ -15,11 +15,11 @@ import {
   IconButton,
   VStack,
 } from "@carbon/react";
+import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useNavigate, useParams } from "@remix-run/react";
 import { useState } from "react";
 import { BsDownload, BsThreeDotsVertical, BsUpload } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { ValidatedForm } from "remix-validated-form";
 import {
   Hidden,
   InputControlled,

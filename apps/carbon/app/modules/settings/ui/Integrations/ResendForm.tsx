@@ -10,7 +10,7 @@ import {
   HStack,
   VStack,
 } from "@carbon/react";
-import { ValidatedForm } from "remix-validated-form";
+import { ValidatedForm } from "@carbon/remix-validated-form";
 import { Boolean, Input, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import { resendFormValidator } from "~/modules/settings";

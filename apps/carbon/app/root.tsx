@@ -1,5 +1,6 @@
 // root.tsx
 import { Heading } from "@carbon/react";
+import { withZod } from "@carbon/remix-validated-form";
 import type {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -17,7 +18,6 @@ import {
   useLoaderData,
   useRouteError,
 } from "@remix-run/react";
-import { withZod } from "@remix-validated-form/with-zod";
 import { Analytics } from "@vercel/analytics/react";
 import React from "react";
 import { getBrowserEnv } from "~/config/env";

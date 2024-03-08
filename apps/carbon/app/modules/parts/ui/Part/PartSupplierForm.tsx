@@ -9,9 +9,9 @@ import {
   HStack,
   VStack,
 } from "@carbon/react";
+import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useNavigate, useParams } from "@remix-run/react";
 import { useMemo } from "react";
-import { ValidatedForm } from "remix-validated-form";
 import {
   Combobox,
   Hidden,

@@ -1,7 +1,7 @@
+import { validationError } from "@carbon/remix-validated-form";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { validationError } from "remix-validated-form";
 import { useUrlParams } from "~/hooks";
 import type {
   PurchaseOrderStatus,
@@ -24,10 +24,13 @@ export async function action({ request }: ActionFunctionArgs) {
   const { client, userId } = await requirePermissions(request, {
     create: "purchasing",
   });
+  const formData = await request.formData();
+  console.log("formData");
+  for (var pair of formData.entries()) {
+    console.log(pair[0] + ", " + pair[1]);
+  }
 
-  const validation = await purchaseOrderValidator.validate(
-    await request.formData()
-  );
+  const validation = await purchaseOrderValidator.validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);

@@ -9,8 +9,8 @@ import {
   HStack,
   VStack,
 } from "@carbon/react";
+import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useNavigate } from "@remix-run/react";
-import { ValidatedForm } from "remix-validated-form";
 import { DatePicker, Hidden, Input, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import { holidayValidator } from "~/modules/resources";

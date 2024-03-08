@@ -11,8 +11,8 @@ import {
   VStack,
   cn,
 } from "@carbon/react";
+import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
-import { ValidatedForm } from "remix-validated-form";
 import { Employee, Hidden, Input, Select, Submit } from "~/components/Form";
 import { usePermissions, useRouteData } from "~/hooks";
 import type { SupplierStatus, SupplierType } from "~/modules/purchasing";

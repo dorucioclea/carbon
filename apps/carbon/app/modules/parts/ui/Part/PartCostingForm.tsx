@@ -6,7 +6,7 @@ import {
   CardTitle,
   VStack,
 } from "@carbon/react";
-import { ValidatedForm } from "remix-validated-form";
+import { ValidatedForm } from "@carbon/remix-validated-form";
 import { Boolean, Hidden, Number, Select, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import { partCostValidator, partCostingMethods } from "~/modules/parts";

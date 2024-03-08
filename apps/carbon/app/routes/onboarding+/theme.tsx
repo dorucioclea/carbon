@@ -16,7 +16,7 @@ import { json, redirect } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { RxCheck } from "react-icons/rx";
-import { ValidatedForm, validationError } from "remix-validated-form";
+import { ValidatedForm, validationError } from "@carbon/remix-validated-form";
 import { Hidden, Submit } from "~/components/Form";
 import { useOnboarding } from "~/hooks";
 import { useMode } from "~/hooks/useMode";

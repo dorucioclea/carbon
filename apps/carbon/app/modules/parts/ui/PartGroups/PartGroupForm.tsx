@@ -9,8 +9,8 @@ import {
   HStack,
   VStack,
 } from "@carbon/react";
+import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useNavigate } from "@remix-run/react";
-import { ValidatedForm } from "remix-validated-form";
 import { Hidden, Input, Submit, TextArea } from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import { partGroupValidator } from "~/modules/parts";

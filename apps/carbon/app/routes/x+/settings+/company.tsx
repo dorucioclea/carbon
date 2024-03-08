@@ -1,7 +1,7 @@
 import { VStack } from "@carbon/react";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { validationError } from "remix-validated-form";
+import { validationError } from "@carbon/remix-validated-form";
 import { useRouteData } from "~/hooks";
 import type { Company as CompanyType } from "~/modules/settings";
 import {

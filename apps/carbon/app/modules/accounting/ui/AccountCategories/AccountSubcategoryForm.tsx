@@ -12,8 +12,8 @@ import {
   Input as InputBase,
   VStack,
 } from "@carbon/react";
+import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useParams } from "@remix-run/react";
-import { ValidatedForm } from "remix-validated-form";
 import { Hidden, Input, Submit } from "~/components/Form";
 import { usePermissions, useRouteData } from "~/hooks";
 import type { AccountCategory } from "~/modules/accounting";

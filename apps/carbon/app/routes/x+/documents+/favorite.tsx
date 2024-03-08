@@ -1,6 +1,5 @@
+import { validationError, withZod } from "@carbon/remix-validated-form";
 import { json, type ActionFunctionArgs } from "@remix-run/node";
-import { withZod } from "@remix-validated-form/with-zod";
-import { validationError } from "remix-validated-form";
 import { updateDocumentFavorite } from "~/modules/documents";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";

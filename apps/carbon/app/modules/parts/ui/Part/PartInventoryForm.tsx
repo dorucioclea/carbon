@@ -8,8 +8,8 @@ import {
   HStack,
   VStack,
 } from "@carbon/react";
+import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useRevalidator } from "@remix-run/react";
-import { ValidatedForm } from "remix-validated-form";
 import { Combobox } from "~/components";
 import { CreatableCombobox, Hidden, Number, Submit } from "~/components/Form";
 import { usePermissions, useUser } from "~/hooks";

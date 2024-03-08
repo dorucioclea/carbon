@@ -1,7 +1,7 @@
 import { json, redirect } from "@remix-run/react";
 
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { validationError } from "remix-validated-form";
+import { validationError } from "@carbon/remix-validated-form";
 import {
   QuotationMaterialForm,
   quotationMaterialValidator,

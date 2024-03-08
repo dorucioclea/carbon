@@ -2,7 +2,7 @@ import type { OptionBase } from "@carbon/react";
 import type { TypedResponse } from "@remix-run/node";
 import type { ReactElement } from "react";
 import type { IconType } from "react-icons";
-import type { ValidationErrorResponseData } from "remix-validated-form";
+import type { ValidationErrorResponseData } from "@carbon/remix-validated-form";
 
 export type Action = {
   label: string;

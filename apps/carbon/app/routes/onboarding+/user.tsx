@@ -10,7 +10,7 @@ import {
 } from "@carbon/react";
 import { redirect, type ActionFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
-import { ValidatedForm, validationError } from "remix-validated-form";
+import { ValidatedForm, validationError } from "@carbon/remix-validated-form";
 import { Hidden, Input, Password, Submit } from "~/components/Form";
 import { useOnboarding } from "~/hooks";
 import { getSupabaseServiceRole } from "~/lib/supabase";

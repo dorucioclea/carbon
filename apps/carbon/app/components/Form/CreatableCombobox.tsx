@@ -6,7 +6,7 @@ import {
 } from "@carbon/react";
 import { forwardRef } from "react";
 
-import { useControlField, useField } from "remix-validated-form";
+import { useControlField, useField } from "@carbon/remix-validated-form";
 import { CreatableCombobox as CreatableComboboxBase } from "~/components";
 import type { CreatableComboboxProps as CreatableComboboxBaseProps } from "~/components/CreateableCombobox";
 

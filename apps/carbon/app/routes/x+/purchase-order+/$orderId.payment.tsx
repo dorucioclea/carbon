@@ -1,7 +1,7 @@
+import { validationError } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { validationError } from "remix-validated-form";
 import { getPaymentTermsList } from "~/modules/accounting";
 import {
   PurchaseOrderPaymentForm,

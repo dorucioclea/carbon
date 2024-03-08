@@ -1,7 +1,7 @@
+import { validationError } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import type { FunctionsResponse } from "@supabase/functions-js";
-import { validationError } from "remix-validated-form";
 import { useRouteData, useUrlParams } from "~/hooks";
 import type { PurchaseInvoiceStatus } from "~/modules/invoicing";
 import {

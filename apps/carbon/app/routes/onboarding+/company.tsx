@@ -12,7 +12,7 @@ import {
 import { getLocalTimeZone } from "@internationalized/date";
 import { json, redirect, type ActionFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
-import { ValidatedForm, validationError } from "remix-validated-form";
+import { ValidatedForm, validationError } from "@carbon/remix-validated-form";
 import { Hidden, Input, Submit } from "~/components/Form";
 import { useOnboarding } from "~/hooks";
 import {

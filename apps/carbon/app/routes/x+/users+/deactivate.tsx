@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { validationError } from "remix-validated-form";
+import { validationError } from "@carbon/remix-validated-form";
 import { deactivateUsersValidator } from "~/modules/users";
 import { deactivateUser } from "~/modules/users/users.server";
 import type { UserAdminQueueData } from "~/queues";

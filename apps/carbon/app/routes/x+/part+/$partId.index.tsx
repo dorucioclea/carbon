@@ -1,7 +1,7 @@
+import { validationError } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { useParams } from "@remix-run/react";
-import { validationError } from "remix-validated-form";
 import { useRouteData } from "~/hooks";
 import type { PartSummary } from "~/modules/parts";
 import { PartForm, partValidator, upsertPart } from "~/modules/parts";

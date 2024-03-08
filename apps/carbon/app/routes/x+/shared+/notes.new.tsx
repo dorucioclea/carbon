@@ -1,6 +1,6 @@
+import { validationError } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { validationError } from "remix-validated-form";
 import { insertNote, noteValidator } from "~/modules/shared";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";

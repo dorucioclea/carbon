@@ -10,9 +10,9 @@ import {
   VStack,
 } from "@carbon/react";
 
+import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useParams } from "@remix-run/react";
 import { useState } from "react";
-import { ValidatedForm } from "remix-validated-form";
 import { Employee, Hidden, Number, Select, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import type { Ability } from "~/modules/resources";

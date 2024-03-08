@@ -12,8 +12,8 @@ import {
   MenubarItem,
   VStack,
 } from "@carbon/react";
+import { ValidatedForm } from "@carbon/remix-validated-form";
 import { Outlet } from "@remix-run/react";
-import { ValidatedForm } from "remix-validated-form";
 import {
   ComboboxControlled,
   Hidden,

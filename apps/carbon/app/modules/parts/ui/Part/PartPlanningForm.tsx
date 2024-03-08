@@ -8,7 +8,7 @@ import {
   HStack,
   VStack,
 } from "@carbon/react";
-import { ValidatedForm } from "remix-validated-form";
+import { ValidatedForm } from "@carbon/remix-validated-form";
 import { Combobox } from "~/components";
 import {
   Boolean,

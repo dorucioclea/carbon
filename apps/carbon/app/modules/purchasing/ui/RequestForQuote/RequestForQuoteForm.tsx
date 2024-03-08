@@ -8,7 +8,7 @@ import {
   VStack,
   cn,
 } from "@carbon/react";
-import { ValidatedForm } from "remix-validated-form";
+import { ValidatedForm } from "@carbon/remix-validated-form";
 import {
   DatePicker,
   Hidden,

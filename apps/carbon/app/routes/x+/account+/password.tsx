@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { validationError } from "remix-validated-form";
+import { validationError } from "@carbon/remix-validated-form";
 import { PageTitle } from "~/components/Layout";
 import { getSupabaseServiceRole } from "~/lib/supabase";
 import { PasswordForm, accountPasswordValidator } from "~/modules/account";

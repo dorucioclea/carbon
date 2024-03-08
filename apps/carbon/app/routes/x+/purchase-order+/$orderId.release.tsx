@@ -1,7 +1,7 @@
 import { PurchaseOrderEmail } from "@carbon/documents";
+import { validationError } from "@carbon/remix-validated-form";
 import { renderAsync } from "@react-email/components";
 import { redirect, type ActionFunctionArgs } from "@remix-run/node";
-import { validationError } from "remix-validated-form";
 import { triggerClient } from "~/lib/trigger.server";
 import {
   getPurchaseOrder,

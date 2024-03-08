@@ -9,11 +9,11 @@ import {
   VStack,
   cn,
 } from "@carbon/react";
+import { ValidatedForm } from "@carbon/remix-validated-form";
 import type { Theme } from "@carbon/utils";
 import { themes } from "@carbon/utils";
 import { useEffect, useState } from "react";
 import { RxCheck } from "react-icons/rx";
-import { ValidatedForm } from "remix-validated-form";
 import { Hidden, Submit } from "~/components/Form";
 import { useMode } from "~/hooks/useMode";
 import type { Theme as ThemeValue } from "~/modules/settings";

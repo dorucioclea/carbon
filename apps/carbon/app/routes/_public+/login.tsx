@@ -7,7 +7,7 @@ import type {
 import { json, redirect } from "@remix-run/node";
 import { Link, useActionData, useSearchParams } from "@remix-run/react";
 import { LuAlertCircle } from "react-icons/lu";
-import { ValidatedForm, validationError } from "remix-validated-form";
+import { ValidatedForm, validationError } from "@carbon/remix-validated-form";
 
 import { Hidden, Input, Password, Submit } from "~/components/Form";
 import {

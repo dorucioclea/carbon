@@ -1,7 +1,7 @@
+import { validationError } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
-import { validationError } from "remix-validated-form";
 import {
   accountProfileValidator,
   updatePublicAccount,

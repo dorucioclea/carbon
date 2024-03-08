@@ -13,7 +13,7 @@ import type {
 import { json, redirect } from "@remix-run/node";
 import { Link, useActionData } from "@remix-run/react";
 import { LuAlertCircle, LuCheckCircle } from "react-icons/lu";
-import { ValidatedForm, validationError } from "remix-validated-form";
+import { ValidatedForm, validationError } from "@carbon/remix-validated-form";
 
 import { Input, Submit } from "~/components/Form";
 import { getUserByEmail } from "~/modules/users/users.server";

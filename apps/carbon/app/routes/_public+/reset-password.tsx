@@ -3,7 +3,7 @@ import { Button, HStack, VStack } from "@carbon/react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useNavigate } from "@remix-run/react";
-import { ValidatedForm, validationError } from "remix-validated-form";
+import { ValidatedForm, validationError } from "@carbon/remix-validated-form";
 import { Password, Submit } from "~/components/Form";
 import { resetPassword } from "~/modules/users/users.server";
 import { resetPasswordValidator } from "~/services/auth";
