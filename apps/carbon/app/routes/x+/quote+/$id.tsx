@@ -179,7 +179,6 @@ export default function QuotationRoute() {
               <TooltipTrigger>
                 <IconButton
                   aria-label="Add Quote Line"
-                  variant="secondary"
                   icon={<IoMdAdd />}
                   ref={buttonRef}
                   onClick={() => navigate(path.to.newQuoteLine(id))}

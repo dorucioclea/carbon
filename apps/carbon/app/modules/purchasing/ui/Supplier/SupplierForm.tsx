@@ -14,9 +14,16 @@ import {
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
 import type { z } from "zod";
-import { Employee, Hidden, Input, Select, Submit } from "~/components/Form";
+import {
+  Employee,
+  Hidden,
+  Input,
+  Select,
+  Submit,
+  SupplierType,
+} from "~/components/Form";
 import { usePermissions, useRouteData } from "~/hooks";
-import type { SupplierStatus, SupplierType } from "~/modules/purchasing";
+import type { SupplierStatus } from "~/modules/purchasing";
 import { supplierValidator } from "~/modules/purchasing";
 import { path } from "~/utils/path";
 
@@ -35,15 +42,8 @@ const SupplierForm = ({
   const fetcher = useFetcher();
 
   const routeData = useRouteData<{
-    supplierTypes: SupplierType[];
     supplierStatuses: SupplierStatus[];
   }>(path.to.supplierRoot);
-
-  const supplierTypeOptions =
-    routeData?.supplierTypes?.map((type) => ({
-      value: type.id,
-      label: type.name,
-    })) ?? [];
 
   const supplierStatusOptions =
     routeData?.supplierStatuses?.map((status) => ({
@@ -93,10 +93,9 @@ const SupplierForm = ({
                   <Input name="taxId" label="Tax ID" />
                 </VStack>
                 <VStack>
-                  <Select
+                  <SupplierType
                     name="supplierTypeId"
                     label="Supplier Type"
-                    options={supplierTypeOptions}
                     placeholder="Select Supplier Type"
                   />
                   <Select

@@ -22,7 +22,7 @@ type DepartmentFormProps = {
   initialValues: z.infer<typeof departmentValidator>;
   type?: "modal" | "drawer";
   open?: boolean;
-  onClose: (data?: { id: string; name: string }) => void;
+  onClose: () => void;
 };
 
 const DepartmentForm = ({

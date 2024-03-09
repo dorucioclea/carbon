@@ -207,8 +207,13 @@ const QuotationLineQuantities = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate, quotationLine.replenishmentSystem, isEditable, canDelete]);
 
-  const editableComponents = useMemo(
-    () => ({
+  console.log({
+    isMade,
+    replenishmentSystem: quotationLine.replenishmentSystem,
+  });
+
+  const editableComponents = useMemo(() => {
+    const editableCells = {
       quantity: EditableQuotationLineQuantity(onCellEdit, {
         client: supabase,
         effects: linePriceEffects.effects[lineId],
@@ -219,12 +224,13 @@ const QuotationLineQuantities = ({
       markupPercentage: EditableNumber(onCellEdit, { minValue: 0 }),
       unitTaxAmount: EditableNumber(onCellEdit, { minValue: 0 }),
       leadTime: EditableNumber(onCellEdit, { minValue: 0 }),
-      materialCost: isMade
-        ? undefined
-        : EditableNumber(onCellEdit, { minValue: 0 }),
-    }),
-    [isMade, lineId, linePriceEffects.effects, onCellEdit, supabase]
-  );
+    };
+    if (!isMade) {
+      // @ts-expect-error
+      editableCells.materialCost = EditableNumber(onCellEdit, { minValue: 0 });
+    }
+    return editableCells;
+  }, [isMade, lineId, linePriceEffects.effects, onCellEdit, supabase]);
 
   const newRowButtonRef = useRef<HTMLButtonElement>(null);
 

@@ -1,7 +1,7 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useNavigate } from "@remix-run/react";
 import {
   SupplierTypeForm,
   getSupplierType,
@@ -87,6 +87,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function EditSupplierTypesRoute() {
   const { supplierType } = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
 
   const initialValues = {
     id: supplierType.id ?? undefined,
@@ -95,6 +96,10 @@ export default function EditSupplierTypesRoute() {
   };
 
   return (
-    <SupplierTypeForm key={initialValues.id} initialValues={initialValues} />
+    <SupplierTypeForm
+      key={initialValues.id}
+      initialValues={initialValues}
+      onClose={() => navigate(-1)}
+    />
   );
 }

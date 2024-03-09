@@ -150,7 +150,7 @@ const QuotationAssemblyForm = ({
               <VStack>
                 <Part
                   name="partId"
-                  label="Part"
+                  label="Manufactured Part"
                   partReplenishmentSystem="Make"
                   onChange={(value) => {
                     onPartChange(value?.value as string);

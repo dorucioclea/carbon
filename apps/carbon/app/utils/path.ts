@@ -41,6 +41,7 @@ export const path = {
         generatePath(`${api}/purchasing/supplier-contacts?supplierId=${id}`),
       supplierLocations: (id: string) =>
         generatePath(`${api}/purchasing/supplier-locations?supplierId=${id}`),
+      supplierTypes: `${api}/purchasing/supplier-types`,
       unitOfMeasures: `${api}/parts/uoms`,
       workCells: (id: string) =>
         generatePath(`${api}/resources/work-cells?location=${id}`),
