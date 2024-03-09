@@ -19,6 +19,7 @@ export const path = {
         generatePath(`${api}/sales/customer-contacts?customerId=${id}`),
       customerLocations: (id: string) =>
         generatePath(`${api}/sales/customer-locations?customerId=${id}`),
+      customerTypes: `${api}/sales/customer-types`,
       departments: `${api}/resources/departments`,
       employeeTypes: `${api}/users/employee-types`,
       emptyPermissions: `${api}/users/empty-permissions`,

@@ -18,19 +18,19 @@ import { usePermissions } from "~/hooks";
 import { supplierTypeValidator } from "~/modules/purchasing";
 import { path } from "~/utils/path";
 
-type DepartmentFormProps = {
+type SupplierTypeFormProps = {
   initialValues: z.infer<typeof supplierTypeValidator>;
   type?: "modal" | "drawer";
   open?: boolean;
   onClose: () => void;
 };
 
-const DepartmentForm = ({
+const SupplierTypeForm = ({
   initialValues,
   open = true,
   type = "drawer",
   onClose,
-}: DepartmentFormProps) => {
+}: SupplierTypeFormProps) => {
   const permissions = usePermissions();
   const fetcher = useFetcher();
 
@@ -93,4 +93,4 @@ const DepartmentForm = ({
   );
 };
 
-export default DepartmentForm;
+export default SupplierTypeForm;

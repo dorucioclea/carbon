@@ -1,6 +1,7 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
+import { useNavigate } from "@remix-run/react";
 import {
   CustomerTypeForm,
   customerTypeValidator,
@@ -9,7 +10,7 @@ import {
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { assertIsPost } from "~/utils/http";
-import { path } from "~/utils/path";
+import { path, requestReferrer } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -26,9 +27,10 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "sales",
   });
 
-  const validation = await validator(customerTypeValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const modal = formData.get("type") === "modal";
+
+  const validation = await validator(customerTypeValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -41,26 +43,36 @@ export async function action({ request }: ActionFunctionArgs) {
     createdBy: userId,
   });
   if (insertCustomerType.error) {
-    return json(
-      {},
-      await flash(
-        request,
-        error(insertCustomerType.error, "Failed to insert customer type")
-      )
-    );
+    return modal
+      ? json(insertCustomerType)
+      : redirect(
+          requestReferrer(request) ?? path.to.customerTypes,
+          await flash(
+            request,
+            error(insertCustomerType.error, "Failed to insert customer type")
+          )
+        );
   }
 
-  return redirect(
-    path.to.customerTypes,
-    await flash(request, success("Customer type created"))
-  );
+  return modal
+    ? json(insertCustomerType, { status: 201 })
+    : redirect(
+        path.to.customerTypes,
+        await flash(request, success("Customer type created"))
+      );
 }
 
 export default function NewCustomerTypesRoute() {
+  const navigate = useNavigate();
   const initialValues = {
     name: "",
     color: "#000000",
   };
 
-  return <CustomerTypeForm initialValues={initialValues} />;
+  return (
+    <CustomerTypeForm
+      initialValues={initialValues}
+      onClose={() => navigate(-1)}
+    />
+  );
 }

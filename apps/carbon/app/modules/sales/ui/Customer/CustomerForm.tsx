@@ -15,7 +15,7 @@ import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
 import type { z } from "zod";
 import {
-  Combobox,
+  CustomerType,
   Employee,
   Hidden,
   Input,
@@ -23,7 +23,7 @@ import {
   Submit,
 } from "~/components/Form";
 import { usePermissions, useRouteData } from "~/hooks";
-import type { CustomerStatus, CustomerType } from "~/modules/sales";
+import type { CustomerStatus } from "~/modules/sales";
 import { customerValidator } from "~/modules/sales";
 import { path } from "~/utils/path";
 
@@ -42,15 +42,8 @@ const CustomerForm = ({
   const fetcher = useFetcher();
 
   const routeData = useRouteData<{
-    customerTypes: CustomerType[];
     customerStatuses: CustomerStatus[];
   }>(path.to.customerRoot);
-
-  const customerTypeOptions =
-    routeData?.customerTypes?.map((type) => ({
-      value: type.id,
-      label: type.name,
-    })) ?? [];
 
   const customerStatusOptions =
     routeData?.customerStatuses?.map((status) => ({
@@ -100,10 +93,9 @@ const CustomerForm = ({
                   <Input name="taxId" label="Tax ID" />
                 </VStack>
                 <VStack>
-                  <Combobox
+                  <CustomerType
                     name="customerTypeId"
                     label="Customer Type"
-                    options={customerTypeOptions}
                     placeholder="Select Customer Type"
                   />
                   <Select

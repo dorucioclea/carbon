@@ -27,17 +27,23 @@ export async function loader({ request }: LoaderFunctionArgs) {
     view: "purchasing",
   });
 
-  const [supplierStatuses, paymentTerms, shippingMethods, shippingTerms] =
-    await Promise.all([
-      getSupplierTypes(client),
-      getSupplierStatuses(client),
-      getPaymentTermsList(client),
-      getShippingMethodsList(client),
-      getShippingTermsList(client),
-    ]);
+  const [
+    supplierTypes,
+    supplierStatuses,
+    paymentTerms,
+    shippingMethods,
+    shippingTerms,
+  ] = await Promise.all([
+    getSupplierTypes(client),
+    getSupplierStatuses(client),
+    getPaymentTermsList(client),
+    getShippingMethodsList(client),
+    getShippingTermsList(client),
+  ]);
 
   return json({
     supplierStatuses: supplierStatuses.data ?? [],
+    supplierTypes: supplierTypes.data ?? [],
     paymentTerms: paymentTerms.data ?? [],
     shippingMethods: shippingMethods.data ?? [],
     shippingTerms: shippingTerms.data ?? [],

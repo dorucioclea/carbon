@@ -2,49 +2,47 @@ import { useDisclosure, useMount } from "@carbon/react";
 import { useFetcher } from "@remix-run/react";
 import { useMemo, useRef, useState } from "react";
 import { useRouteData } from "~/hooks";
-import type {
-  SupplierStatus,
-  getSupplierTypesList,
-} from "~/modules/purchasing";
-import { SupplierTypeForm } from "~/modules/purchasing";
+import type { SupplierStatus } from "~/modules/purchasing";
+import type { getCustomerTypesList } from "~/modules/sales";
+import { CustomerTypeForm } from "~/modules/sales";
 import { path } from "~/utils/path";
 import type { ComboboxProps } from "./Combobox";
 import CreatableCombobox from "./CreatableCombobox";
 
-type SupplierTypeSelectProps = Omit<ComboboxProps, "options">;
+type CustomerTypeSelectProps = Omit<ComboboxProps, "options">;
 
-const SupplierType = (props: SupplierTypeSelectProps) => {
-  const supplierTypeFetcher =
-    useFetcher<Awaited<ReturnType<typeof getSupplierTypesList>>>();
+const CustomerType = (props: CustomerTypeSelectProps) => {
+  const customerTypeFetcher =
+    useFetcher<Awaited<ReturnType<typeof getCustomerTypesList>>>();
 
-  const sharedSupplierData = useRouteData<{
-    supplierTypes: SupplierStatus[];
-  }>(path.to.supplierRoot);
+  const sharedCustomerData = useRouteData<{
+    customerTypes: SupplierStatus[];
+  }>(path.to.customerRoot);
 
-  const newSupplierTypeModal = useDisclosure();
+  const newCustomerTypeModal = useDisclosure();
   const [created, setCreated] = useState<string>("");
   const triggerRef = useRef<HTMLButtonElement>(null);
 
-  const hasSupplierData = sharedSupplierData?.supplierTypes;
+  const hasSupplierData = sharedCustomerData?.customerTypes;
 
   useMount(() => {
-    if (!hasSupplierData) supplierTypeFetcher.load(path.to.api.supplierTypes);
+    if (!hasSupplierData) customerTypeFetcher.load(path.to.api.customerTypes);
   });
 
   const options = useMemo(() => {
     const dataSource =
       (hasSupplierData
-        ? sharedSupplierData.supplierTypes
-        : supplierTypeFetcher.data?.data) ?? [];
+        ? sharedCustomerData.customerTypes
+        : customerTypeFetcher.data?.data) ?? [];
 
     return dataSource.map((c) => ({
       value: c.id,
       label: c.name,
     }));
   }, [
-    supplierTypeFetcher.data?.data,
+    customerTypeFetcher.data?.data,
     hasSupplierData,
-    sharedSupplierData?.supplierTypes,
+    sharedCustomerData?.customerTypes,
   ]);
 
   return (
@@ -53,18 +51,18 @@ const SupplierType = (props: SupplierTypeSelectProps) => {
         ref={triggerRef}
         options={options}
         {...props}
-        label={props?.label ?? "SupplierType"}
+        label={props?.label ?? "CustomerType"}
         onCreateOption={(option) => {
-          newSupplierTypeModal.onOpen();
+          newCustomerTypeModal.onOpen();
           setCreated(option);
         }}
       />
-      {newSupplierTypeModal.isOpen && (
-        <SupplierTypeForm
+      {newCustomerTypeModal.isOpen && (
+        <CustomerTypeForm
           type="modal"
           onClose={() => {
             setCreated("");
-            newSupplierTypeModal.onClose();
+            newCustomerTypeModal.onClose();
             triggerRef.current?.click();
           }}
           initialValues={{
@@ -77,6 +75,6 @@ const SupplierType = (props: SupplierTypeSelectProps) => {
   );
 };
 
-SupplierType.displayName = "SupplierType";
+CustomerType.displayName = "CustomerType";
 
-export default SupplierType;
+export default CustomerType;
