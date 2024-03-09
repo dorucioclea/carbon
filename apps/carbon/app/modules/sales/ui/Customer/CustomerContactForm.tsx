@@ -10,7 +10,7 @@ import {
   VStack,
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
-import { useNavigate, useParams } from "@remix-run/react";
+import { useFetcher, useNavigate, useParams } from "@remix-run/react";
 import type { z } from "zod";
 import {
   DatePicker,
@@ -29,6 +29,7 @@ type CustomerContactFormProps = {
 };
 
 const CustomerContactForm = ({ initialValues }: CustomerContactFormProps) => {
+  const fetcher = useFetcher();
   const navigate = useNavigate();
   const { customerId } = useParams();
 
@@ -59,6 +60,7 @@ const CustomerContactForm = ({ initialValues }: CustomerContactFormProps) => {
               : path.to.newCustomerContact(customerId)
           }
           defaultValues={initialValues}
+          fetcher={fetcher}
           onSubmit={onClose}
           className="flex flex-col h-full"
         >

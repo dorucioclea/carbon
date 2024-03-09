@@ -11,7 +11,7 @@ import {
 } from "@carbon/react";
 
 import { ValidatedForm } from "@carbon/remix-validated-form";
-import { useNavigate, useParams } from "@remix-run/react";
+import { useFetcher, useNavigate, useParams } from "@remix-run/react";
 import type { z } from "zod";
 import { Hidden, Input, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
@@ -23,6 +23,7 @@ type SupplierLocationFormProps = {
 };
 
 const SupplierLocationForm = ({ initialValues }: SupplierLocationFormProps) => {
+  const fetcher = useFetcher();
   const navigate = useNavigate();
   const { supplierId } = useParams();
 
@@ -54,6 +55,7 @@ const SupplierLocationForm = ({ initialValues }: SupplierLocationFormProps) => {
           }
           defaultValues={initialValues}
           onSubmit={onClose}
+          fetcher={fetcher}
           className="flex flex-col h-full"
         >
           <DrawerHeader>

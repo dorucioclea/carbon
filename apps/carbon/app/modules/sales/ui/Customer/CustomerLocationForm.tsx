@@ -11,7 +11,7 @@ import {
 } from "@carbon/react";
 
 import { ValidatedForm } from "@carbon/remix-validated-form";
-import { useNavigate, useParams } from "@remix-run/react";
+import { useFetcher, useNavigate, useParams } from "@remix-run/react";
 import type { z } from "zod";
 import { Hidden, Input, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
@@ -23,6 +23,7 @@ type CustomerLocationFormProps = {
 };
 
 const CustomerLocationForm = ({ initialValues }: CustomerLocationFormProps) => {
+  const fetcher = useFetcher();
   const navigate = useNavigate();
   const { customerId } = useParams();
 
@@ -53,6 +54,7 @@ const CustomerLocationForm = ({ initialValues }: CustomerLocationFormProps) => {
               : path.to.newCustomerLocation(customerId)
           }
           defaultValues={initialValues}
+          fetcher={fetcher}
           onSubmit={onClose}
           className="flex flex-col h-full"
         >

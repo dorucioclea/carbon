@@ -10,7 +10,7 @@ import {
   VStack,
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
-import { useNavigate } from "@remix-run/react";
+import { useFetcher, useNavigate } from "@remix-run/react";
 import type { z } from "zod";
 import { Hidden, Input, Submit, TextArea } from "~/components/Form";
 import { usePermissions } from "~/hooks";
@@ -22,6 +22,7 @@ type PartGroupFormProps = {
 };
 
 const PartGroupForm = ({ initialValues }: PartGroupFormProps) => {
+  const fetcher = useFetcher();
   const permissions = usePermissions();
   const navigate = useNavigate();
   const onClose = () => navigate(-1);
@@ -48,6 +49,7 @@ const PartGroupForm = ({ initialValues }: PartGroupFormProps) => {
               : path.to.newPartGroup
           }
           defaultValues={initialValues}
+          fetcher={fetcher}
           className="flex flex-col h-full"
         >
           <DrawerHeader>

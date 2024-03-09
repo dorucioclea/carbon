@@ -11,7 +11,7 @@ import {
 } from "@carbon/react";
 
 import { ValidatedForm } from "@carbon/remix-validated-form";
-import { useNavigate } from "@remix-run/react";
+import { useFetcher, useNavigate } from "@remix-run/react";
 import type { z } from "zod";
 import { Hidden, Input, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
@@ -23,6 +23,7 @@ type UnitOfMeasureFormProps = {
 };
 
 const UnitOfMeasureForm = ({ initialValues }: UnitOfMeasureFormProps) => {
+  const fetcher = useFetcher();
   const permissions = usePermissions();
   const navigate = useNavigate();
   const onClose = () => navigate(-1);
@@ -45,6 +46,7 @@ const UnitOfMeasureForm = ({ initialValues }: UnitOfMeasureFormProps) => {
           method="post"
           action={isEditing ? path.to.uom(initialValues.id!) : path.to.newUom}
           defaultValues={initialValues}
+          fetcher={fetcher}
           className="flex flex-col h-full"
         >
           <DrawerHeader>
