@@ -24,13 +24,10 @@ export async function action({ request }: ActionFunctionArgs) {
   const { client, userId } = await requirePermissions(request, {
     create: "purchasing",
   });
-  const formData = await request.formData();
-  console.log("formData");
-  for (var pair of formData.entries()) {
-    console.log(pair[0] + ", " + pair[1]);
-  }
 
-  const validation = await validator(purchaseOrderValidator).validate(formData);
+  const validation = await validator(purchaseOrderValidator).validate(
+    await request.formData()
+  );
 
   if (validation.error) {
     return validationError(validation.error);
