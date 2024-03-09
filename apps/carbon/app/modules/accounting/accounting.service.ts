@@ -680,7 +680,7 @@ export async function upsertAccount(
       })
 ) {
   if ("createdBy" in account) {
-    return client.from("account").insert([account]).select("id").single();
+    return client.from("account").insert([account]).select("*").single();
   }
   return client
     .from("account")
@@ -761,7 +761,7 @@ export async function upsertCurrency(
   }
 
   if ("createdBy" in currency) {
-    return client.from("currency").insert([currency]).select("id").single();
+    return client.from("currency").insert([currency]).select("*").single();
   }
   return client
     .from("currency")

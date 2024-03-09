@@ -1,17 +1,11 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import { useNavigate } from "@remix-run/react";
-import {
-  DepartmentForm,
-  departmentValidator,
-  upsertDepartment,
-} from "~/modules/resources";
+import { json } from "@remix-run/node";
+import { departmentValidator, upsertDepartment } from "~/modules/resources";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { assertIsPost } from "~/utils/http";
-import { path } from "~/utils/path";
-import { error, success } from "~/utils/result";
+import { error } from "~/utils/result";
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
@@ -35,32 +29,17 @@ export async function action({ request }: ActionFunctionArgs) {
   });
 
   if (createDepartment.error) {
-    return redirect(
-      path.to.departments,
+    return json(
+      createDepartment,
       await flash(
         request,
-        error(createDepartment.error, "Failed to create department.")
+        error(createDepartment.error, "Failed to insert department")
       )
     );
   }
 
-  return redirect(
-    path.to.departments,
-    await flash(request, success("Department created."))
-  );
-}
+  const departmentId = createDepartment.data?.id;
+  if (!departmentId) throw new Error("Department ID not found");
 
-export default function NewDepartmentRoute() {
-  const navigate = useNavigate();
-  const initialValues = {
-    name: "",
-    color: "#000000",
-  };
-
-  return (
-    <DepartmentForm
-      onClose={() => navigate(-1)}
-      initialValues={initialValues}
-    />
-  );
+  return json(createDepartment, { status: 201 });
 }

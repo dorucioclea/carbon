@@ -139,7 +139,7 @@ export async function upsertReceipt(
       })
 ) {
   if ("createdBy" in receipt) {
-    return client.from("receipt").insert([receipt]).select("id").single();
+    return client.from("receipt").insert([receipt]).select("*").single();
   }
   return client
     .from("receipt")

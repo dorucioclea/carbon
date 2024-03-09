@@ -1,7 +1,7 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useNavigate } from "@remix-run/react";
 import {
   DepartmentForm,
   departmentValidator,
@@ -77,6 +77,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function DepartmentRoute() {
   const { department } = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
 
   const initialValues = {
     id: department.id,
@@ -86,6 +87,10 @@ export default function DepartmentRoute() {
   };
 
   return (
-    <DepartmentForm key={initialValues.id} initialValues={initialValues} />
+    <DepartmentForm
+      onClose={() => navigate(-1)}
+      key={initialValues.id}
+      initialValues={initialValues}
+    />
   );
 }

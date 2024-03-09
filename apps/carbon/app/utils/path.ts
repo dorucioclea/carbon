@@ -27,6 +27,7 @@ export const path = {
         generatePath(`${api}/users/groups?type=${type}`),
       locations: `${api}/resources/locations`,
       newCustomer: `${api}/sales/customers/new`,
+      newDepartment: `${api}/resources/departments/new`,
       newPart: `${api}/parts/new`,
       newSupplier: `${api}/purchasing/suppliers/new`,
       rollback: (table: string, id: string) =>

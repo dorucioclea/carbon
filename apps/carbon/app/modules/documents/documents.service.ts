@@ -198,7 +198,7 @@ export async function upsertDocument(
       })
 ) {
   if ("createdBy" in document) {
-    return client.from("document").insert(document).select("id").single();
+    return client.from("document").insert(document).select("*").single();
   }
   return client
     .from("document")

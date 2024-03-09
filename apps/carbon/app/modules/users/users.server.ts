@@ -396,7 +396,7 @@ export async function insertEmployee(
   client: SupabaseClient<Database>,
   employee: EmployeeRow
 ) {
-  return client.from("employee").insert([employee]).select("id").single();
+  return client.from("employee").insert([employee]).select("*").single();
 }
 
 async function insertSupplierAccount(
