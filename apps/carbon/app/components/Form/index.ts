@@ -43,6 +43,7 @@ import SupplierLocation from "./SupplierLocation";
 import TextArea from "./Textarea";
 import TimePicker from "./TimePicker";
 import Timezone from "./Timezone";
+import UnitOfMeasure from "./UnitOfMeasure";
 import User from "./User";
 import Users from "./Users";
 import WorkCellType from "./WorkCellType";
@@ -93,6 +94,7 @@ export {
   TextArea,
   TimePicker,
   Timezone,
+  UnitOfMeasure,
   User,
   Users,
   WorkCellType,
