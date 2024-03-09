@@ -1,35 +1,35 @@
 import { useDisclosure, useMount } from "@carbon/react";
 import { useFetcher } from "@remix-run/react";
 import { useMemo, useRef, useState } from "react";
-import type { getDepartmentsList } from "~/modules/resources";
-import { DepartmentForm } from "~/modules/resources";
+import type { getPartGroupsList } from "~/modules/parts";
+import { PartGroupForm } from "~/modules/parts";
 import { path } from "~/utils/path";
 import type { ComboboxProps } from "./Combobox";
 import CreatableCombobox from "./CreatableCombobox";
 
-type DepartmentSelectProps = Omit<ComboboxProps, "options">;
+type PartGroupSelectProps = Omit<ComboboxProps, "options">;
 
-const Department = (props: DepartmentSelectProps) => {
-  const departmentFetcher =
-    useFetcher<Awaited<ReturnType<typeof getDepartmentsList>>>();
+const PartGroup = (props: PartGroupSelectProps) => {
+  const partGroupFetcher =
+    useFetcher<Awaited<ReturnType<typeof getPartGroupsList>>>();
 
-  const newDepartmentModal = useDisclosure();
+  const newPartGroupModal = useDisclosure();
   const [created, setCreated] = useState<string>("");
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   useMount(() => {
-    departmentFetcher.load(path.to.api.departments);
+    partGroupFetcher.load(path.to.api.partGroups);
   });
 
   const options = useMemo(
     () =>
-      departmentFetcher.data?.data
-        ? departmentFetcher.data?.data.map((c) => ({
+      partGroupFetcher.data?.data
+        ? partGroupFetcher.data?.data.map((c) => ({
             value: c.id,
             label: c.name,
           }))
         : [],
-    [departmentFetcher.data]
+    [partGroupFetcher.data]
   );
 
   return (
@@ -38,23 +38,22 @@ const Department = (props: DepartmentSelectProps) => {
         ref={triggerRef}
         options={options}
         {...props}
-        label={props?.label ?? "Department"}
+        label={props?.label ?? "Part Group"}
         onCreateOption={(option) => {
-          newDepartmentModal.onOpen();
+          newPartGroupModal.onOpen();
           setCreated(option);
         }}
       />
-      {newDepartmentModal.isOpen && (
-        <DepartmentForm
+      {newPartGroupModal.isOpen && (
+        <PartGroupForm
           type="modal"
           onClose={() => {
             setCreated("");
-            newDepartmentModal.onClose();
+            newPartGroupModal.onClose();
             triggerRef.current?.click();
           }}
           initialValues={{
             name: created,
-            color: "#000000",
           }}
         />
       )}
@@ -62,6 +61,6 @@ const Department = (props: DepartmentSelectProps) => {
   );
 };
 
-Department.displayName = "Department";
+PartGroup.displayName = "PartGroup";
 
-export default Department;
+export default PartGroup;

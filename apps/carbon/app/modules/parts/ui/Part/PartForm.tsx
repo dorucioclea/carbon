@@ -20,6 +20,7 @@ import {
   Hidden,
   Input,
   InputControlled,
+  PartGroup,
   Select,
   Submit,
   TextArea,
@@ -95,12 +96,6 @@ const PartForm = ({ initialValues, type = "card", onClose }: PartFormProps) => {
   const { partId, onPartIdChange, loading } = useNextPartIdShortcut();
   const permissions = usePermissions();
   const isEditing = !!initialValues.id;
-
-  const partGroupOptions =
-    sharedPartsData?.partGroups.map((partGroup) => ({
-      label: partGroup.name,
-      value: partGroup.id,
-    })) ?? [];
 
   const partTypeOptions =
     partTypes.map((partType) => ({
@@ -186,11 +181,7 @@ const PartForm = ({ initialValues, type = "card", onClose }: PartFormProps) => {
                   />
                 </VStack>
                 <VStack>
-                  <Combobox
-                    name="partGroupId"
-                    label="Part Group"
-                    options={partGroupOptions}
-                  />
+                  <PartGroup name="partGroupId" label="Part Group" />
                   <Boolean name="blocked" label="Blocked" />
                   {isEditing && <Boolean name="active" label="Active" />}
                 </VStack>

@@ -9,6 +9,7 @@ import type {
 import { createContext, forwardRef, useContext } from "react";
 import {
   Drawer,
+  DrawerBody,
   DrawerContent,
   DrawerDescription,
   DrawerFooter,
@@ -71,14 +72,14 @@ const ModalDrawer = forwardRef<
 ModalDrawer.displayName = "ModalDrawer";
 
 const ModalDrawerBody = forwardRef<
-  ElementRef<typeof ModalBody> | ElementRef<typeof DrawerContent>,
+  ElementRef<typeof ModalBody> | ElementRef<typeof DrawerBody>,
   | ComponentPropsWithoutRef<typeof ModalBody>
-  | ComponentPropsWithoutRef<typeof DrawerContent>
+  | ComponentPropsWithoutRef<typeof DrawerBody>
 >((props, ref) => {
   const type = useModalDrawerType();
 
   if (type === "drawer") {
-    return <DrawerContent {...props} ref={ref} />;
+    return <DrawerBody {...props} />;
   }
 
   return <ModalBody {...props} />;
@@ -86,17 +87,16 @@ const ModalDrawerBody = forwardRef<
 ModalDrawerBody.displayName = "ModalDrawerBody";
 
 const ModalDrawerContent = forwardRef<
-  ElementRef<typeof ModalContent> | ElementRef<"div">,
-  | ComponentPropsWithoutRef<typeof ModalContent>
-  | ComponentPropsWithoutRef<"div">
->((props, ref) => {
+  ElementRef<typeof ModalContent> | ElementRef<typeof DrawerContent>,
+  ComponentPropsWithoutRef<typeof DrawerContent>
+>(({ size, ...props }, ref) => {
   const type = useModalDrawerType();
 
   if (type === "drawer") {
-    return <div {...props} ref={ref} />;
+    return <DrawerContent {...props} size={size} ref={ref} />;
   }
 
-  return <ModalContent {...props} ref={ref} />;
+  return <ModalContent {...props} size="medium" ref={ref} />;
 });
 ModalDrawerContent.displayName = "ModalDrawerContent";
 

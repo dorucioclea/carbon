@@ -10,7 +10,7 @@ type CustomerSelectProps = Omit<ComboboxProps, "options">;
 const Customer = (props: CustomerSelectProps) => {
   const [suppliers] = useCustomers();
   const newCustomersModal = useDisclosure();
-  const [createdCustomer, setCreatedCustomer] = useState<string>("");
+  const [created, setCreated] = useState<string>("");
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   const options = useMemo(
@@ -31,19 +31,19 @@ const Customer = (props: CustomerSelectProps) => {
         label={props?.label ?? "Customer"}
         onCreateOption={(option) => {
           newCustomersModal.onOpen();
-          setCreatedCustomer(option);
+          setCreated(option);
         }}
       />
       {newCustomersModal.isOpen && (
         <CustomerForm
           type="modal"
           onClose={() => {
-            setCreatedCustomer("");
+            setCreated("");
             newCustomersModal.onClose();
             triggerRef.current?.click();
           }}
           initialValues={{
-            name: createdCustomer,
+            name: created,
           }}
         />
       )}

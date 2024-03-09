@@ -25,6 +25,7 @@ import Location from "./Location";
 import Number from "./Number";
 import NumberControlled from "./NumberControlled";
 import Part from "./Part";
+import PartGroup from "./PartGroup";
 import Password from "./Password";
 import PhoneInput from "./PhoneInput";
 import Radios from "./Radios";
@@ -74,6 +75,7 @@ export {
   Number,
   NumberControlled,
   Part,
+  PartGroup,
   Password,
   PhoneInput,
   Radios,
