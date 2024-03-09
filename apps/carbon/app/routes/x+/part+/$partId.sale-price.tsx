@@ -2,8 +2,6 @@ import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { useRouteData } from "~/hooks";
-import type { UnitOfMeasureListItem } from "~/modules/parts";
 import {
   PartSalePriceForm,
   getPartUnitSalePrice,
@@ -83,10 +81,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export default function PartSalePriceRoute() {
-  const sharedPartData = useRouteData<{
-    unitOfMeasures: UnitOfMeasureListItem[];
-  }>(path.to.partRoot);
-
   const { partUnitSalePrice } = useLoaderData<typeof loader>();
 
   const initialValues = {
@@ -98,7 +92,6 @@ export default function PartSalePriceRoute() {
     <PartSalePriceForm
       key={initialValues.partId}
       initialValues={initialValues}
-      unitOfMeasures={sharedPartData?.unitOfMeasures ?? []}
     />
   );
 }

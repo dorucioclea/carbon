@@ -11,18 +11,16 @@ import {
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useNavigate, useParams } from "@remix-run/react";
-import { useMemo } from "react";
 import type { z } from "zod";
 import {
-  Combobox,
   Hidden,
   Input,
   Number,
   Submit,
   Supplier,
+  UnitOfMeasure,
 } from "~/components/Form";
-import { usePermissions, useRouteData } from "~/hooks";
-import type { UnitOfMeasureListItem } from "~/modules/parts";
+import { usePermissions } from "~/hooks";
 import { partSupplierValidator } from "~/modules/parts";
 import { path } from "~/utils/path";
 
@@ -36,19 +34,6 @@ const PartSupplierForm = ({ initialValues }: PartSupplierFormProps) => {
   const { partId } = useParams();
 
   if (!partId) throw new Error("partId not found");
-
-  const sharedPartData = useRouteData<{
-    unitOfMeasures: UnitOfMeasureListItem[];
-  }>(path.to.partRoot);
-
-  const unitOfMeasureOptions = useMemo(() => {
-    return (
-      sharedPartData?.unitOfMeasures.map((unitOfMeasure) => ({
-        label: unitOfMeasure.name,
-        value: unitOfMeasure.code,
-      })) ?? []
-    );
-  }, [sharedPartData?.unitOfMeasures]);
 
   const isEditing = initialValues.id !== undefined;
   const isDisabled = isEditing
@@ -88,10 +73,9 @@ const PartSupplierForm = ({ initialValues }: PartSupplierFormProps) => {
             <VStack spacing={4}>
               <Supplier name="supplierId" label="Supplier" />
               <Input name="supplierPartId" label="Supplier Part ID" />
-              <Combobox
+              <UnitOfMeasure
                 name="supplierUnitOfMeasureCode"
                 label="Unit of Measure"
-                options={unitOfMeasureOptions}
               />
               <Number
                 name="minimumOrderQuantity"

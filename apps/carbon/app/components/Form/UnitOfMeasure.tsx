@@ -1,7 +1,11 @@
 import { useDisclosure, useMount } from "@carbon/react";
 import { useFetcher } from "@remix-run/react";
 import { useMemo, useRef, useState } from "react";
-import type { getUnitOfMeasuresList } from "~/modules/parts";
+import { useRouteData } from "~/hooks";
+import type {
+  UnitOfMeasureListItem,
+  getUnitOfMeasuresList,
+} from "~/modules/parts";
 import { UnitOfMeasureForm } from "~/modules/parts";
 import { path } from "~/utils/path";
 import type { ComboboxProps } from "./Combobox";
@@ -13,24 +17,35 @@ const UnitOfMeasure = (props: UnitOfMeasureSelectProps) => {
   const uomFetcher =
     useFetcher<Awaited<ReturnType<typeof getUnitOfMeasuresList>>>();
 
+  const sharedPartData = useRouteData<{
+    unitOfMeasures: UnitOfMeasureListItem[];
+  }>(path.to.partRoot);
+
   const newUnitOfMeasureModal = useDisclosure();
   const [created, setCreated] = useState<string>("");
   const triggerRef = useRef<HTMLButtonElement>(null);
 
+  const hasSharedPartData = sharedPartData?.unitOfMeasures?.length;
+
   useMount(() => {
-    uomFetcher.load(path.to.api.unitOfMeasures);
+    if (!hasSharedPartData) uomFetcher.load(path.to.api.unitOfMeasures);
   });
 
-  const options = useMemo(
-    () =>
-      uomFetcher.data?.data
-        ? uomFetcher.data?.data.map((c) => ({
-            value: c.code,
-            label: c.name,
-          }))
-        : [],
-    [uomFetcher.data]
-  );
+  const options = useMemo(() => {
+    const dataSource =
+      (hasSharedPartData
+        ? sharedPartData?.unitOfMeasures
+        : uomFetcher.data?.data) ?? [];
+
+    return dataSource.map((c) => ({
+      value: c.code,
+      label: c.name,
+    }));
+  }, [
+    hasSharedPartData,
+    sharedPartData?.unitOfMeasures,
+    uomFetcher.data?.data,
+  ]);
 
   return (
     <>
