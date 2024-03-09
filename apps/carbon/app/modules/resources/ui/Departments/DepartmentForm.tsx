@@ -52,8 +52,6 @@ const DepartmentForm = ({
           action={
             isEditing
               ? path.to.department(initialValues.id!)
-              : type === "modal"
-              ? path.to.api.newDepartment
               : path.to.newDepartment
           }
           defaultValues={initialValues}
@@ -70,6 +68,7 @@ const DepartmentForm = ({
           </DrawerHeader>
           <DrawerBody>
             <Hidden name="id" />
+            <Hidden name="type" value={type} />
             <VStack spacing={4}>
               <Input name="name" label="Department Name" />
               <Color name="color" label="Color" />

@@ -1,6 +1,6 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { PartForm, partValidator, upsertPart } from "~/modules/parts";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
@@ -14,9 +14,10 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "parts",
   });
 
-  const validation = await validator(partValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const modal = formData.get("type") === "modal";
+
+  const validation = await validator(partValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -28,16 +29,23 @@ export async function action({ request }: ActionFunctionArgs) {
     createdBy: userId,
   });
   if (createPart.error) {
-    return redirect(
-      path.to.partsSearch,
-      await flash(request, error(createPart.error, "Failed to insert part"))
-    );
+    return modal
+      ? json(
+          createPart,
+          await flash(request, error(createPart.error, "Failed to insert part"))
+        )
+      : redirect(
+          path.to.partsSearch,
+          await flash(request, error(createPart.error, "Failed to insert part"))
+        );
   }
 
   const partId = createPart.data?.id;
   if (!partId) throw new Error("Part ID not found");
 
-  return redirect(path.to.part(partId));
+  return modal
+    ? json(createPart, { status: 201 })
+    : redirect(path.to.part(partId));
 }
 
 export default function PartsNewRoute() {

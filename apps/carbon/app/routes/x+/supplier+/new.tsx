@@ -1,6 +1,6 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import {
   SupplierForm,
   insertSupplier,
@@ -18,9 +18,10 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "purchasing",
   });
 
-  const validation = await validator(supplierValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const modal = formData.get("type") === "modal";
+
+  const validation = await validator(supplierValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -33,18 +34,28 @@ export async function action({ request }: ActionFunctionArgs) {
     createdBy: userId,
   });
   if (createSupplier.error) {
-    return redirect(
-      path.to.suppliers,
-      await flash(
-        request,
-        error(createSupplier.error, "Failed to insert supplier")
-      )
-    );
+    return modal
+      ? json(
+          createSupplier,
+          await flash(
+            request,
+            error(createSupplier.error, "Failed to insert supplier")
+          )
+        )
+      : redirect(
+          path.to.suppliers,
+          await flash(
+            request,
+            error(createSupplier.error, "Failed to insert supplier")
+          )
+        );
   }
 
   const supplierId = createSupplier.data?.id;
 
-  return redirect(path.to.supplier(supplierId));
+  return modal
+    ? json(createSupplier, { status: 201 })
+    : redirect(path.to.supplier(supplierId));
 }
 
 export default function SuppliersNewRoute() {

@@ -17,6 +17,7 @@ import type { z } from "zod";
 import {
   Boolean,
   Combobox,
+  Hidden,
   Input,
   InputControlled,
   Select,
@@ -124,13 +125,7 @@ const PartForm = ({ initialValues, type = "card", onClose }: PartFormProps) => {
       <ModalCard onClose={onClose}>
         <ModalCardContent>
           <ValidatedForm
-            action={
-              isEditing
-                ? undefined
-                : type === "card"
-                ? path.to.newPart
-                : path.to.api.newPart
-            }
+            action={isEditing ? undefined : path.to.newPart}
             method="post"
             validator={partValidator}
             defaultValues={initialValues}
@@ -149,6 +144,7 @@ const PartForm = ({ initialValues, type = "card", onClose }: PartFormProps) => {
               )}
             </ModalCardHeader>
             <ModalCardBody>
+              <Hidden name="type" value={type} />
               <div
                 className={cn(
                   "grid w-full gap-x-8 gap-y-2",
