@@ -1,6 +1,6 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import {
   CustomerForm,
   customerValidator,
@@ -18,9 +18,10 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "sales",
   });
 
-  const validation = await validator(customerValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const modal = formData.get("type") === "modal";
+
+  const validation = await validator(customerValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -33,18 +34,26 @@ export async function action({ request }: ActionFunctionArgs) {
     createdBy: userId,
   });
   if (createCustomer.error) {
-    return redirect(
-      path.to.customers,
-      await flash(
-        request,
-        error(createCustomer.error, "Failed to insert customer")
-      )
-    );
+    return modal
+      ? json(
+          createCustomer,
+          await flash(
+            request,
+            error(createCustomer.error, "Failed to insert customer")
+          )
+        )
+      : redirect(
+          path.to.customers,
+          await flash(
+            request,
+            error(createCustomer.error, "Failed to insert customer")
+          )
+        );
   }
 
   const customerId = createCustomer.data?.id;
 
-  return redirect(path.to.customer(customerId));
+  return modal ? json(createCustomer) : redirect(path.to.customer(customerId));
 }
 
 export default function CustomersNewRoute() {

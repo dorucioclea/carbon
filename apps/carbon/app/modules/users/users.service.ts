@@ -229,7 +229,7 @@ export async function insertGroup(
   client: SupabaseClient<Database>,
   group: { name: string }
 ) {
-  return client.from("group").insert(group).select("id").single();
+  return client.from("group").insert(group).select("*").single();
 }
 
 export async function upsertEmployeeType(

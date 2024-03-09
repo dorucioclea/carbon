@@ -62,13 +62,7 @@ const SupplierForm = ({
         <ModalCardContent>
           <ValidatedForm
             method="post"
-            action={
-              isEditing
-                ? undefined
-                : type === "card"
-                ? path.to.newSupplier
-                : path.to.api.newSupplier
-            }
+            action={isEditing ? undefined : path.to.newSupplier}
             validator={supplierValidator}
             defaultValues={initialValues}
             onSubmit={onClose}
@@ -87,6 +81,7 @@ const SupplierForm = ({
             </ModalCardHeader>
             <ModalCardBody>
               <Hidden name="id" />
+              <Hidden name="type" value={type} />
               <div
                 className={cn(
                   "grid w-full gap-x-8 gap-y-2",

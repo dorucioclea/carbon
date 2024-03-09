@@ -69,13 +69,7 @@ const CustomerForm = ({
         <ModalCardContent>
           <ValidatedForm
             method="post"
-            action={
-              isEditing
-                ? undefined
-                : type === "card"
-                ? path.to.newCustomer
-                : path.to.api.newCustomer
-            }
+            action={isEditing ? undefined : path.to.newCustomer}
             validator={customerValidator}
             defaultValues={initialValues}
             onSubmit={onClose}
@@ -94,6 +88,7 @@ const CustomerForm = ({
             </ModalCardHeader>
             <ModalCardBody>
               <Hidden name="id" />
+              <Hidden name="type" value={type} />
               <div
                 className={cn(
                   "grid w-full gap-x-8 gap-y-2",

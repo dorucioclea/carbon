@@ -387,7 +387,7 @@ export async function upsertPart(
     | (z.infer<typeof partValidator> & { updatedBy: string })
 ) {
   if ("createdBy" in part) {
-    return client.from("part").insert(part).select("id").single();
+    return client.from("part").insert(part).select("*").single();
   }
   return client.from("part").update(sanitize(part)).eq("id", part.id);
 }
@@ -483,7 +483,7 @@ export async function upsertPartGroup(
       })
 ) {
   if ("createdBy" in partGroup) {
-    return client.from("partGroup").insert([partGroup]).select("id").single();
+    return client.from("partGroup").insert([partGroup]).select("*").single();
   }
   return (
     client
@@ -544,7 +544,7 @@ export async function upsertService(
       })
 ) {
   if ("createdBy" in service) {
-    return client.from("service").insert(service).select("id").single();
+    return client.from("service").insert(service).select("*").single();
   }
   return client.from("service").update(sanitize(service)).eq("id", service.id);
 }

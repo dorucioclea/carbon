@@ -158,6 +158,19 @@ import {
   ModalCardTypeProvider,
   useModalCardType,
 } from "./ModalCard";
+import {
+  ModalDrawer,
+  ModalDrawerBody,
+  ModalDrawerContent,
+  ModalDrawerDescription,
+  ModalDrawerFooter,
+  ModalDrawerHeader,
+  ModalDrawerProvider,
+  ModalDrawerTitle,
+  ModalDrawerTypeContext,
+  ModalDrawerTypeProvider,
+  useModalDrawerType,
+} from "./ModalDrawer";
 import type { NumberFieldProps } from "./Number";
 import {
   NumberDecrementStepper,
@@ -348,6 +361,16 @@ export {
   ModalClose,
   ModalContent,
   ModalDescription,
+  ModalDrawer,
+  ModalDrawerBody,
+  ModalDrawerContent,
+  ModalDrawerDescription,
+  ModalDrawerFooter,
+  ModalDrawerHeader,
+  ModalDrawerProvider,
+  ModalDrawerTitle,
+  ModalDrawerTypeContext,
+  ModalDrawerTypeProvider,
   ModalFooter,
   ModalHeader,
   ModalOverlay,
@@ -413,6 +436,7 @@ export {
   useInterval,
   useKeyboardShortcuts,
   useModalCardType,
+  useModalDrawerType,
   useMount,
   useOutsideClick,
 };

@@ -9,9 +9,8 @@ import {
   HStack,
   VStack,
 } from "@carbon/react";
-
 import { ValidatedForm } from "@carbon/remix-validated-form";
-import { useNavigate } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
 import type { z } from "zod";
 import { Color, Department, Hidden, Input, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
@@ -20,12 +19,19 @@ import { path } from "~/utils/path";
 
 type DepartmentFormProps = {
   initialValues: z.infer<typeof departmentValidator>;
+  type?: "modal" | "drawer";
+  open?: boolean;
+  onClose: (data?: { id: string; name: string }) => void;
 };
 
-const DepartmentForm = ({ initialValues }: DepartmentFormProps) => {
+const DepartmentForm = ({
+  initialValues,
+  open = true,
+  type = "drawer",
+  onClose,
+}: DepartmentFormProps) => {
   const permissions = usePermissions();
-  const navigate = useNavigate();
-  const onClose = () => navigate(-1);
+  const fetcher = useFetcher();
 
   const isEditing = initialValues.id !== undefined;
   const isDisabled = isEditing
@@ -34,9 +40,9 @@ const DepartmentForm = ({ initialValues }: DepartmentFormProps) => {
 
   return (
     <Drawer
-      open
+      open={open}
       onOpenChange={(open) => {
-        if (!open) onClose();
+        if (!open) onClose?.();
       }}
     >
       <DrawerContent>
@@ -49,13 +55,20 @@ const DepartmentForm = ({ initialValues }: DepartmentFormProps) => {
               : path.to.newDepartment
           }
           defaultValues={initialValues}
+          fetcher={fetcher}
           className="flex flex-col h-full"
+          onSubmit={() => {
+            if (type === "modal") {
+              onClose();
+            }
+          }}
         >
           <DrawerHeader>
             <DrawerTitle>{isEditing ? "Edit" : "New"} Department</DrawerTitle>
           </DrawerHeader>
           <DrawerBody>
             <Hidden name="id" />
+            <Hidden name="type" value={type} />
             <VStack spacing={4}>
               <Input name="name" label="Department Name" />
               <Color name="color" label="Color" />
@@ -65,7 +78,7 @@ const DepartmentForm = ({ initialValues }: DepartmentFormProps) => {
           <DrawerFooter>
             <HStack>
               <Submit isDisabled={isDisabled}>Save</Submit>
-              <Button size="md" variant="solid" onClick={onClose}>
+              <Button size="md" variant="solid" onClick={() => onClose()}>
                 Cancel
               </Button>
             </HStack>

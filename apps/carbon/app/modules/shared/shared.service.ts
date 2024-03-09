@@ -28,7 +28,7 @@ export async function insertNote(
     createdBy: string;
   }
 ) {
-  return client.from("note").insert([note]).select("id").single();
+  return client.from("note").insert([note]).select("*").single();
 }
 
 export async function updateNote(

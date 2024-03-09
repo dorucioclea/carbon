@@ -1,6 +1,7 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
+import { useNavigate } from "@remix-run/react";
 import {
   DepartmentForm,
   departmentValidator,
@@ -18,9 +19,10 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "resources",
   });
 
-  const validation = await validator(departmentValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const modal = formData.get("type") === "modal";
+
+  const validation = await validator(departmentValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -34,26 +36,42 @@ export async function action({ request }: ActionFunctionArgs) {
   });
 
   if (createDepartment.error) {
-    return redirect(
-      path.to.departments,
-      await flash(
-        request,
-        error(createDepartment.error, "Failed to create department.")
-      )
-    );
+    return modal
+      ? json(
+          createDepartment,
+          await flash(
+            request,
+            error(createDepartment.error, "Failed to insert department")
+          )
+        )
+      : redirect(
+          path.to.departments,
+          await flash(
+            request,
+            error(createDepartment.error, "Failed to create department.")
+          )
+        );
   }
 
-  return redirect(
-    path.to.departments,
-    await flash(request, success("Department created."))
-  );
+  return modal
+    ? json(createDepartment, { status: 201 })
+    : redirect(
+        path.to.departments,
+        await flash(request, success("Department created."))
+      );
 }
 
 export default function NewDepartmentRoute() {
+  const navigate = useNavigate();
   const initialValues = {
     name: "",
     color: "#000000",
   };
 
-  return <DepartmentForm initialValues={initialValues} />;
+  return (
+    <DepartmentForm
+      onClose={() => navigate(-1)}
+      initialValues={initialValues}
+    />
+  );
 }

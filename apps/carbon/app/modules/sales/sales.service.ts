@@ -436,7 +436,7 @@ export async function insertCustomer(
         updatedBy: string;
       })
 ) {
-  return client.from("customer").insert([customer]).select("id").single();
+  return client.from("customer").insert([customer]).select("*").single();
 }
 
 export async function insertCustomerContact(
@@ -751,7 +751,7 @@ export async function upsertQuoteLine(
       .select("id")
       .single();
   }
-  return client.from("quoteLine").insert([quotationLine]).select("id").single();
+  return client.from("quoteLine").insert([quotationLine]).select("*").single();
 }
 
 export async function upsertQuoteMaterial(

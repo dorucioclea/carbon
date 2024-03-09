@@ -438,7 +438,7 @@ export async function insertSupplier(
         updatedBy: string;
       })
 ) {
-  return client.from("supplier").insert([supplier]).select("id").single();
+  return client.from("supplier").insert([supplier]).select("*").single();
 }
 
 export async function insertSupplierContact(
