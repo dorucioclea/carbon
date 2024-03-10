@@ -207,11 +207,6 @@ const QuotationLineQuantities = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate, quotationLine.replenishmentSystem, isEditable, canDelete]);
 
-  console.log({
-    isMade,
-    replenishmentSystem: quotationLine.replenishmentSystem,
-  });
-
   const editableComponents = useMemo(() => {
     const editableCells = {
       quantity: EditableQuotationLineQuantity(onCellEdit, {

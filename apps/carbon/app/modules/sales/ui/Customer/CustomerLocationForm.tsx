@@ -11,7 +11,7 @@ import {
 } from "@carbon/react";
 
 import { ValidatedForm } from "@carbon/remix-validated-form";
-import { useFetcher, useNavigate, useParams } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
 import type { z } from "zod";
 import { Hidden, Input, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
@@ -19,15 +19,21 @@ import { customerLocationValidator } from "~/modules/sales";
 import { path } from "~/utils/path";
 
 type CustomerLocationFormProps = {
+  customerId: string;
   initialValues: z.infer<typeof customerLocationValidator>;
+  type?: "modal" | "drawer";
+  open?: boolean;
+  onClose: () => void;
 };
 
-const CustomerLocationForm = ({ initialValues }: CustomerLocationFormProps) => {
+const CustomerLocationForm = ({
+  customerId,
+  initialValues,
+  open = true,
+  type = "drawer",
+  onClose,
+}: CustomerLocationFormProps) => {
   const fetcher = useFetcher();
-  const navigate = useNavigate();
-  const { customerId } = useParams();
-
-  if (!customerId) throw new Error("customerId not found");
 
   const permissions = usePermissions();
   const isEditing = !!initialValues?.id;
@@ -35,13 +41,11 @@ const CustomerLocationForm = ({ initialValues }: CustomerLocationFormProps) => {
     ? !permissions.can("update", "sales")
     : !permissions.can("create", "sales");
 
-  const onClose = () => navigate(path.to.customerLocations(customerId));
-
   return (
     <Drawer
       open
       onOpenChange={(open) => {
-        if (!open) onClose();
+        if (!open) onClose?.();
       }}
     >
       <DrawerContent>
@@ -55,7 +59,11 @@ const CustomerLocationForm = ({ initialValues }: CustomerLocationFormProps) => {
           }
           defaultValues={initialValues}
           fetcher={fetcher}
-          onSubmit={onClose}
+          onSubmit={() => {
+            if (type === "modal") {
+              onClose?.();
+            }
+          }}
           className="flex flex-col h-full"
         >
           <DrawerHeader>
@@ -63,6 +71,7 @@ const CustomerLocationForm = ({ initialValues }: CustomerLocationFormProps) => {
           </DrawerHeader>
           <DrawerBody>
             <Hidden name="id" />
+            <Hidden name="type" value={type} />
             <Hidden name="addressId" />
             <VStack spacing={4}>
               <Input name="addressLine1" label="Address Line 1" />

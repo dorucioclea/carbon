@@ -1,14 +1,14 @@
 import { createClient } from "@supabase/supabase-js";
 import * as dotenv from "dotenv";
-import type { Database } from "./types";
-import type { Feature, EmployeeType } from "./seed/index";
+import type { EmployeeType, Feature } from "./seed/index";
 import {
   admin,
   claims,
-  features,
   employeeTypePermissionsDefinitions,
   employeeTypes,
+  features,
 } from "./seed/index";
+import type { Database } from "./types";
 
 dotenv.config();
 

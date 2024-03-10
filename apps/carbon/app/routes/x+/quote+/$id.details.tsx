@@ -29,8 +29,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
     await request.formData()
   );
 
-  console.log({ validation });
-
   if (validation.error) {
     return validationError(validation.error);
   }
