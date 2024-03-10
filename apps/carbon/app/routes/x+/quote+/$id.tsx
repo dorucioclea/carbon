@@ -198,11 +198,7 @@ export default function QuotationRoute() {
       <VStack className="p-2">
         <Menubar>
           <MenubarItem asChild>
-            <a
-              target="_blank"
-              href={path.to.file.quote("TODO")}
-              rel="noreferrer"
-            >
+            <a target="_blank" href={path.to.file.quote(id)} rel="noreferrer">
               Preview
             </a>
           </MenubarItem>
