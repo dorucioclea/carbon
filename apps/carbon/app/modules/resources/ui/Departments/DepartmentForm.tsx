@@ -85,7 +85,7 @@ const DepartmentForm = ({
             <ModalDrawerFooter>
               <HStack>
                 <Submit isDisabled={isDisabled}>Save</Submit>
-                <Button size="md" variant="solid" onClick={() => onClose()}>
+                <Button size="md" variant="solid" onClick={() => onClose?.()}>
                   Cancel
                 </Button>
               </HStack>

@@ -7461,7 +7461,7 @@ export type Database = {
             foreignKeyName: "quote_customerContactId_fkey"
             columns: ["customerContactId"]
             isOneToOne: false
-            referencedRelation: "contact"
+            referencedRelation: "customerContact"
             referencedColumns: ["id"]
           },
           {
@@ -7482,22 +7482,8 @@ export type Database = {
             foreignKeyName: "quote_customerLocationId_fkey"
             columns: ["customerLocationId"]
             isOneToOne: false
-            referencedRelation: "location"
+            referencedRelation: "customerLocation"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "quote_customerLocationId_fkey"
-            columns: ["customerLocationId"]
-            isOneToOne: false
-            referencedRelation: "partQuantities"
-            referencedColumns: ["locationId"]
-          },
-          {
-            foreignKeyName: "quote_customerLocationId_fkey"
-            columns: ["customerLocationId"]
-            isOneToOne: false
-            referencedRelation: "purchaseOrders"
-            referencedColumns: ["locationId"]
           },
           {
             foreignKeyName: "quote_locationId_fkey"
@@ -12657,7 +12643,7 @@ export type Database = {
             foreignKeyName: "quote_customerContactId_fkey"
             columns: ["customerContactId"]
             isOneToOne: false
-            referencedRelation: "contact"
+            referencedRelation: "customerContact"
             referencedColumns: ["id"]
           },
           {
@@ -12678,22 +12664,8 @@ export type Database = {
             foreignKeyName: "quote_customerLocationId_fkey"
             columns: ["customerLocationId"]
             isOneToOne: false
-            referencedRelation: "location"
+            referencedRelation: "customerLocation"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "quote_customerLocationId_fkey"
-            columns: ["customerLocationId"]
-            isOneToOne: false
-            referencedRelation: "partQuantities"
-            referencedColumns: ["locationId"]
-          },
-          {
-            foreignKeyName: "quote_customerLocationId_fkey"
-            columns: ["customerLocationId"]
-            isOneToOne: false
-            referencedRelation: "purchaseOrders"
-            referencedColumns: ["locationId"]
           },
           {
             foreignKeyName: "quote_locationId_fkey"

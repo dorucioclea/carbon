@@ -35,8 +35,8 @@ CREATE TABLE "quote" (
   CONSTRAINT "quote_quoteId_key" UNIQUE ("quoteId"),
   CONSTRAINT "quote_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "quote_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "customer" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT "quote_customerLocationId_fkey" FOREIGN KEY ("customerLocationId") REFERENCES "location" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT "quote_customerContactId_fkey" FOREIGN KEY ("customerContactId") REFERENCES "contact" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT "quote_customerLocationId_fkey" FOREIGN KEY ("customerLocationId") REFERENCES "customerLocation" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT "quote_customerContactId_fkey" FOREIGN KEY ("customerContactId") REFERENCES "customerContact" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "quote_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "location" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "quote_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "quote_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
