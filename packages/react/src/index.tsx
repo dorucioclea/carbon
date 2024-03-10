@@ -94,6 +94,7 @@ import {
   DropdownMenuTrigger,
 } from "./Dropdown";
 import { Editor, useEditor } from "./Editor";
+import { Enumerable } from "./Enumerable";
 import { File } from "./File";
 import {
   FormControl,
@@ -312,6 +313,7 @@ export {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
   Editor,
+  Enumerable,
   File,
   FormControl,
   FormErrorMessage,

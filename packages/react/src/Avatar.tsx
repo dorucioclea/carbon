@@ -1,5 +1,5 @@
 "use client";
-
+import { getColor } from "@carbon/utils";
 import type { VariantProps } from "class-variance-authority";
 import { cva } from "class-variance-authority";
 import type {
@@ -76,9 +76,7 @@ const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(
           "bg-muted-foreground",
           className
         )}
-        style={{
-          backgroundColor: name ? getColorFromString(name) : undefined,
-        }}
+        style={name ? getColor(name) : undefined}
         {...props}
         ref={ref}
       >
@@ -212,21 +210,6 @@ function getInitials(name: string) {
   return firstName && lastName
     ? `${firstName.charAt(0)}${lastName.charAt(0)}`
     : firstName.charAt(0);
-}
-
-function getColorFromString(str: string) {
-  let hash = 0;
-  if (str.length === 0) return hash.toString();
-  for (let i = 0; i < str.length; i += 1) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    hash = hash & hash;
-  }
-  let color = "#";
-  for (let j = 0; j < 3; j += 1) {
-    const value = (hash >> (j * 8)) & 255;
-    color += `00${value.toString(16)}`.substr(-2);
-  }
-  return color;
 }
 
 export { Avatar, AvatarGroup, AvatarGroupList, AvatarOverflowIndicator };

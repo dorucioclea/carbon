@@ -3,48 +3,49 @@ import { useFetcher } from "@remix-run/react";
 import { useMemo, useRef, useState } from "react";
 import { useRouteData } from "~/hooks";
 import type {
-  SupplierType as SupplierTypeType,
-  getSupplierTypesList,
+  SupplierStatus as SupplierStatusStatus,
+  getSupplierStatusesList,
 } from "~/modules/purchasing";
-import { SupplierTypeForm } from "~/modules/purchasing";
+import { SupplierStatusForm } from "~/modules/purchasing";
 import { path } from "~/utils/path";
 import type { ComboboxProps } from "./Combobox";
 import CreatableCombobox from "./CreatableCombobox";
 
-type SupplierTypeSelectProps = Omit<ComboboxProps, "options">;
+type SupplierStatusSelectProps = Omit<ComboboxProps, "options">;
 
-const SupplierType = (props: SupplierTypeSelectProps) => {
-  const supplierTypeFetcher =
-    useFetcher<Awaited<ReturnType<typeof getSupplierTypesList>>>();
+const SupplierStatus = (props: SupplierStatusSelectProps) => {
+  const supplierStatusFetcher =
+    useFetcher<Awaited<ReturnType<typeof getSupplierStatusesList>>>();
 
   const sharedSupplierData = useRouteData<{
-    supplierTypes: SupplierTypeType[];
+    supplierStatuses: SupplierStatusStatus[];
   }>(path.to.supplierRoot);
 
-  const newSupplierTypeModal = useDisclosure();
+  const newSupplierStatusModal = useDisclosure();
   const [created, setCreated] = useState<string>("");
   const triggerRef = useRef<HTMLButtonElement>(null);
 
-  const hasSupplierData = sharedSupplierData?.supplierTypes;
+  const hasSupplierData = sharedSupplierData?.supplierStatuses;
 
   useMount(() => {
-    if (!hasSupplierData) supplierTypeFetcher.load(path.to.api.supplierTypes);
+    if (!hasSupplierData)
+      supplierStatusFetcher.load(path.to.api.supplierStatuses);
   });
 
   const options = useMemo(() => {
     const dataSource =
       (hasSupplierData
-        ? sharedSupplierData.supplierTypes
-        : supplierTypeFetcher.data?.data) ?? [];
+        ? sharedSupplierData.supplierStatuses
+        : supplierStatusFetcher.data?.data) ?? [];
 
     return dataSource.map((c) => ({
       value: c.id,
       label: c.name,
     }));
   }, [
-    supplierTypeFetcher.data?.data,
+    supplierStatusFetcher.data?.data,
     hasSupplierData,
-    sharedSupplierData?.supplierTypes,
+    sharedSupplierData?.supplierStatuses,
   ]);
 
   return (
@@ -53,23 +54,22 @@ const SupplierType = (props: SupplierTypeSelectProps) => {
         ref={triggerRef}
         options={options}
         {...props}
-        label={props?.label ?? "SupplierType"}
+        label={props?.label ?? "SupplierStatus"}
         onCreateOption={(option) => {
-          newSupplierTypeModal.onOpen();
+          newSupplierStatusModal.onOpen();
           setCreated(option);
         }}
       />
-      {newSupplierTypeModal.isOpen && (
-        <SupplierTypeForm
+      {newSupplierStatusModal.isOpen && (
+        <SupplierStatusForm
           type="modal"
           onClose={() => {
             setCreated("");
-            newSupplierTypeModal.onClose();
+            newSupplierStatusModal.onClose();
             triggerRef.current?.click();
           }}
           initialValues={{
             name: created,
-            color: "#000000",
           }}
         />
       )}
@@ -77,6 +77,6 @@ const SupplierType = (props: SupplierTypeSelectProps) => {
   );
 };
 
-SupplierType.displayName = "SupplierType";
+SupplierStatus.displayName = "SupplierStatus";
 
-export default SupplierType;
+export default SupplierStatus;

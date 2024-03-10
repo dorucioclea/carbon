@@ -41,6 +41,7 @@ import Submit from "./Submit";
 import Supplier from "./Supplier";
 import SupplierContact from "./SupplierContact";
 import SupplierLocation from "./SupplierLocation";
+import SupplierStatus from "./SupplierStatus";
 import SupplierType from "./SupplierType";
 import TextArea from "./Textarea";
 import TimePicker from "./TimePicker";
@@ -94,6 +95,7 @@ export {
   Supplier,
   SupplierContact,
   SupplierLocation,
+  SupplierStatus,
   SupplierType,
   TextArea,
   TimePicker,

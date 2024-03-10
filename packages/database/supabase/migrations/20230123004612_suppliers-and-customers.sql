@@ -48,10 +48,14 @@ CREATE TABLE "supplierStatus" (
     "id" TEXT NOT NULL DEFAULT xid(),
     "name" TEXT NOT NULL,
     "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    "createdBy" TEXT NOT NULL,
+    "updatedBy" TEXT,
     "updatedAt" TIMESTAMP WITH TIME ZONE,
 
     CONSTRAINT "supplierStatus_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "supplierStatus_name_unique" UNIQUE ("name")
+    CONSTRAINT "supplierStatus_name_unique" UNIQUE ("name"),
+    CONSTRAINT "supplierStatus_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT "supplierStatus_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL
 );
 
 CREATE TABLE "supplierType" (

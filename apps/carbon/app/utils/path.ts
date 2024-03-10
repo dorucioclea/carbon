@@ -42,6 +42,7 @@ export const path = {
         generatePath(`${api}/purchasing/supplier-contacts?supplierId=${id}`),
       supplierLocations: (id: string) =>
         generatePath(`${api}/purchasing/supplier-locations?supplierId=${id}`),
+      supplierStatuses: `${api}/purchasing/supplier-statuses`,
       supplierTypes: `${api}/purchasing/supplier-types`,
       unitOfMeasures: `${api}/parts/uoms`,
       workCells: (id: string) =>
@@ -197,6 +198,8 @@ export const path = {
       generatePath(`${x}/supplier/${supplierId}/contacts/delete/${id}`),
     deleteSupplierLocation: (supplierId: string, id: string) =>
       generatePath(`${x}/supplier/${supplierId}/locations/delete/${id}`),
+    deleteSupplierStatus: (id: string) =>
+      generatePath(`${x}/purchasing/supplier-statuses/delete/${id}`),
     deleteSupplierType: (id: string) =>
       generatePath(`${x}/purchasing/supplier-types/delete/${id}`),
     deleteUom: (id: string) => generatePath(`${x}/parts/uom/delete/${id}`),
@@ -323,6 +326,7 @@ export const path = {
       generatePath(`${x}/supplier/${id}/contacts/new`),
     newSupplierLocation: (id: string) =>
       generatePath(`${x}/supplier/${id}/locations/new`),
+    newSupplierStatus: `${x}/purchasing/supplier-statuses/new`,
     newSupplierType: `${x}/purchasing/supplier-types/new`,
     newUom: `${x}/parts/uom/new`,
     newWorkCell: `${x}/resources/work-cells/cell/new`,
@@ -468,6 +472,9 @@ export const path = {
     supplierShipping: (id: string) =>
       generatePath(`${x}/supplier/${id}/shipping`),
     supplierRoot: `${x}/supplier`,
+    supplierStatus: (id: string) =>
+      generatePath(`${x}/purchasing/supplier-statuses/${id}`),
+    supplierStatuses: `${x}/purchasing/supplier-statuses`,
     supplierType: (id: string) =>
       generatePath(`${x}/purchasing/supplier-types/${id}`),
     supplierTypes: `${x}/purchasing/supplier-types`,

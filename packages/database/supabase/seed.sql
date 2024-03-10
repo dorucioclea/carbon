@@ -150,7 +150,7 @@ VALUES
 
 -- supplier status
 
-INSERT INTO "supplierStatus" ("name") VALUES ('Active'), ('Inactive'), ('Pending'), ('Rejected');
+INSERT INTO "supplierStatus" ("name", "createdBy") VALUES ('Active', 'system'), ('Inactive', 'system'), ('Pending', 'system'), ('Rejected', 'system');
 
 -- customer status
 

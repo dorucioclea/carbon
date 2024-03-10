@@ -18,12 +18,11 @@ import {
   Employee,
   Hidden,
   Input,
-  Select,
   Submit,
+  SupplierStatus,
   SupplierType,
 } from "~/components/Form";
-import { usePermissions, useRouteData } from "~/hooks";
-import type { SupplierStatus } from "~/modules/purchasing";
+import { usePermissions } from "~/hooks";
 import { supplierValidator } from "~/modules/purchasing";
 import { path } from "~/utils/path";
 
@@ -40,16 +39,6 @@ const SupplierForm = ({
 }: SupplierFormProps) => {
   const permissions = usePermissions();
   const fetcher = useFetcher();
-
-  const routeData = useRouteData<{
-    supplierStatuses: SupplierStatus[];
-  }>(path.to.supplierRoot);
-
-  const supplierStatusOptions =
-    routeData?.supplierStatuses?.map((status) => ({
-      value: status.id,
-      label: status.name,
-    })) ?? [];
 
   const isEditing = initialValues.id !== undefined;
   const isDisabled = isEditing
@@ -98,10 +87,9 @@ const SupplierForm = ({
                     label="Supplier Type"
                     placeholder="Select Supplier Type"
                   />
-                  <Select
+                  <SupplierStatus
                     name="supplierStatusId"
                     label="Supplier Status"
-                    options={supplierStatusOptions}
                     placeholder="Select Supplier Status"
                   />
                 </VStack>

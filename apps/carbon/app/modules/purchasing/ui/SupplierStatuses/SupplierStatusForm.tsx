@@ -13,31 +13,31 @@ import {
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
 import type { z } from "zod";
-import { Color, Hidden, Input, Submit } from "~/components/Form";
+import { Hidden, Input, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
-import { customerTypeValidator } from "~/modules/sales";
+import { supplierStatusValidator } from "~/modules/purchasing";
 import { path } from "~/utils/path";
 
-type CustomerTypeFormProps = {
-  initialValues: z.infer<typeof customerTypeValidator>;
+type SupplierStatusFormProps = {
+  initialValues: z.infer<typeof supplierStatusValidator>;
   type?: "modal" | "drawer";
   open?: boolean;
   onClose: () => void;
 };
 
-const CustomerTypeForm = ({
+const SupplierStatusForm = ({
   initialValues,
   open = true,
   type = "drawer",
   onClose,
-}: CustomerTypeFormProps) => {
+}: SupplierStatusFormProps) => {
   const permissions = usePermissions();
   const fetcher = useFetcher();
 
   const isEditing = initialValues.id !== undefined;
   const isDisabled = isEditing
-    ? !permissions.can("update", "sales")
-    : !permissions.can("create", "sales");
+    ? !permissions.can("update", "purchasing")
+    : !permissions.can("create", "purchasing");
 
   return (
     <ModalDrawerProvider type={type}>
@@ -49,12 +49,12 @@ const CustomerTypeForm = ({
       >
         <ModalDrawerContent>
           <ValidatedForm
-            validator={customerTypeValidator}
+            validator={supplierStatusValidator}
             method="post"
             action={
               isEditing
-                ? path.to.customerType(initialValues.id!)
-                : path.to.newCustomerType
+                ? path.to.supplierStatus(initialValues.id!)
+                : path.to.newSupplierStatus
             }
             defaultValues={initialValues}
             fetcher={fetcher}
@@ -67,15 +67,14 @@ const CustomerTypeForm = ({
           >
             <ModalDrawerHeader>
               <ModalDrawerTitle>
-                {isEditing ? "Edit" : "New"} Customer Type
+                {isEditing ? "Edit" : "New"} Supplier Status
               </ModalDrawerTitle>
             </ModalDrawerHeader>
             <ModalDrawerBody>
               <Hidden name="id" />
               <Hidden name="type" value={type} />
               <VStack spacing={4}>
-                <Input name="name" label="Customer Type" />
-                <Color name="color" label="Color" />
+                <Input name="name" label="Supplier Status" />
               </VStack>
             </ModalDrawerBody>
             <ModalDrawerFooter>
@@ -93,4 +92,4 @@ const CustomerTypeForm = ({
   );
 };
 
-export default CustomerTypeForm;
+export default SupplierStatusForm;

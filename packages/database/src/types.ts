@@ -10535,23 +10535,72 @@ export type Database = {
       supplierStatus: {
         Row: {
           createdAt: string
+          createdBy: string
           id: string
           name: string
           updatedAt: string | null
+          updatedBy: string | null
         }
         Insert: {
           createdAt?: string
+          createdBy: string
           id?: string
           name: string
           updatedAt?: string | null
+          updatedBy?: string | null
         }
         Update: {
           createdAt?: string
+          createdBy?: string
           id?: string
           name?: string
           updatedAt?: string | null
+          updatedBy?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "supplierStatus_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplierStatus_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplierStatus_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "supplierStatus_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplierStatus_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplierStatus_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+        ]
       }
       supplierType: {
         Row: {

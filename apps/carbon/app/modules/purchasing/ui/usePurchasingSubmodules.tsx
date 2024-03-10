@@ -25,6 +25,11 @@ const purchasingRoutes: AuthenticatedRouteGroup[] = [
     name: "Configure",
     routes: [
       {
+        name: "Supplier Statuses",
+        to: path.to.supplierStatuses,
+        role: "employee",
+      },
+      {
         name: "Supplier Types",
         to: path.to.supplierTypes,
         role: "employee",
