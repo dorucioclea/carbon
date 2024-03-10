@@ -43,7 +43,7 @@ const CustomerLocationForm = ({
 
   return (
     <Drawer
-      open
+      open={open}
       onOpenChange={(open) => {
         if (!open) onClose?.();
       }}

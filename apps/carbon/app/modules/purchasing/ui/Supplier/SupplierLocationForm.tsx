@@ -11,7 +11,7 @@ import {
 } from "@carbon/react";
 
 import { ValidatedForm } from "@carbon/remix-validated-form";
-import { useFetcher, useNavigate, useParams } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
 import type { z } from "zod";
 import { Hidden, Input, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
@@ -19,15 +19,21 @@ import { supplierLocationValidator } from "~/modules/purchasing";
 import { path } from "~/utils/path";
 
 type SupplierLocationFormProps = {
+  supplierId: string;
   initialValues: z.infer<typeof supplierLocationValidator>;
+  type?: "modal" | "drawer";
+  open?: boolean;
+  onClose: () => void;
 };
 
-const SupplierLocationForm = ({ initialValues }: SupplierLocationFormProps) => {
+const SupplierLocationForm = ({
+  supplierId,
+  initialValues,
+  open = true,
+  type = "drawer",
+  onClose,
+}: SupplierLocationFormProps) => {
   const fetcher = useFetcher();
-  const navigate = useNavigate();
-  const { supplierId } = useParams();
-
-  if (!supplierId) throw new Error("supplierId not found");
 
   const permissions = usePermissions();
   const isEditing = !!initialValues?.id;
@@ -35,13 +41,11 @@ const SupplierLocationForm = ({ initialValues }: SupplierLocationFormProps) => {
     ? !permissions.can("update", "purchasing")
     : !permissions.can("create", "purchasing");
 
-  const onClose = () => navigate(path.to.supplierLocations(supplierId));
-
   return (
     <Drawer
-      open
+      open={open}
       onOpenChange={(open) => {
-        if (!open) onClose();
+        if (!open) onClose?.();
       }}
     >
       <DrawerContent>
@@ -54,8 +58,12 @@ const SupplierLocationForm = ({ initialValues }: SupplierLocationFormProps) => {
               : path.to.newSupplierLocation(supplierId)
           }
           defaultValues={initialValues}
-          onSubmit={onClose}
           fetcher={fetcher}
+          onSubmit={() => {
+            if (type === "modal") {
+              onClose?.();
+            }
+          }}
           className="flex flex-col h-full"
         >
           <DrawerHeader>
@@ -63,6 +71,7 @@ const SupplierLocationForm = ({ initialValues }: SupplierLocationFormProps) => {
           </DrawerHeader>
           <DrawerBody>
             <Hidden name="id" />
+            <Hidden name="type" value={type} />
             <Hidden name="addressId" />
             <VStack spacing={4}>
               <Input name="addressLine1" label="Address Line 1" />
