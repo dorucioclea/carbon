@@ -1,6 +1,7 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
+import { useNavigate, useParams } from "@remix-run/react";
 import { getSupabaseServiceRole } from "~/lib/supabase";
 import {
   SupplierContactForm,
@@ -25,8 +26,11 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { supplierId } = params;
   if (!supplierId) throw notFound("supplierId not found");
 
+  const formData = await request.formData();
+  const modal = formData.get("type") === "modal";
+
   const validation = await validator(supplierContactValidator).validate(
-    await request.formData()
+    formData
   );
 
   if (validation.error) {
@@ -40,27 +44,44 @@ export async function action({ request, params }: ActionFunctionArgs) {
     contact,
   });
   if (createSupplierContact.error) {
-    return redirect(
-      path.to.supplierContacts(supplierId),
-      await flash(
-        request,
-        error(createSupplierContact.error, "Failed to create supplier contact")
-      )
-    );
+    return modal
+      ? json(createSupplierContact)
+      : redirect(
+          path.to.supplierContacts(supplierId),
+          await flash(
+            request,
+            error(
+              createSupplierContact.error,
+              "Failed to create supplier contact"
+            )
+          )
+        );
   }
 
-  return redirect(
-    path.to.supplierContacts(supplierId),
-    await flash(request, success("Supplier contact created"))
-  );
+  return modal
+    ? json(createSupplierContact)
+    : redirect(
+        path.to.supplierContacts(supplierId),
+        await flash(request, success("Supplier contact created"))
+      );
 }
 
 export default function SupplierContactsNewRoute() {
+  const navigate = useNavigate();
+  const { supplierId } = useParams();
+  if (!supplierId) throw new Error("supplierId not found");
+
   const initialValues = {
     firstName: "",
     lastName: "",
     email: "",
   };
 
-  return <SupplierContactForm initialValues={initialValues} />;
+  return (
+    <SupplierContactForm
+      supplierId={supplierId}
+      initialValues={initialValues}
+      onClose={() => navigate(path.to.supplierContacts(supplierId))}
+    />
+  );
 }

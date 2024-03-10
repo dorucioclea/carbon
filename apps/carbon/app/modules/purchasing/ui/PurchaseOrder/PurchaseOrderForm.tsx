@@ -89,20 +89,17 @@ const PurchaseOrderForm = ({ initialValues }: PurchaseOrderFormProps) => {
                     setSupplier(newValue?.value as string | undefined)
                   }
                 />
-                {isEditing && (
-                  <>
-                    <SupplierLocation
-                      name="supplierLocationId"
-                      label="Supplier Location"
-                      supplier={supplier}
-                    />
-                    <SupplierContact
-                      name="supplierContactId"
-                      label="Supplier Contact"
-                      supplier={supplier}
-                    />
-                  </>
-                )}
+
+                <SupplierLocation
+                  name="supplierLocationId"
+                  label="Supplier Location"
+                  supplier={supplier}
+                />
+                <SupplierContact
+                  name="supplierContactId"
+                  label="Supplier Contact"
+                  supplier={supplier}
+                />
               </VStack>
               <VStack>
                 <Input name="supplierReference" label="Supplier Order Number" />

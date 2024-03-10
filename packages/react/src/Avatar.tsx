@@ -54,6 +54,7 @@ const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(
     const isGroup = !!useAvatarGroupContext()?.limit;
     const avatarInitials = getInitials(name ?? "");
     const [error, setError] = useState(false);
+    const { background, color } = getColor(name ?? "");
 
     return src && !error ? (
       <img
@@ -76,13 +77,15 @@ const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(
           "bg-muted-foreground",
           className
         )}
-        style={name ? getColor(name) : undefined}
+        style={name ? { background } : undefined}
         {...props}
         ref={ref}
       >
         <>
           {avatarInitials ? (
-            <span className="text-white">{avatarInitials}</span>
+            <span className="text-white" style={{ color }}>
+              {avatarInitials}
+            </span>
           ) : (
             <svg
               viewBox="0 0 128 128"

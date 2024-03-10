@@ -33,8 +33,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
     formData
   );
 
-  console.log({ modal, data: validation.data });
-
   if (validation.error) {
     return validationError(validation.error);
   }

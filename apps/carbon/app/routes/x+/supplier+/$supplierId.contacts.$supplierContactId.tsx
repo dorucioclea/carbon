@@ -1,7 +1,7 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useNavigate, useParams } from "@remix-run/react";
 import {
   SupplierContactForm,
   getSupplierContact,
@@ -88,6 +88,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function EditSupplierContactRoute() {
   const { contact } = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
+
+  const { supplierId } = useParams();
+  if (!supplierId) throw new Error("supplierId not found");
 
   const initialValues = {
     id: contact?.id ?? undefined,
@@ -109,6 +113,11 @@ export default function EditSupplierContactRoute() {
   };
 
   return (
-    <SupplierContactForm key={initialValues.id} initialValues={initialValues} />
+    <SupplierContactForm
+      key={initialValues.id}
+      supplierId={supplierId}
+      initialValues={initialValues}
+      onClose={() => navigate(path.to.supplierContacts(supplierId))}
+    />
   );
 }

@@ -1,25 +1,33 @@
 import { useFetcher } from "@remix-run/react";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type {
   SupplierContact as SupplierContactType,
   getSupplierContacts,
 } from "~/modules/purchasing";
 import { path } from "~/utils/path";
 
+import { useDisclosure } from "@carbon/react";
+import { SupplierContactForm } from "~/modules/purchasing";
 import type { ComboboxProps } from "./Combobox";
-import Combobox from "./Combobox";
+import CreatableCombobox from "./CreatableCombobox";
 
 type SupplierContactSelectProps = Omit<
   ComboboxProps,
   "options" | "onChange"
 > & {
   supplier?: string;
-  onChange?: (supplier: SupplierContactType | null) => void;
+  onChange?: (supplier: SupplierContactType["contact"] | null) => void;
 };
 
 const SupplierContact = (props: SupplierContactSelectProps) => {
   const supplierContactsFetcher =
     useFetcher<Awaited<ReturnType<typeof getSupplierContacts>>>();
+
+  const newContactModal = useDisclosure();
+  const [created, setCreated] = useState<string>("");
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  const [firstName, ...lastName] = created.split(" ");
 
   useEffect(() => {
     if (props?.supplier) {
@@ -46,16 +54,39 @@ const SupplierContact = (props: SupplierContactSelectProps) => {
         (contact) => contact.id === newValue?.value
       ) ?? null;
 
-    props.onChange?.(contact as SupplierContactType | null);
+    props.onChange?.(contact?.contact ?? null);
   };
 
   return (
-    <Combobox
-      options={options}
-      {...props}
-      onChange={onChange}
-      label={props?.label ?? "Supplier Contact"}
-    />
+    <>
+      <CreatableCombobox
+        ref={triggerRef}
+        options={options}
+        {...props}
+        label={props?.label ?? "Supplier Contact"}
+        onChange={onChange}
+        onCreateOption={(option) => {
+          newContactModal.onOpen();
+          setCreated(option);
+        }}
+      />
+      {newContactModal.isOpen && (
+        <SupplierContactForm
+          supplierId={props.supplier!}
+          type="modal"
+          onClose={() => {
+            setCreated("");
+            newContactModal.onClose();
+            triggerRef.current?.click();
+          }}
+          initialValues={{
+            email: "",
+            firstName: firstName,
+            lastName: lastName.join(" "),
+          }}
+        />
+      )}
+    </>
   );
 };
 
