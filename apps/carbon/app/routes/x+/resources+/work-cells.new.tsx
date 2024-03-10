@@ -1,6 +1,6 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { useNavigate } from "@remix-run/react";
 import {
   WorkCellTypeForm,
@@ -19,9 +19,10 @@ export async function action({ request }: ActionFunctionArgs) {
     update: "resources",
   });
 
-  const validation = await validator(workCellTypeValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const modal = formData.get("type") === "modal";
+
+  const validation = await validator(workCellTypeValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -34,16 +35,20 @@ export async function action({ request }: ActionFunctionArgs) {
     createdBy: userId,
   });
   if (createWorkCellType.error) {
-    return redirect(
-      path.to.workCells,
-      await flash(
-        request,
-        error(createWorkCellType.error, "Failed to create work cell type")
-      )
-    );
+    return modal
+      ? json(createWorkCellType)
+      : redirect(
+          path.to.workCells,
+          await flash(
+            request,
+            error(createWorkCellType.error, "Failed to create work cell type")
+          )
+        );
   }
 
-  return redirect(path.to.workCells);
+  return modal
+    ? json(createWorkCellType, { status: 201 })
+    : redirect(path.to.workCells);
 }
 
 export default function NewWorkCellTypeRoute() {
