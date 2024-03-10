@@ -19,6 +19,7 @@ export const path = {
         generatePath(`${api}/sales/customer-contacts?customerId=${id}`),
       customerLocations: (id: string) =>
         generatePath(`${api}/sales/customer-locations?customerId=${id}`),
+      customerStatuses: `${api}/sales/customer-statuses`,
       customerTypes: `${api}/sales/customer-types`,
       departments: `${api}/resources/departments`,
       employeeTypes: `${api}/users/employee-types`,
@@ -118,6 +119,9 @@ export const path = {
       generatePath(`${x}/customer/${id}/payments`),
     customerShipping: (id: string) =>
       generatePath(`${x}/customer/${id}/shipping`),
+    customerStatus: (id: string) =>
+      generatePath(`${x}/sales/customer-statuses/${id}`),
+    customerStatuses: `${x}/sales/customer-statuses`,
     customerType: (id: string) =>
       generatePath(`${x}/sales/customer-types/${id}`),
     customerTypes: `${x}/sales/customer-types`,
@@ -142,6 +146,8 @@ export const path = {
       generatePath(`${x}/customer/${customerId}/contacts/delete/${id}`),
     deleteCustomerLocation: (customerId: string, id: string) =>
       generatePath(`${x}/customer/${customerId}/locations/delete/${id}`),
+    deleteCustomerStatus: (id: string) =>
+      generatePath(`${x}/sales/customer-statuses/delete/${id}`),
     deleteCustomerType: (id: string) =>
       generatePath(`${x}/sales/customer-types/delete/${id}`),
     deleteDepartment: (id: string) =>
@@ -266,6 +272,7 @@ export const path = {
       generatePath(`${x}/customer/${id}/contacts/new`),
     newCustomerLocation: (id: string) =>
       generatePath(`${x}/customer/${id}/locations/new`),
+    newCustomerStatus: `${x}/sales/customer-statuses/new`,
     newCustomerType: `${x}/sales/customer-types/new`,
     newDepartment: `${x}/resources/departments/new`,
     newDocument: `${x}/documents/new`,

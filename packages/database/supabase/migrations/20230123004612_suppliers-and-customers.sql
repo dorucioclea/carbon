@@ -140,10 +140,14 @@ CREATE TABLE "customerStatus" (
     "id" TEXT NOT NULL DEFAULT xid(),
     "name" TEXT NOT NULL,
     "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    "createdBy" TEXT NOT NULL,
+    "updatedBy" TEXT,
     "updatedAt" TIMESTAMP WITH TIME ZONE,
 
     CONSTRAINT "customerStatus_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "customerStatus_name_unique" UNIQUE ("name")
+    CONSTRAINT "customerStatus_name_unique" UNIQUE ("name"),
+    CONSTRAINT "customerStatus_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT "customerStatus_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL
 );
 
 CREATE TABLE "customerType" (

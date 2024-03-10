@@ -2309,23 +2309,72 @@ export type Database = {
       customerStatus: {
         Row: {
           createdAt: string
+          createdBy: string
           id: string
           name: string
           updatedAt: string | null
+          updatedBy: string | null
         }
         Insert: {
           createdAt?: string
+          createdBy: string
           id?: string
           name: string
           updatedAt?: string | null
+          updatedBy?: string | null
         }
         Update: {
           createdAt?: string
+          createdBy?: string
           id?: string
           name?: string
           updatedAt?: string | null
+          updatedBy?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "customerStatus_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customerStatus_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customerStatus_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "customerStatus_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customerStatus_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customerStatus_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+        ]
       }
       customerType: {
         Row: {

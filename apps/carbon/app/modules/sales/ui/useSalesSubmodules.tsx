@@ -20,6 +20,11 @@ const salesRoutes: AuthenticatedRouteGroup[] = [
     name: "Configure",
     routes: [
       {
+        name: "Customer Statuses",
+        to: path.to.customerStatuses,
+        role: "employee",
+      },
+      {
         name: "Customer Types",
         to: path.to.customerTypes,
         role: "employee",

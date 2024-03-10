@@ -13,6 +13,7 @@ import Currency from "./Currency";
 import Customer from "./Customer";
 import CustomerContact from "./CustomerContact";
 import CustomerLocation from "./CustomerLocation";
+import CustomerStatus from "./CustomerStatus";
 import CustomerType from "./CustomerType";
 import DatePicker from "./DatePicker";
 import Department from "./Department";
@@ -67,6 +68,7 @@ export {
   Customer,
   CustomerContact,
   CustomerLocation,
+  CustomerStatus,
   CustomerType,
   DatePicker,
   Department,

@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { getCustomerTypesList } from "~/modules/sales";
+import { getCustomerStatusesList } from "~/modules/sales";
 import { requirePermissions } from "~/services/auth";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -8,5 +8,5 @@ export async function loader({ request }: LoaderFunctionArgs) {
     view: "sales",
   });
 
-  return json(await getCustomerTypesList(authorized.client));
+  return json(await getCustomerStatusesList(authorized.client));
 }
