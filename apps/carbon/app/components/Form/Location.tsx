@@ -33,8 +33,6 @@ const Location = (props: LocationSelectProps) => {
     [locationFetcher.data]
   );
 
-  console.log("value", props.value);
-
   return (
     <>
       <CreatableCombobox
