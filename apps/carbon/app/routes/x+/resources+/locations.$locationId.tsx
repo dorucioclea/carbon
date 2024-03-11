@@ -2,7 +2,7 @@ import { validationError, validator } from "@carbon/remix-validated-form";
 import { getLocalTimeZone } from "@internationalized/date";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useNavigate } from "@remix-run/react";
 import {
   LocationForm,
   getLocation,
@@ -78,6 +78,8 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function LocationRoute() {
   const { location } = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
+  const onClose = () => navigate(path.to.workCells);
 
   const initialValues = {
     id: location.id,
@@ -92,5 +94,5 @@ export default function LocationRoute() {
     longitude: location.longitude ?? undefined,
   };
 
-  return <LocationForm initialValues={initialValues} />;
+  return <LocationForm initialValues={initialValues} onClose={onClose} />;
 }
