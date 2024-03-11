@@ -14,9 +14,15 @@ import {
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
 import type { z } from "zod";
-import { Employee, Hidden, Input, Select, Submit } from "~/components/Form";
-import { usePermissions, useRouteData } from "~/hooks";
-import type { SupplierStatus, SupplierType } from "~/modules/purchasing";
+import {
+  Employee,
+  Hidden,
+  Input,
+  Submit,
+  SupplierStatus,
+  SupplierType,
+} from "~/components/Form";
+import { usePermissions } from "~/hooks";
 import { supplierValidator } from "~/modules/purchasing";
 import { path } from "~/utils/path";
 
@@ -33,23 +39,6 @@ const SupplierForm = ({
 }: SupplierFormProps) => {
   const permissions = usePermissions();
   const fetcher = useFetcher();
-
-  const routeData = useRouteData<{
-    supplierTypes: SupplierType[];
-    supplierStatuses: SupplierStatus[];
-  }>(path.to.supplierRoot);
-
-  const supplierTypeOptions =
-    routeData?.supplierTypes?.map((type) => ({
-      value: type.id,
-      label: type.name,
-    })) ?? [];
-
-  const supplierStatusOptions =
-    routeData?.supplierStatuses?.map((status) => ({
-      value: status.id,
-      label: status.name,
-    })) ?? [];
 
   const isEditing = initialValues.id !== undefined;
   const isDisabled = isEditing
@@ -93,16 +82,14 @@ const SupplierForm = ({
                   <Input name="taxId" label="Tax ID" />
                 </VStack>
                 <VStack>
-                  <Select
+                  <SupplierType
                     name="supplierTypeId"
                     label="Supplier Type"
-                    options={supplierTypeOptions}
                     placeholder="Select Supplier Type"
                   />
-                  <Select
+                  <SupplierStatus
                     name="supplierStatusId"
                     label="Supplier Status"
-                    options={supplierStatusOptions}
                     placeholder="Select Supplier Status"
                   />
                 </VStack>

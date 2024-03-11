@@ -1,13 +1,15 @@
 import { useFetcher } from "@remix-run/react";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type {
   CustomerContact as CustomerContactType,
   getCustomerContacts,
 } from "~/modules/sales";
 import { path } from "~/utils/path";
 
+import { useDisclosure } from "@carbon/react";
+import { CustomerContactForm } from "~/modules/sales";
 import type { ComboboxProps } from "./Combobox";
-import Combobox from "./Combobox";
+import CreatableCombobox from "./CreatableCombobox";
 
 type CustomerContactSelectProps = Omit<
   ComboboxProps,
@@ -20,6 +22,12 @@ type CustomerContactSelectProps = Omit<
 const CustomerContact = (props: CustomerContactSelectProps) => {
   const customerContactsFetcher =
     useFetcher<Awaited<ReturnType<typeof getCustomerContacts>>>();
+
+  const newContactModal = useDisclosure();
+  const [created, setCreated] = useState<string>("");
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  const [firstName, ...lastName] = created.split(" ");
 
   useEffect(() => {
     if (props?.customer) {
@@ -50,12 +58,35 @@ const CustomerContact = (props: CustomerContactSelectProps) => {
   };
 
   return (
-    <Combobox
-      options={options}
-      {...props}
-      onChange={onChange}
-      label={props?.label ?? "Customer Contact"}
-    />
+    <>
+      <CreatableCombobox
+        ref={triggerRef}
+        options={options}
+        {...props}
+        label={props?.label ?? "Customer Contact"}
+        onChange={onChange}
+        onCreateOption={(option) => {
+          newContactModal.onOpen();
+          setCreated(option);
+        }}
+      />
+      {newContactModal.isOpen && (
+        <CustomerContactForm
+          customerId={props.customer!}
+          type="modal"
+          onClose={() => {
+            setCreated("");
+            newContactModal.onClose();
+            triggerRef.current?.click();
+          }}
+          initialValues={{
+            email: "",
+            firstName: firstName,
+            lastName: lastName.join(" "),
+          }}
+        />
+      )}
+    </>
   );
 };
 

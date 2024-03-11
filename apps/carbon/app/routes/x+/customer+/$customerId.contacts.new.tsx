@@ -1,6 +1,7 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
+import { useNavigate, useParams } from "@remix-run/react";
 import { getSupabaseServiceRole } from "~/lib/supabase";
 import {
   CustomerContactForm,
@@ -25,8 +26,11 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { customerId } = params;
   if (!customerId) throw notFound("customerId not found");
 
+  const formData = await request.formData();
+  const modal = formData.get("type") === "modal";
+
   const validation = await validator(customerContactValidator).validate(
-    await request.formData()
+    formData
   );
 
   if (validation.error) {
@@ -40,27 +44,44 @@ export async function action({ request, params }: ActionFunctionArgs) {
     contact,
   });
   if (createCustomerContact.error) {
-    return redirect(
-      path.to.customerContacts(customerId),
-      await flash(
-        request,
-        error(createCustomerContact.error, "Failed to create customer contact")
-      )
-    );
+    return modal
+      ? json(createCustomerContact)
+      : redirect(
+          path.to.customerContacts(customerId),
+          await flash(
+            request,
+            error(
+              createCustomerContact.error,
+              "Failed to create customer contact"
+            )
+          )
+        );
   }
 
-  return redirect(
-    path.to.customerContacts(customerId),
-    await flash(request, success("Customer contact created"))
-  );
+  return modal
+    ? json(createCustomerContact, { status: 201 })
+    : redirect(
+        path.to.customerContacts(customerId),
+        await flash(request, success("Customer contact created"))
+      );
 }
 
 export default function CustomerContactsNewRoute() {
+  const navigate = useNavigate();
+  const { customerId } = useParams();
+  if (!customerId) throw new Error("customerId not found");
+
   const initialValues = {
     firstName: "",
     lastName: "",
     email: "",
   };
 
-  return <CustomerContactForm initialValues={initialValues} />;
+  return (
+    <CustomerContactForm
+      customerId={customerId}
+      initialValues={initialValues}
+      onClose={() => navigate(path.to.customerContacts(customerId))}
+    />
+  );
 }

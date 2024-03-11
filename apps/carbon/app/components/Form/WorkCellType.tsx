@@ -1,38 +1,69 @@
-import { useMount } from "@carbon/react";
+import { useDisclosure, useMount } from "@carbon/react";
 import { useFetcher } from "@remix-run/react";
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { getWorkCellTypesList } from "~/modules/resources";
+import { WorkCellTypeForm } from "~/modules/resources";
 import { path } from "~/utils/path";
 import type { ComboboxProps } from "./Combobox";
-import Combobox from "./Combobox";
+import CreatableCombobox from "./CreatableCombobox";
 
 type WorkCellTypeSelectProps = Omit<ComboboxProps, "options">;
 
 const WorkCellType = (props: WorkCellTypeSelectProps) => {
-  const workCellTypesFetcher =
+  const workCellTypeFetcher =
     useFetcher<Awaited<ReturnType<typeof getWorkCellTypesList>>>();
 
+  const newWorkCellTypeModal = useDisclosure();
+  const [created, setCreated] = useState<string>("");
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
   useMount(() => {
-    workCellTypesFetcher.load(path.to.api.workCellTypes);
+    workCellTypeFetcher.load(path.to.api.workCellTypes);
   });
 
   const options = useMemo(
     () =>
-      workCellTypesFetcher.data?.data
-        ? workCellTypesFetcher.data?.data.map((c) => ({
+      workCellTypeFetcher.data?.data
+        ? workCellTypeFetcher.data?.data.map((c) => ({
             value: c.id,
             label: c.name,
           }))
         : [],
-    [workCellTypesFetcher.data]
+    [workCellTypeFetcher.data]
   );
 
   return (
-    <Combobox
-      options={options}
-      {...props}
-      label={props?.label ?? "Work Cell Type"}
-    />
+    <>
+      <CreatableCombobox
+        ref={triggerRef}
+        options={options}
+        {...props}
+        label={props?.label ?? "WorkCellType"}
+        onCreateOption={(option) => {
+          newWorkCellTypeModal.onOpen();
+          setCreated(option);
+        }}
+      />
+      {newWorkCellTypeModal.isOpen && (
+        <WorkCellTypeForm
+          type="modal"
+          onClose={() => {
+            setCreated("");
+            newWorkCellTypeModal.onClose();
+            triggerRef.current?.click();
+          }}
+          initialValues={{
+            name: created,
+            description: "",
+            color: "#000000",
+            quotingRate: 0,
+            laborRate: 0,
+            overheadRate: 0,
+            defaultStandardFactor: "Total Hours" as "Total Hours",
+          }}
+        />
+      )}
+    </>
   );
 };
 

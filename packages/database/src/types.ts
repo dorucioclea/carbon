@@ -2309,23 +2309,72 @@ export type Database = {
       customerStatus: {
         Row: {
           createdAt: string
+          createdBy: string
           id: string
           name: string
           updatedAt: string | null
+          updatedBy: string | null
         }
         Insert: {
           createdAt?: string
+          createdBy: string
           id?: string
           name: string
           updatedAt?: string | null
+          updatedBy?: string | null
         }
         Update: {
           createdAt?: string
+          createdBy?: string
           id?: string
           name?: string
           updatedAt?: string | null
+          updatedBy?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "customerStatus_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customerStatus_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customerStatus_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "customerStatus_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customerStatus_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customerStatus_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+        ]
       }
       customerType: {
         Row: {
@@ -7412,7 +7461,7 @@ export type Database = {
             foreignKeyName: "quote_customerContactId_fkey"
             columns: ["customerContactId"]
             isOneToOne: false
-            referencedRelation: "contact"
+            referencedRelation: "customerContact"
             referencedColumns: ["id"]
           },
           {
@@ -7433,22 +7482,8 @@ export type Database = {
             foreignKeyName: "quote_customerLocationId_fkey"
             columns: ["customerLocationId"]
             isOneToOne: false
-            referencedRelation: "location"
+            referencedRelation: "customerLocation"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "quote_customerLocationId_fkey"
-            columns: ["customerLocationId"]
-            isOneToOne: false
-            referencedRelation: "partQuantities"
-            referencedColumns: ["locationId"]
-          },
-          {
-            foreignKeyName: "quote_customerLocationId_fkey"
-            columns: ["customerLocationId"]
-            isOneToOne: false
-            referencedRelation: "purchaseOrders"
-            referencedColumns: ["locationId"]
           },
           {
             foreignKeyName: "quote_locationId_fkey"
@@ -10535,23 +10570,72 @@ export type Database = {
       supplierStatus: {
         Row: {
           createdAt: string
+          createdBy: string
           id: string
           name: string
           updatedAt: string | null
+          updatedBy: string | null
         }
         Insert: {
           createdAt?: string
+          createdBy: string
           id?: string
           name: string
           updatedAt?: string | null
+          updatedBy?: string | null
         }
         Update: {
           createdAt?: string
+          createdBy?: string
           id?: string
           name?: string
           updatedAt?: string | null
+          updatedBy?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "supplierStatus_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplierStatus_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplierStatus_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "supplierStatus_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplierStatus_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplierStatus_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+        ]
       }
       supplierType: {
         Row: {
@@ -12559,7 +12643,7 @@ export type Database = {
             foreignKeyName: "quote_customerContactId_fkey"
             columns: ["customerContactId"]
             isOneToOne: false
-            referencedRelation: "contact"
+            referencedRelation: "customerContact"
             referencedColumns: ["id"]
           },
           {
@@ -12580,22 +12664,8 @@ export type Database = {
             foreignKeyName: "quote_customerLocationId_fkey"
             columns: ["customerLocationId"]
             isOneToOne: false
-            referencedRelation: "location"
+            referencedRelation: "customerLocation"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "quote_customerLocationId_fkey"
-            columns: ["customerLocationId"]
-            isOneToOne: false
-            referencedRelation: "partQuantities"
-            referencedColumns: ["locationId"]
-          },
-          {
-            foreignKeyName: "quote_customerLocationId_fkey"
-            columns: ["customerLocationId"]
-            isOneToOne: false
-            referencedRelation: "purchaseOrders"
-            referencedColumns: ["locationId"]
           },
           {
             foreignKeyName: "quote_locationId_fkey"

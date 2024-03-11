@@ -16,17 +16,17 @@ import { useState } from "react";
 import type { z } from "zod";
 import {
   Boolean,
-  Combobox,
   Hidden,
   Input,
   InputControlled,
+  PartGroup,
   Select,
   Submit,
   TextArea,
+  UnitOfMeasure,
 } from "~/components/Form";
-import { usePermissions, useRouteData } from "~/hooks";
+import { usePermissions } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
-import type { PartGroupListItem, UnitOfMeasureListItem } from "~/modules/parts";
 import {
   partReplenishmentSystems,
   partTypes,
@@ -86,21 +86,10 @@ const useNextPartIdShortcut = () => {
 };
 
 const PartForm = ({ initialValues, type = "card", onClose }: PartFormProps) => {
-  const sharedPartsData = useRouteData<{
-    partGroups: PartGroupListItem[];
-    unitOfMeasures: UnitOfMeasureListItem[];
-  }>(path.to.partRoot);
-
   const fetcher = useFetcher();
   const { partId, onPartIdChange, loading } = useNextPartIdShortcut();
   const permissions = usePermissions();
   const isEditing = !!initialValues.id;
-
-  const partGroupOptions =
-    sharedPartsData?.partGroups.map((partGroup) => ({
-      label: partGroup.name,
-      value: partGroup.id,
-    })) ?? [];
 
   const partTypeOptions =
     partTypes.map((partType) => ({
@@ -112,12 +101,6 @@ const PartForm = ({ initialValues, type = "card", onClose }: PartFormProps) => {
     partReplenishmentSystems.map((partReplenishmentSystem) => ({
       label: partReplenishmentSystem,
       value: partReplenishmentSystem,
-    })) ?? [];
-
-  const unitOfMeasureOptions =
-    sharedPartsData?.unitOfMeasures.map((uom) => ({
-      label: uom.name,
-      value: uom.code,
     })) ?? [];
 
   return (
@@ -179,18 +162,13 @@ const PartForm = ({ initialValues, type = "card", onClose }: PartFormProps) => {
                     label="Part Type"
                     options={partTypeOptions}
                   />
-                  <Combobox
+                  <UnitOfMeasure
                     name="unitOfMeasureCode"
                     label="Unit of Measure"
-                    options={unitOfMeasureOptions}
                   />
                 </VStack>
                 <VStack>
-                  <Combobox
-                    name="partGroupId"
-                    label="Part Group"
-                    options={partGroupOptions}
-                  />
+                  <PartGroup name="partGroupId" label="Part Group" />
                   <Boolean name="blocked" label="Blocked" />
                   {isEditing && <Boolean name="active" label="Active" />}
                 </VStack>

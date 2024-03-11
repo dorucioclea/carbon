@@ -8,6 +8,7 @@ import type {
   customerContactValidator,
   customerPaymentValidator,
   customerShippingValidator,
+  customerStatusValidator,
   customerTypeValidator,
   customerValidator,
   quotationAssemblyValidator,
@@ -39,6 +40,13 @@ export async function deleteCustomerLocation(
     .delete()
     .eq("customerId", customerId)
     .eq("id", customerLocationId);
+}
+
+export async function deleteCustomerStatus(
+  client: SupabaseClient<Database>,
+  customerStatusId: string
+) {
+  return client.from("customerStatus").delete().eq("id", customerStatusId);
 }
 
 export async function deleteCustomerType(
@@ -203,6 +211,17 @@ export async function getCustomersList(client: SupabaseClient<Database>) {
   return client.from("customer").select("id, name").order("name");
 }
 
+export async function getCustomerStatus(
+  client: SupabaseClient<Database>,
+  customerStatusId: string
+) {
+  return client
+    .from("customerStatus")
+    .select("id, name")
+    .eq("id", customerStatusId)
+    .single();
+}
+
 export async function getCustomerStatuses(
   client: SupabaseClient<Database>,
   args?: GenericQueryFilters & { name: string | null }
@@ -222,6 +241,12 @@ export async function getCustomerStatuses(
   }
 
   return query;
+}
+
+export async function getCustomerStatusesList(
+  client: SupabaseClient<Database>
+) {
+  return client.from("customerStatus").select("id, name").order("name");
 }
 
 export async function getCustomerType(
@@ -639,6 +664,27 @@ export async function updateCustomerShipping(
     .from("customerShipping")
     .update(sanitize(customerShipping))
     .eq("customerId", customerShipping.customerId);
+}
+
+export async function upsertCustomerStatus(
+  client: SupabaseClient<Database>,
+  customerStatus:
+    | (Omit<z.infer<typeof customerStatusValidator>, "id"> & {
+        createdBy: string;
+      })
+    | (Omit<z.infer<typeof customerStatusValidator>, "id"> & {
+        id: string;
+        updatedBy: string;
+      })
+) {
+  if ("createdBy" in customerStatus) {
+    return client.from("customerStatus").insert([customerStatus]);
+  } else {
+    return client
+      .from("customerStatus")
+      .update(sanitize(customerStatus))
+      .eq("id", customerStatus.id);
+  }
 }
 
 export async function upsertCustomerType(

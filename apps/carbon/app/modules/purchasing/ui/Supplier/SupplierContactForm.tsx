@@ -10,7 +10,7 @@ import {
   VStack,
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
-import { useNavigate, useParams } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
 import type { z } from "zod";
 import {
   DatePicker,
@@ -25,14 +25,21 @@ import { supplierContactValidator } from "~/modules/purchasing";
 import { path } from "~/utils/path";
 
 type SupplierContactFormProps = {
+  supplierId: string;
   initialValues: z.infer<typeof supplierContactValidator>;
+  type?: "modal" | "drawer";
+  open?: boolean;
+  onClose: () => void;
 };
 
-const SupplierContactForm = ({ initialValues }: SupplierContactFormProps) => {
-  const navigate = useNavigate();
-  const { supplierId } = useParams();
-
-  if (!supplierId) throw new Error("supplierId not found");
+const SupplierContactForm = ({
+  supplierId,
+  initialValues,
+  open = true,
+  type = "drawer",
+  onClose,
+}: SupplierContactFormProps) => {
+  const fetcher = useFetcher();
 
   const permissions = usePermissions();
   const isEditing = !!initialValues?.id;
@@ -40,13 +47,11 @@ const SupplierContactForm = ({ initialValues }: SupplierContactFormProps) => {
     ? !permissions.can("update", "purchasing")
     : !permissions.can("create", "purchasing");
 
-  const onClose = () => navigate(path.to.supplierContacts(supplierId));
-
   return (
     <Drawer
-      open
+      open={open}
       onOpenChange={(open) => {
-        if (!open) onClose();
+        if (!open) onClose?.();
       }}
     >
       <DrawerContent>
@@ -59,14 +64,20 @@ const SupplierContactForm = ({ initialValues }: SupplierContactFormProps) => {
               : path.to.newSupplierContact(supplierId)
           }
           defaultValues={initialValues}
-          onSubmit={onClose}
+          fetcher={fetcher}
           className="flex flex-col h-full"
+          onSubmit={() => {
+            if (type === "modal") {
+              onClose?.();
+            }
+          }}
         >
           <DrawerHeader>
             <DrawerTitle>{isEditing ? "Edit" : "New"} Contact</DrawerTitle>
           </DrawerHeader>
           <DrawerBody>
             <Hidden name="id" />
+            <Hidden name="type" value={type} />
             <Hidden name="contactId" />
             <VStack spacing={4}>
               <Input name="firstName" label="First Name" />

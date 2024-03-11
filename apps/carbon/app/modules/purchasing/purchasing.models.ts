@@ -248,3 +248,8 @@ export const supplierTypeValidator = z.object({
   name: z.string().min(1, { message: "Name is required" }),
   color: z.string(),
 });
+
+export const supplierStatusValidator = z.object({
+  id: zfd.text(z.string().optional()),
+  name: z.string().min(1, { message: "Name is required" }),
+});

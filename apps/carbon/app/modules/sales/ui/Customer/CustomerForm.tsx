@@ -15,15 +15,14 @@ import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
 import type { z } from "zod";
 import {
-  Combobox,
+  CustomerStatus,
+  CustomerType,
   Employee,
   Hidden,
   Input,
-  Select,
   Submit,
 } from "~/components/Form";
-import { usePermissions, useRouteData } from "~/hooks";
-import type { CustomerStatus, CustomerType } from "~/modules/sales";
+import { usePermissions } from "~/hooks";
 import { customerValidator } from "~/modules/sales";
 import { path } from "~/utils/path";
 
@@ -40,23 +39,6 @@ const CustomerForm = ({
 }: CustomerFormProps) => {
   const permissions = usePermissions();
   const fetcher = useFetcher();
-
-  const routeData = useRouteData<{
-    customerTypes: CustomerType[];
-    customerStatuses: CustomerStatus[];
-  }>(path.to.customerRoot);
-
-  const customerTypeOptions =
-    routeData?.customerTypes?.map((type) => ({
-      value: type.id,
-      label: type.name,
-    })) ?? [];
-
-  const customerStatusOptions =
-    routeData?.customerStatuses?.map((status) => ({
-      value: status.id,
-      label: status.name,
-    })) ?? [];
 
   const isEditing = initialValues.id !== undefined;
   const isDisabled = isEditing
@@ -100,16 +82,14 @@ const CustomerForm = ({
                   <Input name="taxId" label="Tax ID" />
                 </VStack>
                 <VStack>
-                  <Combobox
+                  <CustomerType
                     name="customerTypeId"
                     label="Customer Type"
-                    options={customerTypeOptions}
                     placeholder="Select Customer Type"
                   />
-                  <Select
+                  <CustomerStatus
                     name="customerStatusId"
                     label="Customer Status"
-                    options={customerStatusOptions}
                     placeholder="Select Customer Status"
                   />
                 </VStack>

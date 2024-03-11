@@ -41,7 +41,7 @@ const EditableQuotationLineQuantity =
         : {
             materialCost:
               row.quantity === 0
-                ? row.materialCost
+                ? row.materialCost * quantity
                 : (row.materialCost / row.quantity) * quantity,
           };
 

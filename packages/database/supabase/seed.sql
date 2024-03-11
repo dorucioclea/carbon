@@ -150,11 +150,11 @@ VALUES
 
 -- supplier status
 
-INSERT INTO "supplierStatus" ("name") VALUES ('Active'), ('Inactive'), ('Pending'), ('Rejected');
+INSERT INTO "supplierStatus" ("name", "createdBy") VALUES ('Active', 'system'), ('Inactive', 'system'), ('Pending', 'system'), ('Rejected', 'system');
 
 -- customer status
 
-INSERT INTO "customerStatus" ("name") VALUES ('Active'), ('Inactive'), ('Prospect'), ('Lead'), ('On Hold'), ('Cancelled'), ('Archived');
+INSERT INTO "customerStatus" ("name", "createdBy") VALUES ('Active', 'system'), ('Inactive', 'system'), ('Prospect', 'system'), ('Lead', 'system'), ('On Hold', 'system'), ('Cancelled', 'system'), ('Archived', 'system');
 
 -- unit of measure
 

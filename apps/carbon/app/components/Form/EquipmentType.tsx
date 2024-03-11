@@ -1,38 +1,66 @@
-import { useMount } from "@carbon/react";
+import { useDisclosure, useMount } from "@carbon/react";
 import { useFetcher } from "@remix-run/react";
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { getEquipmentTypesList } from "~/modules/resources";
+import { EquipmentTypeForm } from "~/modules/resources";
 import { path } from "~/utils/path";
 import type { ComboboxProps } from "./Combobox";
-import Combobox from "./Combobox";
+import CreatableCombobox from "./CreatableCombobox";
 
 type EquipmentTypeSelectProps = Omit<ComboboxProps, "options">;
 
 const EquipmentType = (props: EquipmentTypeSelectProps) => {
-  const equipmentTypesFetcher =
+  const equipmentTypeFetcher =
     useFetcher<Awaited<ReturnType<typeof getEquipmentTypesList>>>();
 
+  const newEquipmentTypeModal = useDisclosure();
+  const [created, setCreated] = useState<string>("");
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
   useMount(() => {
-    equipmentTypesFetcher.load(path.to.api.equipmentTypes);
+    equipmentTypeFetcher.load(path.to.api.equipmentTypes);
   });
 
   const options = useMemo(
     () =>
-      equipmentTypesFetcher.data?.data
-        ? equipmentTypesFetcher.data?.data.map((c) => ({
+      equipmentTypeFetcher.data?.data
+        ? equipmentTypeFetcher.data?.data.map((c) => ({
             value: c.id,
             label: c.name,
           }))
         : [],
-    [equipmentTypesFetcher.data]
+    [equipmentTypeFetcher.data]
   );
 
   return (
-    <Combobox
-      options={options}
-      {...props}
-      label={props?.label ?? "Equipment Type"}
-    />
+    <>
+      <CreatableCombobox
+        ref={triggerRef}
+        options={options}
+        {...props}
+        label={props?.label ?? "EquipmentType"}
+        onCreateOption={(option) => {
+          newEquipmentTypeModal.onOpen();
+          setCreated(option);
+        }}
+      />
+      {newEquipmentTypeModal.isOpen && (
+        <EquipmentTypeForm
+          type="modal"
+          onClose={() => {
+            setCreated("");
+            newEquipmentTypeModal.onClose();
+            triggerRef.current?.click();
+          }}
+          initialValues={{
+            name: created,
+            description: "",
+            color: "#000000",
+            setupHours: 0,
+          }}
+        />
+      )}
+    </>
   );
 };
 

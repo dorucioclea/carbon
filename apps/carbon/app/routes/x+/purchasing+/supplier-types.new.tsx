@@ -1,6 +1,7 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
+import { useNavigate } from "@remix-run/react";
 import {
   SupplierTypeForm,
   supplierTypeValidator,
@@ -9,7 +10,7 @@ import {
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { assertIsPost } from "~/utils/http";
-import { path } from "~/utils/path";
+import { path, requestReferrer } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -26,9 +27,10 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "purchasing",
   });
 
-  const validation = await validator(supplierTypeValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const modal = formData.get("type") === "modal";
+
+  const validation = await validator(supplierTypeValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -41,26 +43,36 @@ export async function action({ request }: ActionFunctionArgs) {
     createdBy: userId,
   });
   if (insertSupplierType.error) {
-    return json(
-      {},
-      await flash(
-        request,
-        error(insertSupplierType.error, "Failed to insert supplier type")
-      )
-    );
+    return modal
+      ? json(insertSupplierType)
+      : redirect(
+          requestReferrer(request) ?? path.to.supplierTypes,
+          await flash(
+            request,
+            error(insertSupplierType.error, "Failed to insert supplier type")
+          )
+        );
   }
 
-  return redirect(
-    path.to.supplierTypes,
-    await flash(request, success("Supplier type created"))
-  );
+  return modal
+    ? json(insertSupplierType, { status: 201 })
+    : redirect(
+        path.to.supplierTypes,
+        await flash(request, success("Supplier type created"))
+      );
 }
 
 export default function NewSupplierTypesRoute() {
+  const navigate = useNavigate();
   const initialValues = {
     name: "",
     color: "#000000",
   };
 
-  return <SupplierTypeForm initialValues={initialValues} />;
+  return (
+    <SupplierTypeForm
+      initialValues={initialValues}
+      onClose={() => navigate(-1)}
+    />
+  );
 }

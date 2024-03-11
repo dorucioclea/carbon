@@ -1,13 +1,15 @@
 import { useFetcher } from "@remix-run/react";
-import { useEffect, useMemo } from "react";
-import type {
-  CustomerLocation as CustomerLocationType,
-  getCustomerLocations,
+import { useEffect, useMemo, useRef } from "react";
+import {
+  CustomerLocationForm,
+  type CustomerLocation as CustomerLocationType,
+  type getCustomerLocations,
 } from "~/modules/sales";
 import { path } from "~/utils/path";
 
+import { useDisclosure } from "@carbon/react";
 import type { ComboboxProps } from "./Combobox";
-import Combobox from "./Combobox";
+import CreatableCombobox from "./CreatableCombobox";
 
 type CustomerLocationSelectProps = Omit<
   ComboboxProps,
@@ -20,6 +22,10 @@ type CustomerLocationSelectProps = Omit<
 const CustomerLocation = (props: CustomerLocationSelectProps) => {
   const customerLocationsFetcher =
     useFetcher<Awaited<ReturnType<typeof getCustomerLocations>>>();
+
+  const newLocationModal = useDisclosure();
+  // const [created, setCreated] = useState<string>("");
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (props?.customer) {
@@ -50,12 +56,31 @@ const CustomerLocation = (props: CustomerLocationSelectProps) => {
   };
 
   return (
-    <Combobox
-      options={options}
-      {...props}
-      onChange={onChange}
-      label={props?.label ?? "Customer Location"}
-    />
+    <>
+      <CreatableCombobox
+        ref={triggerRef}
+        options={options}
+        {...props}
+        label={props?.label ?? "Customer Location"}
+        onChange={onChange}
+        onCreateOption={(option) => {
+          newLocationModal.onOpen();
+          // setCreated(option);
+        }}
+      />
+      {newLocationModal.isOpen && (
+        <CustomerLocationForm
+          customerId={props.customer!}
+          type="modal"
+          onClose={() => {
+            // setCreated("");
+            newLocationModal.onClose();
+            triggerRef.current?.click();
+          }}
+          initialValues={{}}
+        />
+      )}
+    </>
   );
 };
 

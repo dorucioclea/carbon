@@ -1,6 +1,7 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
+import { useNavigate, useParams } from "@remix-run/react";
 import {
   SupplierLocationForm,
   insertSupplierLocation,
@@ -18,11 +19,14 @@ export async function action({ request, params }: ActionFunctionArgs) {
     create: "purchasing",
   });
 
+  const formData = await request.formData();
+  const modal = formData.get("type") === "modal";
+
   const { supplierId } = params;
   if (!supplierId) throw notFound("supplierId not found");
 
   const validation = await validator(supplierLocationValidator).validate(
-    await request.formData()
+    formData
   );
 
   if (validation.error) {
@@ -36,26 +40,41 @@ export async function action({ request, params }: ActionFunctionArgs) {
     address,
   });
   if (createSupplierLocation.error) {
-    return redirect(
-      path.to.supplierLocations(supplierId),
-      await flash(
-        request,
-        error(
-          createSupplierLocation.error,
-          "Failed to create supplier location"
-        )
-      )
-    );
+    return modal
+      ? json(createSupplierLocation)
+      : redirect(
+          path.to.supplierLocations(supplierId),
+          await flash(
+            request,
+            error(
+              createSupplierLocation.error,
+              "Failed to create supplier location"
+            )
+          )
+        );
   }
 
-  return redirect(
-    path.to.supplierLocations(supplierId),
-    await flash(request, success("Supplier location created"))
-  );
+  return modal
+    ? json(createSupplierLocation, { status: 201 })
+    : redirect(
+        path.to.supplierLocations(supplierId),
+        await flash(request, success("Supplier location created"))
+      );
 }
 
 export default function SupplierLocationsNewRoute() {
+  const navigate = useNavigate();
+
+  const { supplierId } = useParams();
+  if (!supplierId) throw new Error("supplierId not found");
+
   const initialValues = {};
 
-  return <SupplierLocationForm initialValues={initialValues} />;
+  return (
+    <SupplierLocationForm
+      initialValues={initialValues}
+      supplierId={supplierId}
+      onClose={() => navigate(path.to.supplierLocations(supplierId))}
+    />
+  );
 }

@@ -1,6 +1,7 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
+import { useNavigate } from "@remix-run/react";
 import {
   UnitOfMeasureForm,
   unitOfMeasureValidator,
@@ -26,9 +27,10 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "parts",
   });
 
-  const validation = await validator(unitOfMeasureValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const modal = formData.get("type") === "modal";
+
+  const validation = await validator(unitOfMeasureValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -62,17 +64,25 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
-    path.to.uoms,
-    await flash(request, success("Unit of measure created"))
-  );
+  return modal
+    ? json(insertUnitOfMeasure, { status: 201 })
+    : redirect(
+        path.to.uoms,
+        await flash(request, success("Unit of measure created"))
+      );
 }
 
 export default function NewUnitOfMeasuresRoute() {
+  const navigate = useNavigate();
   const initialValues = {
     name: "",
     code: "",
   };
 
-  return <UnitOfMeasureForm initialValues={initialValues} />;
+  return (
+    <UnitOfMeasureForm
+      onClose={() => navigate(-1)}
+      initialValues={initialValues}
+    />
+  );
 }

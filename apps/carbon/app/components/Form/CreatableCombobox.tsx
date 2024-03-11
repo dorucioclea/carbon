@@ -4,7 +4,7 @@ import {
   FormHelperText,
   FormLabel,
 } from "@carbon/react";
-import { forwardRef } from "react";
+import { forwardRef, useEffect } from "react";
 
 import { useControlField, useField } from "@carbon/remix-validated-form";
 import { CreatableCombobox as CreatableComboboxBase } from "~/components";
@@ -24,6 +24,10 @@ const CreatableCombobox = forwardRef<HTMLButtonElement, CreatableComboboxProps>(
   ({ name, label, helperText, ...props }, ref) => {
     const { getInputProps, error } = useField(name);
     const [value, setValue] = useControlField<string | undefined>(name);
+
+    useEffect(() => {
+      if (props.value) setValue(props.value);
+    }, [props.value, setValue]);
 
     const onChange = (value: string) => {
       if (value) {

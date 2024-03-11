@@ -41,6 +41,11 @@ export const customerShippingValidator = z.object({
   shippingMethodId: zfd.text(z.string().optional()),
 });
 
+export const customerStatusValidator = z.object({
+  id: zfd.text(z.string().optional()),
+  name: z.string().min(1, { message: "Name is required" }),
+});
+
 export const customerTypeValidator = z.object({
   id: zfd.text(z.string().optional()),
   name: z.string().min(1, { message: "Name is required" }),

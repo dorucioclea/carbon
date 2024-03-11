@@ -10,31 +10,21 @@ import { ValidatedForm } from "@carbon/remix-validated-form";
 import type { z } from "zod";
 import {
   Boolean,
-  Combobox,
   Hidden,
   Number,
   Submit,
   Supplier,
+  UnitOfMeasure,
 } from "~/components/Form";
 import { usePermissions } from "~/hooks";
-import type { UnitOfMeasureListItem } from "~/modules/parts";
 import { partPurchasingValidator } from "~/modules/parts";
 
 type PartPurchasingFormProps = {
   initialValues: z.infer<typeof partPurchasingValidator>;
-  unitOfMeasures: UnitOfMeasureListItem[];
 };
 
-const PartPurchasingForm = ({
-  initialValues,
-  unitOfMeasures,
-}: PartPurchasingFormProps) => {
+const PartPurchasingForm = ({ initialValues }: PartPurchasingFormProps) => {
   const permissions = usePermissions();
-
-  const unitOfMeasureOptions = unitOfMeasures.map((unitOfMeasure) => ({
-    label: unitOfMeasure.name,
-    value: unitOfMeasure.code,
-  }));
 
   return (
     <ValidatedForm
@@ -54,10 +44,9 @@ const PartPurchasingForm = ({
               <Number name="purchasingLeadTime" label="Lead Time (Days)" />
             </VStack>
             <VStack>
-              <Combobox
+              <UnitOfMeasure
                 name="purchasingUnitOfMeasureCode"
                 label="Purchasing Unit of Measure"
-                options={unitOfMeasureOptions}
               />
               <Number
                 name="conversionFactor"
