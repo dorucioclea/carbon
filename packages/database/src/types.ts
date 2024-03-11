@@ -2452,6 +2452,242 @@ export type Database = {
           },
         ]
       }
+      customField: {
+        Row: {
+          active: boolean | null
+          attributeDataTypeId: number
+          createdAt: string
+          createdBy: string
+          customFieldTableId: string
+          id: string
+          listOptions: string[] | null
+          name: string
+          sortOrder: number
+          updatedAt: string | null
+          updatedBy: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          attributeDataTypeId: number
+          createdAt?: string
+          createdBy: string
+          customFieldTableId: string
+          id?: string
+          listOptions?: string[] | null
+          name: string
+          sortOrder?: number
+          updatedAt?: string | null
+          updatedBy?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          attributeDataTypeId?: number
+          createdAt?: string
+          createdBy?: string
+          customFieldTableId?: string
+          id?: string
+          listOptions?: string[] | null
+          name?: string
+          sortOrder?: number
+          updatedAt?: string | null
+          updatedBy?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customField_attributeDataTypeId_fkey"
+            columns: ["attributeDataTypeId"]
+            isOneToOne: false
+            referencedRelation: "attributeDataType"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customField_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customField_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customField_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "customField_customFieldTableId_fkey"
+            columns: ["customFieldTableId"]
+            isOneToOne: false
+            referencedRelation: "customFieldTable"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customField_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customField_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customField_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+        ]
+      }
+      customFieldTable: {
+        Row: {
+          id: string
+          module: Database["public"]["Enums"]["module"]
+          name: string
+          table: string
+        }
+        Insert: {
+          id?: string
+          module: Database["public"]["Enums"]["module"]
+          name: string
+          table: string
+        }
+        Update: {
+          id?: string
+          module?: Database["public"]["Enums"]["module"]
+          name?: string
+          table?: string
+        }
+        Relationships: []
+      }
+      customFieldValue: {
+        Row: {
+          createdAt: string
+          createdBy: string
+          customFieldId: string
+          id: string
+          recordId: string
+          updatedAt: string | null
+          updatedBy: string | null
+          valueBoolean: boolean | null
+          valueDate: string | null
+          valueNumeric: number | null
+          valueText: string | null
+          valueUser: string | null
+        }
+        Insert: {
+          createdAt?: string
+          createdBy: string
+          customFieldId: string
+          id?: string
+          recordId: string
+          updatedAt?: string | null
+          updatedBy?: string | null
+          valueBoolean?: boolean | null
+          valueDate?: string | null
+          valueNumeric?: number | null
+          valueText?: string | null
+          valueUser?: string | null
+        }
+        Update: {
+          createdAt?: string
+          createdBy?: string
+          customFieldId?: string
+          id?: string
+          recordId?: string
+          updatedAt?: string | null
+          updatedBy?: string | null
+          valueBoolean?: boolean | null
+          valueDate?: string | null
+          valueNumeric?: number | null
+          valueText?: string | null
+          valueUser?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customFieldValue_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customFieldValue_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customFieldValue_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "customFieldValue_customFieldId_fkey"
+            columns: ["customFieldId"]
+            isOneToOne: false
+            referencedRelation: "customField"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customFieldValue_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customFieldValue_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customFieldValue_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "customFieldValue_valueUser_fkey"
+            columns: ["valueUser"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customFieldValue_valueUser_fkey"
+            columns: ["valueUser"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customFieldValue_valueUser_fkey"
+            columns: ["valueUser"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+        ]
+      }
       department: {
         Row: {
           color: string
@@ -13095,6 +13331,20 @@ export type Database = {
         | "Credit Memo"
         | "Blanket Order"
         | "Return Order"
+      module:
+        | "Accounting"
+        | "Documents"
+        | "Invoicing"
+        | "Inventory"
+        | "Jobs"
+        | "Messaging"
+        | "Parts"
+        | "Purchasing"
+        | "Resources"
+        | "Sales"
+        | "Scheduling"
+        | "Timecards"
+        | "Users"
       month:
         | "January"
         | "February"
