@@ -2,47 +2,21 @@ import type { Database } from "@carbon/database";
 import { StyleSheet, Text, View } from "@react-pdf/renderer";
 
 import type { PDF } from "../types";
-// import {
-//   getLineDescription,
-//   getLineDescriptionDetails,
-//   getLineTotal,
-//   getTotal,
-// } from "../utils/purchase-order";
-// import { formatAddress } from "../utils/shared";
+// import { getLineDescription } from "../utils/quote";
 import { Header, Summary, Template } from "./components";
 
 interface QuotePDFProps extends PDF {
   quote: Database["public"]["Views"]["quotes"]["Row"];
+  quoteLines: Database["public"]["Tables"]["quoteLine"]["Row"][];
 }
 
-// TODO: format currency based on settings
-
-const QuotePDF = ({ company, meta, quote, title = "Quote" }: QuotePDFProps) => {
-  // const {
-  //   supplierName,
-  //   supplierAddressLine1,
-  //   supplierAddressLine2,
-  //   supplierCity,
-  //   supplierState,
-  //   supplierPostalCode,
-  //   supplierCountryCode,
-  //   deliveryName,
-  //   deliveryAddressLine1,
-  //   deliveryAddressLine2,
-  //   deliveryCity,
-  //   deliveryState,
-  //   deliveryPostalCode,
-  //   deliveryCountryCode,
-  //   dropShipment,
-  //   customerName,
-  //   customerAddressLine1,
-  //   customerAddressLine2,
-  //   customerCity,
-  //   customerState,
-  //   customerPostalCode,
-  //   customerCountryCode,
-  // } = purchaseOrderLocations;
-
+const QuotePDF = ({
+  company,
+  meta,
+  quote,
+  quoteLines,
+  title = "Quote",
+}: QuotePDFProps) => {
   return (
     <Template
       title={title}
@@ -70,66 +44,8 @@ const QuotePDF = ({ company, meta, quote, title = "Quote" }: QuotePDFProps) => {
         <View style={styles.row}>
           <View style={styles.colThird}>
             <Text style={styles.label}>Supplier</Text>
-            {/* <Text>{quote.n}</Text>
-            {/* {supplierAddressLine1 && <Text>{supplierAddressLine1}</Text>}
-            {supplierAddressLine2 && <Text>{supplierAddressLine2}</Text>} */}
-            {/* <Text>
-              {formatAddress(supplierCity, supplierState, supplierPostalCode)}
-            </Text> */}
-            {/* <Text>{supplierCountryCode}</Text> */}
           </View>
-          {/* {dropShipment ? (
-            <View style={styles.colThird}>
-              <Text style={styles.label}>Ship To</Text>
-              <Text>{customerName}</Text>
-              {customerAddressLine1 && <Text>{customerAddressLine1}</Text>}
-              {customerAddressLine2 && <Text>{customerAddressLine2}</Text>}
-              <Text>
-                {formatAddress(customerCity, customerState, customerPostalCode)}
-              </Text>
-              <Text>{customerCountryCode}</Text>
-            </View>
-          ) : (
-            <View style={styles.colThird}>
-              <Text style={styles.label}>Ship To</Text>
-              <Text>{deliveryName}</Text>
-              {deliveryAddressLine1 && <Text>{deliveryAddressLine1}</Text>}
-              {deliveryAddressLine2 && <Text>{deliveryAddressLine2}</Text>}
-              <Text>
-                {formatAddress(deliveryCity, deliveryState, deliveryPostalCode)}
-              </Text>
-              <Text>{deliveryCountryCode}</Text>
-            </View>
-          )} */}
         </View>
-        {/* <View style={styles.row}>
-          <View style={styles.colThird}>
-            <Text style={styles.label}>Supplier Order #</Text>
-            <Text>{purchaseOrder?.supplierReference}</Text>
-          </View>
-          <View style={styles.colThird}>
-            <Text style={styles.label}>Requested Date</Text>
-            <Text>{purchaseOrder?.receiptRequestedDate}</Text>
-          </View>
-          <View style={styles.colThird}>
-            <Text style={styles.label}>Promised Date</Text>
-            <Text>{purchaseOrder?.receiptPromisedDate}</Text>
-          </View>
-        </View> */}
-        {/* <View style={styles.row}>
-          <View style={styles.colThird}>
-            <Text style={styles.label}>Shipping Method</Text>
-            <Text>{purchaseOrder?.shippingMethodName}</Text>
-          </View>
-          <View style={styles.colThird}>
-            <Text style={styles.label}>Shipping Terms</Text>
-            <Text>{purchaseOrder?.shippingTermName}</Text>
-          </View>
-          <View style={styles.colThird}>
-            <Text style={styles.label}>Payment Terms</Text>
-            <Text>{purchaseOrder?.paymentTermName}</Text>
-          </View>
-        </View> */}
         <View style={styles.table}>
           <View style={styles.thead}>
             <Text style={styles.tableCol1}>Description</Text>
@@ -137,53 +53,9 @@ const QuotePDF = ({ company, meta, quote, title = "Quote" }: QuotePDFProps) => {
             <Text style={styles.tableCol3}>Price</Text>
             <Text style={styles.tableCol4}>Total</Text>
           </View>
-          {/* {purchaseOrderLines.map((line) => (
+          {quoteLines.map((line) => (
             <View style={styles.tr} key={line.id}>
-              <View style={styles.tableCol1}>
-                <Text style={{ ...styles.bold, marginBottom: 4 }}>
-                  {getLineDescription(line)}
-                </Text>
-                <Text style={{ fontSize: 9, opacity: 0.8 }}>
-                  {getLineDescriptionDetails(line)}
-                </Text>
-              </View>
-              <Text style={styles.tableCol2}>
-                {line.purchaseOrderLineType === "Comment"
-                  ? ""
-                  : line.purchaseQuantity}
-              </Text>
-              <Text style={styles.tableCol3}>
-                {line.purchaseOrderLineType === "Comment" ? null : (
-                  <>
-                    <Text>$</Text>
-                    <Text>
-                      {line.unitPrice ? line.unitPrice.toFixed(2) : ""}
-                    </Text>
-                  </>
-                )}
-              </Text>
-              <Text style={styles.tableCol4}>
-                {line.purchaseOrderLineType === "Comment" ? null : (
-                  <>
-                    <Text>$</Text>
-                    <Text>{getLineTotal(line)}</Text>
-                  </>
-                )}
-              </Text>
-            </View>
-          ))} */}
-          {/* <View style={styles.tfoot}>
-            <Text>Total</Text>
-            <Text style={styles.bold}>
-              <Text>$</Text>
-              <Text>{getTotal(purchaseOrderLines)}</Text>
-            </Text>
-          </View> */}
-          {quote.partIds?.map((part, index) => (
-            <View style={styles.tr} key={index}>
-              <View style={styles.tableCol1}>
-                <Text style={{ ...styles.bold, marginBottom: 4 }}>{part}</Text>
-              </View>
+              <Text key={line.id}>{line.description}</Text>
             </View>
           ))}
         </View>

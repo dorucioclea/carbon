@@ -37,7 +37,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   }
 
   const stream = await renderToStream(
-    <QuotePDF company={company.data} quote={quote.data} />
+    <QuotePDF
+      company={company.data}
+      quote={quote.data}
+      quoteLines={quoteLines.data}
+    />
   );
 
   const body: Buffer = await new Promise((resolve, reject) => {
