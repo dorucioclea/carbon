@@ -96,7 +96,6 @@ export async function action(args: ActionFunctionArgs) {
     case "Email":
       try {
         if (!customerContactId) throw new Error("Customer contact is required");
-        console.log("===>", customerContactId);
 
         const [company, customer, customerContact, quoteLines, user] =
           await Promise.all([
@@ -111,6 +110,7 @@ export async function action(args: ActionFunctionArgs) {
         if (!customer.data) throw new Error("Failed to get customer");
         if (!customerContact.data)
           throw new Error("Failed to get customer contact");
+        if (!user.data) throw new Error("Failed to get user");
 
         // TODO: Update sender email
         const emailTemplate = QuoteEmail({
@@ -132,8 +132,7 @@ export async function action(args: ActionFunctionArgs) {
         await triggerClient.sendEvent({
           name: "resend.email",
           payload: {
-            to: customerContactId,
-            // TODO: Update from email
+            to: customerContact.data.contact.email,
             from: user.data.email,
             subject: `${quote.data.quoteId} from ${company.data.name}`,
             html: await renderAsync(emailTemplate),
