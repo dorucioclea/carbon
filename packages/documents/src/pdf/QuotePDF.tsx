@@ -41,11 +41,6 @@ const QuotePDF = ({
             },
           ]}
         />
-        <View style={styles.row}>
-          <View style={styles.colThird}>
-            <Text style={styles.label}>Supplier</Text>
-          </View>
-        </View>
         <View style={styles.table}>
           <View style={styles.thead}>
             <Text style={styles.tableCol1}>Description</Text>
