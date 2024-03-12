@@ -16,7 +16,7 @@ import {
 } from "@carbon/react";
 import { Link, useFetcher } from "@remix-run/react";
 import { Reorder } from "framer-motion";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AiOutlineNumber } from "react-icons/ai";
 import { BiText } from "react-icons/bi";
 import { BsCalendarDate, BsFillPenFill, BsToggleOn } from "react-icons/bs";
@@ -84,6 +84,19 @@ const CustomFieldCategoryDetail = ({
           .map((field) => (field as CustomField).id)
       : []
   );
+
+  useEffect(() => {
+    setSortOrder(
+      Array.isArray(customFieldTable.fields)
+        ? customFieldTable.fields
+            .sort(
+              (a, b) =>
+                (a as CustomField).sortOrder - (b as CustomField).sortOrder
+            )
+            .map((field) => (field as CustomField).id)
+        : []
+    );
+  }, [customFieldTable.fields, getAttributeDataType]);
 
   const onReorder = (newOrder: string[]) => {
     let updates: Record<string, number> = {};

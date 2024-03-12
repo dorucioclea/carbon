@@ -11,7 +11,7 @@ import {
   CustomFieldForm,
   customFieldValidator,
   getCustomField,
-  updateCustomField,
+  upsertCustomField,
 } from "~/modules/settings";
 import { DataType } from "~/modules/shared";
 import { path } from "~/utils/path";
@@ -67,7 +67,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { id, ...data } = validation.data;
   if (!id) throw new Error("id is not found");
 
-  const update = await updateCustomField(client, {
+  const update = await upsertCustomField(client, {
     id,
     ...data,
     updatedBy: userId,
@@ -79,7 +79,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(path.to.customFields);
+  return redirect(path.to.customFieldList(tableId));
 }
 
 export default function UpdateCustomFieldRoute() {

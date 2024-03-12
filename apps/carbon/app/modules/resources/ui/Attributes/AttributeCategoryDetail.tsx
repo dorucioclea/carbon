@@ -16,13 +16,14 @@ import {
 } from "@carbon/react";
 import { Link, useFetcher } from "@remix-run/react";
 import { Reorder } from "framer-motion";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AiOutlineNumber } from "react-icons/ai";
 import { BiText } from "react-icons/bi";
 import { BsCalendarDate, BsFillPenFill, BsToggleOn } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
 import { IoMdTrash } from "react-icons/io";
 import { MdOutlineDragIndicator } from "react-icons/md";
+import { New } from "~/components";
 import { ConfirmDelete } from "~/components/Modals";
 import { useUrlParams } from "~/hooks";
 import type {
@@ -68,6 +69,16 @@ const AttributeCategoryDetail = ({
           .map((attribute) => attribute.id)
       : []
   );
+
+  useEffect(() => {
+    setSortOrder(
+      Array.isArray(attributeCategory.userAttribute)
+        ? attributeCategory.userAttribute
+            .sort((a, b) => a.sortOrder - b.sortOrder)
+            .map((attribute) => attribute.id)
+        : []
+    );
+  }, [attributeCategory.userAttribute]);
 
   const onReorder = (newOrder: string[]) => {
     let updates: Record<string, number> = {};
@@ -183,9 +194,7 @@ const AttributeCategoryDetail = ({
             )}
           </DrawerBody>
           <DrawerFooter>
-            <Button asChild size="md">
-              <Link to={`new?${params.toString()}`}>New Attribute</Link>
-            </Button>
+            <New to={`new?${params.toString()}`} label="Attribute" />
           </DrawerFooter>
         </DrawerContent>
       </Drawer>

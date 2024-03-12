@@ -182,30 +182,6 @@ export async function insertCompany(
   return client.from("company").insert(company);
 }
 
-export async function insertCustomField(
-  client: SupabaseClient<Database>,
-  customField: Omit<z.infer<typeof customFieldValidator>, "id"> & {
-    createdBy: string;
-  }
-) {
-  // TODO: the new version of supabase client has a max function
-  const sortOrders = await client
-    .from("customField")
-    .select("sortOrder")
-    .eq("customFieldTableId", customField.customFieldTableId);
-
-  if (sortOrders.error) return sortOrders;
-  const maxSortOrder = sortOrders.data.reduce((max, item) => {
-    return Math.max(max, item.sortOrder);
-  }, 0);
-
-  return client
-    .from("customField")
-    .upsert([{ ...customField, sortOrder: maxSortOrder + 1 }])
-    .select("id")
-    .single();
-}
-
 export async function rollbackNextSequence(
   client: SupabaseClient<Database>,
   table: string,
@@ -235,14 +211,32 @@ export async function updateCompany(
   return client.from("company").update(sanitize(company)).eq("id", true);
 }
 
-export async function updateCustomField(
+export async function upsertCustomField(
   client: SupabaseClient<Database>,
-  customField: Omit<z.infer<typeof customFieldValidator>, "id"> & {
-    id: string;
-    updatedBy: string;
-  }
+  customField:
+    | (Omit<z.infer<typeof customFieldValidator>, "id"> & {
+        createdBy: string;
+      })
+    | (Omit<z.infer<typeof customFieldValidator>, "id"> & {
+        id: string;
+        updatedBy: string;
+      })
 ) {
-  if (!customField.id) throw new Error("id is required");
+  if ("createdBy" in customField) {
+    const sortOrders = await client
+      .from("customField")
+      .select("sortOrder")
+      .eq("customFieldTableId", customField.customFieldTableId);
+
+    if (sortOrders.error) return sortOrders;
+    const maxSortOrder = sortOrders.data.reduce((max, item) => {
+      return Math.max(max, item.sortOrder);
+    }, 0);
+
+    return client
+      .from("customField")
+      .insert([{ ...customField, sortOrder: maxSortOrder + 1 }]);
+  }
   return client
     .from("customField")
     .update(

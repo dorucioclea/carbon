@@ -4,7 +4,7 @@ import type { AttributeDataType } from "~/modules/resources";
 import {
   CustomFieldForm,
   customFieldValidator,
-  insertCustomField,
+  upsertCustomField,
 } from "~/modules/settings";
 import { DataType } from "~/modules/shared";
 import { path } from "~/utils/path";
@@ -35,21 +35,18 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { id, ...data } = validation.data;
 
-  const createCustomField = await insertCustomField(client, {
+  const update = await upsertCustomField(client, {
     ...data,
     createdBy: userId,
   });
-  if (createCustomField.error) {
+  if (update.error) {
     return json(
       {},
-      await flash(
-        request,
-        error(createCustomField.error, "Failed to create custom field")
-      )
+      await flash(request, error(update.error, "Failed to insert custom field"))
     );
   }
 
-  return redirect(path.to.customFields);
+  return redirect(path.to.customFieldList(tableId));
 }
 
 export default function NewCustomFieldRoute() {
