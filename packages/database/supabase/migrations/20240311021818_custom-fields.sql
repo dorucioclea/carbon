@@ -42,7 +42,7 @@ CREATE TABLE "customField" (
   "name" TEXT NOT NULL,
   "sortOrder" INTEGER NOT NULL DEFAULT 1,
   "customFieldTableId" TEXT NOT NULL,
-  "attributeDataTypeId" INTEGER NOT NULL,
+  "dataTypeId" INTEGER NOT NULL,
   "listOptions" TEXT ARRAY,
   "active" BOOLEAN DEFAULT TRUE,
   "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
@@ -51,8 +51,9 @@ CREATE TABLE "customField" (
   "updatedBy" TEXT,
 
   CONSTRAINT "customField_pkey" PRIMARY KEY ("id"),
+  CONSTRAINT "customField_customFieldTableId_name_key" UNIQUE ("customFieldTableId", "name"),
   CONSTRAINT "customField_customFieldTableId_fkey" FOREIGN KEY ("customFieldTableId") REFERENCES "customFieldTable"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT "customField_attributeDataTypeId_fkey" FOREIGN KEY ("attributeDataTypeId") REFERENCES "attributeDataType"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "customField_dataTypeId_fkey" FOREIGN KEY ("dataTypeId") REFERENCES "attributeDataType"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "customField_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE,
   CONSTRAINT "customField_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE
 );
@@ -87,99 +88,27 @@ CREATE POLICY "Employees with settings_delete can delete custom fields" ON "cust
     AND (get_my_claim('role'::text)) = '"employee"'::jsonb
   );
 
-CREATE TABLE "customFieldValue" (
-  "id" TEXT NOT NULL DEFAULT xid(),
-  "customFieldId" TEXT NOT NULL,
-  "recordId" TEXT NOT NULL,
-  "valueBoolean" BOOLEAN,
-  "valueDate" DATE,
-  "valueNumeric" NUMERIC,
-  "valueText" TEXT,
-  "valueUser" TEXT,
-  "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
-  "createdBy" TEXT NOT NULL,
-  "updatedAt" TIMESTAMP WITH TIME ZONE,
-  "updatedBy" TEXT,
-
-  CONSTRAINT "customFieldValue_singleValue"
-    CHECK (
-      (
-        "valueBoolean" IS NOT NULL AND
-        "valueDate" IS NULL AND
-        "valueNumeric" IS NULL AND
-        "valueText" IS NULL AND
-        "valueUser" IS NULL
-      ) 
-      OR (
-        "valueBoolean" IS NULL AND
-        "valueDate" IS NULL AND
-        "valueNumeric" IS NULL AND
-        "valueText" IS NOT NULL AND
-        "valueUser" IS NULL
-      ) 
-      OR (
-        "valueBoolean" IS NULL AND
-        "valueDate" IS NOT NULL AND
-        "valueNumeric" IS NULL AND
-        "valueText" IS NULL AND
-        "valueUser" IS NULL
-      ) 
-      OR (
-        "valueBoolean" IS NULL AND
-        "valueDate" IS NULL AND
-        "valueNumeric" IS NOT NULL AND
-        "valueText" IS NULL AND
-        "valueUser" IS NULL
-      ) 
-      OR (
-        "valueBoolean" IS NULL AND
-        "valueDate" IS NULL AND
-        "valueNumeric" IS NULL AND
-        "valueText" IS NULL AND
-        "valueUser" IS NOT NULL
-      ) 
-    ),
-
-  CONSTRAINT "customFieldValue_customFieldId_fkey" FOREIGN KEY ("customFieldId") REFERENCES "customField"("id") ON DELETE CASCADE,
-  CONSTRAINT "customFieldValue_valueUser_fkey" FOREIGN KEY ("valueUser") REFERENCES "user"("id") ON DELETE CASCADE,
-  CONSTRAINT "customFieldValue_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id"),
-  CONSTRAINT "customFieldValue_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id"),
-  CONSTRAINT uq_customFieldId_recordId 
-    UNIQUE ( "customFieldId", "recordId")
-);
-
-CREATE INDEX "customFieldValue_customFieldId_index" ON "customFieldValue" ("customFieldId");
-CREATE INDEX "customFieldValue_recordId_index" ON "customFieldValue" ("recordId");
-
--- TODO: fine-grained control over read/write access to custom field values based on customFieldTable module
-
-ALTER TABLE "customFieldValue" ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Employees can view custom field values" ON "customFieldValue"
-  FOR SELECT
-  USING (
-    auth.role() = 'authenticated' 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
-  );
-
-CREATE POLICY "Employees can insert custom field values" ON "customFieldValue"
-  FOR INSERT
-  WITH CHECK (   
-    auth.role() = 'authenticated' 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
-  );
-
-CREATE POLICY "Employees can update custom field values" ON "customFieldValue"
-  FOR UPDATE
-  USING (
-    auth.role() = 'authenticated' 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
-  );
-
-CREATE POLICY "Employees can delete custom field values" ON "customFieldValue"
-  FOR DELETE
-  USING (
-    auth.role() = 'authenticated' 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
-  );
-
+CREATE OR REPLACE VIEW "customFieldTables" WITH(SECURITY_INVOKER=true) AS
+SELECT 
+  cft.id,
+  cft.module,
+  cft.table,
+  cft.name,
+  cf.fields
+FROM "customFieldTable" cft
+LEFT JOIN (
+  SELECT cf."customFieldTableId", 
+    COALESCE(json_agg(
+      json_build_object(
+        'id', id, 
+        'name', name,
+        'sortOrder', "sortOrder",
+        'dataTypeId', "dataTypeId",
+        'listOptions', "listOptions",
+        'active', active
+      )
+    ), '[]') AS fields 
+  FROM "customField" cf
+  GROUP BY cf."customFieldTableId"
+) cf
+ON cf."customFieldTableId" = cft.id;

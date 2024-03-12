@@ -1,6 +1,7 @@
 import { BsPaletteFill } from "react-icons/bs";
 import { CgSync } from "react-icons/cg";
 import { GoNumber } from "react-icons/go";
+import { MdOutlineDashboardCustomize } from "react-icons/md";
 import { TbBuildingFactory2 } from "react-icons/tb";
 import { usePermissions } from "~/hooks";
 import type { AuthenticatedRouteGroup } from "~/types";
@@ -21,6 +22,12 @@ const settingsRoutes: AuthenticatedRouteGroup[] = [
   {
     name: "System",
     routes: [
+      {
+        name: "Custom Fields",
+        to: path.to.customFields,
+        role: "employee",
+        icon: <MdOutlineDashboardCustomize />,
+      },
       {
         name: "Integrations",
         to: path.to.integrations,

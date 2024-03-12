@@ -24,7 +24,7 @@ import {
   attributeUserValidator,
   deleteUserAttributeValueValidator,
 } from "~/modules/account";
-import { DataType } from "~/modules/users";
+import { DataType } from "~/modules/shared";
 import { path } from "~/utils/path";
 
 type UserAttributesFormProps = {
@@ -123,21 +123,23 @@ const GenericAttributeRow = (props: GenericAttributeRowProps) => {
   );
 };
 
-function renderTypedForm({
-  attribute,
-  type,
-  value,
-  updateFetcher,
-  userAttributeId,
-  userAttributeValueId,
-  userId,
-  onSubmit,
-  onClose,
-}: GenericAttributeRowProps & {
-  userId: string;
-  onSubmit: (value: string | boolean | number) => void;
-  onClose: () => void;
-}) {
+function TypedForm(
+  props: GenericAttributeRowProps & {
+    onSubmit: (value: string | boolean | number) => void;
+    onClose: () => void;
+  }
+) {
+  const {
+    attribute,
+    type,
+    value,
+    updateFetcher,
+    userAttributeId,
+    userAttributeValueId,
+    userId,
+    onSubmit,
+    onClose,
+  } = props;
   switch (type) {
     case DataType.Boolean:
       return (
@@ -354,18 +356,11 @@ function renderTypedForm({
   }
 }
 
-function TypedForm(
+function TypedDisplay(
   props: GenericAttributeRowProps & {
-    onSubmit: (value: string | boolean | number) => void;
-    onClose: () => void;
+    onOpen: () => void;
   }
 ) {
-  return renderTypedForm({ ...props });
-}
-
-function renderTypedDisplay({
-  ...props
-}: GenericAttributeRowProps & { onOpen: () => void }) {
   const {
     attribute,
     displayValue,
@@ -453,14 +448,6 @@ function renderTypedDisplay({
         </div>
       );
   }
-}
-
-function TypedDisplay(
-  props: GenericAttributeRowProps & {
-    onOpen: () => void;
-  }
-) {
-  return renderTypedDisplay({ ...props });
 }
 
 function getGenericProps(

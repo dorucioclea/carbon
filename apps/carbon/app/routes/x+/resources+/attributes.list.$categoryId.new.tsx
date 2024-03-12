@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "@remix-run/react";
 import { useRouteData } from "~/hooks";
 import type { AttributeDataType } from "~/modules/resources";
 import { AttributeForm } from "~/modules/resources";
-import { DataType } from "~/modules/users";
+import { DataType } from "~/modules/shared";
 import { path } from "~/utils/path";
 
 export default function NewAttributeRoute() {

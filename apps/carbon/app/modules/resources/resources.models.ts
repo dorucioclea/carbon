@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { zfd } from "zod-form-data";
-import { DataType } from "~/modules/users";
+import { DataType } from "~/modules/shared";
 
 export const standardFactorType = [
   "Hours/Piece",

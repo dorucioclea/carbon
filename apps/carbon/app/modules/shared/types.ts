@@ -19,6 +19,15 @@ export type BillOfMaterialNode = {
   children?: BillOfMaterialNode[];
 };
 
+export enum DataType {
+  Boolean = 1,
+  Date = 2,
+  List = 3,
+  Numeric = 4,
+  Text = 5,
+  User = 6,
+}
+
 export type Note = NonNullable<
   Awaited<ReturnType<typeof getNotes>>["data"]
 >[number];

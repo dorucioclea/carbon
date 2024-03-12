@@ -8,7 +8,7 @@ const colors = [
   { background: "#4ff38c", color: "#000000" },
   { background: "#f4a261", color: "#38210f" },
   { background: "#e76f51", color: "#ffffff" },
-  { background: "#8ecae6", color: "#ffffff" },
+  { background: "#8ecae6", color: "#172a33" },
   { background: "#219ebc", color: "#ffffff" },
   { background: "#3a86ff", color: "#ffffff" },
   { background: "#ff006e", color: "#ffffff" },
