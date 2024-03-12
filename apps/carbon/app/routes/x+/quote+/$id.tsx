@@ -10,6 +10,7 @@ import {
   TooltipContent,
   TooltipTrigger,
   VStack,
+  useDisclosure,
   useKeyboardShortcuts,
 } from "@carbon/react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
@@ -39,6 +40,7 @@ import {
   useQuotation,
   useQuotationLinePriceEffectsUpdate,
 } from "~/modules/sales";
+import QuotationReleaseModal from "~/modules/sales/ui/Quotation/QuotationReleaseModal";
 
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
@@ -128,6 +130,7 @@ export default function QuotationRoute() {
     quotationMaterials,
     quotationOperations,
   } = useLoaderData<typeof loader>();
+  const releaseDisclosure = useDisclosure();
 
   const [quote, setQuote] = useQuotation();
   useQuotationLinePriceEffectsUpdate();
@@ -202,11 +205,22 @@ export default function QuotationRoute() {
               Preview
             </a>
           </MenubarItem>
-          <MenubarItem isDisabled>Release</MenubarItem>
+          <MenubarItem
+            onClick={releaseDisclosure.onOpen}
+            // isDisabled={isReleased}
+          >
+            Release
+          </MenubarItem>
         </Menubar>
 
         <Outlet />
       </VStack>
+      {releaseDisclosure.isOpen && (
+        <QuotationReleaseModal
+          quotation={quotation}
+          onClose={releaseDisclosure.onClose}
+        />
+      )}
     </div>
   );
 }

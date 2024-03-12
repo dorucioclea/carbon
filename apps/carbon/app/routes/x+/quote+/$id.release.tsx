@@ -1,0 +1,167 @@
+import { QuoteEmail } from "@carbon/documents";
+import { validationError, validator } from "@carbon/remix-validated-form";
+import { renderAsync } from "@react-email/components";
+import { redirect, type ActionFunctionArgs } from "@remix-run/node";
+import { triggerClient } from "~/lib/trigger.server";
+import {
+  getQuote,
+  releaseQuote,
+  quotationReleaseValidator,
+  getCustomer,
+  getQuoteLines,
+  getCustomerContact,
+} from "~/modules/sales";
+import { getCompany } from "~/modules/settings";
+import { getUser } from "~/modules/users/users.server";
+import { loader as pdfLoader } from "~/routes/file+/quote+/$id[.]pdf";
+import { requirePermissions } from "~/services/auth";
+import { flash } from "~/services/session.server";
+import { assertIsPost } from "~/utils/http";
+import { path } from "~/utils/path";
+import { error, success } from "~/utils/result";
+
+export async function action(args: ActionFunctionArgs) {
+  const { request, params } = args;
+  assertIsPost(request);
+
+  const { client, userId } = await requirePermissions(request, {
+    create: "sales",
+    role: "employee",
+  });
+
+  const { id } = params;
+  if (!id) throw new Error("Could not find id");
+
+  let file: ArrayBuffer;
+  let bucketName = id;
+  let fileName: string;
+
+  const release = await releaseQuote(client, id, userId);
+  if (release.error) {
+    return redirect(
+      path.to.quote(id),
+      await flash(request, error(release.error, "Failed to release quote"))
+    );
+  }
+
+  const quote = await getQuote(client, id);
+  if (quote.error) {
+    return redirect(
+      path.to.quote(id),
+      await flash(request, error(quote.error, "Failed to get quote"))
+    );
+  }
+
+  try {
+    const pdf = await pdfLoader(args);
+    if (pdf.headers.get("content-type") !== "application/pdf")
+      throw new Error("Failed to generate PDF");
+
+    file = await pdf.arrayBuffer();
+    fileName = `${quote.data.quoteId} - ${new Date()
+      .toISOString()
+      .slice(0, -5)}.pdf`;
+
+    const fileUpload = await client.storage
+      .from("quote-internal")
+      .upload(`${bucketName}/${fileName}`, file, {
+        cacheControl: `${12 * 60 * 60}`,
+        contentType: "application/pdf",
+      });
+
+    if (fileUpload.error) {
+      return redirect(
+        path.to.quote(id),
+        await flash(request, error(fileUpload.error, "Failed to upload file"))
+      );
+    }
+  } catch (err) {
+    return redirect(
+      path.to.quote(id),
+      await flash(request, error(err, "Failed to generate PDF"))
+    );
+  }
+
+  const validation = await validator(quotationReleaseValidator).validate(
+    await request.formData()
+  );
+
+  if (validation.error) {
+    return validationError(validation.error);
+  }
+
+  const { notification, customerContact: customerContactId } = validation.data;
+
+  switch (notification) {
+    case "Email":
+      try {
+        if (!customerContactId) throw new Error("Customer contact is required");
+
+        const [company, customer, customerContact, quoteLines, user] =
+          await Promise.all([
+            getCompany(client),
+            getCustomer(client, quote.data.customerId),
+            getCustomerContact(client, customerContactId),
+            getQuoteLines(client, id),
+            getUser(client, userId),
+          ]);
+
+        if (!company.data) throw new Error("Failed to get company");
+        if (!customer.data) throw new Error("Failed to get customer");
+        if (!customerContact.data)
+          throw new Error("Failed to get customer contact");
+        if (!user.data) throw new Error("Failed to get user");
+
+        // TODO: Update sender email
+        const emailTemplate = QuoteEmail({
+          company: company.data,
+          quote: quote.data,
+          quoteLines: quoteLines.data ?? [],
+          recipient: {
+            email: customerContact.data.contact.email,
+            firstName: "Customer",
+            lastName: "",
+          },
+          sender: {
+            email: user.data.email,
+            firstName: user.data.firstName,
+            lastName: user.data.lastName,
+          },
+        });
+
+        await triggerClient.sendEvent({
+          name: "resend.email",
+          payload: {
+            to: customerContact.data.contact.email,
+            from: user.data.email,
+            subject: `${quote.data.quoteId} from ${company.data.name}`,
+            html: await renderAsync(emailTemplate),
+            text: await renderAsync(emailTemplate, { plainText: true }),
+            attachments: [
+              {
+                content: Buffer.from(file),
+                filename: fileName,
+              },
+            ],
+          },
+        });
+      } catch (err) {
+        return redirect(
+          path.to.quote(id),
+          await flash(request, error(err, "Failed to send email"))
+        );
+      }
+
+      break;
+    case undefined:
+    case "None":
+      break;
+    default:
+      throw new Error("Invalid notification type");
+  }
+
+  return redirect(
+    path.to.quote(id),
+    await flash(request, success("Quote released"))
+  );
+}
