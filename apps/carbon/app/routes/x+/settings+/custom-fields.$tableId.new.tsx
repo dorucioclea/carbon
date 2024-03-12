@@ -66,7 +66,8 @@ export default function NewCustomFieldRoute() {
     <CustomFieldForm
       initialValues={{
         name: "",
-        dataTypeId: DataType.Text,
+        // @ts-ignore
+        dataTypeId: DataType.Text.toString(),
         customFieldTableId: tableId,
       }}
       dataTypes={routeData?.dataTypes ?? []}

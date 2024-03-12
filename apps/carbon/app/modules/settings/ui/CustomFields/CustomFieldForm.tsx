@@ -62,6 +62,8 @@ const CustomFieldForm = ({
     );
   };
 
+  console.log({ initialValues });
+
   return (
     <Drawer
       open

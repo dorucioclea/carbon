@@ -51,7 +51,8 @@ export default function EditAttributeRoute() {
       initialValues={{
         id: attribute?.id,
         name: attribute?.name,
-        attributeDataTypeId: attribute?.attributeDataTypeId,
+        // @ts-ignore
+        attributeDataTypeId: attribute?.attributeDataTypeId.toString(),
         userAttributeCategoryId: attribute?.userAttributeCategoryId,
         canSelfManage: attribute.canSelfManage ?? true,
         listOptions: attribute?.listOptions ?? [],

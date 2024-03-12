@@ -19,7 +19,8 @@ export default function NewAttributeRoute() {
     <AttributeForm
       initialValues={{
         name: "",
-        attributeDataTypeId: DataType.Text,
+        // @ts-ignore
+        attributeDataTypeId: DataType.Text.toString(),
         userAttributeCategoryId: categoryId,
         canSelfManage: true,
       }}

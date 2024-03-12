@@ -98,7 +98,8 @@ export default function UpdateCustomFieldRoute() {
       initialValues={{
         id: customField.id,
         name: customField.name,
-        dataTypeId: customField.dataTypeId || DataType.Text,
+        // @ts-ignore
+        dataTypeId: (customField.dataTypeId || DataType.Text).toString(),
         customFieldTableId: tableId,
       }}
       dataTypes={routeData?.dataTypes ?? []}
