@@ -8,16 +8,16 @@ import { requirePermissions } from "~/services/auth";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { client } = await requirePermissions(request, {
-    view: "purchasing",
+    view: "sales",
   });
 
-  const { quoteId } = params;
-  if (!quoteId) throw new Error("Could not find quoteId");
+  const { id } = params;
+  if (!id) throw new Error("Could not find id");
 
   const [company, quote, quoteLines] = await Promise.all([
     getCompany(client),
-    getQuote(client, quoteId),
-    getQuoteLines(client, quoteId),
+    getQuote(client, id),
+    getQuoteLines(client, id),
   ]);
 
   if (company.error) {

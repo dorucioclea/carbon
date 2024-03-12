@@ -14,18 +14,19 @@ import {
   Text,
 } from "@react-email/components";
 import type { Email } from "../types";
-// import {
-//   getLineDescription,
-//   getLineDescriptionDetails,
-//   getTotal,
-// } from "../utils/purchase-order";
-// import { formatAddress } from "../utils/shared";
 
 interface QuoteEmailProps extends Email {
   quote: Database["public"]["Tables"]["quote"]["Row"];
+  quoteLines: Database["public"]["Tables"]["quoteLine"]["Row"][];
 }
 
-const QuoteEmail = ({ company, quote, recipient, sender }: QuoteEmailProps) => {
+const QuoteEmail = ({
+  company,
+  quote,
+  quoteLines,
+  recipient,
+  sender,
+}: QuoteEmailProps) => {
   const reSubject = `Re: ${quote.quoteId} from ${company.name}`;
 
   return (
@@ -161,6 +162,15 @@ const QuoteEmail = ({ company, quote, recipient, sender }: QuoteEmailProps) => {
             <Text style={{ ...informationTableLabel, paddingLeft: "20px" }}>
               Purchase Order Lines
             </Text>
+          </Section>
+          <Section>
+            {quoteLines.map((line) => (
+              <Row key={line.id}>
+                <Column>
+                  <Text>{line.description}</Text>
+                </Column>
+              </Row>
+            ))}
           </Section>
           {/* <Section>
             {purchaseOrderLines.map((line) => (
