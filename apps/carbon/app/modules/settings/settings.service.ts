@@ -1,4 +1,5 @@
 import type { Database, Json } from "@carbon/database";
+import { redis } from "@carbon/redis";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { z } from "zod";
 import { SUPABASE_API_URL } from "~/config/env";
@@ -222,30 +223,41 @@ export async function upsertCustomField(
         updatedBy: string;
       })
 ) {
-  if ("createdBy" in customField) {
-    const sortOrders = await client
-      .from("customField")
-      .select("sortOrder")
-      .eq("customFieldTableId", customField.customFieldTableId);
+  try {
+    // delete all the existing cache keys that start with customFields:
+    redis.keys("customFields:*").then(function (keys) {
+      const pipeline = redis.pipeline();
+      keys.forEach(function (key) {
+        pipeline.del(key);
+      });
+      return pipeline.exec();
+    });
+  } finally {
+    if ("createdBy" in customField) {
+      const sortOrders = await client
+        .from("customField")
+        .select("sortOrder")
+        .eq("customFieldTableId", customField.customFieldTableId);
 
-    if (sortOrders.error) return sortOrders;
-    const maxSortOrder = sortOrders.data.reduce((max, item) => {
-      return Math.max(max, item.sortOrder);
-    }, 0);
+      if (sortOrders.error) return sortOrders;
+      const maxSortOrder = sortOrders.data.reduce((max, item) => {
+        return Math.max(max, item.sortOrder);
+      }, 0);
 
+      return client
+        .from("customField")
+        .insert([{ ...customField, sortOrder: maxSortOrder + 1 }]);
+    }
     return client
       .from("customField")
-      .insert([{ ...customField, sortOrder: maxSortOrder + 1 }]);
+      .update(
+        sanitize({
+          ...customField,
+          updatedBy: customField.updatedBy,
+        })
+      )
+      .eq("id", customField.id);
   }
-  return client
-    .from("customField")
-    .update(
-      sanitize({
-        ...customField,
-        updatedBy: customField.updatedBy,
-      })
-    )
-    .eq("id", customField.id);
 }
 
 export async function updateCustomFieldsSortOrder(

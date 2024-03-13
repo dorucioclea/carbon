@@ -3,11 +3,13 @@ import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import { GroupedContentSidebar } from "~/components/Layout";
+import logger from "~/lib/logger";
 import {
   getAccountsList,
   getBaseCurrency,
   useAccountingSubmodules,
 } from "~/modules/accounting";
+import { getCustomFieldsSchemas } from "~/modules/shared";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";
@@ -29,49 +31,35 @@ export async function loader({ request }: LoaderFunctionArgs) {
     view: "accounting",
   });
 
-  const [baseCurrency, balanceSheetAccounts, incomeStatementAccounts] =
-    await Promise.all([
-      getBaseCurrency(client),
-      getAccountsList(client, {
-        type: "Posting",
-        incomeBalance: "Balance Sheet",
-      }),
-      getAccountsList(client, {
-        type: "Posting",
-        incomeBalance: "Income Statement",
-      }),
-    ]);
+  // the ABCs of accounting
+  const [accounts, baseCurrency, customFields] = await Promise.all([
+    getAccountsList(client, {
+      type: "Posting",
+    }),
+    getBaseCurrency(client),
+    getCustomFieldsSchemas(client, {
+      module: "Accounting",
+    }),
+  ]);
 
-  if (balanceSheetAccounts.error) {
+  if (accounts.error) {
     return redirect(
       path.to.authenticatedRoot,
-      await flash(
-        request,
-        error(
-          balanceSheetAccounts.error,
-          "Failed to fetch balance sheet accounts"
-        )
-      )
+      await flash(request, error(accounts.error, "Failed to fetch accounts"))
     );
   }
 
-  if (incomeStatementAccounts.error) {
-    return redirect(
-      path.to.authenticatedRoot,
-      await flash(
-        request,
-        error(
-          incomeStatementAccounts.error,
-          "Failed to fetch income statement accounts"
-        )
-      )
-    );
+  if (customFields.error) {
+    logger.error(customFields.error);
   }
 
   return json({
     baseCurrency: baseCurrency.data,
-    balanceSheetAccounts: balanceSheetAccounts.data ?? [],
-    incomeStatementAccounts: incomeStatementAccounts.data ?? [],
+    balanceSheetAccounts:
+      accounts.data.filter((a) => a.incomeBalance === "Balance Sheet") ?? [],
+    incomeStatementAccounts:
+      accounts.data.filter((a) => a.incomeBalance === "Income Statement") ?? [],
+    customFields: customFields.data ?? [],
   });
 }
 
