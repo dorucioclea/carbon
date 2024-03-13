@@ -3,13 +3,11 @@ import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import { GroupedContentSidebar } from "~/components/Layout";
-import logger from "~/lib/logger";
 import {
   getAccountsList,
   getBaseCurrency,
   useAccountingSubmodules,
 } from "~/modules/accounting";
-import { getCustomFieldsSchemas } from "~/modules/shared/shared.server";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";
@@ -32,14 +30,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
   });
 
   // the ABCs of accounting
-  const [accounts, baseCurrency, customFields] = await Promise.all([
+  const [accounts, baseCurrency] = await Promise.all([
     getAccountsList(client, {
       type: "Posting",
     }),
     getBaseCurrency(client),
-    getCustomFieldsSchemas(client, {
-      module: "Accounting",
-    }),
   ]);
 
   if (accounts.error) {
@@ -49,17 +44,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
     );
   }
 
-  if (customFields.error) {
-    logger.error(customFields.error);
-  }
-
   return json({
     baseCurrency: baseCurrency.data,
     balanceSheetAccounts:
       accounts.data.filter((a) => a.incomeBalance === "Balance Sheet") ?? [],
     incomeStatementAccounts:
       accounts.data.filter((a) => a.incomeBalance === "Income Statement") ?? [],
-    customFields: customFields.data ?? [],
   });
 }
 

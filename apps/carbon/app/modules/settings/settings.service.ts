@@ -12,13 +12,6 @@ import type {
   themeValidator,
 } from "./settings.models";
 
-export async function deleteCustomField(
-  client: SupabaseClient<Database>,
-  id: string
-) {
-  return client.from("customField").delete().eq("id", id);
-}
-
 export async function getCompany(client: SupabaseClient<Database>) {
   const company = await client.from("company").select("*").single();
   if (company.error) {

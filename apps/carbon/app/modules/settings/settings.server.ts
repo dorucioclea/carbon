@@ -15,6 +15,17 @@ export async function clearCustomFieldsCache() {
   });
 }
 
+export async function deleteCustomField(
+  client: SupabaseClient<Database>,
+  id: string
+) {
+  try {
+    clearCustomFieldsCache();
+  } finally {
+    return client.from("customField").delete().eq("id", id);
+  }
+}
+
 export async function upsertCustomField(
   client: SupabaseClient<Database>,
   customField:

@@ -12,7 +12,7 @@ export async function getCustomFieldsCacheKey(args?: {
 
 export async function getCustomFieldsSchemas(
   client: SupabaseClient<Database>,
-  args: {
+  args?: {
     module?: string;
     table?: string;
   }
@@ -32,11 +32,11 @@ export async function getCustomFieldsSchemas(
 
     const query = client.from("customFieldTables").select("*");
 
-    if (args.module) {
+    if (args?.module) {
       query.eq("module", args.module);
     }
 
-    if (args.table) {
+    if (args?.table) {
       query.eq("table", args.table);
     }
 
