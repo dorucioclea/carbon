@@ -140,7 +140,10 @@ export async function getAccountsList(
     classes?: string[];
   }
 ) {
-  let query = client.from("account").select("number, name").eq("active", true);
+  let query = client
+    .from("account")
+    .select("number, name, incomeBalance")
+    .eq("active", true);
 
   if (args?.type) {
     query = query.eq("type", args.type);

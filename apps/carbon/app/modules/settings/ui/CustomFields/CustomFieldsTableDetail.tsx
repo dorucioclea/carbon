@@ -14,7 +14,7 @@ import {
   MenuItem,
   useDisclosure,
 } from "@carbon/react";
-import { Link, useFetcher } from "@remix-run/react";
+import { Link, useFetcher, useParams } from "@remix-run/react";
 import { Reorder } from "framer-motion";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AiOutlineNumber } from "react-icons/ai";
@@ -45,6 +45,8 @@ const CustomFieldCategoryDetail = ({
   onClose,
 }: CustomFieldCategoryDetailProps) => {
   const sortOrderFetcher = useFetcher();
+  const { tableId } = useParams();
+  if (!tableId) throw new Error("tableId is not found");
 
   const getAttributeDataType = useCallback(
     (id: number) => {
@@ -186,7 +188,9 @@ const CustomFieldCategoryDetail = ({
                         </p>
                         <Button
                           isDisabled
-                          leftIcon={getIcon(fieldMap[sortId]?.dataType)}
+                          leftIcon={
+                            getIcon(fieldMap[sortId]?.dataType) ?? undefined
+                          }
                           variant="ghost"
                         >
                           {fieldMap[sortId]?.dataType?.label ?? "Unknown"}
@@ -209,12 +213,10 @@ const CustomFieldCategoryDetail = ({
       {selectedCustomField && selectedCustomField.id && (
         <ConfirmDelete
           isOpen={deleteModal.isOpen}
-          action={path.to.deleteCustomField(
-            selectedCustomField.customFieldTableId,
-            selectedCustomField.id
-          )}
+          action={path.to.deleteCustomField(tableId, selectedCustomField.id)}
           name={selectedCustomField?.name ?? ""}
           text={`Are you sure you want to delete the ${selectedCustomField?.name} field?`}
+          onSubmit={onDeleteCancel}
           onCancel={onDeleteCancel}
         />
       )}
@@ -222,13 +224,9 @@ const CustomFieldCategoryDetail = ({
   );
 };
 
-function getIcon({
-  isBoolean,
-  isDate,
-  isNumeric,
-  isText,
-  isUser,
-}: AttributeDataType) {
+function getIcon(props: AttributeDataType) {
+  if (!props) return null;
+  const { isBoolean, isDate, isNumeric, isText, isUser } = props;
   if (isBoolean) return <BsToggleOn />;
   if (isDate) return <BsCalendarDate />;
   if (isNumeric) return <AiOutlineNumber />;

@@ -8,7 +8,6 @@ import { interpolateSequenceDate } from "~/utils/string";
 import { sanitize } from "~/utils/supabase";
 import type {
   companyValidator,
-  customFieldValidator,
   sequenceValidator,
   themeValidator,
 } from "./settings.models";
@@ -209,57 +208,6 @@ export async function updateCompany(
   }
 ) {
   return client.from("company").update(sanitize(company)).eq("id", true);
-}
-
-export async function upsertCustomField(
-  client: SupabaseClient<Database>,
-  customField:
-    | (Omit<z.infer<typeof customFieldValidator>, "id"> & {
-        createdBy: string;
-      })
-    | (Omit<z.infer<typeof customFieldValidator>, "id"> & {
-        id: string;
-        updatedBy: string;
-      })
-) {
-  if ("createdBy" in customField) {
-    const sortOrders = await client
-      .from("customField")
-      .select("sortOrder")
-      .eq("customFieldTableId", customField.customFieldTableId);
-
-    if (sortOrders.error) return sortOrders;
-    const maxSortOrder = sortOrders.data.reduce((max, item) => {
-      return Math.max(max, item.sortOrder);
-    }, 0);
-
-    return client
-      .from("customField")
-      .insert([{ ...customField, sortOrder: maxSortOrder + 1 }]);
-  }
-  return client
-    .from("customField")
-    .update(
-      sanitize({
-        ...customField,
-        updatedBy: customField.updatedBy,
-      })
-    )
-    .eq("id", customField.id);
-}
-
-export async function updateCustomFieldsSortOrder(
-  client: SupabaseClient<Database>,
-  updates: {
-    id: string;
-    sortOrder: number;
-    updatedBy: string;
-  }[]
-) {
-  const updatePromises = updates.map(({ id, sortOrder, updatedBy }) =>
-    client.from("customField").update({ sortOrder, updatedBy }).eq("id", id)
-  );
-  return Promise.all(updatePromises);
 }
 
 export async function updateIntegration(

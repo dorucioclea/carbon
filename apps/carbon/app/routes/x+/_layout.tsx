@@ -8,6 +8,7 @@ import { IconSidebar, Topbar } from "~/components/Layout";
 import { SupabaseProvider, getSupabase } from "~/lib/supabase";
 import { getCompany, getIntegrations } from "~/modules/settings";
 import { RealtimeDataProvider } from "~/modules/shared";
+import { getCustomFieldsSchemas } from "~/modules/shared/shared.server";
 import {
   getUser,
   getUserClaims,
@@ -33,16 +34,25 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const client = getSupabase(accessToken);
 
   // parallelize the requests
-  const [sessionFlash, company, integrations, user, claims, groups, defaults] =
-    await Promise.all([
-      getSessionFlash(request),
-      getCompany(client),
-      getIntegrations(client),
-      getUser(client, userId),
-      getUserClaims(request),
-      getUserGroups(client, userId),
-      getUserDefaults(client, userId),
-    ]);
+  const [
+    sessionFlash,
+    company,
+    customFields,
+    integrations,
+    user,
+    claims,
+    groups,
+    defaults,
+  ] = await Promise.all([
+    getSessionFlash(request),
+    getCompany(client),
+    getCustomFieldsSchemas(client, {}),
+    getIntegrations(client),
+    getUser(client, userId),
+    getUserClaims(request),
+    getUserGroups(client, userId),
+    getUserDefaults(client, userId),
+  ]);
 
   if (!claims || user.error || !user.data || !groups.data) {
     await destroyAuthSession(request);
@@ -61,6 +71,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         expiresAt,
       },
       company: company.data,
+      customFields: customFields.data ?? [],
       integrations: integrations.data ?? [],
       user: user.data,
       groups: groups.data,
