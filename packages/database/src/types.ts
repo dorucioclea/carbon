@@ -40,6 +40,7 @@ export type Database = {
           createdAt: string
           createdBy: string
           curve: Json
+          customFields: Json | null
           id: string
           name: string
           shadowWeeks: number
@@ -51,6 +52,7 @@ export type Database = {
           createdAt?: string
           createdBy: string
           curve?: Json
+          customFields?: Json | null
           id?: string
           name: string
           shadowWeeks?: number
@@ -62,6 +64,7 @@ export type Database = {
           createdAt?: string
           createdBy?: string
           curve?: Json
+          customFields?: Json | null
           id?: string
           name?: string
           shadowWeeks?: number
@@ -124,6 +127,7 @@ export type Database = {
             | null
           createdAt: string
           createdBy: string
+          customFields: Json | null
           directPosting: boolean
           id: string
           incomeBalance: Database["public"]["Enums"]["glIncomeBalance"]
@@ -143,6 +147,7 @@ export type Database = {
             | null
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           directPosting?: boolean
           id?: string
           incomeBalance: Database["public"]["Enums"]["glIncomeBalance"]
@@ -162,6 +167,7 @@ export type Database = {
             | null
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           directPosting?: boolean
           id?: string
           incomeBalance?: Database["public"]["Enums"]["glIncomeBalance"]
@@ -236,6 +242,7 @@ export type Database = {
           class: Database["public"]["Enums"]["glAccountClass"]
           createdAt: string
           createdBy: string
+          customFields: Json | null
           id: string
           incomeBalance: Database["public"]["Enums"]["glIncomeBalance"]
           updatedAt: string | null
@@ -246,6 +253,7 @@ export type Database = {
           class: Database["public"]["Enums"]["glAccountClass"]
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           id?: string
           incomeBalance: Database["public"]["Enums"]["glIncomeBalance"]
           updatedAt?: string | null
@@ -256,6 +264,7 @@ export type Database = {
           class?: Database["public"]["Enums"]["glAccountClass"]
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           id?: string
           incomeBalance?: Database["public"]["Enums"]["glIncomeBalance"]
           updatedAt?: string | null
@@ -1101,6 +1110,7 @@ export type Database = {
           active: boolean
           createdAt: string
           createdBy: string
+          customFields: Json | null
           id: string
           name: string
           updatedAt: string | null
@@ -1111,6 +1121,7 @@ export type Database = {
           active?: boolean
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           id?: string
           name: string
           updatedAt?: string | null
@@ -1121,6 +1132,7 @@ export type Database = {
           active?: boolean
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           id?: string
           name?: string
           updatedAt?: string | null
@@ -1414,6 +1426,7 @@ export type Database = {
           active: boolean
           createdAt: string
           createdBy: string
+          customFields: Json | null
           hoursPerWeek: number
           id: string
           updatedAt: string | null
@@ -1423,6 +1436,7 @@ export type Database = {
           active?: boolean
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           hoursPerWeek?: number
           id: string
           updatedAt?: string | null
@@ -1432,6 +1446,7 @@ export type Database = {
           active?: boolean
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           hoursPerWeek?: number
           id?: string
           updatedAt?: string | null
@@ -1731,6 +1746,7 @@ export type Database = {
         Row: {
           active: boolean
           code: string
+          customFields: Json | null
           decimalPlaces: number
           exchangeRate: number
           id: string
@@ -1743,6 +1759,7 @@ export type Database = {
         Insert: {
           active?: boolean
           code: string
+          customFields?: Json | null
           decimalPlaces?: number
           exchangeRate?: number
           id?: string
@@ -1755,6 +1772,7 @@ export type Database = {
         Update: {
           active?: boolean
           code?: string
+          customFields?: Json | null
           decimalPlaces?: number
           exchangeRate?: number
           id?: string
@@ -1813,6 +1831,7 @@ export type Database = {
           createdBy: string | null
           customerStatusId: string | null
           customerTypeId: string | null
+          customFields: Json | null
           id: string
           logo: string | null
           name: string
@@ -1826,6 +1845,7 @@ export type Database = {
           createdBy?: string | null
           customerStatusId?: string | null
           customerTypeId?: string | null
+          customFields?: Json | null
           id?: string
           logo?: string | null
           name: string
@@ -1839,6 +1859,7 @@ export type Database = {
           createdBy?: string | null
           customerStatusId?: string | null
           customerTypeId?: string | null
+          customFields?: Json | null
           id?: string
           logo?: string | null
           name?: string
@@ -1982,6 +2003,7 @@ export type Database = {
           contactId: string
           customerId: string
           customerLocationId: string | null
+          customFields: Json | null
           id: string
           userId: string | null
         }
@@ -1989,6 +2011,7 @@ export type Database = {
           contactId: string
           customerId: string
           customerLocationId?: string | null
+          customFields?: Json | null
           id?: string
           userId?: string | null
         }
@@ -1996,6 +2019,7 @@ export type Database = {
           contactId?: string
           customerId?: string
           customerLocationId?: string | null
+          customFields?: Json | null
           id?: string
           userId?: string | null
         }
@@ -2055,16 +2079,19 @@ export type Database = {
         Row: {
           addressId: string
           customerId: string
+          customFields: Json | null
           id: string
         }
         Insert: {
           addressId: string
           customerId: string
+          customFields?: Json | null
           id?: string
         }
         Update: {
           addressId?: string
           customerId?: string
+          customFields?: Json | null
           id?: string
         }
         Relationships: [
@@ -2310,6 +2337,7 @@ export type Database = {
         Row: {
           createdAt: string
           createdBy: string
+          customFields: Json | null
           id: string
           name: string
           updatedAt: string | null
@@ -2318,6 +2346,7 @@ export type Database = {
         Insert: {
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           id?: string
           name: string
           updatedAt?: string | null
@@ -2326,6 +2355,7 @@ export type Database = {
         Update: {
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           id?: string
           name?: string
           updatedAt?: string | null
@@ -2381,6 +2411,7 @@ export type Database = {
           color: string | null
           createdAt: string
           createdBy: string
+          customFields: Json | null
           id: string
           name: string
           protected: boolean
@@ -2391,6 +2422,7 @@ export type Database = {
           color?: string | null
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           id?: string
           name: string
           protected?: boolean
@@ -2401,6 +2433,7 @@ export type Database = {
           color?: string | null
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           id?: string
           name?: string
           protected?: boolean
@@ -2584,6 +2617,7 @@ export type Database = {
           color: string
           createdAt: string
           createdBy: string
+          customFields: Json | null
           id: string
           name: string
           parentDepartmentId: string | null
@@ -2594,6 +2628,7 @@ export type Database = {
           color?: string
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           id?: string
           name: string
           parentDepartmentId?: string | null
@@ -2604,6 +2639,7 @@ export type Database = {
           color?: string
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           id?: string
           name?: string
           parentDepartmentId?: string | null
@@ -2878,14 +2914,17 @@ export type Database = {
       }
       employee: {
         Row: {
+          customFields: Json | null
           employeeTypeId: string
           id: string
         }
         Insert: {
+          customFields?: Json | null
           employeeTypeId: string
           id: string
         }
         Update: {
+          customFields?: Json | null
           employeeTypeId?: string
           id?: string
         }
@@ -2924,6 +2963,7 @@ export type Database = {
         Row: {
           abilityId: string
           active: boolean
+          customFields: Json | null
           employeeId: string
           id: string
           lastTrainingDate: string | null
@@ -2933,6 +2973,7 @@ export type Database = {
         Insert: {
           abilityId: string
           active?: boolean
+          customFields?: Json | null
           employeeId: string
           id?: string
           lastTrainingDate?: string | null
@@ -2942,6 +2983,7 @@ export type Database = {
         Update: {
           abilityId?: string
           active?: boolean
+          customFields?: Json | null
           employeeId?: string
           id?: string
           lastTrainingDate?: string | null
@@ -2981,6 +3023,7 @@ export type Database = {
       }
       employeeJob: {
         Row: {
+          customFields: Json | null
           departmentId: string | null
           id: string
           locationId: string | null
@@ -2991,6 +3034,7 @@ export type Database = {
           workCellId: string | null
         }
         Insert: {
+          customFields?: Json | null
           departmentId?: string | null
           id: string
           locationId?: string | null
@@ -3001,6 +3045,7 @@ export type Database = {
           workCellId?: string | null
         }
         Update: {
+          customFields?: Json | null
           departmentId?: string | null
           id?: string
           locationId?: string | null
@@ -3099,16 +3144,19 @@ export type Database = {
       }
       employeeShift: {
         Row: {
+          customFields: Json | null
           employeeId: string
           id: string
           shiftId: string
         }
         Insert: {
+          customFields?: Json | null
           employeeId: string
           id?: string
           shiftId: string
         }
         Update: {
+          customFields?: Json | null
           employeeId?: string
           id?: string
           shiftId?: string
@@ -3225,6 +3273,7 @@ export type Database = {
           activeDate: string | null
           createdAt: string
           createdBy: string
+          customFields: Json | null
           description: string | null
           equipmentTypeId: string
           id: string
@@ -3241,6 +3290,7 @@ export type Database = {
           activeDate?: string | null
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           description?: string | null
           equipmentTypeId: string
           id?: string
@@ -3257,6 +3307,7 @@ export type Database = {
           activeDate?: string | null
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           description?: string | null
           equipmentTypeId?: string
           id?: string
@@ -3354,6 +3405,7 @@ export type Database = {
           color: string
           createdAt: string
           createdBy: string
+          customFields: Json | null
           description: string | null
           id: string
           name: string
@@ -3367,6 +3419,7 @@ export type Database = {
           color?: string
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           description?: string | null
           id?: string
           name: string
@@ -3380,6 +3433,7 @@ export type Database = {
           color?: string
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           description?: string | null
           id?: string
           name?: string
@@ -3547,6 +3601,7 @@ export type Database = {
         Row: {
           createdAt: string
           createdBy: string
+          customFields: Json | null
           date: string
           id: string
           name: string
@@ -3557,6 +3612,7 @@ export type Database = {
         Insert: {
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           date: string
           id?: string
           name: string
@@ -3567,6 +3623,7 @@ export type Database = {
         Update: {
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           date?: string
           id?: string
           name?: string
@@ -3684,6 +3741,7 @@ export type Database = {
         Row: {
           accountingPeriodId: string | null
           createdAt: string
+          customFields: Json | null
           description: string | null
           id: number
           postingDate: string
@@ -3691,6 +3749,7 @@ export type Database = {
         Insert: {
           accountingPeriodId?: string | null
           createdAt?: string
+          customFields?: Json | null
           description?: string | null
           id?: number
           postingDate?: string
@@ -3698,6 +3757,7 @@ export type Database = {
         Update: {
           accountingPeriodId?: string | null
           createdAt?: string
+          customFields?: Json | null
           description?: string | null
           id?: number
           postingDate?: string
@@ -3718,6 +3778,7 @@ export type Database = {
           accrual: boolean
           amount: number
           createdAt: string
+          customFields: Json | null
           description: string | null
           documentId: string | null
           documentLineReference: string | null
@@ -3735,6 +3796,7 @@ export type Database = {
           accrual?: boolean
           amount: number
           createdAt?: string
+          customFields?: Json | null
           description?: string | null
           documentId?: string | null
           documentLineReference?: string | null
@@ -3752,6 +3814,7 @@ export type Database = {
           accrual?: boolean
           amount?: number
           createdAt?: string
+          customFields?: Json | null
           description?: string | null
           documentId?: string | null
           documentLineReference?: string | null
@@ -3789,6 +3852,7 @@ export type Database = {
           countryCode: string | null
           createdAt: string
           createdBy: string
+          customFields: Json | null
           id: string
           latitude: number | null
           longitude: number | null
@@ -3806,6 +3870,7 @@ export type Database = {
           countryCode?: string | null
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           id?: string
           latitude?: number | null
           longitude?: number | null
@@ -3823,6 +3888,7 @@ export type Database = {
           countryCode?: string | null
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           id?: string
           latitude?: number | null
           longitude?: number | null
@@ -3955,6 +4021,7 @@ export type Database = {
           blocked: boolean
           createdAt: string
           createdBy: string
+          customFields: Json | null
           description: string | null
           fromDate: string | null
           id: string
@@ -3975,6 +4042,7 @@ export type Database = {
           blocked?: boolean
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           description?: string | null
           fromDate?: string | null
           id: string
@@ -3995,6 +4063,7 @@ export type Database = {
           blocked?: boolean
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           description?: string | null
           fromDate?: string | null
           id?: string
@@ -4101,6 +4170,7 @@ export type Database = {
           costIsAdjusted: boolean
           createdAt: string
           createdBy: string
+          customFields: Json | null
           partId: string
           standardCost: number
           unitCost: number
@@ -4112,6 +4182,7 @@ export type Database = {
           costIsAdjusted?: boolean
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           partId: string
           standardCost?: number
           unitCost?: number
@@ -4123,6 +4194,7 @@ export type Database = {
           costIsAdjusted?: boolean
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           partId?: string
           standardCost?: number
           unitCost?: number
@@ -4200,6 +4272,7 @@ export type Database = {
           active: boolean
           createdAt: string
           createdBy: string
+          customFields: Json | null
           description: string | null
           id: string
           name: string
@@ -4210,6 +4283,7 @@ export type Database = {
           active?: boolean
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           description?: string | null
           id?: string
           name: string
@@ -4220,6 +4294,7 @@ export type Database = {
           active?: boolean
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           description?: string | null
           id?: string
           name?: string
@@ -4275,6 +4350,7 @@ export type Database = {
         Row: {
           createdAt: string
           createdBy: string
+          customFields: Json | null
           defaultShelfId: string | null
           locationId: string
           partId: string
@@ -4284,6 +4360,7 @@ export type Database = {
         Insert: {
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           defaultShelfId?: string | null
           locationId: string
           partId: string
@@ -4293,6 +4370,7 @@ export type Database = {
         Update: {
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           defaultShelfId?: string | null
           locationId?: string
           partId?: string
@@ -4500,6 +4578,7 @@ export type Database = {
           active: boolean
           createdAt: string
           createdBy: string
+          customFields: Json | null
           hoursPerWeek: number
           id: string
           updatedAt: string | null
@@ -4510,6 +4589,7 @@ export type Database = {
           active?: boolean
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           hoursPerWeek?: number
           id: string
           updatedAt?: string | null
@@ -4520,6 +4600,7 @@ export type Database = {
           active?: boolean
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           hoursPerWeek?: number
           id?: string
           updatedAt?: string | null
@@ -4589,6 +4670,7 @@ export type Database = {
           createdAt: string
           createdBy: string
           critical: boolean
+          customFields: Json | null
           demandAccumulationIncludesInventory: boolean
           demandAccumulationPeriod: number
           demandReschedulingPeriod: number
@@ -4610,6 +4692,7 @@ export type Database = {
           createdAt?: string
           createdBy: string
           critical?: boolean
+          customFields?: Json | null
           demandAccumulationIncludesInventory?: boolean
           demandAccumulationPeriod?: number
           demandReschedulingPeriod?: number
@@ -4631,6 +4714,7 @@ export type Database = {
           createdAt?: string
           createdBy?: string
           critical?: boolean
+          customFields?: Json | null
           demandAccumulationIncludesInventory?: boolean
           demandAccumulationPeriod?: number
           demandReschedulingPeriod?: number
@@ -4740,6 +4824,7 @@ export type Database = {
           conversionFactor: number
           createdAt: string
           createdBy: string
+          customFields: Json | null
           lotSize: number | null
           manufacturingBlocked: boolean
           manufacturingLeadTime: number
@@ -4758,6 +4843,7 @@ export type Database = {
           conversionFactor?: number
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           lotSize?: number | null
           manufacturingBlocked?: boolean
           manufacturingLeadTime?: number
@@ -4776,6 +4862,7 @@ export type Database = {
           conversionFactor?: number
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           lotSize?: number | null
           manufacturingBlocked?: boolean
           manufacturingLeadTime?: number
@@ -4904,6 +4991,7 @@ export type Database = {
           conversionFactor: number
           createdAt: string
           createdBy: string
+          customFields: Json | null
           id: string
           minimumOrderQuantity: number | null
           partId: string
@@ -4918,6 +5006,7 @@ export type Database = {
           conversionFactor?: number
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           id?: string
           minimumOrderQuantity?: number | null
           partId: string
@@ -4932,6 +5021,7 @@ export type Database = {
           conversionFactor?: number
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           id?: string
           minimumOrderQuantity?: number | null
           partId?: string
@@ -5048,6 +5138,7 @@ export type Database = {
           createdAt: string
           createdBy: string
           currencyCode: string
+          customFields: Json | null
           partId: string
           priceIncludesTax: boolean
           salesBlocked: boolean
@@ -5061,6 +5152,7 @@ export type Database = {
           createdAt?: string
           createdBy: string
           currencyCode: string
+          customFields?: Json | null
           partId: string
           priceIncludesTax?: boolean
           salesBlocked?: boolean
@@ -5074,6 +5166,7 @@ export type Database = {
           createdAt?: string
           createdBy?: string
           currencyCode?: string
+          customFields?: Json | null
           partId?: string
           priceIncludesTax?: boolean
           salesBlocked?: boolean
@@ -5168,6 +5261,7 @@ export type Database = {
           calculationMethod: Database["public"]["Enums"]["paymentTermCalculationMethod"]
           createdAt: string
           createdBy: string
+          customFields: Json | null
           daysDiscount: number
           daysDue: number
           discountPercentage: number
@@ -5181,6 +5275,7 @@ export type Database = {
           calculationMethod?: Database["public"]["Enums"]["paymentTermCalculationMethod"]
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           daysDiscount?: number
           daysDue?: number
           discountPercentage?: number
@@ -5194,6 +5289,7 @@ export type Database = {
           calculationMethod?: Database["public"]["Enums"]["paymentTermCalculationMethod"]
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           daysDiscount?: number
           daysDue?: number
           discountPercentage?: number
@@ -5901,6 +5997,7 @@ export type Database = {
           createdAt: string
           createdBy: string
           currencyCode: string
+          customFields: Json | null
           dateDue: string | null
           dateIssued: string | null
           datePaid: string | null
@@ -5927,6 +6024,7 @@ export type Database = {
           createdAt?: string
           createdBy: string
           currencyCode: string
+          customFields?: Json | null
           dateDue?: string | null
           dateIssued?: string | null
           datePaid?: string | null
@@ -5953,6 +6051,7 @@ export type Database = {
           createdAt?: string
           createdBy?: string
           currencyCode?: string
+          customFields?: Json | null
           dateDue?: string | null
           dateIssued?: string | null
           datePaid?: string | null
@@ -6124,6 +6223,7 @@ export type Database = {
           createdAt: string
           createdBy: string
           currencyCode: string
+          customFields: Json | null
           description: string | null
           exchangeRate: number
           id: string
@@ -6148,6 +6248,7 @@ export type Database = {
           createdAt?: string
           createdBy: string
           currencyCode: string
+          customFields?: Json | null
           description?: string | null
           exchangeRate?: number
           id?: string
@@ -6172,6 +6273,7 @@ export type Database = {
           createdAt?: string
           createdBy?: string
           currencyCode?: string
+          customFields?: Json | null
           description?: string | null
           exchangeRate?: number
           id?: string
@@ -6533,6 +6635,7 @@ export type Database = {
           closedBy: string | null
           createdAt: string
           createdBy: string
+          customFields: Json | null
           id: string
           notes: string | null
           orderDate: string
@@ -6552,6 +6655,7 @@ export type Database = {
           closedBy?: string | null
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           id?: string
           notes?: string | null
           orderDate?: string
@@ -6571,6 +6675,7 @@ export type Database = {
           closedBy?: string | null
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           id?: string
           notes?: string | null
           orderDate?: string
@@ -6704,6 +6809,7 @@ export type Database = {
         Row: {
           customerId: string | null
           customerLocationId: string | null
+          customFields: Json | null
           deliveryDate: string | null
           dropShipment: boolean
           id: string
@@ -6720,6 +6826,7 @@ export type Database = {
         Insert: {
           customerId?: string | null
           customerLocationId?: string | null
+          customFields?: Json | null
           deliveryDate?: string | null
           dropShipment?: boolean
           id: string
@@ -6736,6 +6843,7 @@ export type Database = {
         Update: {
           customerId?: string | null
           customerLocationId?: string | null
+          customFields?: Json | null
           deliveryDate?: string | null
           dropShipment?: boolean
           id?: string
@@ -6914,6 +7022,7 @@ export type Database = {
           assetId: string | null
           createdAt: string
           createdBy: string
+          customFields: Json | null
           description: string | null
           id: string
           invoicedComplete: boolean
@@ -6941,6 +7050,7 @@ export type Database = {
           assetId?: string | null
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           description?: string | null
           id?: string
           invoicedComplete?: boolean
@@ -6968,6 +7078,7 @@ export type Database = {
           assetId?: string | null
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           description?: string | null
           id?: string
           invoicedComplete?: boolean
@@ -7122,6 +7233,7 @@ export type Database = {
       purchaseOrderPayment: {
         Row: {
           currencyCode: string
+          customFields: Json | null
           id: string
           invoiceSupplierContactId: string | null
           invoiceSupplierId: string | null
@@ -7133,6 +7245,7 @@ export type Database = {
         }
         Insert: {
           currencyCode?: string
+          customFields?: Json | null
           id: string
           invoiceSupplierContactId?: string | null
           invoiceSupplierId?: string | null
@@ -7144,6 +7257,7 @@ export type Database = {
         }
         Update: {
           currencyCode?: string
+          customFields?: Json | null
           id?: string
           invoiceSupplierContactId?: string | null
           invoiceSupplierId?: string | null
@@ -7379,6 +7493,7 @@ export type Database = {
           createdAt: string
           createdBy: string
           currencyCode: string
+          customFields: Json | null
           exchangeRate: number
           id: string
           paymentDate: string | null
@@ -7392,6 +7507,7 @@ export type Database = {
           createdAt?: string
           createdBy: string
           currencyCode: string
+          customFields?: Json | null
           exchangeRate?: number
           id?: string
           paymentDate?: string | null
@@ -7405,6 +7521,7 @@ export type Database = {
           createdAt?: string
           createdBy?: string
           currencyCode?: string
+          customFields?: Json | null
           exchangeRate?: number
           id?: string
           paymentDate?: string | null
@@ -7509,6 +7626,7 @@ export type Database = {
           customerId: string
           customerLocationId: string | null
           customerReference: string | null
+          customFields: Json | null
           expirationDate: string | null
           id: string
           locationId: string | null
@@ -7529,6 +7647,7 @@ export type Database = {
           customerId: string
           customerLocationId?: string | null
           customerReference?: string | null
+          customFields?: Json | null
           expirationDate?: string | null
           id?: string
           locationId?: string | null
@@ -7549,6 +7668,7 @@ export type Database = {
           customerId?: string
           customerLocationId?: string | null
           customerReference?: string | null
+          customFields?: Json | null
           expirationDate?: string | null
           id?: string
           locationId?: string | null
@@ -7681,6 +7801,7 @@ export type Database = {
         Row: {
           createdAt: string
           createdBy: string
+          customFields: Json | null
           description: string | null
           id: string
           parentAssemblyId: string | null
@@ -7695,6 +7816,7 @@ export type Database = {
         Insert: {
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           description?: string | null
           id?: string
           parentAssemblyId?: string | null
@@ -7709,6 +7831,7 @@ export type Database = {
         Update: {
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           description?: string | null
           id?: string
           parentAssemblyId?: string | null
@@ -7849,6 +7972,7 @@ export type Database = {
           createdBy: string
           customerPartId: string | null
           customerPartRevision: string | null
+          customFields: Json | null
           description: string
           id: string
           partId: string
@@ -7864,6 +7988,7 @@ export type Database = {
           createdBy: string
           customerPartId?: string | null
           customerPartRevision?: string | null
+          customFields?: Json | null
           description: string
           id?: string
           partId: string
@@ -7879,6 +8004,7 @@ export type Database = {
           createdBy?: string
           customerPartId?: string | null
           customerPartRevision?: string | null
+          customFields?: Json | null
           description?: string
           id?: string
           partId?: string
@@ -8096,6 +8222,7 @@ export type Database = {
         Row: {
           createdAt: string
           createdBy: string
+          customFields: Json | null
           description: string
           id: string
           partId: string
@@ -8111,6 +8238,7 @@ export type Database = {
         Insert: {
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           description: string
           id?: string
           partId: string
@@ -8126,6 +8254,7 @@ export type Database = {
         Update: {
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           description?: string
           id?: string
           partId?: string
@@ -8236,6 +8365,7 @@ export type Database = {
         Row: {
           createdAt: string
           createdBy: string
+          customFields: Json | null
           description: string | null
           equipmentTypeId: string | null
           id: string
@@ -8255,6 +8385,7 @@ export type Database = {
         Insert: {
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           description?: string | null
           equipmentTypeId?: string | null
           id?: string
@@ -8274,6 +8405,7 @@ export type Database = {
         Update: {
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           description?: string | null
           equipmentTypeId?: string | null
           id?: string
@@ -8381,6 +8513,7 @@ export type Database = {
         Row: {
           createdAt: string
           createdBy: string
+          customFields: Json | null
           externalDocumentId: string | null
           id: string
           invoiced: boolean | null
@@ -8400,6 +8533,7 @@ export type Database = {
         Insert: {
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           externalDocumentId?: string | null
           id?: string
           invoiced?: boolean | null
@@ -8419,6 +8553,7 @@ export type Database = {
         Update: {
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           externalDocumentId?: string | null
           id?: string
           invoiced?: boolean | null
@@ -8700,6 +8835,7 @@ export type Database = {
         Row: {
           createdAt: string | null
           createdBy: string
+          customFields: Json | null
           expirationDate: string | null
           id: string
           locationId: string | null
@@ -8715,6 +8851,7 @@ export type Database = {
         Insert: {
           createdAt?: string | null
           createdBy: string
+          customFields?: Json | null
           expirationDate?: string | null
           id?: string
           locationId?: string | null
@@ -8730,6 +8867,7 @@ export type Database = {
         Update: {
           createdAt?: string | null
           createdBy?: string
+          customFields?: Json | null
           expirationDate?: string | null
           id?: string
           locationId?: string | null
@@ -8863,6 +9001,7 @@ export type Database = {
         Row: {
           createdAt: string | null
           createdBy: string
+          customFields: Json | null
           description: string | null
           id: string
           locationId: string | null
@@ -8878,6 +9017,7 @@ export type Database = {
         Insert: {
           createdAt?: string | null
           createdBy: string
+          customFields?: Json | null
           description?: string | null
           id?: string
           locationId?: string | null
@@ -8893,6 +9033,7 @@ export type Database = {
         Update: {
           createdAt?: string | null
           createdBy?: string
+          customFields?: Json | null
           description?: string | null
           id?: string
           locationId?: string | null
@@ -9025,6 +9166,7 @@ export type Database = {
           completedAt: string | null
           createdAt: string | null
           createdBy: string
+          customFields: Json | null
           id: string
           password: string | null
           requestForQuoteId: string
@@ -9039,6 +9181,7 @@ export type Database = {
           completedAt?: string | null
           createdAt?: string | null
           createdBy: string
+          customFields?: Json | null
           id?: string
           password?: string | null
           requestForQuoteId: string
@@ -9053,6 +9196,7 @@ export type Database = {
           completedAt?: string | null
           createdAt?: string | null
           createdBy?: string
+          customFields?: Json | null
           id?: string
           password?: string | null
           requestForQuoteId?: string
@@ -9374,6 +9518,7 @@ export type Database = {
           blocked: boolean
           createdAt: string
           createdBy: string
+          customFields: Json | null
           description: string | null
           fromDate: string | null
           id: string
@@ -9391,6 +9536,7 @@ export type Database = {
           blocked?: boolean
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           description?: string | null
           fromDate?: string | null
           id: string
@@ -9408,6 +9554,7 @@ export type Database = {
           blocked?: boolean
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           description?: string | null
           fromDate?: string | null
           id?: string
@@ -9503,6 +9650,7 @@ export type Database = {
           active: boolean
           createdAt: string
           createdBy: string
+          customFields: Json | null
           id: string
           serviceId: string
           supplierId: string
@@ -9514,6 +9662,7 @@ export type Database = {
           active?: boolean
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           id?: string
           serviceId: string
           supplierId: string
@@ -9525,6 +9674,7 @@ export type Database = {
           active?: boolean
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           id?: string
           serviceId?: string
           supplierId?: string
@@ -9631,6 +9781,7 @@ export type Database = {
           active: boolean
           createdAt: string
           createdBy: string
+          customFields: Json | null
           id: string
           locationId: string
           updatedAt: string | null
@@ -9641,6 +9792,7 @@ export type Database = {
           active?: boolean
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           id: string
           locationId: string
           updatedAt?: string | null
@@ -9651,6 +9803,7 @@ export type Database = {
           active?: boolean
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           id?: string
           locationId?: string
           updatedAt?: string | null
@@ -9733,6 +9886,7 @@ export type Database = {
       shift: {
         Row: {
           active: boolean
+          customFields: Json | null
           endTime: string
           friday: boolean
           id: string
@@ -9748,6 +9902,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
+          customFields?: Json | null
           endTime: string
           friday?: boolean
           id?: string
@@ -9763,6 +9918,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
+          customFields?: Json | null
           endTime?: string
           friday?: boolean
           id?: string
@@ -9807,6 +9963,7 @@ export type Database = {
           carrierAccountId: string | null
           createdAt: string
           createdBy: string
+          customFields: Json | null
           id: string
           name: string
           trackingUrl: string | null
@@ -9819,6 +9976,7 @@ export type Database = {
           carrierAccountId?: string | null
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           id?: string
           name: string
           trackingUrl?: string | null
@@ -9831,6 +9989,7 @@ export type Database = {
           carrierAccountId?: string | null
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           id?: string
           name?: string
           trackingUrl?: string | null
@@ -9974,6 +10133,7 @@ export type Database = {
           accountManagerId: string | null
           createdAt: string
           createdBy: string | null
+          customFields: Json | null
           id: string
           logo: string | null
           name: string
@@ -9987,6 +10147,7 @@ export type Database = {
           accountManagerId?: string | null
           createdAt?: string
           createdBy?: string | null
+          customFields?: Json | null
           id?: string
           logo?: string | null
           name: string
@@ -10000,6 +10161,7 @@ export type Database = {
           accountManagerId?: string | null
           createdAt?: string
           createdBy?: string | null
+          customFields?: Json | null
           id?: string
           logo?: string | null
           name?: string
@@ -10164,6 +10326,7 @@ export type Database = {
       supplierContact: {
         Row: {
           contactId: string
+          customFields: Json | null
           id: string
           supplierId: string
           supplierLocationId: string | null
@@ -10171,6 +10334,7 @@ export type Database = {
         }
         Insert: {
           contactId: string
+          customFields?: Json | null
           id?: string
           supplierId: string
           supplierLocationId?: string | null
@@ -10178,6 +10342,7 @@ export type Database = {
         }
         Update: {
           contactId?: string
+          customFields?: Json | null
           id?: string
           supplierId?: string
           supplierLocationId?: string | null
@@ -10337,16 +10502,19 @@ export type Database = {
       supplierLocation: {
         Row: {
           addressId: string
+          customFields: Json | null
           id: string
           supplierId: string
         }
         Insert: {
           addressId: string
+          customFields?: Json | null
           id?: string
           supplierId: string
         }
         Update: {
           addressId?: string
+          customFields?: Json | null
           id?: string
           supplierId?: string
         }
@@ -10398,6 +10566,7 @@ export type Database = {
       supplierPayment: {
         Row: {
           currencyCode: string | null
+          customFields: Json | null
           invoiceSupplierContactId: string | null
           invoiceSupplierId: string | null
           invoiceSupplierLocationId: string | null
@@ -10408,6 +10577,7 @@ export type Database = {
         }
         Insert: {
           currencyCode?: string | null
+          customFields?: Json | null
           invoiceSupplierContactId?: string | null
           invoiceSupplierId?: string | null
           invoiceSupplierLocationId?: string | null
@@ -10418,6 +10588,7 @@ export type Database = {
         }
         Update: {
           currencyCode?: string | null
+          customFields?: Json | null
           invoiceSupplierContactId?: string | null
           invoiceSupplierId?: string | null
           invoiceSupplierLocationId?: string | null
@@ -10543,6 +10714,7 @@ export type Database = {
       }
       supplierShipping: {
         Row: {
+          customFields: Json | null
           shippingMethodId: string | null
           shippingSupplierContactId: string | null
           shippingSupplierId: string | null
@@ -10553,6 +10725,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
+          customFields?: Json | null
           shippingMethodId?: string | null
           shippingSupplierContactId?: string | null
           shippingSupplierId?: string | null
@@ -10563,6 +10736,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
+          customFields?: Json | null
           shippingMethodId?: string | null
           shippingSupplierContactId?: string | null
           shippingSupplierId?: string | null
@@ -10698,6 +10872,7 @@ export type Database = {
         Row: {
           createdAt: string
           createdBy: string
+          customFields: Json | null
           id: string
           name: string
           updatedAt: string | null
@@ -10706,6 +10881,7 @@ export type Database = {
         Insert: {
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           id?: string
           name: string
           updatedAt?: string | null
@@ -10714,6 +10890,7 @@ export type Database = {
         Update: {
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           id?: string
           name?: string
           updatedAt?: string | null
@@ -10769,6 +10946,7 @@ export type Database = {
           color: string | null
           createdAt: string
           createdBy: string
+          customFields: Json | null
           id: string
           name: string
           protected: boolean
@@ -10779,6 +10957,7 @@ export type Database = {
           color?: string | null
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           id?: string
           name: string
           protected?: boolean
@@ -10789,6 +10968,7 @@ export type Database = {
           color?: string | null
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           id?: string
           name?: string
           protected?: boolean
@@ -10889,6 +11069,7 @@ export type Database = {
           code: string
           createdAt: string
           createdBy: string
+          customFields: Json | null
           id: string
           name: string
           updatedAt: string | null
@@ -10899,6 +11080,7 @@ export type Database = {
           code: string
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           id?: string
           name: string
           updatedAt?: string | null
@@ -10909,6 +11091,7 @@ export type Database = {
           code?: string
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           id?: string
           name?: string
           updatedAt?: string | null
@@ -11437,6 +11620,7 @@ export type Database = {
           activeDate: string | null
           createdAt: string
           createdBy: string
+          customFields: Json | null
           defaultStandardFactor: Database["public"]["Enums"]["factor"]
           departmentId: string
           description: string | null
@@ -11452,6 +11636,7 @@ export type Database = {
           activeDate?: string | null
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           defaultStandardFactor?: Database["public"]["Enums"]["factor"]
           departmentId: string
           description?: string | null
@@ -11467,6 +11652,7 @@ export type Database = {
           activeDate?: string | null
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           defaultStandardFactor?: Database["public"]["Enums"]["factor"]
           departmentId?: string
           description?: string | null
@@ -11521,6 +11707,7 @@ export type Database = {
           color: string
           createdAt: string
           createdBy: string
+          customFields: Json | null
           defaultStandardFactor: Database["public"]["Enums"]["factor"]
           description: string | null
           id: string
@@ -11537,6 +11724,7 @@ export type Database = {
           color?: string
           createdAt?: string
           createdBy: string
+          customFields?: Json | null
           defaultStandardFactor?: Database["public"]["Enums"]["factor"]
           description?: string | null
           id?: string
@@ -11553,6 +11741,7 @@ export type Database = {
           color?: string
           createdAt?: string
           createdBy?: string
+          customFields?: Json | null
           defaultStandardFactor?: Database["public"]["Enums"]["factor"]
           description?: string | null
           id?: string
