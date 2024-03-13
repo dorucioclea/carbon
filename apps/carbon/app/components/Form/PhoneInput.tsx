@@ -17,6 +17,8 @@ import {
   cn,
 } from "@carbon/react";
 import { useControlField, useField } from "@carbon/remix-validated-form";
+import * as ReactPhoneInput from "react-phone-number-input";
+import flags from "react-phone-number-input/flags";
 import type {
   ElementRef,
   ForwardRefExoticComponent,
@@ -24,8 +26,6 @@ import type {
 } from "react";
 import { forwardRef, useCallback } from "react";
 import { RxCaretSort, RxCheck } from "react-icons/rx";
-import * as ReactPhoneInput from "react-phone-number-input";
-import flags from "react-phone-number-input/flags";
 
 const PhoneInputComponent = ReactPhoneInput.default;
 
