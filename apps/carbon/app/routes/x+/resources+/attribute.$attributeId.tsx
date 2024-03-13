@@ -33,7 +33,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
 
   return redirect(
-    path.to.attributes,
+    path.to.attributeCategoryList(validation.data.userAttributeCategoryId),
     await flash(request, success("Successfully updated attribtue"))
   );
 }

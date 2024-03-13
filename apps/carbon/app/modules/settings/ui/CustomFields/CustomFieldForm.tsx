@@ -11,41 +11,30 @@ import {
 } from "@carbon/react";
 
 import { ValidatedForm } from "@carbon/remix-validated-form";
+import { useParams } from "@remix-run/react";
 import { useState } from "react";
 import type { z } from "zod";
-import {
-  Array,
-  Boolean,
-  Hidden,
-  Input,
-  Select,
-  Submit,
-} from "~/components/Form";
+import { Array, Hidden, Input, Select, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
-import { attributeValidator } from "~/modules/resources";
+import type { AttributeDataType } from "~/modules/resources";
+import { customFieldValidator } from "~/modules/settings";
 import { DataType } from "~/modules/shared";
 import { path } from "~/utils/path";
 
-type AttributeFormProps = {
-  initialValues: z.infer<typeof attributeValidator>;
-  dataTypes: {
-    id: number;
-    label: string;
-    isBoolean: boolean;
-    isDate: boolean;
-    isList: boolean;
-    isNumeric: boolean;
-    isText: boolean;
-  }[];
+type CustomFieldFormProps = {
+  initialValues: z.infer<typeof customFieldValidator>;
+  dataTypes: AttributeDataType[];
   onClose: () => void;
 };
 
-const AttributeForm = ({
+const CustomFieldForm = ({
   initialValues,
   dataTypes,
   onClose,
-}: AttributeFormProps) => {
+}: CustomFieldFormProps) => {
   const permissions = usePermissions();
+  const { tableId } = useParams();
+  if (!tableId) throw new Error("tableId is not found");
 
   const options =
     dataTypes?.map((dt) => ({
@@ -59,7 +48,7 @@ const AttributeForm = ({
     : !permissions.can("create", "resources");
 
   const [isList, setIsList] = useState(
-    initialValues.attributeDataTypeId === DataType.List
+    initialValues.dataTypeId === DataType.List
   );
 
   const onChangeCheckForListType = (
@@ -82,27 +71,27 @@ const AttributeForm = ({
     >
       <DrawerContent>
         <ValidatedForm
-          validator={attributeValidator}
+          validator={customFieldValidator}
           method="post"
           action={
             isEditing
-              ? path.to.attribute(initialValues.id!)
-              : path.to.newAttribute
+              ? path.to.customField(tableId, initialValues.id!)
+              : path.to.newCustomField(tableId)
           }
           defaultValues={initialValues}
           className="flex flex-col h-full"
         >
           <DrawerHeader>
-            <DrawerTitle>{isEditing ? "Edit" : "New"} Attribute</DrawerTitle>
+            <DrawerTitle>{isEditing ? "Edit" : "New"} Custom Field</DrawerTitle>
           </DrawerHeader>
           <DrawerBody>
             <Hidden name="id" />
             <VStack spacing={4}>
               <Input name="name" label="Name" />
-              <Hidden name="userAttributeCategoryId" />
+              <Hidden name="customFieldTableId" />
 
               <Select
-                name="attributeDataTypeId"
+                name="dataTypeId"
                 label="Data Type"
                 isReadOnly={isEditing}
                 helperText={
@@ -112,11 +101,6 @@ const AttributeForm = ({
                 onChange={onChangeCheckForListType}
               />
               {isList && <Array name="listOptions" label="List Options" />}
-              <Boolean
-                name="canSelfManage"
-                label="Self Managed"
-                description="Users can update this value for themselves"
-              />
             </VStack>
           </DrawerBody>
           <DrawerFooter>
@@ -133,4 +117,4 @@ const AttributeForm = ({
   );
 };
 
-export default AttributeForm;
+export default CustomFieldForm;

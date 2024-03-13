@@ -77,6 +77,7 @@ export type AttributeDataType = {
   isList: boolean;
   isNumeric: boolean;
   isText: boolean;
+  isUser: boolean;
 };
 
 export type Contractor = NonNullable<

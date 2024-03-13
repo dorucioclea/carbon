@@ -6,7 +6,7 @@ import { BsFillPenFill } from "react-icons/bs";
 import { Avatar, Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
 import type { AttributeCategory, Person } from "~/modules/resources";
-import { DataType } from "~/modules/users";
+import { DataType } from "~/modules/shared";
 import { path } from "~/utils/path";
 
 type PeopleTableProps = {

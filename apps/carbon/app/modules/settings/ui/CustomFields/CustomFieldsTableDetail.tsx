@@ -16,7 +16,7 @@ import {
 } from "@carbon/react";
 import { Link, useFetcher } from "@remix-run/react";
 import { Reorder } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AiOutlineNumber } from "react-icons/ai";
 import { BiText } from "react-icons/bi";
 import { BsCalendarDate, BsFillPenFill, BsToggleOn } from "react-icons/bs";
@@ -25,60 +25,78 @@ import { IoMdTrash } from "react-icons/io";
 import { MdOutlineDragIndicator } from "react-icons/md";
 import { New } from "~/components";
 import { ConfirmDelete } from "~/components/Modals";
-import { useUrlParams } from "~/hooks";
-import type {
-  Attribute,
-  AttributeCategoryDetailType,
-} from "~/modules/resources";
+import type { AttributeDataType } from "~/modules/resources";
+import type { CustomField, CustomFieldsTableType } from "~/modules/settings";
 import { path } from "~/utils/path";
 
-type AttributeCategoryDetailProps = {
-  attributeCategory: AttributeCategoryDetailType;
+type CustomFieldCategoryDetailProps = {
+  customFieldTable: CustomFieldsTableType;
+  dataTypes: AttributeDataType[];
   onClose: () => void;
 };
 
-const AttributeCategoryDetail = ({
-  attributeCategory,
+type CustomFieldAndDataType = CustomField & {
+  dataType: AttributeDataType;
+};
+
+const CustomFieldCategoryDetail = ({
+  customFieldTable,
+  dataTypes,
   onClose,
-}: AttributeCategoryDetailProps) => {
-  const [params] = useUrlParams();
+}: CustomFieldCategoryDetailProps) => {
   const sortOrderFetcher = useFetcher();
 
-  const attributeMap: Record<string, Attribute> = useMemo(
-    () =>
-      Array.isArray(attributeCategory.userAttribute)
-        ? attributeCategory.userAttribute.reduce<Record<string, Attribute>>(
-            // @ts-ignore
-            (acc, attribute) => {
-              if (!attribute) return acc;
-              return {
-                ...acc,
-                [attribute.id]: attribute,
-              };
-            },
-            {}
-          )
-        : {},
-    [attributeCategory]
+  const getAttributeDataType = useCallback(
+    (id: number) => {
+      return dataTypes.find((dt) => dt.id === id);
+    },
+    [dataTypes]
   );
 
+  const fieldMap = useMemo(
+    () =>
+      Array.isArray(customFieldTable.fields)
+        ? customFieldTable.fields.reduce<
+            Record<string, CustomFieldAndDataType>
+            // @ts-ignore
+          >((acc, field) => {
+            if (!field) return acc;
+            const customField = field as CustomFieldAndDataType;
+            return {
+              ...acc,
+              [customField.id]: {
+                ...customField,
+                dataType: getAttributeDataType(customField.dataTypeId),
+              },
+            };
+          }, {})
+        : {},
+    [customFieldTable.fields, getAttributeDataType]
+  ) as Record<string, CustomFieldAndDataType>;
+
   const [sortOrder, setSortOrder] = useState<string[]>(
-    Array.isArray(attributeCategory.userAttribute)
-      ? attributeCategory.userAttribute
-          .sort((a, b) => a.sortOrder - b.sortOrder)
-          .map((attribute) => attribute.id)
+    Array.isArray(customFieldTable.fields)
+      ? customFieldTable.fields
+          .sort(
+            (a, b) =>
+              (a as CustomField).sortOrder - (b as CustomField).sortOrder
+          )
+          .map((field) => (field as CustomField).id)
       : []
   );
 
   useEffect(() => {
     setSortOrder(
-      Array.isArray(attributeCategory.userAttribute)
-        ? attributeCategory.userAttribute
-            .sort((a, b) => a.sortOrder - b.sortOrder)
-            .map((attribute) => attribute.id)
+      Array.isArray(customFieldTable.fields)
+        ? customFieldTable.fields
+            .sort(
+              (a, b) =>
+                (a as CustomField).sortOrder - (b as CustomField).sortOrder
+            )
+            .map((field) => (field as CustomField).id)
         : []
     );
-  }, [attributeCategory.userAttribute]);
+  }, [customFieldTable.fields, getAttributeDataType]);
 
   const onReorder = (newOrder: string[]) => {
     let updates: Record<string, number> = {};
@@ -98,32 +116,32 @@ const AttributeCategoryDetail = ({
   };
 
   const deleteModal = useDisclosure();
-  const [selectedAttribute, setSelectedAttribute] = useState<
-    Attribute | undefined
+  const [selectedCustomField, setSelectedCustomField] = useState<
+    CustomField | undefined
   >();
 
-  const onDelete = (data?: Attribute) => {
-    setSelectedAttribute(data);
+  const onDelete = (data?: CustomField) => {
+    setSelectedCustomField(data);
     deleteModal.onOpen();
   };
 
   const onDeleteCancel = () => {
-    setSelectedAttribute(undefined);
+    setSelectedCustomField(undefined);
     deleteModal.onClose();
   };
 
-  const renderContextMenu = (attributeId: string) => {
+  const renderContextMenu = (fieldId: string) => {
     return (
       <>
         <MenuItem asChild>
-          <Link to={attributeId}>
+          <Link to={fieldId}>
             <MenuIcon icon={<BsFillPenFill />} />
-            Edit Attribute
+            Edit Custom Field
           </Link>
         </MenuItem>
-        <MenuItem onClick={() => onDelete(attributeMap[attributeId])}>
+        <MenuItem onClick={() => onDelete(fieldMap[fieldId])}>
           <MenuIcon icon={<IoMdTrash />} />
-          Delete Attribute
+          Delete Custom Field
         </MenuItem>
       </>
     );
@@ -139,13 +157,11 @@ const AttributeCategoryDetail = ({
       >
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle>{attributeCategory.name}</DrawerTitle>
-            <DrawerDescription>
-              {attributeCategory.public ? "Public" : "Private"}
-            </DrawerDescription>
+            <DrawerTitle>{customFieldTable.name}</DrawerTitle>
+            <DrawerDescription>{customFieldTable.module}</DrawerDescription>
           </DrawerHeader>
           <DrawerBody>
-            {Array.isArray(attributeCategory?.userAttribute) && (
+            {Array.isArray(customFieldTable?.fields) && (
               <Reorder.Group
                 axis="y"
                 values={sortOrder}
@@ -166,24 +182,14 @@ const AttributeCategoryDetail = ({
                           variant="ghost"
                         />
                         <p className="flex-grow text-foreground">
-                          {
-                            // @ts-ignore
-                            attributeMap[sortId]?.name
-                          }
+                          {fieldMap[sortId]?.name}
                         </p>
                         <Button
                           isDisabled
-                          leftIcon={getIcon(
-                            // @ts-ignore
-                            attributeMap[sortId]?.attributeDataType
-                          )}
+                          leftIcon={getIcon(fieldMap[sortId]?.dataType)}
                           variant="ghost"
                         >
-                          {
-                            // @ts-ignore
-                            attributeMap[sortId]?.attributeDataType?.label ??
-                              "Unknown"
-                          }
+                          {fieldMap[sortId]?.dataType?.label ?? "Unknown"}
                         </Button>
                         <ActionMenu>{renderContextMenu(sortId)}</ActionMenu>
                       </HStack>
@@ -194,16 +200,21 @@ const AttributeCategoryDetail = ({
             )}
           </DrawerBody>
           <DrawerFooter>
-            <New to={`new?${params.toString()}`} label="Attribute" />
+            <Button asChild size="md">
+              <New label="Custom Field" to="new" />
+            </Button>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
-      {selectedAttribute && selectedAttribute.id && (
+      {selectedCustomField && selectedCustomField.id && (
         <ConfirmDelete
           isOpen={deleteModal.isOpen}
-          action={path.to.deleteAttribute(selectedAttribute.id)}
-          name={selectedAttribute?.name ?? ""}
-          text={`Are you sure you want to deactivate the ${selectedAttribute?.name} attribute?`}
+          action={path.to.deleteCustomField(
+            selectedCustomField.customFieldTableId,
+            selectedCustomField.id
+          )}
+          name={selectedCustomField?.name ?? ""}
+          text={`Are you sure you want to delete the ${selectedCustomField?.name} field?`}
           onCancel={onDeleteCancel}
         />
       )}
@@ -217,13 +228,7 @@ function getIcon({
   isNumeric,
   isText,
   isUser,
-}: {
-  isBoolean: boolean;
-  isDate: boolean;
-  isNumeric: boolean;
-  isText: boolean;
-  isUser: boolean;
-}) {
+}: AttributeDataType) {
   if (isBoolean) return <BsToggleOn />;
   if (isDate) return <BsCalendarDate />;
   if (isNumeric) return <AiOutlineNumber />;
@@ -231,4 +236,4 @@ function getIcon({
   if (isUser) return <CgProfile />;
 }
 
-export default AttributeCategoryDetail;
+export default CustomFieldCategoryDetail;
