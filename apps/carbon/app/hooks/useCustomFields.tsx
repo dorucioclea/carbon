@@ -14,7 +14,6 @@ export function useCustomFields() {
     if (!data?.customFields || !Array.isArray(data.customFields)) return result;
 
     data.customFields.forEach((field) => {
-      console.log(field.fields);
       const fields = fieldValidator.safeParse(field.fields);
       if (fields.success && "table" in field) {
         result[field.table] = fields.data;
