@@ -9,7 +9,7 @@ import {
   getBaseCurrency,
   useAccountingSubmodules,
 } from "~/modules/accounting";
-import { getCustomFieldsSchemas } from "~/modules/shared";
+import { getCustomFieldsSchemas } from "~/modules/shared/shared.server";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";

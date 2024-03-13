@@ -1,16 +1,13 @@
 import { json, redirect, useNavigate, useParams } from "@remix-run/react";
 import { useRouteData } from "~/hooks";
 import type { AttributeDataType } from "~/modules/resources";
-import {
-  CustomFieldForm,
-  customFieldValidator,
-  upsertCustomField,
-} from "~/modules/settings";
+import { CustomFieldForm, customFieldValidator } from "~/modules/settings";
 import { DataType } from "~/modules/shared";
 import { path } from "~/utils/path";
 
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
+import { upsertCustomField } from "~/modules/settings/settings.server";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { assertIsPost } from "~/utils/http";
