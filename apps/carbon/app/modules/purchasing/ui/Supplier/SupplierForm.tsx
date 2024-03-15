@@ -14,6 +14,7 @@ import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
 import type { z } from "zod";
 import {
+  CustomFormFields,
   Employee,
   Hidden,
   Input,
@@ -92,7 +93,7 @@ const SupplierForm = ({
 
                 <Employee name="accountManagerId" label="Account Manager" />
 
-                {/* <CustomFormFields table="supplier" />*/}
+                <CustomFormFields table="supplier" />
               </div>
             </ModalCardBody>
             <ModalCardFooter>

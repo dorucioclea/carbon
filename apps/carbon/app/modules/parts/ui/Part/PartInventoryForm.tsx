@@ -11,7 +11,13 @@ import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useRevalidator } from "@remix-run/react";
 import type { z } from "zod";
 import { Combobox } from "~/components";
-import { CreatableCombobox, Hidden, Number, Submit } from "~/components/Form";
+import {
+  CreatableCombobox,
+  CustomFormFields,
+  Hidden,
+  Number,
+  Submit,
+} from "~/components/Form";
 import { usePermissions, useUser } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import type { PartQuantities } from "~/modules/parts";
@@ -113,7 +119,7 @@ const PartInventoryForm = ({
               label="Quantity On Sales Order"
               isReadOnly
             />
-            {/* <CustomFormFields table="partInventory" />*/}
+            <CustomFormFields table="partInventory" />
           </div>
         </CardContent>
         <CardFooter>

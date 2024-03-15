@@ -7,7 +7,14 @@ import {
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import type { z } from "zod";
-import { Boolean, Hidden, Number, Select, Submit } from "~/components/Form";
+import {
+  Boolean,
+  CustomFormFields,
+  Hidden,
+  Number,
+  Select,
+  Submit,
+} from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import { partCostValidator, partCostingMethods } from "~/modules/parts";
 
@@ -81,7 +88,7 @@ const PartCostingForm = ({ initialValues }: PartCostingFormProps) => {
               isReadOnly
             />
             <Boolean name="costIsAdjusted" label="Cost Is Adjusted" />
-            {/* <CustomFormFields table="partCost" />*/}
+            <CustomFormFields table="partCost" />
           </div>
         </CardContent>
         <CardFooter>

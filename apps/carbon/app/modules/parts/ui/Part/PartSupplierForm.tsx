@@ -13,6 +13,7 @@ import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useNavigate, useParams } from "@remix-run/react";
 import type { z } from "zod";
 import {
+  CustomFormFields,
   Hidden,
   Input,
   Number,
@@ -87,7 +88,7 @@ const PartSupplierForm = ({ initialValues }: PartSupplierFormProps) => {
                 label="Conversion Factor"
                 minValue={0}
               />
-              {/* <CustomFormFields table="partSupplier" />*/}
+              <CustomFormFields table="partSupplier" />
             </VStack>
           </DrawerBody>
           <DrawerFooter>

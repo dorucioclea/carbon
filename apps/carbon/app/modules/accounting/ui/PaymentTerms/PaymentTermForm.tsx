@@ -13,7 +13,14 @@ import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useNavigate } from "@remix-run/react";
 import { useState } from "react";
 import type { z } from "zod";
-import { Hidden, Input, Number, Select, Submit } from "~/components/Form";
+import {
+  CustomFormFields,
+  Hidden,
+  Input,
+  Number,
+  Select,
+  Submit,
+} from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import type { PaymentTermCalculationMethod } from "~/modules/accounting";
 import { paymentTermValidator } from "~/modules/accounting";
@@ -99,7 +106,7 @@ const PaymentTermForm = ({ initialValues }: PaymentTermFormProps) => {
                 maxValue={100}
                 helperText="The percentage of the cash discount. Use 0 for no discount."
               />
-              {/* <CustomFormFields table="paymentTerm" />*/}
+              <CustomFormFields table="paymentTerm" />
             </VStack>
           </DrawerBody>
           <DrawerFooter>

@@ -20,6 +20,7 @@ import type { z } from "zod";
 import {
   Ability,
   ComboboxControlled,
+  CustomFormFields,
   Number,
   Submit,
   Supplier,
@@ -116,7 +117,7 @@ const PartnerForm = ({ initialValues }: PartnerFormProps) => {
                 minValue={0}
                 maxValue={10000}
               />
-              {/* <CustomFormFields table="partner" />*/}
+              <CustomFormFields table="partner" />
             </VStack>
           </DrawerBody>
           <DrawerFooter>

@@ -13,6 +13,7 @@ import type { z } from "zod";
 import {
   Boolean,
   Combobox,
+  CustomFormFields,
   Input,
   InputControlled,
   Select,
@@ -146,7 +147,7 @@ const ServiceForm = ({ initialValues }: ServiceFormProps) => {
 
             <Boolean name="blocked" label="Blocked" />
             {isEditing && <Boolean name="active" label="Active" />}
-            {/* <CustomFormFields table="service" />*/}
+            <CustomFormFields table="service" />
           </div>
         </CardContent>
         <CardFooter>

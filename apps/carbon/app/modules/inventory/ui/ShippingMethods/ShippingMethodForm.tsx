@@ -13,7 +13,14 @@ import {
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useNavigate } from "@remix-run/react";
 import type { z } from "zod";
-import { Account, Hidden, Input, Select, Submit } from "~/components/Form";
+import {
+  Account,
+  CustomFormFields,
+  Hidden,
+  Input,
+  Select,
+  Submit,
+} from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import { shippingMethodValidator } from "~/modules/inventory";
 import { path } from "~/utils/path";
@@ -82,7 +89,7 @@ const ShippingMethodForm = ({ initialValues }: ShippingMethodFormProps) => {
                 label="Tracking URL"
                 prefix="https://"
               />
-              {/* <CustomFormFields table="shippingMethod" />*/}
+              <CustomFormFields table="shippingMethod" />
             </VStack>
           </DrawerBody>
           <DrawerFooter>

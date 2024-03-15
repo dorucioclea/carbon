@@ -15,6 +15,7 @@ import { useState } from "react";
 import type { z } from "zod";
 import {
   Boolean,
+  CustomFormFields,
   Hidden,
   Input,
   InputControlled,
@@ -167,7 +168,8 @@ const PartForm = ({ initialValues, type = "card", onClose }: PartFormProps) => {
 
                 <Boolean name="blocked" label="Blocked" />
                 {isEditing && <Boolean name="active" label="Active" />}
-                {/* <CustomFormFields table="customerStatus" />*/}
+
+                <CustomFormFields table="part" />
               </div>
             </ModalCardBody>
             <ModalCardFooter>

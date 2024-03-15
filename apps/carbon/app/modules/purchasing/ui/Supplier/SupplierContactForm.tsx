@@ -13,6 +13,7 @@ import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
 import type { z } from "zod";
 import {
+  CustomFormFields,
   DatePicker,
   Hidden,
   Input,
@@ -96,7 +97,7 @@ const SupplierContactForm = ({
               {/* Country dropdown */}
               <DatePicker name="birthday" label="Birthday" />
               <TextArea name="notes" label="Notes" />
-              {/* <CustomFormFields table="supplierContact" />*/}
+              <CustomFormFields table="supplierContact" />
             </VStack>
           </DrawerBody>
           <DrawerFooter>

@@ -17,6 +17,7 @@ import { Outlet } from "@remix-run/react";
 import type { z } from "zod";
 import {
   ComboboxControlled,
+  CustomFormFields,
   Hidden,
   Input,
   Select,
@@ -174,7 +175,7 @@ const ReceiptForm = ({
                         label="External Reference"
                       />
                     </div>
-                    {/* <CustomFormFields table="receipt" />*/}
+                    <CustomFormFields table="receipt" />
                   </VStack>
                 </ValidatedForm>
               </div>

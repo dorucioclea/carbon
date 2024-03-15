@@ -13,7 +13,13 @@ import {
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
 import type { z } from "zod";
-import { Department, Hidden, Input, Submit } from "~/components/Form";
+import {
+  CustomFormFields,
+  Department,
+  Hidden,
+  Input,
+  Submit,
+} from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import { departmentValidator } from "~/modules/resources";
 import { path } from "~/utils/path";
@@ -79,7 +85,7 @@ const DepartmentForm = ({
                   name="parentDepartmentId"
                   label="Parent Department"
                 />
-                {/* <CustomFormFields table="department" />*/}
+                <CustomFormFields table="department" />
               </VStack>
             </ModalDrawerBody>
             <ModalDrawerFooter>

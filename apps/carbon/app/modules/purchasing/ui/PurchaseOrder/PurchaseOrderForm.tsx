@@ -12,6 +12,7 @@ import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useState } from "react";
 import type { z } from "zod";
 import {
+  CustomFormFields,
   DatePicker,
   Hidden,
   Input,
@@ -124,7 +125,7 @@ const PurchaseOrderForm = ({ initialValues }: PurchaseOrderFormProps) => {
               {isEditing && (
                 <TextArea name="notes" label="Notes" readOnly={isSupplier} />
               )}
-              {/* <CustomFormFields table="purchaseOrder" />*/}
+              <CustomFormFields table="purchaseOrder" />
             </div>
           </VStack>
         </CardContent>

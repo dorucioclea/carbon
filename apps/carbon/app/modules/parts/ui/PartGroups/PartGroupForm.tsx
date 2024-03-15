@@ -13,7 +13,13 @@ import {
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
 import type { z } from "zod";
-import { Hidden, Input, Submit, TextArea } from "~/components/Form";
+import {
+  CustomFormFields,
+  Hidden,
+  Input,
+  Submit,
+  TextArea,
+} from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import { partGroupValidator } from "~/modules/parts";
 import { path } from "~/utils/path";
@@ -76,7 +82,7 @@ const PartGroupForm = ({
               <VStack spacing={4}>
                 <Input name="name" label="Name" />
                 <TextArea name="description" label="Description" />
-                {/* <CustomFormFields table="partGroup" />*/}
+                <CustomFormFields table="partGroup" />
               </VStack>
             </ModalDrawerBody>
             <ModalDrawerFooter>

@@ -13,7 +13,7 @@ import {
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
 import type { z } from "zod";
-import { Hidden, Input, Submit } from "~/components/Form";
+import { CustomFormFields, Hidden, Input, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import { supplierLocationValidator } from "~/modules/purchasing";
 import { path } from "~/utils/path";
@@ -80,7 +80,7 @@ const SupplierLocationForm = ({
               <Input name="state" label="State" />
               <Input name="postalCode" label="Zip Code" />
               {/* Country dropdown */}
-              {/* <CustomFormFields table="supplierLocation" />*/}
+              <CustomFormFields table="supplierLocation" />
             </VStack>
           </DrawerBody>
           <DrawerFooter>

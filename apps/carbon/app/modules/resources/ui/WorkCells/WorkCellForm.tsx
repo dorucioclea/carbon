@@ -12,6 +12,7 @@ import {
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import type { z } from "zod";
 import {
+  CustomFormFields,
   DatePicker,
   Department,
   Hidden,
@@ -87,7 +88,7 @@ const WorkCellForm = ({
               <Location name="locationId" label="Location" />
               <Department name="departmentId" label="Department" />
               <DatePicker name="activeDate" label="Active Date" />
-              {/* <CustomFormFields table="workCell" />*/}
+              <CustomFormFields table="workCell" />
             </VStack>
           </DrawerBody>
           <DrawerFooter>

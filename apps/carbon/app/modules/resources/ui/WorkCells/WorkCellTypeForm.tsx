@@ -15,6 +15,7 @@ import { useFetcher } from "@remix-run/react";
 import type { z } from "zod";
 import {
   Ability,
+  CustomFormFields,
   Hidden,
   Input,
   Number,
@@ -96,7 +97,7 @@ const WorkCellTypeForm = ({
                   name="defaultStandardFactor"
                   label="Default Standard Factor"
                 />
-                {/* <CustomFormFields table="workCellType" />*/}
+                <CustomFormFields table="workCellType" />
               </VStack>
             </ModalDrawerBody>
             <ModalDrawerFooter>

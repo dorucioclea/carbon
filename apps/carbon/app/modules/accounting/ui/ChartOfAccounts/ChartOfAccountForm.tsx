@@ -18,6 +18,7 @@ import {
   AccountSubcategory,
   Boolean,
   ComboboxControlled,
+  CustomFormFields,
   Hidden,
   Input,
   Select,
@@ -154,7 +155,7 @@ const ChartOfAccountForm = ({ initialValues }: ChartOfAccountFormProps) => {
                 }))}
               />
               <Boolean name="directPosting" label="Direct Posting" />
-              {/* <CustomFormFields table="account" />*/}
+              <CustomFormFields table="account" />
             </div>
           </DrawerBody>
           <DrawerFooter>

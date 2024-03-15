@@ -7,7 +7,14 @@ import {
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import type { z } from "zod";
-import { Boolean, Hidden, Number, Select, Submit } from "~/components/Form";
+import {
+  Boolean,
+  CustomFormFields,
+  Hidden,
+  Number,
+  Select,
+  Submit,
+} from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import {
   partManufacturingPolicies,
@@ -69,7 +76,7 @@ const PartManufacturingForm = ({
               name="requiresConfiguration"
               label="Requires Configuration"
             />
-            {/* <CustomFormFields table="partReplenishment" />*/}
+            <CustomFormFields table="partReplenishment" />
           </div>
         </CardContent>
         <CardFooter>

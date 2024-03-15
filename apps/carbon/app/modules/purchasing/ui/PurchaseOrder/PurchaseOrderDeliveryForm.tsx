@@ -10,6 +10,7 @@ import { useState } from "react";
 import type { z } from "zod";
 import {
   Boolean,
+  CustomFormFields,
   Customer,
   CustomerLocation,
   DatePicker,
@@ -110,7 +111,7 @@ const PurchaseOrderDeliveryForm = ({
                 />
               </>
             )}
-            {/* <CustomFormFields table="purchaseOrderDelivery" />*/}
+            <CustomFormFields table="purchaseOrderDelivery" />
           </div>
         </CardContent>
         <CardFooter>

@@ -4,7 +4,7 @@ import { z } from "zod";
 import { path } from "~/utils/path";
 import { useRouteData } from "./useRouteData";
 
-export function useCustomFields() {
+export function useCustomFieldsSchema() {
   const data = useRouteData<{
     customFields: { table: string; name: string; fields: Json[] }[];
   }>(path.to.authenticatedRoot);

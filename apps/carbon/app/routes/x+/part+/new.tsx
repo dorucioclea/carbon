@@ -4,6 +4,7 @@ import { json, redirect } from "@remix-run/node";
 import { PartForm, partValidator, upsertPart } from "~/modules/parts";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";
@@ -26,6 +27,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const createPart = await upsertPart(client, {
     ...validation.data,
     active: true,
+    customFields: setCustomFields(formData),
     createdBy: userId,
   });
   if (createPart.error) {

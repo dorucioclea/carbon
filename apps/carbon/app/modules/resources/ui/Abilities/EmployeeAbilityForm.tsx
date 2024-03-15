@@ -14,7 +14,14 @@ import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useParams } from "@remix-run/react";
 import { useState } from "react";
 import type { z } from "zod";
-import { Employee, Hidden, Number, Select, Submit } from "~/components/Form";
+import {
+  CustomFormFields,
+  Employee,
+  Hidden,
+  Number,
+  Select,
+  Submit,
+} from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import type { Ability } from "~/modules/resources";
 import {
@@ -125,7 +132,7 @@ const EmployeeAbilityForm = ({
                   <Hidden name="trainingDays" value={trainingDays} />
                 </>
               )}
-              {/* <CustomFormFields table="employeeAbility" />*/}
+              <CustomFormFields table="employeeAbility" />
             </VStack>
           </DrawerBody>
           <DrawerFooter>

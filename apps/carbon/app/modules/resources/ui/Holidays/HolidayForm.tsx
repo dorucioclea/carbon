@@ -12,7 +12,13 @@ import {
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useNavigate } from "@remix-run/react";
 import type { z } from "zod";
-import { DatePicker, Hidden, Input, Submit } from "~/components/Form";
+import {
+  CustomFormFields,
+  DatePicker,
+  Hidden,
+  Input,
+  Submit,
+} from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import { holidayValidator } from "~/modules/resources";
 import { path } from "~/utils/path";
@@ -56,7 +62,7 @@ const HolidayForm = ({ initialValues }: HolidayFormProps) => {
             <VStack spacing={4}>
               <Input name="name" label="Holiday Name" />
               <DatePicker name="date" label="Date" />
-              {/* <CustomFormFields table="holiday" />*/}
+              <CustomFormFields table="holiday" />
             </VStack>
           </DrawerBody>
           <DrawerFooter>

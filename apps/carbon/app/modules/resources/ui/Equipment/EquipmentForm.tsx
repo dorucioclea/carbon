@@ -21,6 +21,7 @@ import { useFetcher } from "@remix-run/react";
 import { useEffect, useMemo, useState } from "react";
 import type { z } from "zod";
 import {
+  CustomFormFields,
   Hidden,
   Input,
   Location,
@@ -140,7 +141,7 @@ const EquipmentForm = ({
                 minValue={0}
                 maxValue={100} // this seems like a reasonable max?
               />
-              {/* <CustomFormFields table="equipment" />*/}
+              <CustomFormFields table="equipment" />
             </VStack>
           </DrawerBody>
           <DrawerFooter>

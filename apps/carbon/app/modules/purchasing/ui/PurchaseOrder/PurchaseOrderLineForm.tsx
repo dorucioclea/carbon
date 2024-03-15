@@ -17,6 +17,7 @@ import type { z } from "zod";
 import {
   Account,
   ComboboxControlled,
+  CustomFormFields,
   Hidden,
   InputControlled,
   Number,
@@ -327,7 +328,7 @@ const PurchaseOrderLineForm = ({
                   )}
                 </>
               )}
-              {/* <CustomFormFields table="purchaseOrderLine" />*/}
+              <CustomFormFields table="purchaseOrderLine" />
             </VStack>
           </DrawerBody>
           <DrawerFooter>

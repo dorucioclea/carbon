@@ -17,6 +17,7 @@ import { useState } from "react";
 import type { z } from "zod";
 import {
   Abilities,
+  CustomFormFields,
   Number,
   Submit,
   Supplier,
@@ -92,7 +93,7 @@ const ContractorForm = ({ initialValues }: ContractorFormProps) => {
                 minValue={0}
                 maxValue={10000}
               />
-              {/* <CustomFormFields table="contractor" />*/}
+              <CustomFormFields table="contractor" />
             </VStack>
           </DrawerBody>
           <DrawerFooter>

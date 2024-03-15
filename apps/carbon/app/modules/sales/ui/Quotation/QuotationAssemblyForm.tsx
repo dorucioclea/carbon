@@ -22,6 +22,7 @@ import { BsDownload, BsThreeDotsVertical, BsUpload } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
 import type { z } from "zod";
 import {
+  CustomFormFields,
   Hidden,
   InputControlled,
   Number,
@@ -170,7 +171,7 @@ const QuotationAssemblyForm = ({
                 label="Quantity per Parent"
                 minValue={0}
               />
-              {/* <CustomFormFields table="quoteAssembly" />*/}
+              <CustomFormFields table="quoteAssembly" />
             </div>
           </VStack>
         </CardContent>

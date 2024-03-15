@@ -1,4 +1,4 @@
-import type { Database } from "@carbon/database";
+import type { Database, Json } from "@carbon/database";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { z } from "zod";
 import type { GenericQueryFilters } from "~/utils/query";
@@ -199,13 +199,7 @@ export async function getPartSummary(
   client: SupabaseClient<Database>,
   id: string
 ) {
-  return client
-    .from("part")
-    .select(
-      "id, name, description, partType, replenishmentSystem, partType, unitOfMeasureCode, partGroupId, blocked, active"
-    )
-    .eq("id", id)
-    .single();
+  return client.from("part").select("*").eq("id", id).single();
 }
 
 export async function getPartSuppliers(
@@ -383,8 +377,14 @@ export async function insertShelf(
 export async function upsertPart(
   client: SupabaseClient<Database>,
   part:
-    | (z.infer<typeof partValidator> & { createdBy: string })
-    | (z.infer<typeof partValidator> & { updatedBy: string })
+    | (z.infer<typeof partValidator> & {
+        createdBy: string;
+        customFields: Json;
+      })
+    | (z.infer<typeof partValidator> & {
+        updatedBy: string;
+        customFields: Json;
+      })
 ) {
   if ("createdBy" in part) {
     return client.from("part").insert(part).select("*").single();
@@ -394,7 +394,10 @@ export async function upsertPart(
 
 export async function upsertPartCost(
   client: SupabaseClient<Database>,
-  partCost: z.infer<typeof partCostValidator> & { updatedBy: string }
+  partCost: z.infer<typeof partCostValidator> & {
+    updatedBy: string;
+    customFields: Json;
+  }
 ) {
   return client
     .from("partCost")
@@ -405,13 +408,13 @@ export async function upsertPartCost(
 export async function upsertPartInventory(
   client: SupabaseClient<Database>,
   partInventory:
-    | {
-        partId: string;
-        locationId: string;
+    | (z.infer<typeof partInventoryValidator> & {
         createdBy: string;
-      }
+        customFields: Json;
+      })
     | (z.infer<typeof partInventoryValidator> & {
         updatedBy: string;
+        customFields: Json;
       })
 ) {
   if ("createdBy" in partInventory) {

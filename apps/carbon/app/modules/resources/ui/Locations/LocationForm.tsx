@@ -13,7 +13,13 @@ import {
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
 import type { z } from "zod";
-import { Hidden, Input, Submit, Timezone } from "~/components/Form";
+import {
+  CustomFormFields,
+  Hidden,
+  Input,
+  Submit,
+  Timezone,
+} from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import { locationValidator } from "~/modules/resources";
 import { path } from "~/utils/path";
@@ -84,7 +90,7 @@ const LocationForm = ({
                 <Timezone name="timezone" label="Timezone" />
                 {/* <Number name="latitude" label="Latitude" minValue={-90} maxValue={90} />
               <Number name="longitude" label="Longitude" minVale={-180} maxValue={180} /> */}
-                {/* <CustomFormFields table="location" />*/}
+                <CustomFormFields table="location" />
               </VStack>
             </ModalDrawerBody>
             <ModalDrawerFooter>

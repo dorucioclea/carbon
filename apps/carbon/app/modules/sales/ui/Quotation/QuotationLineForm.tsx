@@ -24,6 +24,7 @@ import { BsDownload, BsThreeDotsVertical, BsUpload } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
 import type { z } from "zod";
 import {
+  CustomFormFields,
   Hidden,
   Input,
   InputControlled,
@@ -216,7 +217,7 @@ const QuotationLineForm = ({ initialValues }: QuotationLineFormProps) => {
                 }))}
                 className={cn(!isEditing && "sr-only")}
               />
-              {/* <CustomFormFields table="quoteLine" />*/}
+              <CustomFormFields table="quoteLine" />
             </div>
           </VStack>
         </CardContent>

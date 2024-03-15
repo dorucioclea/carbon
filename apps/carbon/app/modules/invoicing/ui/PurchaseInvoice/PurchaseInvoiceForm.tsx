@@ -13,6 +13,7 @@ import { useState } from "react";
 import type { z } from "zod";
 import {
   Currency,
+  CustomFormFields,
   DatePicker,
   Hidden,
   Input,
@@ -133,7 +134,7 @@ const PurchaseInvoiceForm = ({
                   <Currency name="currencyCode" label="Currency" />
                 </>
               )}
-              {/* <CustomFormFields table="purchaseInvoice" />*/}
+              <CustomFormFields table="purchaseInvoice" />
             </div>
           </VStack>
         </CardContent>

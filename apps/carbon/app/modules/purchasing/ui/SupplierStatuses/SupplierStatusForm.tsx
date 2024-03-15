@@ -13,7 +13,7 @@ import {
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
 import type { z } from "zod";
-import { Hidden, Input, Submit } from "~/components/Form";
+import { CustomFormFields, Hidden, Input, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import { supplierStatusValidator } from "~/modules/purchasing";
 import { path } from "~/utils/path";
@@ -75,7 +75,7 @@ const SupplierStatusForm = ({
               <Hidden name="type" value={type} />
               <VStack spacing={4}>
                 <Input name="name" label="Supplier Status" />
-                {/* <CustomFormFields table="supplierStatus" />*/}
+                <CustomFormFields table="supplierStatus" />
               </VStack>
             </ModalDrawerBody>
             <ModalDrawerFooter>

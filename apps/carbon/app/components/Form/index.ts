@@ -10,6 +10,7 @@ import Combobox from "./Combobox";
 import ComboboxControlled from "./ComboboxControlled";
 import CreatableCombobox from "./CreatableCombobox";
 import Currency from "./Currency";
+import CustomFormFields from "./CustomFormFields";
 import Customer from "./Customer";
 import CustomerContact from "./CustomerContact";
 import CustomerLocation from "./CustomerLocation";
@@ -65,6 +66,7 @@ export {
   ComboboxControlled,
   CreatableCombobox,
   Currency,
+  CustomFormFields,
   Customer,
   CustomerContact,
   CustomerLocation,

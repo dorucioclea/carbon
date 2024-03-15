@@ -9,6 +9,7 @@ import {
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useState } from "react";
 import {
+  CustomFormFields,
   DatePicker,
   Employee,
   Hidden,
@@ -58,7 +59,7 @@ const PersonJob = ({ job }: PersonJobProps) => {
             />
             <Employee name="managerId" label="Manager" />
             <Hidden name="intent" value="job" />
-            {/* <CustomFormFields table="employeeJob" />*/}
+            <CustomFormFields table="employeeJob" />
           </VStack>
         </CardContent>
         <CardFooter>

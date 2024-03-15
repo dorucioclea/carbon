@@ -22,6 +22,7 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
 import type { z } from "zod";
 import {
+  CustomFormFields,
   EquipmentType,
   Hidden,
   InputControlled,
@@ -233,7 +234,7 @@ const QuotationOperationForm = ({
                   setWorkCellData((d) => ({ ...d, overheadRate: newValue }));
                 }}
               />
-              {/* <CustomFormFields table="quoteOperation" />*/}
+              <CustomFormFields table="quoteOperation" />
             </div>
           </VStack>
         </CardContent>

@@ -13,7 +13,7 @@ import {
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
 import type { z } from "zod";
-import { Hidden, Input, Submit } from "~/components/Form";
+import { CustomFormFields, Hidden, Input, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import { customerTypeValidator } from "~/modules/sales";
 import { path } from "~/utils/path";
@@ -75,7 +75,7 @@ const CustomerTypeForm = ({
               <Hidden name="type" value={type} />
               <VStack spacing={4}>
                 <Input name="name" label="Customer Type" />
-                {/* <CustomFormFields table="customerType" />*/}
+                <CustomFormFields table="customerType" />
               </VStack>
             </ModalDrawerBody>
             <ModalDrawerFooter>

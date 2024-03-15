@@ -15,6 +15,7 @@ import { useNavigate } from "@remix-run/react";
 import { useState } from "react";
 import type { z } from "zod";
 import {
+  CustomFormFields,
   Employees,
   Hidden,
   Input,
@@ -100,7 +101,7 @@ const AbilityForm = ({ initialValues }: AbilityFormProps) => {
                 label="Employees"
                 helperText="Employees who already have this ability"
               />
-              {/* <CustomFormFields table="ability" />*/}
+              <CustomFormFields table="ability" />
             </VStack>
           </DrawerBody>
           <DrawerFooter>

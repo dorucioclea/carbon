@@ -7,6 +7,7 @@ import type { PartSummary } from "~/modules/parts";
 import { PartForm, partValidator, upsertPart } from "~/modules/parts";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -20,10 +21,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { partId } = params;
   if (!partId) throw new Error("Could not find partId");
 
+  const formData = await request.formData();
+
   // validate with partsValidator
-  const validation = await validator(partValidator).validate(
-    await request.formData()
-  );
+  const validation = await validator(partValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -32,6 +33,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const updatePart = await upsertPart(client, {
     ...validation.data,
     id: partId,
+    customFields: setCustomFields(formData),
     updatedBy: userId,
   });
   if (updatePart.error) {
@@ -65,6 +67,7 @@ export default function PartBasicRoute() {
     unitOfMeasureCode: partData.partSummary?.unitOfMeasureCode ?? "EA",
     blocked: partData.partSummary?.blocked ?? false,
     active: partData.partSummary?.active ?? false,
+    ...getCustomFields(partData.partSummary?.customFields ?? {}),
   };
 
   return <PartForm key={initialValues.id} initialValues={initialValues} />;

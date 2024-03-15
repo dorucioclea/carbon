@@ -11,6 +11,7 @@ import {
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import type { z } from "zod";
 import {
+  CustomFormFields,
   DatePicker,
   Hidden,
   Input,
@@ -89,7 +90,7 @@ const RequestForQuoteForm = ({ initialValues }: RequestForQuoteFormProps) => {
                   <TextArea name="notes" label="Notes" readOnly={isSupplier} />
                 </>
               )}
-              {/* <CustomFormFields table="requestForQuote" />*/}
+              <CustomFormFields table="requestForQuote" />
             </div>
           </VStack>
         </CardContent>

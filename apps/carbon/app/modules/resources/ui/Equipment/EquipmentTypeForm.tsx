@@ -15,6 +15,7 @@ import { useFetcher } from "@remix-run/react";
 import type { z } from "zod";
 import {
   Ability,
+  CustomFormFields,
   Hidden,
   Input,
   Number,
@@ -89,7 +90,7 @@ const EquipmentTypeForm = ({
                   isClearable
                 />
                 <Number name="setupHours" label="Setup Hours" />
-                {/* <CustomFormFields table="equipmentType" />*/}
+                <CustomFormFields table="equipmentType" />
               </VStack>
             </ModalDrawerBody>
             <ModalDrawerFooter>

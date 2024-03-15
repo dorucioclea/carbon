@@ -13,7 +13,7 @@ import {
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
 import type { z } from "zod";
-import { Hidden, Input, Submit } from "~/components/Form";
+import { CustomFormFields, Hidden, Input, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import { unitOfMeasureValidator } from "~/modules/parts";
 import { path } from "~/utils/path";
@@ -76,7 +76,7 @@ const UnitOfMeasureForm = ({
                   label="Code"
                   helperText="Unique, uppercase, without spaces"
                 />
-                {/* <CustomFormFields table="unitOfMeasure" />*/}
+                <CustomFormFields table="unitOfMeasure" />
               </VStack>
             </ModalDrawerBody>
             <ModalDrawerFooter>

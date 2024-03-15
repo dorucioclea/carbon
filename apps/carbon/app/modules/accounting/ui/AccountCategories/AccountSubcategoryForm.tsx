@@ -15,7 +15,7 @@ import {
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useParams } from "@remix-run/react";
 import type { z } from "zod";
-import { Hidden, Input, Submit } from "~/components/Form";
+import { CustomFormFields, Hidden, Input, Submit } from "~/components/Form";
 import { usePermissions, useRouteData } from "~/hooks";
 import type { AccountCategory } from "~/modules/accounting";
 import { accountSubcategoryValidator } from "~/modules/accounting";
@@ -80,7 +80,7 @@ const AccountSubcategoryForm = ({
                 <InputBase value={category} isReadOnly />
               </FormControl>
               <Input name="name" label="Name" />
-              {/* <CustomFormFields table="accountSubcategory" />*/}
+              <CustomFormFields table="accountSubcategory" />
             </VStack>
           </DrawerBody>
           <DrawerFooter>

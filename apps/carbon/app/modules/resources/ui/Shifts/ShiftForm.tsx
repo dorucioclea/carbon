@@ -16,6 +16,7 @@ import { useNavigate } from "@remix-run/react";
 import type { z } from "zod";
 import {
   Boolean,
+  CustomFormFields,
   Hidden,
   Input,
   Location,
@@ -80,7 +81,7 @@ const ShiftForm = ({ initialValues }: ShiftFormProps) => {
                   <Boolean name="sunday" description="Sunday" />
                 </VStack>
               </FormControl>
-              {/* <CustomFormFields table="shift" />*/}
+              <CustomFormFields table="shift" />
             </VStack>
           </DrawerBody>
           <DrawerFooter>

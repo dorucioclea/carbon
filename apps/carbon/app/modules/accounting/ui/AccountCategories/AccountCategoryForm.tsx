@@ -11,7 +11,13 @@ import {
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import type { z } from "zod";
-import { Hidden, Input, Select, Submit } from "~/components/Form";
+import {
+  CustomFormFields,
+  Hidden,
+  Input,
+  Select,
+  Submit,
+} from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import {
   accountCategoryValidator,
@@ -80,7 +86,7 @@ const AccountCategoryForm = ({
                   label: accountClass,
                 }))}
               />
-              {/* <CustomFormFields table="accountCategory" />*/}
+              <CustomFormFields table="accountCategory" />
             </VStack>
           </DrawerBody>
           <DrawerFooter>

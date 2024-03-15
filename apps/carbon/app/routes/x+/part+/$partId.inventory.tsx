@@ -16,6 +16,7 @@ import { getUserDefaults } from "~/modules/users/users.server";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import type { ListItem } from "~/types";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -70,6 +71,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     const insertPartInventory = await upsertPartInventory(client, {
       partId,
       locationId,
+      customFields: {},
       createdBy: userId,
     });
 
@@ -126,10 +128,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { partId } = params;
   if (!partId) throw new Error("Could not find partId");
 
+  const formData = await request.formData();
   // validate with partsValidator
-  const validation = await validator(partInventoryValidator).validate(
-    await request.formData()
-  );
+  const validation = await validator(partInventoryValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -140,6 +141,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const updatePartInventory = await upsertPartInventory(client, {
     ...update,
     partId,
+    customFields: setCustomFields(formData),
     updatedBy: userId,
   });
   if (updatePartInventory.error) {
@@ -167,6 +169,7 @@ export default function PartInventoryRoute() {
   const initialValues = {
     ...partInventory,
     defaultShelfId: partInventory.defaultShelfId ?? undefined,
+    ...getCustomFields(partInventory.customFields ?? {}),
   };
   return (
     <PartInventoryForm

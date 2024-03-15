@@ -15,6 +15,7 @@ import { useNavigate, useParams } from "@remix-run/react";
 import { useState } from "react";
 import type { z } from "zod";
 import {
+  CustomFormFields,
   Hidden,
   InputControlled,
   Number,
@@ -157,7 +158,7 @@ const QuotationMaterialForm = ({
                   }))
                 }
               />
-              {/* <CustomFormFields table="quoteMaterial" />*/}
+              <CustomFormFields table="quoteMaterial" />
             </VStack>
           </DrawerBody>
           <DrawerFooter>

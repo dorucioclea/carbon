@@ -12,7 +12,13 @@ import {
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useNavigate, useParams } from "@remix-run/react";
 import type { z } from "zod";
-import { Hidden, Input, Submit, Supplier } from "~/components/Form";
+import {
+  CustomFormFields,
+  Hidden,
+  Input,
+  Submit,
+  Supplier,
+} from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import { serviceSupplierValidator } from "~/modules/parts";
 import { path } from "~/utils/path";
@@ -66,7 +72,7 @@ const ServiceSupplierForm = ({ initialValues }: ServiceSupplierFormProps) => {
             <VStack spacing={4}>
               <Supplier name="supplierId" label="Supplier" />
               <Input name="supplierServiceId" label="Supplier Service ID" />
-              {/* <CustomFormFields table="serviceSupplier" />*/}
+              <CustomFormFields table="serviceSupplier" />
             </VStack>
           </DrawerBody>
           <DrawerFooter>

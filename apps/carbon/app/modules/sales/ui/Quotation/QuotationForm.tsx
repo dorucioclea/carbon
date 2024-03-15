@@ -12,6 +12,7 @@ import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useState } from "react";
 import type { z } from "zod";
 import {
+  CustomFormFields,
   Customer,
   CustomerContact,
   CustomerLocation,
@@ -93,7 +94,7 @@ const QuotationForm = ({ initialValues }: QuotationFormProps) => {
                   <TextArea name="notes" label="Notes" />
                 </>
               )}
-              {/* <CustomFormFields table="quote" />*/}
+              <CustomFormFields table="quote" />
             </div>
           </VStack>
         </CardContent>
