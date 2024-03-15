@@ -1,4 +1,4 @@
-import type { Database } from "@carbon/database";
+import type { Database, Json } from "@carbon/database";
 import { getDateNYearsAgo } from "@carbon/utils";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { z } from "zod";
@@ -698,10 +698,12 @@ export async function upsertAccountCategory(
   accountCategory:
     | (Omit<z.infer<typeof accountCategoryValidator>, "id"> & {
         createdBy: string;
+        customFields: Json;
       })
     | (Omit<z.infer<typeof accountCategoryValidator>, "id"> & {
         id: string;
         updatedBy: string;
+        customFields: Json;
       })
 ) {
   if ("createdBy" in accountCategory) {
