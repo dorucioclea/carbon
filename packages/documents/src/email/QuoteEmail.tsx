@@ -52,14 +52,14 @@ const QuoteEmail = ({
               </Column>
 
               <Column align="right" style={tableCell}>
-                <Text style={heading}>Purchase Order</Text>
+                <Text style={heading}>Quote</Text>
               </Column>
             </Row>
           </Section>
           <Section>
             <Text style={subtleText}>
-              Hi {recipient.firstName}, please see the attached purchase order
-              and let me know if you have any questions.
+              Hi {recipient.firstName}, please see the attached quote.
+              questions.
             </Text>
           </Section>
           <Section style={informationTable}>
@@ -160,7 +160,7 @@ const QuoteEmail = ({
           </Section>
           <Section style={linesHeader}>
             <Text style={{ ...informationTableLabel, paddingLeft: "20px" }}>
-              Purchase Order Lines
+              Quote Lines
             </Text>
           </Section>
           <Section>
