@@ -1,7 +1,7 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useNavigate } from "@remix-run/react";
 import {
   UnitOfMeasureForm,
   getUnitOfMeasure,
@@ -72,6 +72,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function EditUnitOfMeasuresRoute() {
   const { unitOfMeasure } = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
 
   const initialValues = {
     id: unitOfMeasure?.id ?? undefined,
@@ -80,6 +81,10 @@ export default function EditUnitOfMeasuresRoute() {
   };
 
   return (
-    <UnitOfMeasureForm key={initialValues.id} initialValues={initialValues} />
+    <UnitOfMeasureForm
+      key={initialValues.id}
+      initialValues={initialValues}
+      onClose={() => navigate(-1)}
+    />
   );
 }

@@ -1,4 +1,4 @@
-import { BsBank, BsCreditCard, BsListCheck } from "react-icons/bs";
+import { BsBank, BsListCheck } from "react-icons/bs";
 import { usePermissions } from "~/hooks";
 import type { Role } from "~/types";
 
@@ -13,19 +13,24 @@ export function usePurchaseInvoiceSidebar({ lines = 0 }: Props) {
       name: "Summary",
       to: "details",
       icon: BsBank,
+      shortcut: "Command+Shift+s",
+      role: ["employee"],
     },
     {
       name: "Lines",
       to: "lines",
       count: lines,
       icon: BsListCheck,
-    },
-    {
-      name: "Payment",
-      to: "payment",
+      shortcut: "Command+Shift+l",
       role: ["employee"],
-      icon: BsCreditCard,
     },
+    // {
+    //   name: "Payment",
+    //   to: "payment",
+    //   role: ["employee"],
+    //   icon: BsCreditCard,
+    //   shortcut: "Command+Shift+p",
+    // },
   ].filter(
     (item) =>
       item.role === undefined ||

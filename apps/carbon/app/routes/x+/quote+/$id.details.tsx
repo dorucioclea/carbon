@@ -76,6 +76,7 @@ export default function QuotationBasicRoute() {
     customerContactId: quoteData?.quotation?.customerContactId ?? "",
     customerLocationId: quoteData?.quotation?.customerLocationId ?? "",
     customerReference: quoteData?.quotation?.customerReference ?? "",
+    locationId: quoteData?.quotation?.locationId ?? "",
     quoteDate: quoteData?.quotation?.quoteDate ?? "",
     expirationDate: quoteData?.quotation.expirationDate ?? undefined,
     status: quoteData?.quotation?.status ?? ("Draft" as "Draft"),

@@ -1,13 +1,15 @@
 import { useFetcher } from "@remix-run/react";
-import { useEffect, useMemo } from "react";
-import type {
-  SupplierLocation as SupplierLocationType,
-  getSupplierLocations,
+import { useEffect, useMemo, useRef } from "react";
+import {
+  SupplierLocationForm,
+  type SupplierLocation as SupplierLocationType,
+  type getSupplierLocations,
 } from "~/modules/purchasing";
 import { path } from "~/utils/path";
 
+import { useDisclosure } from "@carbon/react";
 import type { ComboboxProps } from "./Combobox";
-import Combobox from "./Combobox";
+import CreatableCombobox from "./CreatableCombobox";
 
 type SupplierLocationSelectProps = Omit<
   ComboboxProps,
@@ -20,6 +22,10 @@ type SupplierLocationSelectProps = Omit<
 const SupplierLocation = (props: SupplierLocationSelectProps) => {
   const supplierLocationsFetcher =
     useFetcher<Awaited<ReturnType<typeof getSupplierLocations>>>();
+
+  const newLocationModal = useDisclosure();
+  // const [created, setCreated] = useState<string>("");
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (props?.supplier) {
@@ -50,12 +56,31 @@ const SupplierLocation = (props: SupplierLocationSelectProps) => {
   };
 
   return (
-    <Combobox
-      options={options}
-      {...props}
-      onChange={onChange}
-      label={props?.label ?? "Supplier Location"}
-    />
+    <>
+      <CreatableCombobox
+        ref={triggerRef}
+        options={options}
+        {...props}
+        label={props?.label ?? "Supplier Location"}
+        onChange={onChange}
+        onCreateOption={(option) => {
+          newLocationModal.onOpen();
+          // setCreated(option);
+        }}
+      />
+      {newLocationModal.isOpen && (
+        <SupplierLocationForm
+          supplierId={props.supplier!}
+          type="modal"
+          onClose={() => {
+            // setCreated("");
+            newLocationModal.onClose();
+            triggerRef.current?.click();
+          }}
+          initialValues={{}}
+        />
+      )}
+    </>
   );
 };
 

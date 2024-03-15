@@ -1,7 +1,8 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import { getLocalTimeZone } from "@internationalized/date";
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
+import { useNavigate } from "@remix-run/react";
 import {
   LocationForm,
   locationValidator,
@@ -19,9 +20,10 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "resources",
   });
 
-  const validation = await validator(locationValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const modal = formData.get("type") === "modal";
+
+  const validation = await validator(locationValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -35,22 +37,29 @@ export async function action({ request }: ActionFunctionArgs) {
   });
 
   if (createLocation.error) {
-    return redirect(
-      path.to.locations,
-      await flash(
-        request,
-        error(createLocation.error, "Failed to create location.")
-      )
-    );
+    return modal
+      ? json(createLocation)
+      : redirect(
+          path.to.locations,
+          await flash(
+            request,
+            error(createLocation.error, "Failed to create location.")
+          )
+        );
   }
 
-  return redirect(
-    path.to.locations,
-    await flash(request, success("Location created"))
-  );
+  return modal
+    ? json(createLocation, { status: 201 })
+    : redirect(
+        path.to.locations,
+        await flash(request, success("Location created"))
+      );
 }
 
 export default function NewLocationRoute() {
+  const navigate = useNavigate();
+  const onClose = () => navigate(path.to.locations);
+
   const initialValues = {
     name: "",
     timezone: getLocalTimeZone(),
@@ -61,5 +70,5 @@ export default function NewLocationRoute() {
     postalCode: "",
   };
 
-  return <LocationForm initialValues={initialValues} />;
+  return <LocationForm initialValues={initialValues} onClose={onClose} />;
 }

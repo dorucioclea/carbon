@@ -1,7 +1,7 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useNavigate } from "@remix-run/react";
 import {
   PartGroupForm,
   getPartGroup,
@@ -71,6 +71,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function EditPartGroupsRoute() {
   const { partGroup } = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
 
   const initialValues = {
     id: partGroup?.id ?? undefined,
@@ -78,5 +79,11 @@ export default function EditPartGroupsRoute() {
     description: partGroup?.description ?? "",
   };
 
-  return <PartGroupForm key={initialValues.id} initialValues={initialValues} />;
+  return (
+    <PartGroupForm
+      key={initialValues.id}
+      initialValues={initialValues}
+      onClose={() => navigate(-1)}
+    />
+  );
 }

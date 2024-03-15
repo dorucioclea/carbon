@@ -29,49 +29,27 @@ export async function loader({ request }: LoaderFunctionArgs) {
     view: "accounting",
   });
 
-  const [baseCurrency, balanceSheetAccounts, incomeStatementAccounts] =
-    await Promise.all([
-      getBaseCurrency(client),
-      getAccountsList(client, {
-        type: "Posting",
-        incomeBalance: "Balance Sheet",
-      }),
-      getAccountsList(client, {
-        type: "Posting",
-        incomeBalance: "Income Statement",
-      }),
-    ]);
+  // the ABCs of accounting
+  const [accounts, baseCurrency] = await Promise.all([
+    getAccountsList(client, {
+      type: "Posting",
+    }),
+    getBaseCurrency(client),
+  ]);
 
-  if (balanceSheetAccounts.error) {
+  if (accounts.error) {
     return redirect(
       path.to.authenticatedRoot,
-      await flash(
-        request,
-        error(
-          balanceSheetAccounts.error,
-          "Failed to fetch balance sheet accounts"
-        )
-      )
-    );
-  }
-
-  if (incomeStatementAccounts.error) {
-    return redirect(
-      path.to.authenticatedRoot,
-      await flash(
-        request,
-        error(
-          incomeStatementAccounts.error,
-          "Failed to fetch income statement accounts"
-        )
-      )
+      await flash(request, error(accounts.error, "Failed to fetch accounts"))
     );
   }
 
   return json({
     baseCurrency: baseCurrency.data,
-    balanceSheetAccounts: balanceSheetAccounts.data ?? [],
-    incomeStatementAccounts: incomeStatementAccounts.data ?? [],
+    balanceSheetAccounts:
+      accounts.data.filter((a) => a.incomeBalance === "Balance Sheet") ?? [],
+    incomeStatementAccounts:
+      accounts.data.filter((a) => a.incomeBalance === "Income Statement") ?? [],
   });
 }
 

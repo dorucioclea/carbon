@@ -13,6 +13,8 @@ import Currency from "./Currency";
 import Customer from "./Customer";
 import CustomerContact from "./CustomerContact";
 import CustomerLocation from "./CustomerLocation";
+import CustomerStatus from "./CustomerStatus";
+import CustomerType from "./CustomerType";
 import DatePicker from "./DatePicker";
 import Department from "./Department";
 import Employee from "./Employee";
@@ -25,6 +27,7 @@ import Location from "./Location";
 import Number from "./Number";
 import NumberControlled from "./NumberControlled";
 import Part from "./Part";
+import PartGroup from "./PartGroup";
 import Password from "./Password";
 import PhoneInput from "./PhoneInput";
 import Radios from "./Radios";
@@ -39,9 +42,12 @@ import Submit from "./Submit";
 import Supplier from "./Supplier";
 import SupplierContact from "./SupplierContact";
 import SupplierLocation from "./SupplierLocation";
+import SupplierStatus from "./SupplierStatus";
+import SupplierType from "./SupplierType";
 import TextArea from "./Textarea";
 import TimePicker from "./TimePicker";
 import Timezone from "./Timezone";
+import UnitOfMeasure from "./UnitOfMeasure";
 import User from "./User";
 import Users from "./Users";
 import WorkCellType from "./WorkCellType";
@@ -62,6 +68,8 @@ export {
   Customer,
   CustomerContact,
   CustomerLocation,
+  CustomerStatus,
+  CustomerType,
   DatePicker,
   Department,
   Employee,
@@ -74,6 +82,7 @@ export {
   Number,
   NumberControlled,
   Part,
+  PartGroup,
   Password,
   PhoneInput,
   Radios,
@@ -88,9 +97,12 @@ export {
   Supplier,
   SupplierContact,
   SupplierLocation,
+  SupplierStatus,
+  SupplierType,
   TextArea,
   TimePicker,
   Timezone,
+  UnitOfMeasure,
   User,
   Users,
   WorkCellType,

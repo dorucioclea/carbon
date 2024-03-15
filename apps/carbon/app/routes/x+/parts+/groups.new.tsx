@@ -1,6 +1,7 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
+import { useNavigate } from "@remix-run/react";
 import {
   PartGroupForm,
   partGroupValidator,
@@ -26,9 +27,10 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "parts",
   });
 
-  const validation = await validator(partGroupValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const modal = formData.get("type") == "modal";
+
+  const validation = await validator(partGroupValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -61,17 +63,22 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
-    path.to.partGroups,
-    await flash(request, success("Part group created"))
-  );
+  return modal
+    ? json(insertPartGroup, { status: 201 })
+    : redirect(
+        path.to.partGroups,
+        await flash(request, success("Part group created"))
+      );
 }
 
 export default function NewPartGroupsRoute() {
+  const navigate = useNavigate();
   const initialValues = {
     name: "",
     description: "",
   };
 
-  return <PartGroupForm initialValues={initialValues} />;
+  return (
+    <PartGroupForm onClose={() => navigate(-1)} initialValues={initialValues} />
+  );
 }

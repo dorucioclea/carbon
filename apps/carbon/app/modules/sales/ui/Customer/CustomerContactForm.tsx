@@ -10,7 +10,7 @@ import {
   VStack,
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
-import { useNavigate, useParams } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
 import type { z } from "zod";
 import {
   DatePicker,
@@ -25,14 +25,21 @@ import { customerContactValidator } from "~/modules/sales";
 import { path } from "~/utils/path";
 
 type CustomerContactFormProps = {
+  customerId: string;
   initialValues: z.infer<typeof customerContactValidator>;
+  type?: "modal" | "drawer";
+  open?: boolean;
+  onClose: () => void;
 };
 
-const CustomerContactForm = ({ initialValues }: CustomerContactFormProps) => {
-  const navigate = useNavigate();
-  const { customerId } = useParams();
-
-  if (!customerId) throw new Error("customerId not found");
+const CustomerContactForm = ({
+  customerId,
+  initialValues,
+  open = true,
+  type = "drawer",
+  onClose,
+}: CustomerContactFormProps) => {
+  const fetcher = useFetcher();
 
   const permissions = usePermissions();
   const isEditing = !!initialValues?.id;
@@ -40,13 +47,11 @@ const CustomerContactForm = ({ initialValues }: CustomerContactFormProps) => {
     ? !permissions.can("update", "sales")
     : !permissions.can("create", "sales");
 
-  const onClose = () => navigate(path.to.customerContacts(customerId));
-
   return (
     <Drawer
-      open
+      open={open}
       onOpenChange={(open) => {
-        if (!open) onClose();
+        if (!open) onClose?.();
       }}
     >
       <DrawerContent>
@@ -59,14 +64,20 @@ const CustomerContactForm = ({ initialValues }: CustomerContactFormProps) => {
               : path.to.newCustomerContact(customerId)
           }
           defaultValues={initialValues}
-          onSubmit={onClose}
+          fetcher={fetcher}
           className="flex flex-col h-full"
+          onSubmit={() => {
+            if (type === "modal") {
+              onClose?.();
+            }
+          }}
         >
           <DrawerHeader>
             <DrawerTitle>{isEditing ? "Edit" : "New"} Contact</DrawerTitle>
           </DrawerHeader>
           <DrawerBody>
             <Hidden name="id" />
+            <Hidden name="type" value={type} />
             <Hidden name="contactId" />
             <VStack spacing={4}>
               <Input name="firstName" label="First Name" />
@@ -85,6 +96,7 @@ const CustomerContactForm = ({ initialValues }: CustomerContactFormProps) => {
               {/* Country dropdown */}
               <DatePicker name="birthday" label="Birthday" />
               <TextArea name="notes" label="Notes" />
+              {/* <CustomFormFields table="customerContact" />*/}
             </VStack>
           </DrawerBody>
           <DrawerFooter>

@@ -168,6 +168,9 @@ CREATE TABLE "userAttributeValue" (
     UNIQUE ( "userAttributeId", "userId")
 );
 
+CREATE INDEX "userAttributeValue_userAttributeId_index" ON "userAttributeValue" ("userAttributeId");
+CREATE INDEX "userAttributeValue_userId_index" ON "userAttributeValue" ("userId");
+
 ALTER TABLE "userAttributeValue" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Claims admin can view/modify user attribute values" ON "userAttributeValue" FOR ALL USING (is_claims_admin());
 CREATE POLICY "Users can insert attributes for themselves" ON "userAttributeValue" FOR UPDATE WITH CHECK (auth.uid() = "userId"::uuid);
@@ -182,34 +185,3 @@ CREATE POLICY "Users can view other users attributes if the category is public" 
       )
     )
   );
-
--- CREATE TABLE employee_personal_data (
---   "id" TEXT NOT NULL DEFAULT xid(), 
---   bank_account_number TEXT,
---   bank_routing_number TEXT,
---   drivers_license_number TEXT,
---   social_security TEXT,
---   user_id TEXT NOT NULL,
--- 	 key_id uuid NOT NULL DEFAULT '7da3ce7e-98f0-4c4f-9b63-b3f783eab919'::uuid,
---   nonce BYTEA DEFAULT pgsodium.crypto_aead_det_noncegen(),
-
---   CONSTRAINT "employee_personal_data_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE
--- );
-
--- SECURITY LABEL FOR pgsodium
--- 	ON COLUMN employee_personal_data.bank_account
---   	IS 'ENCRYPT WITH KEY COLUMN key_id ASSOCIATED (user_id) NONCE nonce';
-
--- SECURITY LABEL FOR pgsodium
--- 	ON COLUMN employee_personal_data.bank_routing
---   	IS 'ENCRYPT WITH KEY COLUMN key_id ASSOCIATED (user_id) NONCE nonce';
-
--- SECURITY LABEL FOR pgsodium
--- 	ON COLUMN employee_personal_data.drivers_license
---   	IS 'ENCRYPT WITH KEY COLUMN key_id ASSOCIATED (user_id) NONCE nonce';
-
--- SECURITY LABEL FOR pgsodium
--- 	ON COLUMN employee_personal_data.social_security
---   	IS 'ENCRYPT WITH KEY COLUMN key_id ASSOCIATED (user_id) NONCE nonce';
-
--- ALTER TABLE "employee_personal_data" ENABLE ROW LEVEL SECURITY;

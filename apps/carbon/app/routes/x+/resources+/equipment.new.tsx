@@ -1,6 +1,6 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { useNavigate } from "@remix-run/react";
 import {
   EquipmentTypeForm,
@@ -19,9 +19,10 @@ export async function action({ request }: ActionFunctionArgs) {
     update: "resources",
   });
 
-  const validation = await validator(equipmentTypeValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const modal = formData.get("type") === "modal";
+
+  const validation = await validator(equipmentTypeValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -34,16 +35,20 @@ export async function action({ request }: ActionFunctionArgs) {
     createdBy: userId,
   });
   if (createEquipmentType.error) {
-    return redirect(
-      path.to.equipment,
-      await flash(
-        request,
-        error(createEquipmentType.error, "Failed to create equipment type")
-      )
-    );
+    return modal
+      ? json(createEquipmentType)
+      : redirect(
+          path.to.equipment,
+          await flash(
+            request,
+            error(createEquipmentType.error, "Failed to create equipment type")
+          )
+        );
   }
 
-  return redirect(path.to.equipment);
+  return modal
+    ? json(createEquipmentType, { status: 201 })
+    : redirect(path.to.equipment);
 }
 
 export default function NewEquipmentTypeRoute() {
@@ -53,7 +58,6 @@ export default function NewEquipmentTypeRoute() {
   const initialValues = {
     name: "",
     description: "",
-    color: "#000000",
     setupHours: 0,
   };
 

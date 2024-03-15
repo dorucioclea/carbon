@@ -50,6 +50,40 @@ export async function getCurrentSequence(
   };
 }
 
+export async function getCustomField(
+  client: SupabaseClient<Database>,
+  id: string
+) {
+  return client.from("customField").select("*").eq("id", id).single();
+}
+
+export async function getCustomFields(
+  client: SupabaseClient<Database>,
+  id: string
+) {
+  return client.from("customFieldTables").select("*").eq("id", id).single();
+}
+
+export async function getCustomFieldsTables(
+  client: SupabaseClient<Database>,
+  args: GenericQueryFilters & {
+    name: string | null;
+  }
+) {
+  let query = client.from("customFieldTables").select("*", {
+    count: "exact",
+  });
+
+  if (args.name) {
+    query = query.ilike("name", `%${args.name}%`);
+  }
+
+  query = setGenericQueryFilters(query, args, [
+    { column: "name", ascending: true },
+  ]);
+  return query;
+}
+
 export async function getIntegration(
   client: SupabaseClient<Database>,
   id: string
@@ -115,7 +149,9 @@ export async function getSequences(
     name: string | null;
   }
 ) {
-  let query = client.from("sequence").select("*");
+  let query = client.from("sequence").select("*", {
+    count: "exact",
+  });
 
   if (args.name) {
     query = query.ilike("name", `%${args.name}%`);

@@ -15,6 +15,7 @@ import type {
   supplierContactValidator,
   supplierPaymentValidator,
   supplierShippingValidator,
+  supplierStatusValidator,
   supplierTypeValidator,
   supplierValidator,
 } from "./purchasing.models";
@@ -92,6 +93,13 @@ export async function deleteSupplierLocation(
     .delete()
     .eq("supplierId", supplierId)
     .eq("id", supplierLocationId);
+}
+
+export async function deleteSupplierStatus(
+  client: SupabaseClient<Database>,
+  supplierStatusId: string
+) {
+  return client.from("supplierStatus").delete().eq("id", supplierStatusId);
 }
 
 export async function deleteSupplierType(
@@ -370,6 +378,17 @@ export async function getSuppliersList(client: SupabaseClient<Database>) {
   return client.from("supplier").select("id, name").order("name");
 }
 
+export async function getSupplierStatus(
+  client: SupabaseClient<Database>,
+  supplierStatusId: string
+) {
+  return client
+    .from("supplierStatus")
+    .select("id, name")
+    .eq("id", supplierStatusId)
+    .single();
+}
+
 export async function getSupplierStatuses(
   client: SupabaseClient<Database>,
   args?: GenericQueryFilters & { name: string | null }
@@ -391,13 +410,19 @@ export async function getSupplierStatuses(
   return query;
 }
 
+export async function getSupplierStatusesList(
+  client: SupabaseClient<Database>
+) {
+  return client.from("supplierStatus").select("id, name").order("name");
+}
+
 export async function getSupplierType(
   client: SupabaseClient<Database>,
   supplierTypeId: string
 ) {
   return client
     .from("supplierType")
-    .select("id, name, color, protected")
+    .select("id, name, protected")
     .eq("id", supplierTypeId)
     .single();
 }
@@ -406,9 +431,7 @@ export async function getSupplierTypes(
   client: SupabaseClient<Database>,
   args?: GenericQueryFilters & { name: string | null }
 ) {
-  let query = client
-    .from("supplierType")
-    .select("id, name, color, protected", { count: "exact" });
+  let query = client.from("supplierType").select("*", { count: "exact" });
 
   if (args?.name) {
     query = query.ilike("name", `%${args.name}%`);
@@ -886,6 +909,27 @@ export async function upsertRequestForQuote(
       .from("requestForQuote")
       .update(sanitize(requestForQuote))
       .eq("id", requestForQuote.id);
+  }
+}
+
+export async function upsertSupplierStatus(
+  client: SupabaseClient<Database>,
+  supplierStatus:
+    | (Omit<z.infer<typeof supplierStatusValidator>, "id"> & {
+        createdBy: string;
+      })
+    | (Omit<z.infer<typeof supplierStatusValidator>, "id"> & {
+        id: string;
+        updatedBy: string;
+      })
+) {
+  if ("createdBy" in supplierStatus) {
+    return client.from("supplierStatus").insert([supplierStatus]);
+  } else {
+    return client
+      .from("supplierStatus")
+      .update(sanitize(supplierStatus))
+      .eq("id", supplierStatus.id);
   }
 }
 

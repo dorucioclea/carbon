@@ -52,6 +52,7 @@
     "@carbon/jest": "*",
     "@carbon/tailwind": "*",
     "@carbon/tsconfig": "*",
+    "@carbon/utils": "*",
     "@testing-library/dom": "^8.11.1",
     "@types/dompurify": "^2.4.0",
     "@types/jest": "^26.0.22",

@@ -10,7 +10,7 @@ type SupplierSelectProps = Omit<ComboboxProps, "options">;
 const Supplier = (props: SupplierSelectProps) => {
   const [suppliers] = useSuppliers();
   const newSuppliersModal = useDisclosure();
-  const [createdSupplier, setCreatedSupplier] = useState<string>("");
+  const [created, setCreated] = useState<string>("");
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   const options = useMemo(
@@ -31,19 +31,19 @@ const Supplier = (props: SupplierSelectProps) => {
         label={props?.label ?? "Supplier"}
         onCreateOption={(option) => {
           newSuppliersModal.onOpen();
-          setCreatedSupplier(option);
+          setCreated(option);
         }}
       />
       {newSuppliersModal.isOpen && (
         <SupplierForm
           type="modal"
           onClose={() => {
-            setCreatedSupplier("");
+            setCreated("");
             newSuppliersModal.onClose();
             triggerRef.current?.click();
           }}
           initialValues={{
-            name: createdSupplier,
+            name: created,
           }}
         />
       )}

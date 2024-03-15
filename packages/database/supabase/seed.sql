@@ -150,11 +150,11 @@ VALUES
 
 -- supplier status
 
-INSERT INTO "supplierStatus" ("name") VALUES ('Active'), ('Inactive'), ('Pending'), ('Rejected');
+INSERT INTO "supplierStatus" ("name", "createdBy") VALUES ('Active', 'system'), ('Inactive', 'system'), ('Pending', 'system'), ('Rejected', 'system');
 
 -- customer status
 
-INSERT INTO "customerStatus" ("name") VALUES ('Active'), ('Inactive'), ('Prospect'), ('Lead'), ('On Hold'), ('Cancelled'), ('Archived');
+INSERT INTO "customerStatus" ("name", "createdBy") VALUES ('Active', 'system'), ('Inactive', 'system'), ('Prospect', 'system'), ('Lead', 'system'), ('On Hold', 'system'), ('Cancelled', 'system'), ('Archived', 'system');
 
 -- unit of measure
 
@@ -454,3 +454,72 @@ INSERT INTO "fiscalYearSettings" (
   'January',
   'system'
 );
+
+-- custom fields
+
+INSERT INTO "customFieldTable" ("table", "name", "module") 
+VALUES 
+('ability', 'Ability', 'Resources'),
+('account', 'Account', 'Accounting'),
+('accountCategory', 'Account Category', 'Accounting'),
+('accountSubcategory', 'Account Subcategory', 'Accounting'),
+('contractor', 'Contractor', 'Resources'),
+('currency', 'Currency', 'Accounting'),
+('customer', 'Customer', 'Sales'),
+('customerContact', 'Customer Contact', 'Sales'),
+('customerLocation', 'Customer Location', 'Sales'),
+('customerStatus', 'Customer Status', 'Sales'),
+('customerType', 'Customer Type', 'Sales'),
+('department', 'Department', 'Resources'),
+('employee', 'Employee', 'Resources'),
+('employeeAbility', 'Employee Ability', 'Resources'),
+('employeeJob', 'Employee Job', 'Resources'),
+('employeeShift', 'Employee Shift', 'Resources'),
+('equipment', 'Equipment', 'Resources'),
+('equipmentType', 'Equipment Type', 'Resources'),
+('holiday', 'Holiday', 'Resources'),
+('journal', 'Journal', 'Accounting'),
+('journalLine', 'Journal Line', 'Accounting'),
+('location', 'Location', 'Resources'),
+('part', 'Part', 'Parts'),
+('partCost', 'Part Cost', 'Parts'),
+('partGroup', 'Part Group', 'Parts'),
+('partInventory', 'Part Inventory', 'Parts'),
+('partPlanning', 'Part Planning', 'Parts'),
+('partReplenishment', 'Part Replenishment', 'Parts'),
+('partSupplier', 'Part Supplier', 'Parts'),
+('partUnitSalePrice', 'Part Unit Sale Price', 'Parts'),
+('partner', 'Partner', 'Resources'),
+('paymentTerm', 'Payment Term', 'Accounting'),
+('purchaseInvoice', 'Purchase Invoice', 'Invoicing'),
+('purchaseInvoiceLine', 'Purchase Invoice Line', 'Invoicing'),
+('purchasePayment', 'Purchase Invoice Payment', 'Invoicing'),
+('purchaseOrder', 'Purchase Order', 'Purchasing'),
+('purchaseOrderDelivery', 'Purchase Order Delivery', 'Purchasing'),
+('purchaseOrderLine', 'Purchase Order Line', 'Purchasing'),
+('purchaseOrderPayment', 'Purchase Order Payment', 'Purchasing'),
+('quote', 'Quote', 'Sales'),
+('quoteAssembly', 'Quote Assembly', 'Sales'),
+('quoteLine', 'Quote Line', 'Sales'),
+('quoteMaterial', 'Quote Material', 'Sales'),
+('quoteOperation', 'Quote Operation', 'Sales'),
+('receipt', 'Receipt', 'Inventory'),
+('requestForQuote', 'RFQ', 'Purchasing'),
+('requestForQuoteLine', 'RFQ Line', 'Purchasing'),
+('requestForQuoteSupplier', 'RFQ Supplier', 'Purchasing'),
+('service', 'Service', 'Parts'),
+('serviceSupplier', 'Service Supplier', 'Parts'),
+('shelf', 'Shelf', 'Inventory'),
+('shift', 'Shift', 'Resources'),
+('shippingMethod', 'Shipping Method', 'Inventory'),
+-- ('shippingTerm', 'Shipping Term', 'Accounting'),
+('supplier', 'Supplier', 'Purchasing'),
+('supplierContact', 'Supplier Contact', 'Purchasing'),
+('supplierLocation', 'Supplier Location', 'Purchasing'),
+('supplierPayment', 'Supplier Payment', 'Purchasing'),
+('supplierShipping', 'Supplier Shipping', 'Purchasing'),
+('supplierStatus', 'Supplier Status', 'Purchasing'),
+('supplierType', 'Supplier Type', 'Purchasing'),
+('unitOfMeasure', 'Unit of Measure', 'Inventory'),
+('workCell', 'Work Cell', 'Resources'),
+('workCellType', 'Work Cell Type', 'Resources');

@@ -1,7 +1,7 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useNavigate } from "@remix-run/react";
 import {
   CustomerTypeForm,
   customerTypeValidator,
@@ -78,14 +78,18 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function EditCustomerTypesRoute() {
   const { customerType } = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
 
   const initialValues = {
     id: customerType?.id ?? undefined,
     name: customerType?.name ?? "",
-    color: customerType?.color ?? "#000000",
   };
 
   return (
-    <CustomerTypeForm key={initialValues.id} initialValues={initialValues} />
+    <CustomerTypeForm
+      key={initialValues.id}
+      initialValues={initialValues}
+      onClose={() => navigate(-1)}
+    />
   );
 }

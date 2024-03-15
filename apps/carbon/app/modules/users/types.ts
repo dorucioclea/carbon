@@ -13,15 +13,6 @@ export type Customer = NonNullable<
   Awaited<ReturnType<typeof getCustomers>>["data"]
 >[number];
 
-export enum DataType {
-  Boolean = 1,
-  Date = 2,
-  List = 3,
-  Numeric = 4,
-  Text = 5,
-  User = 6,
-}
-
 export type Employee = NonNullable<
   Awaited<ReturnType<typeof getEmployees>>["data"]
 >[number];

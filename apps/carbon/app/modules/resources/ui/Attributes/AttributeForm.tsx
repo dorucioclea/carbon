@@ -23,7 +23,7 @@ import {
 } from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import { attributeValidator } from "~/modules/resources";
-import { DataType } from "~/modules/users";
+import { DataType } from "~/modules/shared";
 import { path } from "~/utils/path";
 
 type AttributeFormProps = {

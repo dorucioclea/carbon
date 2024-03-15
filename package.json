@@ -64,8 +64,5 @@
     "packages/*",
     "shared",
     "www"
-  ],
-  "dependencies": {
-    "react-phone-number-input": "^3.3.9"
-  }
+  ]
 }

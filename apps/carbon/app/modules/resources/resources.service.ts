@@ -1,7 +1,8 @@
 import type { Database } from "@carbon/database";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { z } from "zod";
-import type { DataType, Employee } from "~/modules/users";
+import type { DataType } from "~/modules/shared";
+import type { Employee } from "~/modules/users";
 import { getEmployees } from "~/modules/users";
 import type { GenericQueryFilters } from "~/utils/query";
 import { setGenericQueryFilters } from "~/utils/query";
@@ -310,22 +311,16 @@ export async function getDepartment(
   client: SupabaseClient<Database>,
   departmentId: string
 ) {
-  return client
-    .from("department")
-    .select(`id, name, color, parentDepartmentId`)
-    .eq("id", departmentId)
-    .single();
+  return client.from("department").select("*").eq("id", departmentId).single();
 }
 
 export async function getDepartments(
   client: SupabaseClient<Database>,
   args?: GenericQueryFilters & { name: string | null }
 ) {
-  let query = client
-    .from("department")
-    .select(`id, name, color, department(id, name)`, {
-      count: "exact",
-    });
+  let query = client.from("department").select(`*, department(id, name)`, {
+    count: "exact",
+  });
 
   if (args?.name) {
     query = query.ilike("name", `%${args.name}%`);
@@ -427,12 +422,9 @@ export async function getEquipmentTypes(
 ) {
   let query = client
     .from("equipmentType")
-    .select(
-      "id, name, color, description, requiredAbility, equipment(id, name)",
-      {
-        count: "exact",
-      }
-    )
+    .select("*, equipment(id, name)", {
+      count: "exact",
+    })
     .eq("active", true)
     .eq("equipment.active", true);
 
@@ -779,12 +771,9 @@ export async function getWorkCellTypes(
 ) {
   let query = client
     .from("workCellType")
-    .select(
-      "id, name, color, description, requiredAbility, workCell(id, name)",
-      {
-        count: "exact",
-      }
-    )
+    .select("*, workCell(id, name)", {
+      count: "exact",
+    })
     .eq("active", true)
     .eq("workCell.active", true);
 

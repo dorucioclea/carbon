@@ -7,7 +7,6 @@ import {
   ModalCardHeader,
   ModalCardProvider,
   ModalCardTitle,
-  VStack,
   cn,
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
@@ -16,17 +15,17 @@ import { useState } from "react";
 import type { z } from "zod";
 import {
   Boolean,
-  Combobox,
   Hidden,
   Input,
   InputControlled,
+  PartGroup,
   Select,
   Submit,
   TextArea,
+  UnitOfMeasure,
 } from "~/components/Form";
-import { usePermissions, useRouteData } from "~/hooks";
+import { usePermissions } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
-import type { PartGroupListItem, UnitOfMeasureListItem } from "~/modules/parts";
 import {
   partReplenishmentSystems,
   partTypes,
@@ -86,21 +85,10 @@ const useNextPartIdShortcut = () => {
 };
 
 const PartForm = ({ initialValues, type = "card", onClose }: PartFormProps) => {
-  const sharedPartsData = useRouteData<{
-    partGroups: PartGroupListItem[];
-    unitOfMeasures: UnitOfMeasureListItem[];
-  }>(path.to.partRoot);
-
   const fetcher = useFetcher();
   const { partId, onPartIdChange, loading } = useNextPartIdShortcut();
   const permissions = usePermissions();
   const isEditing = !!initialValues.id;
-
-  const partGroupOptions =
-    sharedPartsData?.partGroups.map((partGroup) => ({
-      label: partGroup.name,
-      value: partGroup.id,
-    })) ?? [];
 
   const partTypeOptions =
     partTypes.map((partType) => ({
@@ -112,12 +100,6 @@ const PartForm = ({ initialValues, type = "card", onClose }: PartFormProps) => {
     partReplenishmentSystems.map((partReplenishmentSystem) => ({
       label: partReplenishmentSystem,
       value: partReplenishmentSystem,
-    })) ?? [];
-
-  const unitOfMeasureOptions =
-    sharedPartsData?.unitOfMeasures.map((uom) => ({
-      label: uom.name,
-      value: uom.code,
     })) ?? [];
 
   return (
@@ -147,53 +129,45 @@ const PartForm = ({ initialValues, type = "card", onClose }: PartFormProps) => {
               <Hidden name="type" value={type} />
               <div
                 className={cn(
-                  "grid w-full gap-x-8 gap-y-2",
+                  "grid w-full gap-x-8 gap-y-4",
                   isEditing ? "grid-cols-1 md:grid-cols-3" : "grid-cols-1"
                 )}
               >
-                <VStack>
-                  {isEditing ? (
-                    <Input name="id" label="Part ID" isReadOnly />
-                  ) : (
-                    <InputControlled
-                      name="id"
-                      label="Part ID"
-                      helperText="Use ... to get the next part ID"
-                      value={partId}
-                      onChange={onPartIdChange}
-                      isDisabled={loading}
-                    />
-                  )}
+                {isEditing ? (
+                  <Input name="id" label="Part ID" isReadOnly />
+                ) : (
+                  <InputControlled
+                    name="id"
+                    label="Part ID"
+                    helperText="Use ... to get the next part ID"
+                    value={partId}
+                    onChange={onPartIdChange}
+                    isDisabled={loading}
+                  />
+                )}
 
-                  <Input name="name" label="Name" />
-                  <TextArea name="description" label="Description" />
-                </VStack>
-                <VStack>
-                  <Select
-                    name="replenishmentSystem"
-                    label="Replenishment System"
-                    options={partReplenishmentSystemOptions}
-                  />
-                  <Select
-                    name="partType"
-                    label="Part Type"
-                    options={partTypeOptions}
-                  />
-                  <Combobox
-                    name="unitOfMeasureCode"
-                    label="Unit of Measure"
-                    options={unitOfMeasureOptions}
-                  />
-                </VStack>
-                <VStack>
-                  <Combobox
-                    name="partGroupId"
-                    label="Part Group"
-                    options={partGroupOptions}
-                  />
-                  <Boolean name="blocked" label="Blocked" />
-                  {isEditing && <Boolean name="active" label="Active" />}
-                </VStack>
+                <Input name="name" label="Name" />
+                <PartGroup name="partGroupId" label="Part Group" />
+
+                <TextArea name="description" label="Description" />
+                <Select
+                  name="replenishmentSystem"
+                  label="Replenishment System"
+                  options={partReplenishmentSystemOptions}
+                />
+                <Select
+                  name="partType"
+                  label="Part Type"
+                  options={partTypeOptions}
+                />
+                <UnitOfMeasure
+                  name="unitOfMeasureCode"
+                  label="Unit of Measure"
+                />
+
+                <Boolean name="blocked" label="Blocked" />
+                {isEditing && <Boolean name="active" label="Active" />}
+                {/* <CustomFormFields table="customerStatus" />*/}
               </div>
             </ModalCardBody>
             <ModalCardFooter>

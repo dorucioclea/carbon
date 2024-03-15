@@ -14,7 +14,7 @@ const Department = (props: DepartmentSelectProps) => {
     useFetcher<Awaited<ReturnType<typeof getDepartmentsList>>>();
 
   const newDepartmentModal = useDisclosure();
-  const [createdDepartment, setCreatedDepartment] = useState<string>("");
+  const [created, setCreated] = useState<string>("");
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   useMount(() => {
@@ -41,20 +41,19 @@ const Department = (props: DepartmentSelectProps) => {
         label={props?.label ?? "Department"}
         onCreateOption={(option) => {
           newDepartmentModal.onOpen();
-          setCreatedDepartment(option);
+          setCreated(option);
         }}
       />
       {newDepartmentModal.isOpen && (
         <DepartmentForm
           type="modal"
           onClose={() => {
-            setCreatedDepartment("");
+            setCreated("");
             newDepartmentModal.onClose();
             triggerRef.current?.click();
           }}
           initialValues={{
-            name: createdDepartment,
-            color: "#000000",
+            name: created,
           }}
         />
       )}

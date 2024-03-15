@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { zfd } from "zod-form-data";
+import { DataType } from "~/modules/shared";
 
 const company = {
   name: z.string().min(1, { message: "Name is required" }),
@@ -21,6 +22,29 @@ export const onboardingCompanyValidator = z.object({
   ...company,
   next: z.string().min(1, { message: "Next is required" }),
 });
+
+export const customFieldValidator = z
+  .object({
+    id: zfd.text(z.string().optional()),
+    name: z.string().min(1, { message: "Name is required" }),
+    customFieldTableId: z.string().min(20),
+    dataTypeId: zfd.numeric(
+      z.number().min(1, { message: "Data type is required" })
+    ),
+    listOptions: z.string().min(1).array().optional(),
+  })
+  .refine((input) => {
+    // allows bar to be optional only when foo is 'foo'
+    if (
+      input.dataTypeId === DataType.List &&
+      (input.listOptions === undefined ||
+        input.listOptions.length === 0 ||
+        input.listOptions.some((option) => option.length === 0))
+    )
+      return false;
+
+    return true;
+  });
 
 export const sequenceValidator = z.object({
   table: z.string().min(1, { message: "Table is required" }),
