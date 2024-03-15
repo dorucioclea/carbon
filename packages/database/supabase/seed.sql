@@ -459,7 +459,6 @@ INSERT INTO "fiscalYearSettings" (
 
 INSERT INTO "customFieldTable" ("table", "name", "module") 
 VALUES 
-('ability', 'Ability', 'Resources'),
 ('account', 'Account', 'Accounting'),
 ('accountCategory', 'Account Category', 'Accounting'),
 ('accountSubcategory', 'Account Subcategory', 'Accounting'),

@@ -7,9 +7,9 @@ export const isValidEmail = (email: string) => {
 };
 
 export const getCustomFields = (
-  fields: Json
+  fields?: Json
 ): Record<string, string | number | boolean> => {
-  if (typeof fields !== "object" || fields === null) return {};
+  if (!fields || typeof fields !== "object" || fields === null) return {};
   return Object.entries(fields).reduce<
     Record<string, string | number | boolean>
   >((acc, [key, value]) => {

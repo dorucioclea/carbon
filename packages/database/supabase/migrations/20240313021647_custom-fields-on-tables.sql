@@ -1,4 +1,3 @@
-ALTER TABLE "ability" ADD COLUMN "customFields" JSONB; 
 ALTER TABLE "account" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "accountCategory" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "accountSubcategory" ADD COLUMN "customFields" JSONB;

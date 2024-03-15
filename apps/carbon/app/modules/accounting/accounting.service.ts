@@ -676,10 +676,12 @@ export async function upsertAccount(
   account:
     | (Omit<z.infer<typeof accountValidator>, "id"> & {
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof accountValidator>, "id"> & {
         id: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("createdBy" in account) {
@@ -698,12 +700,12 @@ export async function upsertAccountCategory(
   accountCategory:
     | (Omit<z.infer<typeof accountCategoryValidator>, "id"> & {
         createdBy: string;
-        customFields: Json;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof accountCategoryValidator>, "id"> & {
         id: string;
         updatedBy: string;
-        customFields: Json;
+        customFields?: Json;
       })
 ) {
   if ("createdBy" in accountCategory) {
@@ -726,12 +728,12 @@ export async function upsertAccountSubcategory(
   accountSubcategory:
     | (Omit<z.infer<typeof accountSubcategoryValidator>, "id"> & {
         createdBy: string;
-        customFields: Json;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof accountSubcategoryValidator>, "id"> & {
         id: string;
         updatedBy: string;
-        customFields: Json;
+        customFields?: Json;
       })
 ) {
   if ("createdBy" in accountSubcategory) {

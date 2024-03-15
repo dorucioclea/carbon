@@ -11,6 +11,7 @@ import {
 } from "~/modules/accounting";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost, notFound } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -37,9 +38,8 @@ export async function action({ request }: ActionFunctionArgs) {
     update: "accounting",
   });
 
-  const validation = await validator(accountValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const validation = await validator(accountValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -51,6 +51,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const updateAccount = await upsertAccount(client, {
     id,
     ...data,
+    customFields: setCustomFields(formData),
     updatedBy: userId,
   });
 
@@ -84,6 +85,7 @@ export default function EditChartOfAccountsRoute() {
     incomeBalance: account?.incomeBalance ?? "Balance Sheet",
     consolidatedRate: account?.consolidatedRate ?? "Average",
     directPosting: account?.directPosting ?? false,
+    ...getCustomFields(account?.customFields),
   };
 
   return (

@@ -379,11 +379,11 @@ export async function upsertPart(
   part:
     | (z.infer<typeof partValidator> & {
         createdBy: string;
-        customFields: Json;
+        customFields?: Json;
       })
     | (z.infer<typeof partValidator> & {
         updatedBy: string;
-        customFields: Json;
+        customFields?: Json;
       })
 ) {
   if ("createdBy" in part) {
@@ -396,7 +396,7 @@ export async function upsertPartCost(
   client: SupabaseClient<Database>,
   partCost: z.infer<typeof partCostValidator> & {
     updatedBy: string;
-    customFields: Json;
+    customFields?: Json;
   }
 ) {
   return client
@@ -410,11 +410,11 @@ export async function upsertPartInventory(
   partInventory:
     | (z.infer<typeof partInventoryValidator> & {
         createdBy: string;
-        customFields: Json;
+        customFields?: Json;
       })
     | (z.infer<typeof partInventoryValidator> & {
         updatedBy: string;
-        customFields: Json;
+        customFields?: Json;
       })
 ) {
   if ("createdBy" in partInventory) {
