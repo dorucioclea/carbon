@@ -756,10 +756,12 @@ export async function upsertCurrency(
   currency:
     | (Omit<z.infer<typeof currencyValidator>, "id"> & {
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof currencyValidator>, "id"> & {
         id: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if (currency.isBaseCurrency) {

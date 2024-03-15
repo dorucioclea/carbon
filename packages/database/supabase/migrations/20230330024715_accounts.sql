@@ -7,6 +7,8 @@ CREATE TABLE "currency" (
   "decimalPlaces" INTEGER NOT NULL DEFAULT 2,
   "isBaseCurrency" BOOLEAN NOT NULL DEFAULT false,
   "active" BOOLEAN NOT NULL DEFAULT true,
+  "createdBy" TEXT NOT NULL,
+  "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
 

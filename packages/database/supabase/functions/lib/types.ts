@@ -1743,6 +1743,8 @@ export type Database = {
         Row: {
           active: boolean
           code: string
+          createdAt: string
+          createdBy: string
           customFields: Json | null
           decimalPlaces: number
           exchangeRate: number
@@ -1756,6 +1758,8 @@ export type Database = {
         Insert: {
           active?: boolean
           code: string
+          createdAt?: string
+          createdBy: string
           customFields?: Json | null
           decimalPlaces?: number
           exchangeRate?: number
@@ -1769,6 +1773,8 @@ export type Database = {
         Update: {
           active?: boolean
           code?: string
+          createdAt?: string
+          createdBy?: string
           customFields?: Json | null
           decimalPlaces?: number
           exchangeRate?: number
