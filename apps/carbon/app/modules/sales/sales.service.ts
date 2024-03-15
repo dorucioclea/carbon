@@ -17,6 +17,7 @@ import type {
   quotationOperationValidator,
   quotationValidator,
 } from "./sales.models";
+import { getLocalTimeZone, today } from "@internationalized/date";
 
 export async function deleteCustomerContact(
   client: SupabaseClient<Database>,
@@ -570,6 +571,21 @@ export async function insertQuoteLineQuantity(
       materialCost,
     },
   ]);
+}
+
+export async function releaseQuote(
+  client: SupabaseClient<Database>,
+  quoteId: string,
+  usedId: string
+) {
+  return client
+    .from("quote")
+    .update({
+      status: "Open",
+      updatedAt: today(getLocalTimeZone()).toString(),
+      updatedBy: usedId,
+    })
+    .eq("id", quoteId);
 }
 
 export async function updateCustomer(
