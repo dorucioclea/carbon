@@ -10,6 +10,7 @@ import {
 } from "~/modules/resources";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost, notFound } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -42,9 +43,8 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "resources",
   });
 
-  const validation = await validator(contractorValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const validation = await validator(contractorValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -57,6 +57,7 @@ export async function action({ request }: ActionFunctionArgs) {
     id,
     hoursPerWeek,
     abilities: abilities ?? [],
+    customFields: setCustomFields(formData),
     updatedBy: userId,
   });
 
@@ -84,6 +85,7 @@ export default function ContractorRoute() {
     supplierId: contractor.supplierId ?? "",
     hoursPerWeek: contractor.hoursPerWeek ?? 0,
     abilities: contractor.abilityIds ?? ([] as string[]),
+    ...getCustomFields(contractor.customFields),
   };
 
   return (

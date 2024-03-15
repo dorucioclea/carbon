@@ -22,6 +22,28 @@ const ContractorsTable = memo(({ data, count }: ContractorsTableProps) => {
   const columns = useMemo<ColumnDef<Contractor>[]>(() => {
     return [
       {
+        header: "Contractor",
+        cell: ({ row }) => (
+          <HStack>
+            <Avatar
+              size="sm"
+              name={`${row.original.firstName} ${row.original.lastName}` ?? ""}
+            />
+            <Hyperlink
+              onClick={() => {
+                navigate(
+                  `${path.to.contractor(
+                    row.original.supplierContactId!
+                  )}?${params.toString()}`
+                );
+              }}
+            >
+              {row.original.firstName} {row.original.lastName}
+            </Hyperlink>
+          </HStack>
+        ),
+      },
+      {
         accessorKey: "supplier",
         header: "Supplier",
         cell: ({ row }) => (
@@ -35,12 +57,6 @@ const ContractorsTable = memo(({ data, count }: ContractorsTableProps) => {
               {row.original.supplierName}
             </Hyperlink>
           </HStack>
-        ),
-      },
-      {
-        header: "Contractor",
-        cell: ({ row }) => (
-          <>{`${row.original.firstName} ${row.original.lastName}`}</>
         ),
       },
       {

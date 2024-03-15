@@ -1,7 +1,7 @@
 ALTER TABLE "account" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "accountCategory" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "accountSubcategory" ADD COLUMN "customFields" JSONB;
-ALTER TABLE "contractor" ADD COLUMN "customFields" JSONB;
+-- ALTER TABLE "contractor" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "currency" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "customer" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "customerContact" ADD COLUMN "customFields" JSONB;

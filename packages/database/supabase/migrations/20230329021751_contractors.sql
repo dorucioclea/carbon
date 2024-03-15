@@ -6,6 +6,7 @@ CREATE TABLE "contractor" (
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
+  "customFields" JSONB,
 
   CONSTRAINT "contractor_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "contractor_id_fkey" FOREIGN KEY ("id") REFERENCES "supplierContact"("id"),
@@ -92,6 +93,7 @@ CREATE OR REPLACE VIEW "contractors" AS
     p.id AS "supplierContactId", 
     p."active", 
     p."hoursPerWeek", 
+    p."customFields",
     s.id AS "supplierId", 
     s.name AS "supplierName", 
     c."firstName",
@@ -108,5 +110,4 @@ CREATE OR REPLACE VIEW "contractors" AS
     LEFT JOIN "contractorAbility" pa
       ON pa."contractorId" = p.id
   WHERE p."active" = true
-  GROUP BY p.id, p.active, p."hoursPerWeek", s.id, c.id, s.name, c."firstName", c."lastName", c."email"
-;
+  GROUP BY p.id, p.active, p."hoursPerWeek", p."customFields", s.id, c.id, s.name, c."firstName", c."lastName", c."email";

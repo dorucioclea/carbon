@@ -1,4 +1,4 @@
-import type { Database } from "@carbon/database";
+import type { Database, Json } from "@carbon/database";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { z } from "zod";
 import type { DataType } from "~/modules/shared";
@@ -962,12 +962,14 @@ export async function upsertContractor(
         hoursPerWeek?: number;
         abilities: string[];
         createdBy: string;
+        customFields?: Json;
       }
     | {
         id: string;
         hoursPerWeek?: number;
         abilities: string[];
         updatedBy: string;
+        customFields?: Json;
       }
 ) {
   const { abilities, ...contractor } = contractorWithAbilities;
