@@ -726,10 +726,12 @@ export async function upsertAccountSubcategory(
   accountSubcategory:
     | (Omit<z.infer<typeof accountSubcategoryValidator>, "id"> & {
         createdBy: string;
+        customFields: Json;
       })
     | (Omit<z.infer<typeof accountSubcategoryValidator>, "id"> & {
         id: string;
         updatedBy: string;
+        customFields: Json;
       })
 ) {
   if ("createdBy" in accountSubcategory) {
