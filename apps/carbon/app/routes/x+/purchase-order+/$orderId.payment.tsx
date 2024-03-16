@@ -11,6 +11,7 @@ import {
 } from "~/modules/purchasing";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -66,9 +67,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { orderId } = params;
   if (!orderId) throw new Error("Could not find orderId");
 
-  // validate with purchasingValidator
+  const formData = await request.formData();
   const validation = await validator(purchaseOrderPaymentValidator).validate(
-    await request.formData()
+    formData
   );
 
   if (validation.error) {
@@ -79,6 +80,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     ...validation.data,
     id: orderId,
     updatedBy: userId,
+    customFields: setCustomFields(formData),
   });
   if (updatePurchaseOrderPayment.error) {
     return redirect(
@@ -112,6 +114,7 @@ export default function PurchaseOrderPaymentRoute() {
     paymentTermId: purchaseOrderPayment.paymentTermId ?? undefined,
     paymentComplete: purchaseOrderPayment.paymentComplete ?? undefined,
     currencyCode: (purchaseOrderPayment.currencyCode ?? "USD") as "USD",
+    ...getCustomFields(purchaseOrderPayment.customFields),
   };
 
   return (

@@ -848,10 +848,12 @@ export async function upsertPurchaseOrderPayment(
   purchaseOrderPayment:
     | (z.infer<typeof purchaseOrderPaymentValidator> & {
         createdBy: string;
+        customFields?: Json;
       })
     | (z.infer<typeof purchaseOrderPaymentValidator> & {
         id: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("id" in purchaseOrderPayment) {
