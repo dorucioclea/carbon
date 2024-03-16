@@ -9,7 +9,13 @@ import {
   DropdownMenuTrigger,
   HStack,
   IconButton,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+  useKeyboardShortcuts,
 } from "@carbon/react";
+import { useRef } from "react";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 
 export type PaginationProps = {
@@ -82,6 +88,20 @@ export const PaginationButtons = ({
   pageSize,
   previousPage,
 }: PaginationProps & { condensed?: boolean }) => {
+  const nextButtonRef = useRef<HTMLButtonElement>(null);
+  const previousButtonRef = useRef<HTMLButtonElement>(null);
+
+  useKeyboardShortcuts({
+    x: (event: KeyboardEvent) => {
+      event.stopPropagation();
+      nextButtonRef.current?.click();
+    },
+    p: (event: KeyboardEvent) => {
+      event.stopPropagation();
+      previousButtonRef.current?.click();
+    },
+  });
+
   return (
     <>
       {condensed ? (
@@ -102,28 +122,44 @@ export const PaginationButtons = ({
           />
         </>
       ) : (
-        <>
+        <TooltipProvider>
           <div className="text-foreground flex text-sm font-medium align-center">
             {count > 0 ? offset + 1 : 0} - {Math.min(offset + pageSize, count)}{" "}
             of {count}
           </div>
-          <Button
-            variant="secondary"
-            isDisabled={!canPreviousPage}
-            onClick={previousPage}
-            leftIcon={<BsChevronLeft />}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="secondary"
-            isDisabled={!canNextPage}
-            onClick={nextPage}
-            rightIcon={<BsChevronRight />}
-          >
-            Next
-          </Button>
-        </>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                ref={previousButtonRef}
+                variant="secondary"
+                isDisabled={!canPreviousPage}
+                onClick={previousPage}
+                leftIcon={<BsChevronLeft />}
+              >
+                Previous
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <HStack>P</HStack>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                ref={nextButtonRef}
+                variant="secondary"
+                isDisabled={!canNextPage}
+                onClick={nextPage}
+                rightIcon={<BsChevronRight />}
+              >
+                Next
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <HStack>X</HStack>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       )}
     </>
   );

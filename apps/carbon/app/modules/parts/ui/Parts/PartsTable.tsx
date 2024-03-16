@@ -1,4 +1,4 @@
-import { Hyperlink, MenuIcon, MenuItem } from "@carbon/react";
+import { Enumerable, Hyperlink, MenuIcon, MenuItem } from "@carbon/react";
 import { useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo } from "react";
@@ -41,18 +41,17 @@ const PartsTable = memo(({ data, count }: PartsTableProps) => {
       {
         accessorKey: "partType",
         header: "Part Type",
-        cell: (item) => item.getValue(),
+        cell: (item) => <Enumerable value={item.getValue<string>()} />,
       },
       {
         accessorKey: "replenishmentSystem",
         header: "Replenishment",
-        cell: (item) => item.getValue(),
+        cell: (item) => <Enumerable value={item.getValue<string>()} />,
       },
       {
-        // @ts-ignore
         accessorKey: "partGroup",
         header: "Part Group",
-        cell: (item) => item.getValue(),
+        cell: (item) => <Enumerable value={item.getValue<string>()} />,
       },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
