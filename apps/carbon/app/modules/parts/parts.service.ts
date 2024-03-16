@@ -508,10 +508,12 @@ export async function upsertPartSupplier(
   partSupplier:
     | (Omit<z.infer<typeof partSupplierValidator>, "id"> & {
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof partSupplierValidator>, "id"> & {
         id: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("createdBy" in partSupplier) {

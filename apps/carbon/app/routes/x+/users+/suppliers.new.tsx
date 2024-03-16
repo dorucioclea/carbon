@@ -16,9 +16,9 @@ export async function action({ request }: ActionFunctionArgs) {
   const { client } = await requirePermissions(request, {
     view: "users",
   });
-
+  const formData = await request.formData();
   const validation = await validator(createSupplierAccountValidator).validate(
-    await request.formData()
+    formData
   );
 
   if (validation.error) {

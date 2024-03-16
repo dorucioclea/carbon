@@ -3,7 +3,7 @@ import { useRouteData } from "~/hooks";
 import type { AttributeDataType } from "~/modules/resources";
 import { CustomFieldForm, customFieldValidator } from "~/modules/settings";
 import { DataType } from "~/modules/shared";
-import { path } from "~/utils/path";
+import { getParams, path } from "~/utils/path";
 
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
@@ -43,7 +43,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(path.to.customFieldList(tableId));
+  return redirect(`${path.to.customFieldList(tableId)}?${getParams(request)}`);
 }
 
 export default function NewCustomFieldRoute() {

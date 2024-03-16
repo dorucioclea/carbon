@@ -138,7 +138,7 @@ const CustomFieldCategoryDetail = ({
     return (
       <>
         <MenuItem asChild>
-          <Link to={fieldId}>
+          <Link to={`${fieldId}?${params.toString()}`}>
             <MenuIcon icon={<BsFillPenFill />} />
             Edit Custom Field
           </Link>

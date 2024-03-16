@@ -9,6 +9,7 @@ import {
 } from "~/modules/parts";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";
@@ -22,9 +23,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { partId } = params;
   if (!partId) throw new Error("Could not find partId");
 
-  const validation = await validator(partSupplierValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const validation = await validator(partSupplierValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -35,6 +35,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const createPartSupplier = await upsertPartSupplier(client, {
     ...data,
     createdBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (createPartSupplier.error) {
