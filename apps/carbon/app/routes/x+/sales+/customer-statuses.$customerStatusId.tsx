@@ -10,6 +10,7 @@ import {
 } from "~/modules/sales";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost, notFound } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -46,8 +47,9 @@ export async function action({ request }: ActionFunctionArgs) {
     update: "sales",
   });
 
+  const formData = await request.formData();
   const validation = await validator(customerStatusValidator).validate(
-    await request.formData()
+    formData
   );
 
   if (validation.error) {
@@ -61,6 +63,7 @@ export async function action({ request }: ActionFunctionArgs) {
     id,
     ...data,
     updatedBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (updateCustomerStatus.error) {
@@ -86,6 +89,7 @@ export default function EditCustomerStatusesRoute() {
   const initialValues = {
     id: customerStatus.id ?? undefined,
     name: customerStatus.name ?? "",
+    ...getCustomFields(customerStatus.customFields),
   };
 
   return (

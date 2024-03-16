@@ -217,7 +217,7 @@ export async function getCustomerStatus(
 ) {
   return client
     .from("customerStatus")
-    .select("id, name")
+    .select("*")
     .eq("id", customerStatusId)
     .single();
 }
@@ -673,10 +673,12 @@ export async function upsertCustomerStatus(
   customerStatus:
     | (Omit<z.infer<typeof customerStatusValidator>, "id"> & {
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof customerStatusValidator>, "id"> & {
         id: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("createdBy" in customerStatus) {
