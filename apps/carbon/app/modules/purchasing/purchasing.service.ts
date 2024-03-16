@@ -880,6 +880,7 @@ export async function upsertRequestForQuote(
       > & {
         requestForQuoteId: string;
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<
         z.infer<typeof requestForQuoteValidator>,
@@ -888,6 +889,7 @@ export async function upsertRequestForQuote(
         id: string;
         requestForQuoteId: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("createdBy" in requestForQuote) {
@@ -908,10 +910,12 @@ export async function upsertSupplierStatus(
   supplierStatus:
     | (Omit<z.infer<typeof supplierStatusValidator>, "id"> & {
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof supplierStatusValidator>, "id"> & {
         id: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("createdBy" in supplierStatus) {
@@ -929,10 +933,12 @@ export async function upsertSupplierType(
   supplierType:
     | (Omit<z.infer<typeof supplierTypeValidator>, "id"> & {
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof supplierTypeValidator>, "id"> & {
         id: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("createdBy" in supplierType) {

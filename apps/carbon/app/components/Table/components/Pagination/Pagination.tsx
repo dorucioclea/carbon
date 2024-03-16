@@ -92,11 +92,11 @@ export const PaginationButtons = ({
   const previousButtonRef = useRef<HTMLButtonElement>(null);
 
   useKeyboardShortcuts({
-    x: (event: KeyboardEvent) => {
+    j: (event: KeyboardEvent) => {
       event.stopPropagation();
       nextButtonRef.current?.click();
     },
-    p: (event: KeyboardEvent) => {
+    f: (event: KeyboardEvent) => {
       event.stopPropagation();
       previousButtonRef.current?.click();
     },
@@ -140,7 +140,7 @@ export const PaginationButtons = ({
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <HStack>P</HStack>
+              <HStack>F</HStack>
             </TooltipContent>
           </Tooltip>
           <Tooltip>
@@ -156,7 +156,7 @@ export const PaginationButtons = ({
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <HStack>X</HStack>
+              <HStack>J</HStack>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
