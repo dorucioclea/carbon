@@ -10,6 +10,7 @@ import {
 } from "~/modules/sales";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";
@@ -24,8 +25,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   if (!quoteId) throw new Error("Could not find quoteId");
   if (!quoteLineId) throw new Error("Could not find quoteLineId");
 
+  const formData = await request.formData();
   const validation = await validator(quotationOperationValidator).validate(
-    await request.formData()
+    formData
   );
 
   if (validation.error) {
@@ -39,6 +41,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     quoteLineId,
     ...data,
     createdBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (createQuotationOperation.error) {

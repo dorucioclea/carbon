@@ -1,4 +1,4 @@
-import { VStack, cn, useDisclosure } from "@carbon/react";
+import { Button, VStack, cn, useDisclosure } from "@carbon/react";
 import { Link, useMatches } from "@remix-run/react";
 import { noop } from "@tanstack/react-table";
 import { forwardRef, type AnchorHTMLAttributes } from "react";
@@ -42,13 +42,11 @@ const IconSidebar = () => {
           spacing={1}
           className="flex flex-col gap-y-1 justify-start px-2"
         >
-          <NavigationIconLink
-            link={{
-              to: "/",
-              name: "",
-              icon: BsFillHexagonFill,
-            }}
-          />
+          <Button isIcon asChild variant="ghost" size="lg">
+            <Link to="/">
+              <BsFillHexagonFill />
+            </Link>
+          </Button>
 
           {links.map((link) => {
             const module = link.to.split("/")[2]; // link.to is "/x/parts" -- this returns "parts"
@@ -95,8 +93,7 @@ const NavigationIconLink = forwardRef<
       "flex items-center rounded",
       "group-data-[state=collapsed]:justify-center",
       "group-data-[state=expanded]:-space-x-2",
-      "text-foreground",
-      "hover:bg-muted",
+      "hover:bg-primary/10 active:",
       `${
         isActive
           ? "!bg-primary !text-primary-foreground shadow-sm hover:text-primary-foreground"
@@ -122,11 +119,8 @@ const NavigationIconLink = forwardRef<
           aria-hidden={isOpen || undefined}
           className={cn(
             "min-w-[128px] text-sm",
-            "group-aria-current/item:text-foreground",
             "absolute left-7 group-data-[state=expanded]:left-12",
-            "opacity-0 group-data-[state=expanded]:opacity-100",
-            "transition-all",
-            !isActive && "group-hover/item:text-foreground"
+            "opacity-0 group-data-[state=expanded]:opacity-100"
           )}
         >
           {link.name}

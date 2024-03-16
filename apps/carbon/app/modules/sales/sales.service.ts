@@ -853,12 +853,14 @@ export async function upsertQuoteOperation(
         quoteId: string;
         quoteLineId: string;
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof quotationOperationValidator>, "id"> & {
         id: string;
         quoteId: string;
         quoteLineId: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("id" in quotationOperation) {

@@ -12,6 +12,7 @@ import {
 } from "~/modules/sales";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";
@@ -66,8 +67,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   if (!quoteLineId) throw new Error("Could not find quoteLineId");
   if (!operationId) throw new Error("Could not find operationId");
 
+  const formData = await request.formData();
   const validation = await validator(quotationOperationValidator).validate(
-    await request.formData()
+    formData
   );
 
   if (validation.error) {
@@ -82,6 +84,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     quoteLineId,
     ...data,
     createdBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (updateQuotationOperation.error) {
@@ -117,6 +120,7 @@ export default function QuoteOperation() {
     quotingRate: quoteOperation.quotingRate,
     laborRate: quoteOperation.laborRate,
     overheadRate: quoteOperation.overheadRate,
+    ...getCustomFields(quoteOperation.customFields),
   };
 
   return (
