@@ -394,7 +394,7 @@ export async function getEquipment(
   return client
     .from("equipment")
     .select(
-      "id, name, description, operatorsRequired, setupHours, equipmentType(id, name), workCell(id, name), location(id, name)"
+      "*, equipmentType(id, name), workCell(id, name), location(id, name)"
     )
     .eq("id", equipmentId)
     .eq("active", true)
@@ -725,7 +725,7 @@ export async function getWorkCell(
   return client
     .from("workCell")
     .select(
-      "id, name, description, activeDate, workCellType(id, name), location(id, name), department(id, name)"
+      "*, workCellType(id, name), location(id, name), department(id, name)"
     )
     .eq("id", workCellId)
     .eq("active", true)
@@ -1083,10 +1083,12 @@ export async function upsertEquipment(
   equipment:
     | (Omit<z.infer<typeof equipmentValidator>, "id"> & {
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof equipmentValidator>, "id"> & {
         id: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("id" in equipment) {

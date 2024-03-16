@@ -4,6 +4,7 @@ import { json, redirect } from "@remix-run/node";
 import { equipmentValidator, upsertEquipment } from "~/modules/resources";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";
@@ -14,9 +15,8 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "resources",
   });
 
-  const validation = await validator(equipmentValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const validation = await validator(equipmentValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -27,6 +27,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const insertEquipment = await upsertEquipment(client, {
     ...data,
     createdBy: userId,
+    customFields: setCustomFields(formData),
   });
   if (insertEquipment.error) {
     return json(

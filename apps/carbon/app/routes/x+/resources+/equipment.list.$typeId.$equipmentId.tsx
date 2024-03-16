@@ -6,6 +6,7 @@ import type { EquipmentType } from "~/modules/resources";
 import { EquipmentForm, getEquipment } from "~/modules/resources";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields } from "~/utils/form";
 import { notFound } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";
@@ -68,6 +69,7 @@ export default function EditEquipmentRoute() {
         operatorsRequired: equipment?.operatorsRequired ?? 1,
         setupHours: equipment?.setupHours ?? 0,
         workCellId: equipment?.workCell?.id,
+        ...getCustomFields(equipment?.customFields),
       }}
       equipmentTypes={equipmentRouteData?.equipmentTypes ?? []}
       onClose={onClose}
