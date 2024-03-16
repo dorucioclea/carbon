@@ -820,6 +820,7 @@ export async function upsertQuoteMaterial(
         quoteLineId: string;
         quoteOperationId: string;
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof quotationMaterialValidator>, "id"> & {
         id: string;
@@ -827,6 +828,7 @@ export async function upsertQuoteMaterial(
         quoteLineId: string;
         quoteOperationId: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("id" in quotationMaterial) {

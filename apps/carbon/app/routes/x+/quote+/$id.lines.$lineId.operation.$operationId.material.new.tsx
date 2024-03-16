@@ -9,6 +9,7 @@ import {
 } from "~/modules/sales";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";
@@ -28,8 +29,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   if (!quoteLineId) throw new Error("Could not find quoteLineId");
   if (!quoteOperationId) throw new Error("Could not find operationId");
 
+  const formData = await request.formData();
   const validation = await validator(quotationMaterialValidator).validate(
-    await request.formData()
+    formData
   );
 
   if (validation.error) {
@@ -44,6 +46,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     quoteOperationId,
     ...data,
     createdBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (createQuotationMaterial.error) {
