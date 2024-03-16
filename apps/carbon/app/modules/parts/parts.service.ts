@@ -479,10 +479,12 @@ export async function upsertPartGroup(
   partGroup:
     | (Omit<z.infer<typeof partGroupValidator>, "id"> & {
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof partGroupValidator>, "id"> & {
         id: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("createdBy" in partGroup) {

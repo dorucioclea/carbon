@@ -10,6 +10,7 @@ import {
 } from "~/modules/parts";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost, notFound } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -39,9 +40,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { groupId } = params;
   if (!groupId) throw new Error("Could not find groupId");
 
-  const validation = await validator(partGroupValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const validation = await validator(partGroupValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -51,6 +51,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     id: groupId,
     ...validation.data,
     updatedBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (updatePartGroup.error) {
@@ -77,6 +78,7 @@ export default function EditPartGroupsRoute() {
     id: partGroup?.id ?? undefined,
     name: partGroup?.name ?? "",
     description: partGroup?.description ?? "",
+    ...getCustomFields(partGroup?.customFields),
   };
 
   return (
