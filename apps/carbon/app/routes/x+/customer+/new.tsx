@@ -4,10 +4,11 @@ import { json, redirect } from "@remix-run/node";
 import {
   CustomerForm,
   customerValidator,
-  insertCustomer,
+  upsertCustomer,
 } from "~/modules/sales";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";
@@ -29,8 +30,9 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const { id, ...data } = validation.data;
 
-  const createCustomer = await insertCustomer(client, {
+  const createCustomer = await upsertCustomer(client, {
     ...data,
+    customFields: setCustomFields(formData),
     createdBy: userId,
   });
   if (createCustomer.error) {

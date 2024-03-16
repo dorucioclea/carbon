@@ -7,10 +7,11 @@ import type { CustomerDetail } from "~/modules/sales";
 import {
   CustomerForm,
   customerValidator,
-  updateCustomer,
+  upsertCustomer,
 } from "~/modules/sales";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -21,9 +22,8 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "sales",
   });
 
-  const validation = await validator(customerValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const validation = await validator(customerValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -38,9 +38,10 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  const update = await updateCustomer(client, {
+  const update = await upsertCustomer(client, {
     id,
     ...data,
+    customFields: setCustomFields(formData),
     updatedBy: userId,
   });
   if (update.error) {
@@ -69,6 +70,7 @@ export default function CustomerEditRoute() {
     customerStatusId: routeData?.customer?.customerStatusId ?? undefined,
     accountManagerId: routeData?.customer?.accountManagerId ?? undefined,
     taxId: routeData?.customer?.taxId ?? "",
+    ...getCustomFields(routeData?.customer?.customFields),
   };
 
   return <CustomerForm key={initialValues.id} initialValues={initialValues} />;

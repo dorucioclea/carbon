@@ -1,4 +1,4 @@
-import type { Database } from "@carbon/database";
+import type { Database, Json } from "@carbon/database";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { z } from "zod";
 import type { GenericQueryFilters } from "~/utils/query";
@@ -448,20 +448,6 @@ export async function getQuoteOperations(
   return client.from("quoteOperation").select("*").eq("quoteId", quoteId);
 }
 
-export async function insertCustomer(
-  client: SupabaseClient<Database>,
-  customer:
-    | (Omit<z.infer<typeof customerValidator>, "id"> & {
-        createdBy: string;
-      })
-    | (Omit<z.infer<typeof customerValidator>, "id"> & {
-        id: string;
-        updatedBy: string;
-      })
-) {
-  return client.from("customer").insert([customer]).select("*").single();
-}
-
 export async function insertCustomerContact(
   client: SupabaseClient<Database>,
   customerContact: {
@@ -572,13 +558,22 @@ export async function insertQuoteLineQuantity(
   ]);
 }
 
-export async function updateCustomer(
+export async function upsertCustomer(
   client: SupabaseClient<Database>,
-  customer: Omit<z.infer<typeof customerValidator>, "id"> & {
-    id: string;
-    updatedBy: string;
-  }
+  customer:
+    | (Omit<z.infer<typeof customerValidator>, "id"> & {
+        createdBy: string;
+        customFields?: Json;
+      })
+    | (Omit<z.infer<typeof customerValidator>, "id"> & {
+        id: string;
+        updatedBy: string;
+        customFields?: Json;
+      })
 ) {
+  if ("createdBy" in customer) {
+    return client.from("customer").insert([customer]).select("*").single();
+  }
   return client
     .from("customer")
     .update(sanitize(customer))
