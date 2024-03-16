@@ -8,6 +8,7 @@ import type { GenericQueryFilters } from "~/utils/query";
 import { setGenericQueryFilters } from "~/utils/query";
 import { sanitize } from "~/utils/supabase";
 import type {
+  departmentValidator,
   employeeJobValidator,
   equipmentTypeValidator,
   equipmentValidator,
@@ -1012,19 +1013,15 @@ export async function upsertContractor(
 export async function upsertDepartment(
   client: SupabaseClient<Database>,
   department:
-    | {
-        name: string;
-        color?: string;
-        parentDepartmentId?: string;
+    | (Omit<z.infer<typeof departmentValidator>, "id"> & {
         createdBy: string;
-      }
-    | {
+        customFields?: Json;
+      })
+    | (Omit<z.infer<typeof departmentValidator>, "id"> & {
         id: string;
-        name: string;
-        color?: string;
-        parentDepartmentId?: string;
         updatedBy: string;
-      }
+        customFields?: Json;
+      })
 ) {
   if ("id" in department) {
     return client

@@ -9,6 +9,7 @@ import {
 } from "~/modules/resources";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -33,6 +34,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const createDepartment = await upsertDepartment(client, {
     ...data,
     createdBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (createDepartment.error) {
