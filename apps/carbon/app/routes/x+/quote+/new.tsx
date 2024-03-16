@@ -10,6 +10,7 @@ import {
 import { getNextSequence, rollbackNextSequence } from "~/modules/settings";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";
@@ -20,9 +21,8 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "sales",
   });
 
-  const validation = await validator(quotationValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const validation = await validator(quotationValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -43,6 +43,7 @@ export async function action({ request }: ActionFunctionArgs) {
     ...validation.data,
     quoteId: nextSequence.data,
     createdBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (createQuotation.error || !createQuotation.data?.[0]) {

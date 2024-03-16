@@ -12,6 +12,7 @@ import {
 } from "~/modules/sales";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -25,9 +26,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { id } = params;
   if (!id) throw new Error("Could not find id");
 
-  const validation = await validator(quotationValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const validation = await validator(quotationValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -41,6 +41,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     quoteId,
     ...data,
     updatedBy: userId,
+    customFields: setCustomFields(formData),
   });
   if (updateQuotation.error) {
     return redirect(
@@ -81,6 +82,7 @@ export default function QuotationBasicRoute() {
     expirationDate: quoteData?.quotation.expirationDate ?? undefined,
     status: quoteData?.quotation?.status ?? ("Draft" as "Draft"),
     notes: quoteData?.quotation?.notes ?? "",
+    ...getCustomFields(quoteData.quotation.customFields),
   };
 
   return (

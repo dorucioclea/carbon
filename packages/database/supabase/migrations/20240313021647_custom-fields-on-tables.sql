@@ -33,7 +33,7 @@ ALTER TABLE "purchasePayment" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "purchaseOrderDelivery" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "purchaseOrderLine" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "purchaseOrderPayment" ADD COLUMN "customFields" JSONB;
-ALTER TABLE "quote" ADD COLUMN "customFields" JSONB;
+-- ALTER TABLE "quote" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "quoteAssembly" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "quoteLine" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "quoteMaterial" ADD COLUMN "customFields" JSONB;

@@ -740,11 +740,13 @@ export async function upsertQuote(
     | (Omit<z.infer<typeof quotationValidator>, "id" | "quoteId"> & {
         quoteId: string;
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof quotationValidator>, "id" | "quoteId"> & {
         id: string;
         quoteId: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("createdBy" in quote) {

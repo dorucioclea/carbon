@@ -12987,6 +12987,7 @@ export type Database = {
           customerLocationId: string | null
           customerName: string | null
           customerReference: string | null
+          customFields: Json | null
           expirationDate: string | null
           favorite: boolean | null
           id: string | null
