@@ -12,6 +12,7 @@ import type {
   employeeJobValidator,
   equipmentTypeValidator,
   equipmentValidator,
+  holidayValidator,
   locationValidator,
   partnerValidator,
   workCellTypeValidator,
@@ -143,12 +144,9 @@ export async function getAbilities(
 ) {
   let query = client
     .from("ability")
-    .select(
-      `id, name, curve, shadowWeeks, employeeAbility(user(id, fullName, avatarUrl))`,
-      {
-        count: "exact",
-      }
-    )
+    .select(`*, employeeAbility(user(id, fullName, avatarUrl))`, {
+      count: "exact",
+    })
     .eq("active", true)
     .eq("employeeAbility.active", true)
     .eq("employeeAbility.user.active", true);
@@ -174,7 +172,7 @@ export async function getAbility(
   return client
     .from("ability")
     .select(
-      `id, name, curve, shadowWeeks, employeeAbility(id, user(id, fullName, avatarUrl, active), lastTrainingDate, trainingDays, trainingCompleted)`,
+      `*, employeeAbility(id, user(id, fullName, avatarUrl, active), lastTrainingDate, trainingDays, trainingCompleted)`,
       {
         count: "exact",
       }
@@ -192,9 +190,7 @@ export async function getAttribute(
 ) {
   return client
     .from("userAttribute")
-    .select(
-      "id, name, sortOrder, listOptions, attributeDataTypeId, userAttributeCategoryId, canSelfManage, userAttributeCategory(name)"
-    )
+    .select("*, userAttributeCategory(name)")
     .eq("id", attributeId)
     .eq("active", true)
     .single();
@@ -207,7 +203,7 @@ async function getAttributes(
   return client
     .from("userAttributeCategory")
     .select(
-      `id, name,
+      `*,
       userAttribute(id, name, listOptions, canSelfManage,
         attributeDataType(id, isBoolean, isDate, isNumeric, isText, isUser),
         userAttributeValue(
@@ -226,12 +222,9 @@ export async function getAttributeCategories(
 ) {
   let query = client
     .from("userAttributeCategory")
-    .select(
-      "id, name, protected, public, userAttribute(id, name, attributeDataType(id))",
-      {
-        count: "exact",
-      }
-    )
+    .select("*, userAttribute(id, name, attributeDataType(id))", {
+      count: "exact",
+    })
     .eq("active", true)
     .eq("userAttribute.active", true);
 
@@ -255,7 +248,7 @@ export async function getAttributeCategory(
   return client
     .from("userAttributeCategory")
     .select(
-      `id, name, public, protected, 
+      `*, 
       userAttribute(
         id, name, sortOrder, 
         attributeDataType(id, label,  isBoolean, isDate, isList, isNumeric, isText, isUser ))
@@ -347,9 +340,7 @@ export async function getEmployeeAbility(
 ) {
   return client
     .from("employeeAbility")
-    .select(
-      `id, lastTrainingDate, trainingDays, trainingCompleted, user(id, fullName, avatarUrl)`
-    )
+    .select(`*, user(id, fullName, avatarUrl)`)
     .eq("abilityId", abilityId)
     .eq("id", employeeAbilityId)
     .eq("active", true)
@@ -362,9 +353,7 @@ export async function getEmployeeAbilities(
 ) {
   return client
     .from("employeeAbility")
-    .select(
-      `id, lastTrainingDate, trainingDays, trainingCompleted, ability(id, name, curve, shadowWeeks)`
-    )
+    .select(`*, ability(id, name, curve, shadowWeeks)`)
     .eq("employeeId", employeeId)
     .eq("active", true);
 }
@@ -446,18 +435,14 @@ export async function getHoliday(
   client: SupabaseClient<Database>,
   holidayId: string
 ) {
-  return client
-    .from("holiday")
-    .select(`id, name, date, year`)
-    .eq("id", holidayId)
-    .single();
+  return client.from("holiday").select("*").eq("id", holidayId).single();
 }
 
 export async function getHolidays(
   client: SupabaseClient<Database>,
   args?: GenericQueryFilters & { name: string | null; year: number | null }
 ) {
-  let query = client.from("holiday").select(`id, name, date, year`, {
+  let query = client.from("holiday").select("*", {
     count: "exact",
   });
 
@@ -1126,25 +1111,20 @@ export async function upsertEquipmentType(
 export async function upsertHoliday(
   client: SupabaseClient<Database>,
   holiday:
-    | {
-        name: string;
-        date: string;
+    | (Omit<z.infer<typeof holidayValidator>, "id"> & {
         createdBy: string;
-      }
-    | {
+        customFields?: Json;
+      })
+    | (Omit<z.infer<typeof holidayValidator>, "id"> & {
         id: string;
-        name: string;
-        date: string;
         updatedBy: string;
-      }
+        customFields?: Json;
+      })
 ) {
-  if ("id" in holiday) {
-    return client
-      .from("holiday")
-      .update(sanitize(holiday))
-      .eq("id", holiday.id);
+  if ("createdBy" in holiday) {
+    return client.from("holiday").insert(holiday).select("*").single();
   }
-  return client.from("holiday").insert(holiday).select("*").single();
+  return client.from("holiday").update(sanitize(holiday)).eq("id", holiday.id);
 }
 
 export async function upsertLocation(

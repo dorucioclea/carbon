@@ -8,6 +8,7 @@ import {
 } from "~/modules/resources";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -18,9 +19,8 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "resources",
   });
 
-  const validation = await validator(holidayValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const validation = await validator(holidayValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -32,6 +32,7 @@ export async function action({ request }: ActionFunctionArgs) {
     name,
     date,
     createdBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (createHoliday.error) {
