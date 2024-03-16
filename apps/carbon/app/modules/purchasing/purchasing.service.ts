@@ -820,10 +820,12 @@ export async function upsertPurchaseOrderLine(
   purchaseOrderLine:
     | (Omit<z.infer<typeof purchaseOrderLineValidator>, "id"> & {
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof purchaseOrderLineValidator>, "id"> & {
         id: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("id" in purchaseOrderLine) {

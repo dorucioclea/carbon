@@ -11,6 +11,7 @@ import {
 } from "~/modules/purchasing";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost, notFound } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";
@@ -41,8 +42,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   if (!orderId) throw new Error("Could not find orderId");
   if (!lineId) throw new Error("Could not find lineId");
 
+  const formData = await request.formData();
   const validation = await validator(purchaseOrderLineValidator).validate(
-    await request.formData()
+    formData
   );
 
   if (validation.error) {
@@ -78,6 +80,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     id: lineId,
     ...data,
     updatedBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (updatePurchaseOrderLine.error) {
@@ -115,6 +118,7 @@ export default function EditPurchaseOrderLineRoute() {
     setupPrice: purchaseOrderLine?.setupPrice ?? 0,
     unitOfMeasureCode: purchaseOrderLine?.unitOfMeasureCode ?? "",
     shelfId: purchaseOrderLine?.shelfId ?? "",
+    ...getCustomFields(purchaseOrderLine?.customFields),
   };
 
   return (
