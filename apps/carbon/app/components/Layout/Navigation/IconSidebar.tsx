@@ -1,14 +1,10 @@
-import {
-  Button,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-  VStack,
-} from "@carbon/react";
+import { VStack, cn, useDisclosure } from "@carbon/react";
 import { Link, useMatches } from "@remix-run/react";
+import { noop } from "@tanstack/react-table";
+import { forwardRef, type AnchorHTMLAttributes } from "react";
 import { BsFillHexagonFill } from "react-icons/bs";
 import { z } from "zod";
+import type { Authenticated, NavItem } from "~/types";
 import { useModules } from "./useModules";
 
 export const ModuleHandle = z.object({
@@ -16,6 +12,7 @@ export const ModuleHandle = z.object({
 });
 
 const IconSidebar = () => {
+  const navigationPanel = useDisclosure();
   const links = useModules();
   const matchedModules = useMatches().reduce((acc, match) => {
     if (match.handle) {
@@ -29,44 +26,115 @@ const IconSidebar = () => {
   }, new Set<string>());
 
   return (
-    <div className="h-full bg-background z-10 border-r border-border p-2">
-      <div>
-        <TooltipProvider>
-          <VStack spacing={1} className="self-start sticky">
-            <Button isIcon asChild variant="ghost" size="lg">
-              <Link to="/">
-                <BsFillHexagonFill />
-              </Link>
-            </Button>
+    <div className="w-14 h-full flex flex-col z-50">
+      <nav
+        data-state={navigationPanel.isOpen ? "expanded" : "collapsed"}
+        className={cn(
+          "bg-background group py-2 z-10 h-full w-14 data-[state=expanded]:w-[13rem]",
+          "border-r border-border data-[state=expanded]:shadow-xl",
+          "transition-width duration-200",
+          "hide-scrollbar flex flex-col justify-between overflow-y-auto"
+        )}
+        onMouseEnter={navigationPanel.onOpen}
+        onMouseLeave={navigationPanel.onClose}
+      >
+        <VStack
+          spacing={1}
+          className="flex flex-col gap-y-1 justify-start px-2"
+        >
+          <NavigationIconLink
+            link={{
+              to: "/",
+              name: "",
+              icon: BsFillHexagonFill,
+            }}
+          />
 
-            {links.map((link) => {
-              const module = link.to.split("/")[2]; // link.to is "/x/parts" -- this returns "parts"
+          {links.map((link) => {
+            const module = link.to.split("/")[2]; // link.to is "/x/parts" -- this returns "parts"
 
-              const isActive = matchedModules.has(module);
-              return (
-                <Tooltip key={link.to}>
-                  <TooltipTrigger asChild>
-                    <Button
-                      asChild
-                      isIcon
-                      aria-label={link.name}
-                      variant={isActive ? "primary" : "ghost"}
-                      size="lg"
-                    >
-                      <Link to={link.to} prefetch="intent">
-                        <link.icon />
-                      </Link>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="right">{link.name}</TooltipContent>
-                </Tooltip>
-              );
-            })}
-          </VStack>
-        </TooltipProvider>
-      </div>
+            const isActive = matchedModules.has(module);
+            return (
+              <NavigationIconLink
+                key={link.name}
+                link={link}
+                isActive={isActive}
+                isOpen={navigationPanel.isOpen}
+              />
+            );
+          })}
+        </VStack>
+      </nav>
     </div>
   );
 };
+
+interface NavigationIconButtonProps
+  extends AnchorHTMLAttributes<HTMLAnchorElement> {
+  link: Authenticated<NavItem>;
+  isActive?: boolean;
+  isOpen?: boolean;
+}
+
+const NavigationIconLink = forwardRef<
+  HTMLAnchorElement,
+  NavigationIconButtonProps
+>(
+  (
+    { link, isActive = false, isOpen = false, onClick = noop, ...props },
+    ref
+  ) => {
+    const iconClasses = [
+      "absolute left-3 top-3 flex rounded items-center items-center justify-center", // Layout
+    ];
+
+    const classes = [
+      "relative",
+      "h-10 w-10 group-data-[state=expanded]:w-full",
+      "transition-all duration-200",
+      "flex items-center rounded",
+      "group-data-[state=collapsed]:justify-center",
+      "group-data-[state=expanded]:-space-x-2",
+      "text-foreground",
+      "hover:bg-muted",
+      `${
+        isActive
+          ? "!bg-primary !text-primary-foreground shadow-sm hover:text-primary-foreground"
+          : "hover:text-foreground"
+      }`,
+      "group/item",
+    ];
+
+    return (
+      <Link
+        role="button"
+        aria-current={isActive}
+        ref={ref}
+        to={link.to}
+        {...props}
+        onClick={onClick}
+        className={cn(classes, props.className)}
+        prefetch="intent"
+      >
+        <link.icon className={cn(...iconClasses)} />
+
+        <span
+          aria-hidden={isOpen || undefined}
+          className={cn(
+            "min-w-[128px] text-sm",
+            "group-aria-current/item:text-foreground",
+            "absolute left-7 group-data-[state=expanded]:left-12",
+            "opacity-0 group-data-[state=expanded]:opacity-100",
+            "transition-all",
+            !isActive && "group-hover/item:text-foreground"
+          )}
+        >
+          {link.name}
+        </span>
+      </Link>
+    );
+  }
+);
+NavigationIconLink.displayName = "NavigationIconLink";
 
 export default IconSidebar;

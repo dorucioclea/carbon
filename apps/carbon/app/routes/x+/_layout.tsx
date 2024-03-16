@@ -114,8 +114,8 @@ export default function AuthenticatedRoute() {
   return (
     <SupabaseProvider session={session}>
       <RealtimeDataProvider>
-        <>
-          <div className="grid grid-cols-[auto_1fr] h-screen w-screen">
+        <div className="h-screen min-h-[0px] basis-0 flex-1">
+          <div className="flex h-full">
             <IconSidebar />
             <div className="w-full h-full">
               <div className="grid grid-rows-[auto_1fr] h-full w-full">
@@ -129,7 +129,7 @@ export default function AuthenticatedRoute() {
             </div>
           </div>
           <Toaster />
-        </>
+        </div>
       </RealtimeDataProvider>
     </SupabaseProvider>
   );
