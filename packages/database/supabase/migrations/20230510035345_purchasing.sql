@@ -172,6 +172,7 @@ CREATE TABLE "purchaseOrder" (
   "supplierReference" TEXT,
   "closedAt" DATE,
   "closedBy" TEXT,
+  "customFields" JSONB,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,

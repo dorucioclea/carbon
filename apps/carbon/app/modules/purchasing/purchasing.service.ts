@@ -1,4 +1,4 @@
-import type { Database } from "@carbon/database";
+import type { Database, Json } from "@carbon/database";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { z } from "zod";
@@ -704,6 +704,7 @@ export async function upsertPurchaseOrder(
       > & {
         purchaseOrderId: string;
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<
         z.infer<typeof purchaseOrderValidator>,
@@ -712,6 +713,7 @@ export async function upsertPurchaseOrder(
         id: string;
         purchaseOrderId: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("id" in purchaseOrder) {

@@ -29,7 +29,7 @@ ALTER TABLE "paymentTerm" ADD COLUMN "customFields" JSONB;
 -- ALTER TABLE "purchaseInvoice" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "purchaseInvoiceLine" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "purchasePayment" ADD COLUMN "customFields" JSONB;
-ALTER TABLE "purchaseOrder" ADD COLUMN "customFields" JSONB;
+-- ALTER TABLE "purchaseOrder" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "purchaseOrderDelivery" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "purchaseOrderLine" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "purchaseOrderPayment" ADD COLUMN "customFields" JSONB;
