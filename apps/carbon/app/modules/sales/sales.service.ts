@@ -763,12 +763,14 @@ export async function upsertQuoteAssembly(
         quoteId: string;
         quoteLineId: string;
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof quotationAssemblyValidator>, "id"> & {
         id: string;
         quoteId: string;
         quoteLineId: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("id" in quotationAssembly) {

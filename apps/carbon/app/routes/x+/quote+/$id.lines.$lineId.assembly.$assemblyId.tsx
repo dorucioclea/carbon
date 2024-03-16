@@ -10,6 +10,7 @@ import {
 } from "~/modules/sales";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";
@@ -50,8 +51,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   if (!quoteLineId) throw new Error("Could not find quoteLineId");
   if (!assemblyId) throw new Error("Could not find assemblyId");
 
+  const formData = await request.formData();
   const validation = await validator(quotationAssemblyValidator).validate(
-    await request.formData()
+    formData
   );
 
   if (validation.error) {
@@ -66,6 +68,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     quoteLineId,
     ...data,
     createdBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (updateQuotationAssembly.error) {
@@ -93,6 +96,7 @@ export default function QuoteAssembly() {
     description: quoteAssembly.description ?? "",
     quantityPerParent: quoteAssembly.quantityPerParent,
     unitOfMeasureCode: quoteAssembly.unitOfMeasureCode ?? "",
+    ...getCustomFields(quoteAssembly.customFields),
   };
 
   return (
