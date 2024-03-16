@@ -1,4 +1,10 @@
-import { Button, Hyperlink, MenuIcon, MenuItem } from "@carbon/react";
+import {
+  Button,
+  Enumerable,
+  Hyperlink,
+  MenuIcon,
+  MenuItem,
+} from "@carbon/react";
 import { useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo } from "react";
@@ -31,12 +37,12 @@ const SuppliersTable = memo(({ data, count }: SuppliersTableProps) => {
       {
         accessorKey: "type",
         header: "Supplier Type",
-        cell: (item) => item.getValue(),
+        cell: (item) => <Enumerable value={item.getValue<string>()} />,
       },
       {
         accessorKey: "status",
         header: "Supplier Status",
-        cell: (item) => item.getValue(),
+        cell: (item) => <Enumerable value={item.getValue<string>()} />,
       },
       {
         id: "orders",

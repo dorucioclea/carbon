@@ -8,7 +8,11 @@ type EnumerableProps = BadgeProps & {
 
 const Enumerable = ({ value, ...props }: EnumerableProps) => {
   if (!value) return null;
-  return <Badge style={getColor(value)}>{value}</Badge>;
+  return (
+    <Badge style={getColor(value)} {...props}>
+      {value}
+    </Badge>
+  );
 };
 
 export { Enumerable };

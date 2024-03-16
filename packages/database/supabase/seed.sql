@@ -154,7 +154,7 @@ INSERT INTO "supplierStatus" ("name", "createdBy") VALUES ('Active', 'system'), 
 
 -- customer status
 
-INSERT INTO "customerStatus" ("name", "createdBy") VALUES ('Active', 'system'), ('Inactive', 'system'), ('Prospect', 'system'), ('Lead', 'system'), ('On Hold', 'system'), ('Cancelled', 'system'), ('Archived', 'system');
+INSERT INTO "customerStatus" ("name", "createdBy") VALUES ('Active', 'system'), ('Inactive', 'system'), ('Lead', 'system'), ('On Hold', 'system'), ('Cancelled', 'system'), ('Archived', 'system');
 
 -- unit of measure
 

@@ -11,8 +11,14 @@ const colors = [
   { background: "#8ecae6", color: "#172a33" },
   { background: "#219ebc", color: "#ffffff" },
   { background: "#3a86ff", color: "#ffffff" },
-  { background: "#ff006e", color: "#ffffff" },
   { background: "#8338ec", color: "#ffffff" },
+  { background: "#ffadad", color: "#000000" },
+  { background: "#ffd6a5", color: "#000000" },
+  { background: "#fdffb6", color: "#000000" },
+  { background: "#caffbf", color: "#000000" },
+  { background: "#9bf6ff", color: "#000000" },
+  { background: "#a0c4ff", color: "#000000" },
+  { background: "#ffc6ff", color: "#000000" },
 ];
 
 export function getColor(name: string) {

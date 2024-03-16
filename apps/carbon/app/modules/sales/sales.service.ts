@@ -495,6 +495,7 @@ export async function insertCustomerLocation(
       // countryId: string;
       postalCode?: string;
     };
+    customFields?: Json;
   }
 ) {
   const insertAddress = await client
@@ -517,6 +518,7 @@ export async function insertCustomerLocation(
       {
         customerId: customerLocation.customerId,
         addressId,
+        customFields: customerLocation.customFields,
       },
     ])
     .select("id")
@@ -622,8 +624,19 @@ export async function updateCustomerLocation(
       // countryId: string;
       postalCode?: string;
     };
+    customFields?: Json;
   }
 ) {
+  if (customerLocation.customFields) {
+    const customFieldUpdate = await client
+      .from("customerLocation")
+      .update({ customFields: customerLocation.customFields })
+      .eq("addressId", customerLocation.addressId);
+
+    if (customFieldUpdate.error) {
+      return customFieldUpdate;
+    }
+  }
   return client
     .from("address")
     .update(sanitize(customerLocation.address))

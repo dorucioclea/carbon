@@ -279,7 +279,7 @@ export async function getSupplierContact(
   return client
     .from("supplierContact")
     .select(
-      "id, contact(id, firstName, lastName, email, mobilePhone, homePhone, workPhone, fax, title, addressLine1, addressLine2, city, state, postalCode, country(id, name), birthday, notes)"
+      "*, contact(id, firstName, lastName, email, mobilePhone, homePhone, workPhone, fax, title, addressLine1, addressLine2, city, state, postalCode, country(id, name), birthday, notes)"
     )
     .eq("id", supplierContactId)
     .single();
@@ -292,7 +292,7 @@ export async function getSupplierContacts(
   return client
     .from("supplierContact")
     .select(
-      "id, contact(id, firstName, lastName, email, mobilePhone, homePhone, workPhone, fax, title, addressLine1, addressLine2, city, state, postalCode, country(id, name), birthday, notes), user(id, active)"
+      "*, contact(id, firstName, lastName, email, mobilePhone, homePhone, workPhone, fax, title, addressLine1, addressLine2, city, state, postalCode, country(id, name), birthday, notes), user(id, active)"
     )
     .eq("supplierId", supplierId);
 }
@@ -304,7 +304,7 @@ export async function getSupplierLocations(
   return client
     .from("supplierLocation")
     .select(
-      "id, address(id, addressLine1, addressLine2, city, state, country(id, name), postalCode)"
+      "*, address(id, addressLine1, addressLine2, city, state, country(id, name), postalCode)"
     )
     .eq("supplierId", supplierId);
 }
@@ -316,7 +316,7 @@ export async function getSupplierLocation(
   return client
     .from("supplierLocation")
     .select(
-      "id, address(id, addressLine1, addressLine2, city, state, country(id, name), postalCode)"
+      "*, address(id, addressLine1, addressLine2, city, state, country(id, name), postalCode)"
     )
     .eq("id", supplierContactId)
     .single();
@@ -638,24 +638,7 @@ export async function updateSupplierContact(
   client: SupabaseClient<Database>,
   supplierContact: {
     contactId: string;
-    contact: {
-      firstName?: string;
-      lastName?: string;
-      email: string;
-      mobilePhone?: string;
-      homePhone?: string;
-      workPhone?: string;
-      fax?: string;
-      title?: string;
-      addressLine1?: string;
-      addressLine2?: string;
-      city?: string;
-      state?: string;
-      // countryId: string;
-      postalCode?: string;
-      birthday?: string;
-      notes?: string;
-    };
+    contact: z.infer<typeof supplierContactValidator>;
   }
 ) {
   return client
