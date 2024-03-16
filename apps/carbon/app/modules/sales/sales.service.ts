@@ -696,10 +696,12 @@ export async function upsertCustomerType(
   customerType:
     | (Omit<z.infer<typeof customerTypeValidator>, "id"> & {
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof customerTypeValidator>, "id"> & {
         id: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("createdBy" in customerType) {
