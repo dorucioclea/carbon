@@ -450,6 +450,7 @@ export async function upsertPartPlanning(
       }
     | (z.infer<typeof partPlanningValidator> & {
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("createdBy" in partPlanning) {

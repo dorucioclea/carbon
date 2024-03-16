@@ -14,6 +14,7 @@ import { getUserDefaults } from "~/modules/users/users.server";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import type { ListItem } from "~/types";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -104,10 +105,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { partId } = params;
   if (!partId) throw new Error("Could not find partId");
 
-  // validate with partsValidator
-  const validation = await validator(partPlanningValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const validation = await validator(partPlanningValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -117,6 +116,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     ...validation.data,
     partId,
     updatedBy: userId,
+    customFields: setCustomFields(formData),
   });
   if (updatePartPlanning.error) {
     return redirect(
@@ -146,7 +146,10 @@ export default function PartPlanningRoute() {
   return (
     <PartPlanningForm
       key={partPlanning.partId}
-      initialValues={partPlanning}
+      initialValues={{
+        ...partPlanning,
+        ...getCustomFields(partPlanning.customFields),
+      }}
       locations={sharedPartsData.locations ?? []}
     />
   );
