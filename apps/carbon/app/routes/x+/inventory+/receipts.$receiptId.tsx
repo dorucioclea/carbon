@@ -12,6 +12,7 @@ import {
 import { getNotes } from "~/modules/shared";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost, notFound } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -44,9 +45,8 @@ export async function action({ request }: ActionFunctionArgs) {
     update: "inventory",
   });
 
-  const validation = await validator(receiptValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const validation = await validator(receiptValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -59,6 +59,7 @@ export async function action({ request }: ActionFunctionArgs) {
     id,
     ...data,
     updatedBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (updateReceipt.error) {
@@ -93,6 +94,7 @@ export default function EditReceiptsRoute() {
     sourceDocumentId: receipt.sourceDocumentId ?? undefined,
     sourceDocumentReadbleId: receipt.sourceDocumentReadableId ?? undefined,
     locationId: receipt.locationId ?? undefined,
+    ...getCustomFields(receipt.customFields),
   };
 
   return (

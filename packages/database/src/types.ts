@@ -13157,6 +13157,7 @@ export type Database = {
           createdBy: string | null
           createdByAvatar: string | null
           createdByFullName: string | null
+          customFields: Json | null
           expirationDate: string | null
           favorite: boolean | null
           id: string | null

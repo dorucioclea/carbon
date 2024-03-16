@@ -174,8 +174,8 @@ const ReceiptForm = ({
                         name="externalDocumentId"
                         label="External Reference"
                       />
+                      <CustomFormFields table="receipt" />
                     </div>
-                    <CustomFormFields table="receipt" />
                   </VStack>
                 </ValidatedForm>
               </div>

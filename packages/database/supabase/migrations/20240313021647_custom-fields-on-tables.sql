@@ -39,7 +39,7 @@ ALTER TABLE "quoteLine" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "quoteMaterial" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "quoteOperation" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "receipt" ADD COLUMN "customFields" JSONB;
-ALTER TABLE "requestForQuote" ADD COLUMN "customFields" JSONB;
+-- ALTER TABLE "requestForQuote" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "requestForQuoteLine" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "requestForQuoteSupplier" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "service" ADD COLUMN "customFields" JSONB;
