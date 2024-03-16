@@ -112,7 +112,7 @@ export async function getCustomerContact(
   return client
     .from("customerContact")
     .select(
-      "id, contact(id, firstName, lastName, email, mobilePhone, homePhone, workPhone, fax, title, addressLine1, addressLine2, city, state, postalCode, country(id, name), birthday, notes)"
+      "*, contact(id, firstName, lastName, email, mobilePhone, homePhone, workPhone, fax, title, addressLine1, addressLine2, city, state, postalCode, country(id, name), birthday, notes)"
     )
     .eq("id", customerContactId)
     .single();
@@ -125,7 +125,7 @@ export async function getCustomerContacts(
   return client
     .from("customerContact")
     .select(
-      "id, contact(id, firstName, lastName, email, mobilePhone, homePhone, workPhone, fax, title, addressLine1, addressLine2, city, state, postalCode, country(id, name), birthday, notes), user(id, active)"
+      "*, contact(id, firstName, lastName, email, mobilePhone, homePhone, workPhone, fax, title, addressLine1, addressLine2, city, state, postalCode, country(id, name), birthday, notes), user(id, active)"
     )
     .eq("customerId", customerId);
 }
@@ -137,7 +137,7 @@ export async function getCustomerLocation(
   return client
     .from("customerLocation")
     .select(
-      "id, address(id, addressLine1, addressLine2, city, state, country(id, name), postalCode)"
+      "*, address(id, addressLine1, addressLine2, city, state, country(id, name), postalCode)"
     )
     .eq("id", customerContactId)
     .single();
@@ -150,7 +150,7 @@ export async function getCustomerLocations(
   return client
     .from("customerLocation")
     .select(
-      "id, address(id, addressLine1, addressLine2, city, state, country(id, name), postalCode)"
+      "*, address(id, addressLine1, addressLine2, city, state, country(id, name), postalCode)"
     )
     .eq("customerId", customerId);
 }
@@ -453,6 +453,7 @@ export async function insertCustomerContact(
   customerContact: {
     customerId: string;
     contact: z.infer<typeof customerContactValidator>;
+    customFields?: Json;
   }
 ) {
   const insertContact = await client
@@ -475,6 +476,7 @@ export async function insertCustomerContact(
       {
         customerId: customerContact.customerId,
         contactId,
+        customFields: customerContact.customFields,
       },
     ])
     .select("id")
@@ -586,26 +588,20 @@ export async function updateCustomerContact(
   client: SupabaseClient<Database>,
   customerContact: {
     contactId: string;
-    contact: {
-      firstName?: string;
-      lastName?: string;
-      email: string;
-      mobilePhone?: string;
-      homePhone?: string;
-      workPhone?: string;
-      fax?: string;
-      title?: string;
-      addressLine1?: string;
-      addressLine2?: string;
-      city?: string;
-      state?: string;
-      // countryId: string;
-      postalCode?: string;
-      birthday?: string;
-      notes?: string;
-    };
+    contact: z.infer<typeof customerContactValidator>;
+    customFields?: Json;
   }
 ) {
+  if (customerContact.customFields) {
+    const customFieldUpdate = await client
+      .from("customerContact")
+      .update({ customFields: customerContact.customFields })
+      .eq("contactId", customerContact.contactId);
+
+    if (customFieldUpdate.error) {
+      return customFieldUpdate;
+    }
+  }
   return client
     .from("contact")
     .update(sanitize(customerContact.contact))

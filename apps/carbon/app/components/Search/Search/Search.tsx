@@ -19,6 +19,7 @@ import {
 } from "@carbon/react";
 import { useNavigate } from "@remix-run/react";
 import idb from "localforage";
+import { nanoid } from "nanoid";
 import { useCallback, useEffect, useState } from "react";
 import { AiOutlinePartition } from "react-icons/ai";
 import { BiListCheck } from "react-icons/bi";
@@ -153,15 +154,15 @@ const SearchModal = ({
             onValueChange={onInputChange}
           />
           <CommandList>
-            <CommandEmpty>
+            <CommandEmpty key="empty">
               {loading ? "Loading..." : "No results found."}
             </CommandEmpty>
             {recentResults.length > 0 && (
               <>
-                <CommandGroup heading="Recent Searches">
+                <CommandGroup heading="Recent Searches" key="recent">
                   {recentResults.map((result, index) => (
                     <CommandItem
-                      key={`${result.to}-${index}`}
+                      key={`${result.to}-${nanoid()}-${index}`}
                       onSelect={() => onSelect(result)}
                       // append with : so we're not sharing a value with a static result
                       value={`:${result.to}`}
@@ -176,7 +177,7 @@ const SearchModal = ({
             )}
             {Object.entries(staticResults).map(([module, submodules]) => (
               <>
-                <CommandGroup heading={module} key={module}>
+                <CommandGroup heading={module} key={`static-${module}`}>
                   {submodules.map((submodule, index) => (
                     <CommandItem
                       key={`${submodule.to}-${submodule.name}-${index}`}
@@ -194,10 +195,10 @@ const SearchModal = ({
               </>
             ))}
             {searchResults.length > 0 && (
-              <CommandGroup heading="Search Results">
-                {searchResults.map((result, index) => (
+              <CommandGroup heading="Search Results" key="search">
+                {searchResults.map((result) => (
                   <CommandItem
-                    key={`${result.id}-${index}`}
+                    key={`${result.id}-${nanoid()}`}
                     value={`${input}${result.id}`}
                     onSelect={() =>
                       onSelect({
