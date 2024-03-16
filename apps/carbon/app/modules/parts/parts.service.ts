@@ -16,6 +16,7 @@ import type {
   partValidator,
   serviceSupplierValidator,
   serviceValidator,
+  unitOfMeasureValidator,
 } from "./parts.models";
 import type { PartReplenishmentSystem, ServiceType } from "./types";
 
@@ -568,10 +569,12 @@ export async function upsertServiceSupplier(
   serviceSupplier:
     | (Omit<z.infer<typeof serviceSupplierValidator>, "id"> & {
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof serviceSupplierValidator>, "id"> & {
         id: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("createdBy" in serviceSupplier) {
@@ -592,8 +595,15 @@ export async function upsertServiceSupplier(
 export async function upsertUnitOfMeasure(
   client: SupabaseClient<Database>,
   unitOfMeasure:
-    | { name: string; code: string; createdBy: string }
-    | { id: string; name: string; code: string; updatedBy: string }
+    | (Omit<z.infer<typeof unitOfMeasureValidator>, "id"> & {
+        createdBy: string;
+        customFields?: Json;
+      })
+    | (Omit<z.infer<typeof unitOfMeasureValidator>, "id"> & {
+        id: string;
+        updatedBy: string;
+        customFields?: Json;
+      })
 ) {
   if ("id" in unitOfMeasure) {
     return client

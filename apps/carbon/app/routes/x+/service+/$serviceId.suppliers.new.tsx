@@ -9,6 +9,7 @@ import {
 } from "~/modules/parts";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";
@@ -22,8 +23,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { serviceId } = params;
   if (!serviceId) throw new Error("Could not find serviceId");
 
+  const formData = await request.formData();
   const validation = await validator(serviceSupplierValidator).validate(
-    await request.formData()
+    formData
   );
 
   if (validation.error) {
@@ -35,6 +37,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const createServiceSupplier = await upsertServiceSupplier(client, {
     ...data,
     createdBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (createServiceSupplier.error) {
