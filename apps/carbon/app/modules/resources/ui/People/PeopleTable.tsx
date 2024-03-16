@@ -1,4 +1,10 @@
-import { HStack, Hyperlink, MenuIcon, MenuItem } from "@carbon/react";
+import {
+  Enumerable,
+  HStack,
+  Hyperlink,
+  MenuIcon,
+  MenuItem,
+} from "@carbon/react";
 import { useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
@@ -133,7 +139,7 @@ const PeopleTable = memo(
         {
           accessorKey: "employeeType.name",
           header: "Employee Type",
-          cell: (item) => item.getValue(),
+          cell: (item) => <Enumerable value={item.getValue<string>()} />,
         },
       ];
 

@@ -10,6 +10,7 @@ import {
 } from "~/modules/resources";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost, notFound } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -43,9 +44,8 @@ export async function action({ request }: ActionFunctionArgs) {
     update: "resources",
   });
 
-  const validation = await validator(equipmentTypeValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const validation = await validator(equipmentTypeValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -58,6 +58,7 @@ export async function action({ request }: ActionFunctionArgs) {
     id,
     ...data,
     updatedBy: userId,
+    customFields: setCustomFields(formData),
   });
   if (updateCategory.error) {
     return redirect(
@@ -86,6 +87,7 @@ export default function EditAttributeCategoryRoute() {
     description: equipmentType?.description ?? "",
     requiredAbility: equipmentType?.requiredAbility ?? undefined,
     setupHours: equipmentType?.setupHours ?? 0,
+    ...getCustomFields(equipmentType?.customFields),
   };
 
   return (

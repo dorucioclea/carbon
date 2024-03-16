@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useParams } from "@remix-run/react";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { path } from "~/utils/path";
@@ -13,6 +13,7 @@ import {
   getEmployeeJob,
   upsertEmployeeJob,
 } from "~/modules/resources";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -38,21 +39,24 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export async function action({ request, params }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client } = await requirePermissions(request, {
+  const { client, userId } = await requirePermissions(request, {
     update: "resources",
   });
   const { personId } = params;
   if (!personId) throw new Error("No person ID provided");
 
-  const validation = await validator(employeeJobValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const validation = await validator(employeeJobValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
   }
 
-  const updateJob = await upsertEmployeeJob(client, personId, validation.data);
+  const updateJob = await upsertEmployeeJob(client, personId, {
+    ...validation.data,
+    updatedBy: userId,
+    customFields: setCustomFields(formData),
+  });
   if (updateJob.error) {
     return redirect(
       path.to.personJob(personId),
@@ -68,6 +72,17 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function PersonJobRoute() {
   const { job } = useLoaderData<typeof loader>();
+  const { personId } = useParams();
 
-  return <PersonJob job={job} />;
+  const initialValues = {
+    title: job.title ?? "",
+    startDate: job.startDate ?? "",
+    locationId: job.locationId ?? "",
+    shiftId: job.shiftId ?? "",
+    managerId: job.managerId ?? "",
+    ...getCustomFields(job.customFields),
+  };
+
+  console.log({ initialValues });
+  return <PersonJob key={personId} initialValues={initialValues} />;
 }

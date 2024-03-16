@@ -9,7 +9,6 @@ ALTER TABLE "customerLocation" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "customerStatus" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "customerType" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "department" ADD COLUMN "customFields" JSONB;
-ALTER TABLE "employeeAbility" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "employeeJob" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "equipment" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "equipmentType" ADD COLUMN "customFields" JSONB;

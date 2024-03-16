@@ -2957,7 +2957,6 @@ export type Database = {
         Row: {
           abilityId: string
           active: boolean
-          customFields: Json | null
           employeeId: string
           id: string
           lastTrainingDate: string | null
@@ -2967,7 +2966,6 @@ export type Database = {
         Insert: {
           abilityId: string
           active?: boolean
-          customFields?: Json | null
           employeeId: string
           id?: string
           lastTrainingDate?: string | null
@@ -2977,7 +2975,6 @@ export type Database = {
         Update: {
           abilityId?: string
           active?: boolean
-          customFields?: Json | null
           employeeId?: string
           id?: string
           lastTrainingDate?: string | null
@@ -3025,6 +3022,8 @@ export type Database = {
           shiftId: string | null
           startDate: string | null
           title: string | null
+          updatedAt: string | null
+          updatedBy: string | null
           workCellId: string | null
         }
         Insert: {
@@ -3036,6 +3035,8 @@ export type Database = {
           shiftId?: string | null
           startDate?: string | null
           title?: string | null
+          updatedAt?: string | null
+          updatedBy?: string | null
           workCellId?: string | null
         }
         Update: {
@@ -3047,6 +3048,8 @@ export type Database = {
           shiftId?: string | null
           startDate?: string | null
           title?: string | null
+          updatedAt?: string | null
+          updatedBy?: string | null
           workCellId?: string | null
         }
         Relationships: [
@@ -3126,6 +3129,27 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "shift"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employeeJob_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employeeJob_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employeeJob_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
           },
           {
             foreignKeyName: "employeeJob_workCellId_fkey"

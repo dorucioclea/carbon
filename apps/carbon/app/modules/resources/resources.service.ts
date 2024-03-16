@@ -373,11 +373,7 @@ export async function getEmployeeJob(
   client: SupabaseClient<Database>,
   employeeId: string
 ) {
-  return client
-    .from("employeeJob")
-    .select("title, locationId, shiftId, managerId, startDate")
-    .eq("id", employeeId)
-    .single();
+  return client.from("employeeJob").select("*").eq("id", employeeId).single();
 }
 
 export async function getEmployeeSummary(
@@ -1072,7 +1068,10 @@ export async function upsertEmployeeAbility(
 export async function upsertEmployeeJob(
   client: SupabaseClient<Database>,
   employeeId: string,
-  employeeJob: z.infer<typeof employeeJobValidator>
+  employeeJob: z.infer<typeof employeeJobValidator> & {
+    updatedBy: string;
+    customFields?: Json;
+  }
 ) {
   return client
     .from("employeeJob")
@@ -1103,10 +1102,12 @@ export async function upsertEquipmentType(
   equipmentType:
     | (Omit<z.infer<typeof equipmentTypeValidator>, "id"> & {
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof equipmentTypeValidator>, "id"> & {
         id: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("id" in equipmentType) {
