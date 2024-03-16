@@ -10,6 +10,7 @@ import {
 } from "~/modules/parts";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -51,9 +52,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { partId } = params;
   if (!partId) throw new Error("Could not find partId");
 
-  // validate with partsValidator
+  const formData = await request.formData();
   const validation = await validator(partManufacturingValidator).validate(
-    await request.formData()
+    formData
   );
 
   if (validation.error) {
@@ -64,6 +65,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     ...validation.data,
     partId,
     updatedBy: userId,
+    customFields: setCustomFields(formData),
   });
   if (updatePartManufacturing.error) {
     return redirect(
@@ -90,6 +92,7 @@ export default function PartManufacturingRoute() {
   const initialValues = {
     ...partManufacturing,
     lotSize: partManufacturing.lotSize ?? 0,
+    ...getCustomFields(partManufacturing.customFields),
   };
 
   return (

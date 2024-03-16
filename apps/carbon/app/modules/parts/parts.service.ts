@@ -432,6 +432,7 @@ export async function upsertPartManufacturing(
   client: SupabaseClient<Database>,
   partManufacturing: z.infer<typeof partManufacturingValidator> & {
     updatedBy: string;
+    customFields?: Json;
   }
 ) {
   return client
