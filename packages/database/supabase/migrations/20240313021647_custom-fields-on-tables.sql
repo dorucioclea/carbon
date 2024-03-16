@@ -24,7 +24,7 @@ ALTER TABLE "partPlanning" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "partReplenishment" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "partSupplier" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "partUnitSalePrice" ADD COLUMN "customFields" JSONB;
-ALTER TABLE "partner" ADD COLUMN "customFields" JSONB;
+-- ALTER TABLE "partner" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "paymentTerm" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "purchaseInvoice" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "purchaseInvoiceLine" ADD COLUMN "customFields" JSONB;

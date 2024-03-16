@@ -1154,9 +1154,11 @@ export async function upsertPartner(
   partner:
     | (Omit<z.infer<typeof partnerValidator>, "supplierId"> & {
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof partnerValidator>, "supplierId"> & {
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("updatedBy" in partner) {

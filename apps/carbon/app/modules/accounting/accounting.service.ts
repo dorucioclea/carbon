@@ -348,6 +348,7 @@ export async function getChartOfAccounts(
     return acc;
   }, {});
 
+  // @ts-ignore
   const accounts: Account[] = accountsResponse.data as Account[];
 
   return {
@@ -789,10 +790,12 @@ export async function upsertPaymentTerm(
   paymentTerm:
     | (Omit<z.infer<typeof paymentTermValidator>, "id"> & {
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof paymentTermValidator>, "id"> & {
         id: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("createdBy" in paymentTerm) {

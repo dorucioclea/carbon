@@ -41,7 +41,12 @@ const PartnersTable = memo(({ data, count }: PartnersTableProps) => {
 
             <Hyperlink
               onClick={() => {
-                navigate(path.to.supplier(row?.original.supplierId!));
+                navigate(
+                  `${path.to.partner(
+                    row.original.supplierLocationId!,
+                    row.original.abilityId!
+                  )}?${params.toString()}`
+                );
               }}
             >
               {row.original.supplierName}
@@ -64,7 +69,7 @@ const PartnersTable = memo(({ data, count }: PartnersTableProps) => {
         cell: (item) => item.getValue(),
       },
     ];
-  }, [navigate]);
+  }, [navigate, params]);
 
   const renderContextMenu = useCallback(
     (row: (typeof rows)[number]) => {

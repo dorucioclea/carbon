@@ -279,22 +279,8 @@ CREATE OR REPLACE VIEW "accountCategories" AS
 
 CREATE OR REPLACE VIEW "accounts" AS
   SELECT 
-    "id",
-    "number",
-    "name",
-    "type",
-    "accountCategoryId",
+    "account".*,
     (SELECT "category" FROM "accountCategory" WHERE "accountCategory"."id" = "account"."accountCategoryId") AS "accountCategory",
-    "accountSubcategoryId",
-    (SELECT "name" FROM "accountSubcategory" WHERE "accountSubcategory"."id" = "account"."accountSubcategoryId") AS "accountSubCategory",
-    "class",
-    "incomeBalance",
-    "consolidatedRate",
-    "directPosting",
-    "active",
-    "createdBy",
-    "createdAt",
-    "updatedBy",
-    "updatedAt"
+    (SELECT "name" FROM "accountSubcategory" WHERE "accountSubcategory"."id" = "account"."accountSubcategoryId") AS "accountSubCategory"  
   FROM "account"
 ;

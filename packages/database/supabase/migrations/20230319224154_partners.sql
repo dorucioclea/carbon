@@ -3,6 +3,7 @@ CREATE TABLE "partner" (
   "hoursPerWeek" INTEGER NOT NULL DEFAULT 0,
   "abilityId" TEXT,
   "active" BOOLEAN NOT NULL DEFAULT true,
+  "customFields" JSONB,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
@@ -20,10 +21,8 @@ CREATE INDEX "partner_abilityId_idx" ON "partner" ("abilityId");
 
 CREATE OR REPLACE VIEW "partners" AS
   SELECT 
+    p.*,
     p.id AS "supplierLocationId", 
-    p."active", 
-    p."hoursPerWeek",
-    p."abilityId",
     a2.name AS "abilityName",
     s.id AS "supplierId", 
     s.name AS "supplierName", 
