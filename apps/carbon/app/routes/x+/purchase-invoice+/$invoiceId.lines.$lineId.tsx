@@ -11,6 +11,7 @@ import {
 } from "~/modules/invoicing";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost, notFound } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";
@@ -41,8 +42,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   if (!invoiceId) throw new Error("Could not find invoiceId");
   if (!lineId) throw new Error("Could not find lineId");
 
+  const formData = await request.formData();
   const validation = await validator(purchaseInvoiceLineValidator).validate(
-    await request.formData()
+    formData
   );
 
   if (validation.error) {
@@ -78,6 +80,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     id: lineId,
     ...data,
     updatedBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (updatePurchaseInvoiceLine.error) {
@@ -115,6 +118,7 @@ export default function EditPurchaseInvoiceLineRoute() {
     currencyCode: purchaseInvoiceLine?.currencyCode ?? "USD",
     unitOfMeasureCode: purchaseInvoiceLine?.unitOfMeasureCode ?? "",
     shelfId: purchaseInvoiceLine?.shelfId ?? "",
+    ...getCustomFields(purchaseInvoiceLine?.customFields),
   };
 
   return (

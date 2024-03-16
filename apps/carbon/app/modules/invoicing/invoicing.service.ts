@@ -147,10 +147,12 @@ export async function upsertPurchaseInvoiceLine(
   purchaseInvoiceLine:
     | (Omit<z.infer<typeof purchaseInvoiceLineValidator>, "id"> & {
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof purchaseInvoiceLineValidator>, "id"> & {
         id: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("id" in purchaseInvoiceLine) {

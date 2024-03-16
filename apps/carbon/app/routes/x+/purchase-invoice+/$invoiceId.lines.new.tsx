@@ -10,6 +10,7 @@ import {
 } from "~/modules/invoicing";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";
@@ -23,8 +24,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { invoiceId } = params;
   if (!invoiceId) throw new Error("Could not find invoiceId");
 
+  const formData = await request.formData();
   const validation = await validator(purchaseInvoiceLineValidator).validate(
-    await request.formData()
+    formData
   );
 
   if (validation.error) {
@@ -36,6 +38,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const createPurchaseInvoiceLine = await upsertPurchaseInvoiceLine(client, {
     ...data,
     createdBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (createPurchaseInvoiceLine.error) {
