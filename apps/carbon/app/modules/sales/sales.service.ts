@@ -793,10 +793,12 @@ export async function upsertQuoteLine(
   quotationLine:
     | (Omit<z.infer<typeof quotationLineValidator>, "id"> & {
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof quotationLineValidator>, "id"> & {
         id: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("id" in quotationLine) {

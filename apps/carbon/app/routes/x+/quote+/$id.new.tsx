@@ -10,6 +10,7 @@ import {
 } from "~/modules/sales";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";
@@ -23,9 +24,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { id: quoteId } = params;
   if (!quoteId) throw new Error("Could not find id");
 
-  const validation = await validator(quotationLineValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const validation = await validator(quotationLineValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -36,6 +36,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const createQuotationLine = await upsertQuoteLine(client, {
     ...data,
     createdBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (createQuotationLine.error) {
