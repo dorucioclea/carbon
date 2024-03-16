@@ -48,7 +48,7 @@ const CustomFieldForm = ({
     : !permissions.can("create", "resources");
 
   const [isList, setIsList] = useState(
-    initialValues.dataTypeId === DataType.List
+    initialValues.dataTypeId.toString() === DataType.List.toString()
   );
 
   const onChangeCheckForListType = (

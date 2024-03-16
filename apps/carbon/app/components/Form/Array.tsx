@@ -29,6 +29,7 @@ const Array = forwardRef<HTMLInputElement, FormArrayProps>(
         <VStack className="mb-4">
           {items.map((item, index) => (
             <ArrayInput
+              autoFocus={index === items.length - 1}
               key={`${item}-${index}`}
               id={`${name}[${index}]`}
               name={`${name}[${index}]`}
