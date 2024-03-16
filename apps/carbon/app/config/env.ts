@@ -5,6 +5,8 @@ declare global {
     env: {
       SUPABASE_URL: string;
       SUPABASE_ANON_PUBLIC: string;
+      POSTHOG_API_HOST: string;
+      POSTHOG_PROJECT_PUBLIC_KEY: string;
     };
   }
 }
@@ -19,6 +21,8 @@ declare global {
       SESSION_SECRET: string;
       SESSION_KEY: string;
       SESSION_ERROR_KEY: string;
+      POSTHOG_API_HOST: string;
+      POSTHOG_PROJECT_PUBLIC_KEY: string;
     }
   }
 }
@@ -63,6 +67,12 @@ export const NODE_ENV = getEnv("NODE_ENV", {
   isSecret: false,
   isRequired: false,
 });
+export const POSTHOG_API_HOST = getEnv("POSTHOG_API_HOST", {
+  isSecret: false,
+});
+export const POSTHOG_PROJECT_PUBLIC_KEY = getEnv("POSTHOG_PROJECT_PUBLIC_KEY", {
+  isSecret: false,
+});
 export const SUPABASE_API_URL = getEnv("SUPABASE_API_URL", { isSecret: false });
 export const SUPABASE_ANON_PUBLIC = getEnv("SUPABASE_ANON_PUBLIC", {
   isSecret: false,
@@ -72,6 +82,8 @@ export function getBrowserEnv() {
   return {
     SUPABASE_API_URL,
     SUPABASE_ANON_PUBLIC,
+    POSTHOG_API_HOST,
+    POSTHOG_PROJECT_PUBLIC_KEY,
   };
 }
 
