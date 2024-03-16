@@ -1,4 +1,11 @@
-import { VStack } from "@carbon/react";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  VStack,
+} from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import type { z } from "zod";
 import { Select, Submit } from "~/components/Form";
@@ -16,26 +23,33 @@ const FiscalYearSettingsForm = ({
 }: FiscalYearSettingsFormProps) => {
   const permissions = usePermissions();
   return (
-    <div className="w-full">
+    <Card>
       <ValidatedForm
         method="post"
         action={path.to.fiscalYears}
         defaultValues={initialValues}
         validator={fiscalYearSettingsValidator}
       >
-        <VStack spacing={4} className="my-4 w-full max-w-[440px]">
-          <Select
-            name="startMonth"
-            label="Start of Fiscal Year"
-            options={months.map((month) => ({ label: month, value: month }))}
-            helperText="This is the month your fiscal year starts."
-          />
-          <Select
-            name="taxStartMonth"
-            label="Start of Tax Year"
-            options={months.map((month) => ({ label: month, value: month }))}
-            helperText="This is the month your tax year starts."
-          />
+        <CardHeader>
+          <CardTitle>Fiscal Year Settings</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <VStack spacing={4} className="my-4 w-full max-w-[440px]">
+            <Select
+              name="startMonth"
+              label="Start of Fiscal Year"
+              options={months.map((month) => ({ label: month, value: month }))}
+              helperText="This is the month your fiscal year starts."
+            />
+            <Select
+              name="taxStartMonth"
+              label="Start of Tax Year"
+              options={months.map((month) => ({ label: month, value: month }))}
+              helperText="This is the month your tax year starts."
+            />
+          </VStack>
+        </CardContent>
+        <CardFooter>
           <Submit
             isDisabled={
               !permissions.can("update", "accounting") ||
@@ -44,9 +58,9 @@ const FiscalYearSettingsForm = ({
           >
             Save
           </Submit>
-        </VStack>
+        </CardFooter>
       </ValidatedForm>
-    </div>
+    </Card>
   );
 };
 

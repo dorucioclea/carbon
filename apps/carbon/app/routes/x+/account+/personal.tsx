@@ -8,7 +8,6 @@ import {
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { PageTitle } from "~/components/Layout";
 import type { PrivateAttributes } from "~/modules/account";
 import { UserAttributesForm, getPrivateAttributes } from "~/modules/account";
 import { requirePermissions } from "~/services/auth";
@@ -45,31 +44,25 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function AccountPersonal() {
   const { attributes } = useLoaderData<typeof loader>();
   return (
-    <>
-      <PageTitle
-        title="Personal Data"
-        subtitle="This information is private and can only be seen by you and authorized employees."
-      />
-      <VStack spacing={8}>
-        {attributes.length ? (
-          attributes.map((category: PrivateAttributes) => (
-            <Card key={category.id}>
-              <CardHeader>
-                <CardTitle>{category.name}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <UserAttributesForm attributeCategory={category} />
-              </CardContent>
-            </Card>
-          ))
-        ) : (
-          <Card>
-            <CardContent className="text-muted-foreground w-full py-8 text-center">
-              No private attributes
+    <VStack spacing={4}>
+      {attributes.length ? (
+        attributes.map((category: PrivateAttributes) => (
+          <Card key={category.id}>
+            <CardHeader>
+              <CardTitle>{category.name}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <UserAttributesForm attributeCategory={category} />
             </CardContent>
           </Card>
-        )}
-      </VStack>
-    </>
+        ))
+      ) : (
+        <Card>
+          <CardContent className="text-muted-foreground w-full py-8 text-center">
+            No private attributes
+          </CardContent>
+        </Card>
+      )}
+    </VStack>
   );
 }

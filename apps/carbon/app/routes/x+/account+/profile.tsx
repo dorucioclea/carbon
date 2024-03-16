@@ -1,6 +1,7 @@
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
   VStack,
@@ -9,7 +10,6 @@ import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { PageTitle } from "~/components/Layout";
 import {
   ProfileForm,
   ProfilePhotoForm,
@@ -130,38 +130,43 @@ export default function AccountProfile() {
   const { user, attributes } = useLoaderData<typeof loader>();
 
   return (
-    <>
-      <PageTitle
-        title="Profile"
-        subtitle="This information will be visible to all users, so be careful what you
-        share."
-      />
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-8 w-full">
-        <VStack spacing={8}>
-          <ProfileForm user={user} />
-          {attributes.length ? (
-            <>
-              {attributes.map((category) => (
-                <Card key={category.id}>
-                  <CardHeader>
-                    <CardTitle>{category.name}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <UserAttributesForm attributeCategory={category} />
-                  </CardContent>
-                </Card>
-              ))}
-            </>
-          ) : (
-            <Card>
-              <CardContent className="text-muted-foreground w-full text-center py-8">
-                No public attributes
+    <VStack spacing={4}>
+      <Card>
+        <CardHeader>
+          <CardTitle>Profile</CardTitle>
+          <CardDescription>
+            This information will be visible to all users, so be careful what
+            you share.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 w-full">
+            <ProfileForm user={user} />
+            <ProfilePhotoForm user={user} />
+          </div>
+        </CardContent>
+      </Card>
+
+      {attributes.length ? (
+        <>
+          {attributes.map((category) => (
+            <Card key={category.id}>
+              <CardHeader>
+                <CardTitle>{category.name}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <UserAttributesForm attributeCategory={category} />
               </CardContent>
             </Card>
-          )}
-        </VStack>
-        <ProfilePhotoForm user={user} />
-      </div>
-    </>
+          ))}
+        </>
+      ) : (
+        <Card>
+          <CardContent className="text-muted-foreground w-full text-center py-8">
+            No public attributes
+          </CardContent>
+        </Card>
+      )}
+    </VStack>
   );
 }

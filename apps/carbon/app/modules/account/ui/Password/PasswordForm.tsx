@@ -1,4 +1,11 @@
-import { VStack } from "@carbon/react";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  VStack,
+} from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useRef, useState } from "react";
 import { Password, Submit } from "~/components/Form";
@@ -21,30 +28,37 @@ const PasswordForm = () => {
   };
 
   return (
-    <div className="w-full">
+    <Card>
       <ValidatedForm
         method="post"
         action={path.to.accountPassword}
         validator={accountPasswordValidator}
       >
-        <VStack spacing={4} className="my-4 max-w-[440px]">
-          <Password name="currentPassword" label="Current Password" />
-          <Password
-            ref={passwordRef}
-            onChange={onPasswordChange}
-            name="password"
-            label="New Password"
-          />
-          <Password
-            ref={confirmPasswordRef}
-            onChange={onPasswordChange}
-            name="confirmPassword"
-            label="Confirm Password"
-          />
+        <CardHeader>
+          <CardTitle>Update Password</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <VStack spacing={4} className="my-4 max-w-[440px]">
+            <Password name="currentPassword" label="Current Password" />
+            <Password
+              ref={passwordRef}
+              onChange={onPasswordChange}
+              name="password"
+              label="New Password"
+            />
+            <Password
+              ref={confirmPasswordRef}
+              onChange={onPasswordChange}
+              name="confirmPassword"
+              label="Confirm Password"
+            />
+          </VStack>
+        </CardContent>
+        <CardFooter>
           <Submit isDisabled={!passwordsMatch}>Update Password</Submit>
-        </VStack>
+        </CardFooter>
       </ValidatedForm>
-    </div>
+    </Card>
   );
 };
 

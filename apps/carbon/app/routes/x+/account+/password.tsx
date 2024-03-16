@@ -1,7 +1,6 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { PageTitle } from "~/components/Layout";
 import { getSupabaseServiceRole } from "~/lib/supabase";
 import { PasswordForm, accountPasswordValidator } from "~/modules/account";
 import { requirePermissions } from "~/services/auth";
@@ -65,13 +64,5 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function AccountPassword() {
-  return (
-    <>
-      <PageTitle
-        title="Change Password"
-        subtitle="Make sure it's at least 12 characters"
-      />
-      <PasswordForm />
-    </>
-  );
+  return <PasswordForm />;
 }

@@ -3,7 +3,6 @@ import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { PageTitle } from "~/components/Layout";
 import {
   FiscalYearSettingsForm,
   fiscalYearSettingsValidator,
@@ -84,11 +83,7 @@ export default function FiscalYearSettingsRoute() {
   };
 
   return (
-    <VStack spacing={0} className="h-full bg-background p-8">
-      <PageTitle
-        title="Fiscal Year Settings"
-        subtitle="Define the month when your fiscal year starts"
-      />
+    <VStack spacing={0} className="h-full p-4">
       <FiscalYearSettingsForm initialValues={initialValues} />
     </VStack>
   );

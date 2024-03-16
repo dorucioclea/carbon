@@ -12,7 +12,7 @@ const settingsRoutes: AuthenticatedRouteGroup[] = [
     name: "Company",
     routes: [
       {
-        name: "Business",
+        name: "Company",
         to: path.to.company,
         role: "employee",
         icon: <TbBuildingFactory2 />,

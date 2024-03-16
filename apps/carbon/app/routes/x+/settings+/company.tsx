@@ -1,4 +1,11 @@
-import { VStack } from "@carbon/react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  VStack,
+} from "@carbon/react";
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
@@ -107,10 +114,20 @@ export default function Company() {
 
   return (
     <VStack spacing={0} className="p-4 h-full">
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 w-full">
-        <CompanyForm company={initialValues} />
-        <CompanyLogoForm company={company} />
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Company</CardTitle>
+          <CardDescription>
+            This information will be used on document headers
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 w-full">
+            <CompanyForm company={initialValues} />
+            <CompanyLogoForm company={company} />
+          </div>
+        </CardContent>
+      </Card>
     </VStack>
   );
 }

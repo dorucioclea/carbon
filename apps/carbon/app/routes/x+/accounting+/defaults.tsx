@@ -3,7 +3,6 @@ import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { PageTitle } from "~/components/Layout";
 import { useRouteData } from "~/hooks";
 import type { AccountListItem } from "~/modules/accounting";
 import {
@@ -88,12 +87,7 @@ export default function AccountDefaultsRoute() {
   }>(path.to.accounting);
 
   return (
-    <VStack className="bg-background h-full p-4 overflow-y-auto">
-      <PageTitle
-        title="Account Defaults"
-        subtitle="These accounts will be used to prepopulate posting grous when a new customer type, supplier type, part group, or location is created."
-      />
-
+    <VStack className="h-full p-4 overflow-y-auto">
       <AccountDefaultsForm
         balanceSheetAccounts={routeData?.balanceSheetAccounts ?? []}
         incomeStatementAccounts={routeData?.incomeStatementAccounts ?? []}
