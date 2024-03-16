@@ -535,6 +535,7 @@ export async function upsertPartUnitSalePrice(
   client: SupabaseClient<Database>,
   partUnitSalePrice: z.infer<typeof partUnitSalePriceValidator> & {
     updatedBy: string;
+    customFields?: Json;
   }
 ) {
   return client
