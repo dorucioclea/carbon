@@ -12,6 +12,7 @@ import {
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import type { ListItem } from "~/types";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -25,8 +26,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { invoiceId: id } = params;
   if (!id) throw new Error("Could not find invoiceId");
 
+  const formData = await request.formData();
   const validation = await validator(purchaseInvoiceValidator).validate(
-    await request.formData()
+    formData
   );
 
   if (validation.error) {
@@ -41,6 +43,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     invoiceId,
     ...data,
     updatedBy: userId,
+    customFields: setCustomFields(formData),
   });
   if (updatePurchaseInvoice.error) {
     return redirect(
@@ -87,6 +90,7 @@ export default function PurchaseInvoiceBasicRoute() {
     dateIssued: purchaseInvoice.dateIssued ?? "",
     dateDue: purchaseInvoice.dateDue ?? "",
     status: purchaseInvoice.status ?? ("Draft" as "Draft"),
+    ...getCustomFields(purchaseInvoice.customFields),
   };
 
   return (

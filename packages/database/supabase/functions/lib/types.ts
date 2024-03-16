@@ -12405,6 +12405,7 @@ export type Database = {
           createdByAvatar: string | null
           createdByFullName: string | null
           currencyCode: string | null
+          customFields: Json | null
           dateDue: string | null
           dateIssued: string | null
           datePaid: string | null

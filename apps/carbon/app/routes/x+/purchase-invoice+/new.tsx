@@ -17,6 +17,7 @@ import { getNextSequence, rollbackNextSequence } from "~/modules/settings";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import type { ListItem } from "~/types";
+import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";
@@ -81,8 +82,9 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "invoicing",
   });
 
+  const formData = await request.formData();
   const validation = await validator(purchaseInvoiceValidator).validate(
-    await request.formData()
+    formData
   );
 
   if (validation.error) {
@@ -106,6 +108,7 @@ export async function action({ request }: ActionFunctionArgs) {
     ...data,
     invoiceId: nextSequence.data,
     createdBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (createPurchaseInvoice.error || !createPurchaseInvoice.data?.[0]) {

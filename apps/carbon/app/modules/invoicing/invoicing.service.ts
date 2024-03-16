@@ -1,4 +1,4 @@
-import type { Database } from "@carbon/database";
+import type { Database, Json } from "@carbon/database";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { z } from "zod";
 import { getSupplierPayment } from "~/modules/purchasing";
@@ -101,11 +101,13 @@ export async function upsertPurchaseInvoice(
     | (Omit<z.infer<typeof purchaseInvoiceValidator>, "id" | "invoiceId"> & {
         invoiceId: string;
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof purchaseInvoiceValidator>, "id" | "invoiceId"> & {
         id: string;
         invoiceId: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("id" in purchaseInvoice) {

@@ -31,6 +31,7 @@ CREATE TABLE "purchaseInvoice" (
   "totalAmount" NUMERIC(10, 2) NOT NULL DEFAULT 0,
   "totalTax" NUMERIC(10, 2) NOT NULL DEFAULT 0,
   "balance" NUMERIC(10, 2) NOT NULL DEFAULT 0,
+  "customFields" JSONB,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
@@ -380,6 +381,7 @@ CREATE OR REPLACE VIEW "purchaseInvoices" AS
     pi."createdAt",
     pi."updatedBy",
     pi."updatedAt",
+    pi."customFields",
     CASE
       WHEN pi."dateDue" < CURRENT_DATE AND pi."status" = 'Submitted' THEN 'Overdue'
       ELSE pi."status"

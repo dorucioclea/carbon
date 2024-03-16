@@ -73,7 +73,15 @@ const QuotationForm = ({ initialValues }: QuotationFormProps) => {
                 label="Customer"
                 onChange={(value) => setCustomer(value?.value as string)}
               />
-              <Input name="name" label="Name" />
+              <Input
+                name="name"
+                label="Name"
+                helperText={
+                  isEditing
+                    ? undefined
+                    : "The name of the RFQ or a reference number"
+                }
+              />
               <Employee name="ownerId" label="Quoter" />
 
               <Location name="locationId" label="Location" />
