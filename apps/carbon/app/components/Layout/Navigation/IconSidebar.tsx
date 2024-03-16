@@ -38,10 +38,7 @@ const IconSidebar = () => {
         onMouseEnter={navigationPanel.onOpen}
         onMouseLeave={navigationPanel.onClose}
       >
-        <VStack
-          spacing={1}
-          className="flex flex-col gap-y-1 justify-start px-2"
-        >
+        <VStack spacing={1} className="flex flex-col justify-start px-2">
           <Button isIcon asChild variant="ghost" size="lg">
             <Link to="/">
               <BsFillHexagonFill />

@@ -4,6 +4,7 @@ import { redirect } from "@remix-run/node";
 import { ServiceForm, serviceValidator, upsertService } from "~/modules/parts";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { setCustomFields } from "~/utils/form";
 import type { Handle } from "~/utils/handle";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
@@ -20,9 +21,8 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "parts",
   });
 
-  const validation = await validator(serviceValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const validation = await validator(serviceValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -32,6 +32,7 @@ export async function action({ request }: ActionFunctionArgs) {
     ...validation.data,
     active: true,
     createdBy: userId,
+    customFields: setCustomFields(formData),
   });
   if (createService.error) {
     return redirect(

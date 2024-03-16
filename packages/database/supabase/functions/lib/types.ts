@@ -4137,13 +4137,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "part_partGroupId_fkey"
-            columns: ["partGroupId"]
-            isOneToOne: false
-            referencedRelation: "services"
-            referencedColumns: ["partGroupId"]
-          },
-          {
             foreignKeyName: "part_unitOfMeasureCode_fkey"
             columns: ["unitOfMeasureCode"]
             isOneToOne: false
@@ -5611,13 +5604,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "postingGroupInventory_partGroupId_fkey"
-            columns: ["partGroupId"]
-            isOneToOne: false
-            referencedRelation: "services"
-            referencedColumns: ["partGroupId"]
-          },
-          {
             foreignKeyName: "postingGroupInventory_purchaseVarianceAccount_fkey"
             columns: ["purchaseVarianceAccount"]
             isOneToOne: false
@@ -5712,13 +5698,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "partGroup"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "postingGroupPurchasing_partGroupId_fkey"
-            columns: ["partGroupId"]
-            isOneToOne: false
-            referencedRelation: "services"
-            referencedColumns: ["partGroupId"]
           },
           {
             foreignKeyName: "postingGroupPurchasing_payablesAccount_fkey"
@@ -5885,13 +5864,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "partGroup"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "postingGroupSales_partGroupId_fkey"
-            columns: ["partGroupId"]
-            isOneToOne: false
-            referencedRelation: "services"
-            referencedColumns: ["partGroupId"]
           },
           {
             foreignKeyName: "postingGroupSales_receivablesAccount_fkey"
@@ -9625,13 +9597,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "service_partGroupId_fkey"
-            columns: ["partGroupId"]
-            isOneToOne: false
-            referencedRelation: "services"
-            referencedColumns: ["partGroupId"]
-          },
-          {
             foreignKeyName: "service_updatedBy_fkey"
             columns: ["updatedBy"]
             isOneToOne: false
@@ -12387,13 +12352,6 @@ export type Database = {
             referencedRelation: "partGroup"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "part_partGroupId_fkey"
-            columns: ["partGroupId"]
-            isOneToOne: false
-            referencedRelation: "services"
-            referencedColumns: ["partGroupId"]
-          },
         ]
       }
       purchaseInvoices: {
@@ -13221,16 +13179,50 @@ export type Database = {
       services: {
         Row: {
           active: boolean | null
+          approved: boolean | null
+          approvedBy: string | null
           blocked: boolean | null
+          customFields: Json | null
           description: string | null
+          fromDate: string | null
           id: string | null
           name: string | null
           partGroup: string | null
           partGroupId: string | null
           serviceType: Database["public"]["Enums"]["serviceType"] | null
           supplierIds: string[] | null
+          toDate: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "service_approvedBy_fkey"
+            columns: ["approvedBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_approvedBy_fkey"
+            columns: ["approvedBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_approvedBy_fkey"
+            columns: ["approvedBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "service_partGroupId_fkey"
+            columns: ["partGroupId"]
+            isOneToOne: false
+            referencedRelation: "partGroup"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       suppliers: {
         Row: {

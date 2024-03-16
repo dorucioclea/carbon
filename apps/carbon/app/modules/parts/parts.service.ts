@@ -547,10 +547,14 @@ export async function upsertPartUnitSalePrice(
 export async function upsertService(
   client: SupabaseClient<Database>,
   service:
-    | (z.infer<typeof serviceValidator> & { createdBy: string })
+    | (z.infer<typeof serviceValidator> & {
+        createdBy: string;
+        customFields?: Json;
+      })
     | (Omit<z.infer<typeof serviceValidator>, "id"> & {
         id: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("createdBy" in service) {

@@ -15,6 +15,7 @@ CREATE TABLE "service" (
   "approvedBy" TEXT,
   "fromDate" DATE,
   "toDate" DATE,
+  "customFields" JSONB,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
@@ -131,22 +132,34 @@ CREATE POLICY "Suppliers with parts_update can update their own part suppliers" 
 
 CREATE OR REPLACE VIEW "services" WITH(SECURITY_INVOKER=true) AS
   SELECT
-    s.id,
-    s.name,
-    s.description,
+    s."id",
+    s."name",
+    s."description",
+    s."blocked",
+    s."partGroupId",
     s."serviceType",
-    pg.id AS "partGroupId",
+    s."active",
+    s."approved",
+    s."approvedBy",
+    s."fromDate",
+    s."toDate",
+    s."customFields",
     pg.name AS "partGroup",
-    s.active,
-    s.blocked,
     array_agg(ss."supplierId") AS "supplierIds"
   FROM "service" s
   LEFT JOIN "partGroup" pg ON pg.id = s."partGroupId"
   LEFT JOIN "serviceSupplier" ss ON ss."serviceId" = s.id
-  GROUP BY s.id,
-    s.name,
-    s.description,
+  GROUP BY 
+    s."id",
+    s."name",
+    s."description",
+    s."blocked",
+    s."partGroupId",
     s."serviceType",
-    pg.id,
-    pg.name,
-    s.active;
+    s."active",
+    s."approved",
+    s."approvedBy",
+    s."fromDate",
+    s."toDate",
+    s."customFields",
+    pg.name;

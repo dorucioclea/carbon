@@ -42,7 +42,7 @@ ALTER TABLE "receipt" ADD COLUMN "customFields" JSONB;
 -- ALTER TABLE "requestForQuote" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "requestForQuoteLine" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "requestForQuoteSupplier" ADD COLUMN "customFields" JSONB;
-ALTER TABLE "service" ADD COLUMN "customFields" JSONB;
+-- ALTER TABLE "service" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "serviceSupplier" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "shelf" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "shift" ADD COLUMN "customFields" JSONB;

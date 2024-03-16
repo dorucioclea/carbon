@@ -7,6 +7,7 @@ import type { Service } from "~/modules/parts";
 import { ServiceForm, serviceValidator, upsertService } from "~/modules/parts";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -20,10 +21,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { serviceId } = params;
   if (!serviceId) throw new Error("Could not find serviceId");
 
-  // validate with partsValidator
-  const validation = await validator(serviceValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const validation = await validator(serviceValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -33,6 +32,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     ...validation.data,
     id: serviceId,
     updatedBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (updatePart.error) {
@@ -64,6 +64,7 @@ export default function ServiceDetailsRoute() {
     partGroupId: routeData.service?.partGroupId ?? undefined,
     active: routeData.service?.active ?? true,
     blocked: routeData.service?.blocked ?? false,
+    ...getCustomFields(routeData.service?.customFields),
   };
 
   return <ServiceForm key={initialValues.id} initialValues={initialValues} />;
