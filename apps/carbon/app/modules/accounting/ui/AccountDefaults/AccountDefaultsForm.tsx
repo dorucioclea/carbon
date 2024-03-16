@@ -68,7 +68,7 @@ const AccountDefaultsForm = ({
             <VStack spacing={8}>
               <Card>
                 <CardHeader>
-                  <CardTitle>Revenue</CardTitle>
+                  <CardTitle>Income Statement</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-y-4 gap-x-8 grid-cols-1 md:grid-cols-2">
@@ -82,15 +82,7 @@ const AccountDefaultsForm = ({
                       label="Sales Discounts"
                       options={incomeStatementAccountOptions}
                     />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Expenses</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-y-4 gap-x-8 grid-cols-1 md:grid-cols-2">
+
                     <Select
                       name="costOfGoodsSoldAccount"
                       label="Cost of Goods Sold"
@@ -142,15 +134,7 @@ const AccountDefaultsForm = ({
                       label="Maintenance Expense"
                       options={incomeStatementAccountOptions}
                     />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Fixed Assets</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-y-4 gap-x-8 grid-cols-1 md:grid-cols-2">
+
                     <Select
                       name="assetDepreciationExpenseAccount"
                       label="Depreciation Expense"
@@ -166,15 +150,6 @@ const AccountDefaultsForm = ({
                       label="Service Charges"
                       options={incomeStatementAccountOptions}
                     />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Interest</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-y-4 gap-x-8 grid-cols-1 md:grid-cols-2">
                     <Select
                       name="interestAccount"
                       label="Interest"
@@ -204,7 +179,7 @@ const AccountDefaultsForm = ({
             <VStack spacing={8}>
               <Card>
                 <CardHeader>
-                  <CardTitle>Current Assets</CardTitle>
+                  <CardTitle>Balance Sheet</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-y-4 gap-x-8 grid-cols-1 md:grid-cols-2">
@@ -249,15 +224,7 @@ const AccountDefaultsForm = ({
                       label="Bank - Foreign Currency"
                       options={balanceSheetAccountOptions}
                     />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Fixed Assets</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-y-4 gap-x-8 grid-cols-1 md:grid-cols-2">
+
                     <Select
                       name="assetAquisitionCostAccount"
                       label="Asset Aquisition Cost"
@@ -278,15 +245,7 @@ const AccountDefaultsForm = ({
                       label="Accumulated Depreciation on Disposal"
                       options={balanceSheetAccountOptions}
                     />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Liabilities</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-y-4 gap-x-8 grid-cols-1 md:grid-cols-2">
+
                     <Select
                       name="prepaymentAccount"
                       label="Prepayments"
@@ -322,15 +281,7 @@ const AccountDefaultsForm = ({
                       label="Reverse Charge Sales Tax"
                       options={balanceSheetAccountOptions}
                     />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Equity</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-y-4 gap-x-8 grid-cols-1 md:grid-cols-2">
+
                     <Select
                       name="retainedEarningsAccount"
                       label="Retained Earnings"

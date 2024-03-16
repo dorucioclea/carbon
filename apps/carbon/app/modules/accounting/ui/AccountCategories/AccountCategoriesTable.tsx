@@ -1,5 +1,6 @@
 import {
   Button,
+  Enumerable,
   Hyperlink,
   MenuIcon,
   MenuItem,
@@ -56,12 +57,12 @@ const AccountCategoriesTable = memo(
         {
           header: "Income/Balance",
           accessorKey: "incomeBalance",
-          cell: (item) => item.getValue(),
+          cell: (item) => <Enumerable value={item.getValue<string>()} />,
         },
         {
           header: "Class",
           accessorKey: "class",
-          cell: (item) => item.getValue(),
+          cell: (item) => <Enumerable value={item.getValue<string>()} />,
         },
 
         {

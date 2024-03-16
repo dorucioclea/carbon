@@ -1,3 +1,4 @@
+import { Enumerable } from "@carbon/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { Table } from "~/components";
@@ -44,16 +45,27 @@ const SalesPostingGroupsTable = ({
       {
         id: "partGroup",
         header: "Part Group",
-        cell: ({ row }) =>
-          partGroups.find((group) => group.id === row.original.partGroupId)
-            ?.name,
+        cell: ({ row }) => (
+          <Enumerable
+            value={
+              partGroups.find((group) => group.id === row.original.partGroupId)
+                ?.name ?? null
+            }
+          />
+        ),
       },
       {
         id: "customerType",
         header: "Customer Type",
-        cell: ({ row }) =>
-          customerTypes.find((type) => type.id === row.original.customerTypeId)
-            ?.name,
+        cell: ({ row }) => (
+          <Enumerable
+            value={
+              customerTypes.find(
+                (type) => type.id === row.original.customerTypeId
+              )?.name ?? null
+            }
+          />
+        ),
       },
       {
         accessorKey: "receivablesAccount",

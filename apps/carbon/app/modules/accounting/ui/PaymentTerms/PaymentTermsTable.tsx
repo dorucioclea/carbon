@@ -1,4 +1,4 @@
-import { Hyperlink, MenuIcon, MenuItem } from "@carbon/react";
+import { Enumerable, Hyperlink, MenuIcon, MenuItem } from "@carbon/react";
 import { useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
@@ -48,7 +48,7 @@ const PaymentTermsTable = memo(({ data, count }: PaymentTermsTableProps) => {
       {
         accessorKey: "calculationMethod",
         header: "Calculation Method",
-        cell: (item) => item.getValue(),
+        cell: (item) => <Enumerable value={item.getValue<string>()} />,
       },
     ];
   }, [navigate]);

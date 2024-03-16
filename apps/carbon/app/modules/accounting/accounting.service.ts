@@ -186,6 +186,8 @@ export async function getAccountCategories(
   }
 
   query = setGenericQueryFilters(query, args, [
+    { column: "incomeBalance", ascending: true },
+    { column: "class", ascending: true },
     { column: "category", ascending: true },
   ]);
   return query;

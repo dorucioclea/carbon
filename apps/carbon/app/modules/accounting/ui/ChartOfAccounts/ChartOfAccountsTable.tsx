@@ -1,4 +1,11 @@
-import { Button, Checkbox, HStack, Hyperlink, cn } from "@carbon/react";
+import {
+  Button,
+  Checkbox,
+  Enumerable,
+  HStack,
+  Hyperlink,
+  cn,
+} from "@carbon/react";
 import { Link as RemixLink, useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo } from "react";
@@ -98,12 +105,12 @@ const ChartOfAccountsTable = memo(({ data }: ChartOfAccountsTableProps) => {
       {
         accessorKey: "incomeBalance",
         header: "Income/Balance",
-        cell: (item) => item.getValue(),
+        cell: (item) => <Enumerable value={item.getValue<string>()} />,
       },
       {
         accessorKey: "type",
         header: "Account Type",
-        cell: (item) => item.getValue(),
+        cell: (item) => <Enumerable value={item.getValue<string>()} />,
       },
       {
         acessorKey: "totaling",
@@ -113,12 +120,12 @@ const ChartOfAccountsTable = memo(({ data }: ChartOfAccountsTableProps) => {
       {
         accessorKey: "accountCategory",
         header: "Account Category",
-        cell: (item) => item.getValue(),
+        cell: (item) => <Enumerable value={item.getValue<string>()} />,
       },
       {
         accessorKey: "accountSubCategory",
         header: "Account Subcategory",
-        cell: (item) => item.getValue(),
+        cell: (item) => <Enumerable value={item.getValue<string>()} />,
       },
       {
         accessorKey: "directPosting",
