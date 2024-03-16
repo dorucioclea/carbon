@@ -46,7 +46,7 @@ const PartCostingForm = ({ initialValues }: PartCostingFormProps) => {
         </CardHeader>
         <CardContent>
           <Hidden name="partId" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-8 gap-y-4 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-8 gap-y-2 w-full">
             <Select
               name="costingMethod"
               label="Part Costing Method"

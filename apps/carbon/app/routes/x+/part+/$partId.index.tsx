@@ -22,8 +22,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
   if (!partId) throw new Error("Could not find partId");
 
   const formData = await request.formData();
-
-  // validate with partsValidator
   const validation = await validator(partValidator).validate(formData);
 
   if (validation.error) {

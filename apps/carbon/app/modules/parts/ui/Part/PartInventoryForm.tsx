@@ -79,7 +79,7 @@ const PartInventoryForm = ({
         <CardContent>
           <Hidden name="partId" />
           <Hidden name="locationId" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-8 gap-y-4 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-8 gap-y-2 w-full">
             <CreatableCombobox
               name="defaultShelfId"
               label="Default Shelf"
