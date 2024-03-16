@@ -51,9 +51,7 @@ const PartnersTable = memo(({ data, count }: PartnersTableProps) => {
       },
       {
         header: "Location",
-        cell: ({ row }) => (
-          <Enumerable value={`${row.original.city}, ${row.original.state}`} />
-        ),
+        cell: ({ row }) => `${row.original.city}, ${row.original.state}`,
       },
       {
         accessorKey: "abilityName",

@@ -1,4 +1,5 @@
 import {
+  Enumerable,
   HStack,
   Hyperlink,
   MenuIcon,
@@ -106,7 +107,7 @@ const EmployeesTable = memo(
         {
           accessorKey: "employeeType.name",
           header: "Employee Type",
-          cell: (item) => item.getValue(),
+          cell: (item) => <Enumerable value={item.getValue<string>()} />,
         },
       ];
       // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1,4 +1,10 @@
-import { HStack, MenuIcon, MenuItem, useDisclosure } from "@carbon/react";
+import {
+  Enumerable,
+  HStack,
+  MenuIcon,
+  MenuItem,
+  useDisclosure,
+} from "@carbon/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo, useState } from "react";
 import { BsEnvelope } from "react-icons/bs";
@@ -93,11 +99,10 @@ const CustomerAccountsTable = memo(
         },
         {
           header: "Customer Type",
-          cell: ({ row }) => {
-            const customerType = row.original.customer?.customerType;
+          cell: ({ row }) => (
             // @ts-ignore
-            return customerType ? customerType.name : "";
-          },
+            <Enumerable value={row.original.customer?.customerType?.name} />
+          ),
         },
       ];
     }, []);
