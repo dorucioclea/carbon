@@ -1132,10 +1132,12 @@ export async function upsertLocation(
   location:
     | (Omit<z.infer<typeof locationValidator>, "id"> & {
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof locationValidator>, "id"> & {
         id: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("id" in location) {

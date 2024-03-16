@@ -11,6 +11,7 @@ import {
 } from "~/modules/resources";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost, notFound } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -43,9 +44,8 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "resources",
   });
 
-  const validation = await validator(locationValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const validation = await validator(locationValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
@@ -58,6 +58,7 @@ export async function action({ request }: ActionFunctionArgs) {
     id,
     ...data,
     updatedBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (createLocation.error) {
@@ -79,7 +80,7 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function LocationRoute() {
   const { location } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
-  const onClose = () => navigate(path.to.workCells);
+  const onClose = () => navigate(-1);
 
   const initialValues = {
     id: location.id,
@@ -92,6 +93,7 @@ export default function LocationRoute() {
     timezone: location.timezone ?? getLocalTimeZone(),
     latitude: location.latitude ?? undefined,
     longitude: location.longitude ?? undefined,
+    ...getCustomFields(location.customFields),
   };
 
   return <LocationForm initialValues={initialValues} onClose={onClose} />;

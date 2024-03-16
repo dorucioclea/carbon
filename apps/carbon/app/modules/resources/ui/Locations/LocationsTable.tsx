@@ -1,4 +1,4 @@
-import { Hyperlink, MenuIcon, MenuItem } from "@carbon/react";
+import { Enumerable, MenuIcon, MenuItem } from "@carbon/react";
 import { useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
@@ -29,9 +29,11 @@ const LocationsTable = memo(({ data, count }: LocationsTableProps) => {
         accessorKey: "name",
         header: "Location",
         cell: ({ row }) => (
-          <Hyperlink onClick={() => navigate(row.original.id)}>
-            {row.original.name}
-          </Hyperlink>
+          <Enumerable
+            value={row.original.name}
+            onClick={() => navigate(row.original.id)}
+            className="cursor-pointer"
+          />
         ),
       },
       {
