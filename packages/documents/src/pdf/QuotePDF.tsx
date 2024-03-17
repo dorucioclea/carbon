@@ -8,6 +8,7 @@ import { Header, Summary, Template } from "./components";
 interface QuotePDFProps extends PDF {
   quote: Database["public"]["Views"]["quotes"]["Row"];
   quoteLines: Database["public"]["Tables"]["quoteLine"]["Row"][];
+  // quoteLineQuantities: Database["public"]["Tables"]["quoteLineQuantity"]["Row"][][];
 }
 
 const QuotePDF = ({
@@ -15,6 +16,7 @@ const QuotePDF = ({
   meta,
   quote,
   quoteLines,
+  // quoteLineQuantities,
   title = "Quote",
 }: QuotePDFProps) => {
   return (
@@ -49,8 +51,21 @@ const QuotePDF = ({
             <Text style={styles.tableCol4}>Total</Text>
           </View>
           {quoteLines.map((line) => (
-            <View style={styles.tr} key={line.id}>
-              <Text key={line.id}>{line.description}</Text>
+            <View key={line.id} style={styles.tr}>
+              <View style={styles.tableCol1}>
+                <Text style={styles.bold}>{line.description}</Text>
+                <Text style={{ fontSize: 9, opacity: 0.8 }}>{line.partId}</Text>
+              </View>
+              {/* {quoteLinePrices.map((price) => {} */}
+              <View style={styles.tableCol2}>
+                <Text>10</Text>
+              </View>
+              <View style={styles.tableCol3}>
+                <Text>10</Text>
+              </View>
+              <View style={styles.tableCol4}>
+                <Text>100</Text>
+              </View>
             </View>
           ))}
         </View>

@@ -2,7 +2,11 @@ import { QuotePDF } from "@carbon/documents";
 import { renderToStream } from "@react-pdf/renderer";
 import { type LoaderFunctionArgs } from "@remix-run/node";
 import logger from "~/lib/logger";
-import { getQuote, getQuoteLines } from "~/modules/sales";
+import {
+  getQuote,
+  getQuoteLines,
+  // getQuoteLineQuantities,
+} from "~/modules/sales";
 import { getCompany } from "~/modules/settings";
 import { requirePermissions } from "~/services/auth";
 
@@ -36,11 +40,19 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     throw new Error("Failed to load quote");
   }
 
+  // const promises = quoteLines.data.map((line) =>
+  //   getQuoteLineQuantities(client, line.id)
+  // );
+
+  // const quoteLineQuantities = await Promise.all(promises);
+  // console.log(quoteLineQuantities[0]);
+
   const stream = await renderToStream(
     <QuotePDF
       company={company.data}
       quote={quote.data}
       quoteLines={quoteLines.data}
+      // quoteLineQuantities={quoteLineQuantities.data}
     />
   );
 
