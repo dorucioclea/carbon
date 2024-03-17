@@ -80,14 +80,14 @@ const NavigationIconLink = forwardRef<
     ref
   ) => {
     const iconClasses = [
-      "absolute left-3 top-3 flex rounded items-center items-center justify-center", // Layout
+      "absolute left-3 top-3 flex rounded-md items-center items-center justify-center", // Layout
     ];
 
     const classes = [
       "relative",
       "h-10 w-10 group-data-[state=expanded]:w-full",
       "transition-all duration-200",
-      "flex items-center rounded",
+      "flex items-center rounded-md",
       "group-data-[state=collapsed]:justify-center",
       "group-data-[state=expanded]:-space-x-2",
       "hover:bg-primary/10 active:",
