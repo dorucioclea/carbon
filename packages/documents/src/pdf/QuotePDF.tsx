@@ -2,8 +2,8 @@ import type { Database } from "@carbon/database";
 import { StyleSheet, Text, View } from "@react-pdf/renderer";
 
 import type { PDF } from "../types";
-// import { getLineDescription } from "../utils/quote";
 import { Header, Summary, Template } from "./components";
+import { getExtendedPrice, getUnitCost } from "../utils/quote";
 
 interface QuotePDFProps extends PDF {
   quote: Database["public"]["Views"]["quotes"]["Row"];
@@ -49,8 +49,8 @@ const QuotePDF = ({
           <View style={styles.thead}>
             <Text style={styles.tableCol1}>Description</Text>
             <Text style={styles.tableCol2}>Qty</Text>
-            <Text style={styles.tableCol3}>Price</Text>
-            {/* <Text style={styles.tableCol4}>Total</Text> */}
+            <Text style={styles.tableCol3}>Cost</Text>
+            <Text style={styles.tableCol4}>Total</Text>
           </View>
           {quoteLines.map((line) => (
             <View key={line.id} style={styles.tr}>
@@ -58,19 +58,24 @@ const QuotePDF = ({
                 <Text style={styles.bold}>{line.description}</Text>
                 <Text style={{ fontSize: 9, opacity: 0.8 }}>{line.partId}</Text>
               </View>
-              {quoteLineQuantities &&
-                quoteLineQuantities.map((quantity) =>
-                  quantity.quoteLineId === line.id ? (
-                    <View style={styles.tableCol2} key={quantity.id}>
-                      <View>
-                        <Text>{quantity.quantity}</Text>
+              <View style={styles.quantityTable}>
+                {quoteLineQuantities &&
+                  quoteLineQuantities.map((quantity) =>
+                    quantity.quoteLineId === line.id ? (
+                      <View style={styles.quantityRow} key={quantity.id}>
+                        <View style={styles.quantityCol1}>
+                          <Text>{quantity.quantity}</Text>
+                        </View>
+                        <View style={styles.quantityCol2}>
+                          <Text>{getUnitCost(quantity).toFixed(2)}</Text>
+                        </View>
+                        <View style={styles.quantityCol3}>
+                          <Text>{getExtendedPrice(quantity).toFixed(2)}</Text>
+                        </View>
                       </View>
-                      <View>
-                        <Text>{quantity.unitCostBase}</Text>
-                      </View>
-                    </View>
-                  ) : null
-                )}
+                    ) : null
+                  )}
+              </View>
             </View>
           ))}
         </View>
@@ -178,13 +183,34 @@ const styles = StyleSheet.create({
   },
   tableCol2: {
     width: "15%",
-    textAlign: "right",
+    textAlign: "left",
   },
   tableCol3: {
     width: "15%",
     textAlign: "right",
   },
   tableCol4: {
+    width: "20%",
+    textAlign: "right",
+  },
+  quantityTable: {
+    width: "50%",
+  },
+  quantityRow: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: "6px 3px 6px 3px",
+  },
+  quantityCol1: {
+    width: "15%",
+    textAlign: "left",
+  },
+  quantityCol2: {
+    width: "15%",
+    textAlign: "right",
+  },
+  quantityCol3: {
     width: "20%",
     textAlign: "right",
   },
