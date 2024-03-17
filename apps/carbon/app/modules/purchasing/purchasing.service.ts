@@ -384,7 +384,7 @@ export async function getSupplierStatus(
 ) {
   return client
     .from("supplierStatus")
-    .select("id, name")
+    .select("*")
     .eq("id", supplierStatusId)
     .single();
 }
@@ -393,9 +393,7 @@ export async function getSupplierStatuses(
   client: SupabaseClient<Database>,
   args?: GenericQueryFilters & { name: string | null }
 ) {
-  let query = client
-    .from("supplierStatus")
-    .select("id, name", { count: "exact" });
+  let query = client.from("supplierStatus").select("*", { count: "exact" });
 
   if (args?.name) {
     query = query.ilike("name", `%${args.name}%`);
@@ -422,7 +420,7 @@ export async function getSupplierType(
 ) {
   return client
     .from("supplierType")
-    .select("id, name, protected")
+    .select("*")
     .eq("id", supplierTypeId)
     .single();
 }

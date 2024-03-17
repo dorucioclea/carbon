@@ -10,6 +10,7 @@ import {
 } from "~/modules/purchasing";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost, notFound } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -46,8 +47,9 @@ export async function action({ request }: ActionFunctionArgs) {
     update: "purchasing",
   });
 
+  const formData = await request.formData();
   const validation = await validator(supplierStatusValidator).validate(
-    await request.formData()
+    formData
   );
 
   if (validation.error) {
@@ -61,6 +63,7 @@ export async function action({ request }: ActionFunctionArgs) {
     id,
     ...data,
     updatedBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (updateSupplierStatus.error) {
@@ -86,6 +89,7 @@ export default function EditSupplierStatusesRoute() {
   const initialValues = {
     id: supplierStatus.id ?? undefined,
     name: supplierStatus.name ?? "",
+    ...getCustomFields(supplierStatus.customFields),
   };
 
   return (
