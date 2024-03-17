@@ -5,7 +5,7 @@ import logger from "~/lib/logger";
 import {
   getQuote,
   getQuoteLines,
-  // getQuoteLineQuantities,
+  getQuoteLineQuantitiesByQuoteId,
 } from "~/modules/sales";
 import { getCompany } from "~/modules/settings";
 import { requirePermissions } from "~/services/auth";
@@ -18,11 +18,13 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const { id } = params;
   if (!id) throw new Error("Could not find id");
 
-  const [company, quote, quoteLines] = await Promise.all([
-    getCompany(client),
-    getQuote(client, id),
-    getQuoteLines(client, id),
-  ]);
+  const [company, quote, quoteLines, quoteLineQuantitiesByQuoteId] =
+    await Promise.all([
+      getCompany(client),
+      getQuote(client, id),
+      getQuoteLines(client, id),
+      getQuoteLineQuantitiesByQuoteId(client, id),
+    ]);
 
   if (company.error) {
     logger.error(company.error);
@@ -36,23 +38,20 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     logger.error(quoteLines.error);
   }
 
+  if (quoteLineQuantitiesByQuoteId.error) {
+    logger.error(quoteLineQuantitiesByQuoteId.error);
+  }
+
   if (company.error || quote.error || quoteLines.error) {
     throw new Error("Failed to load quote");
   }
-
-  // const promises = quoteLines.data.map((line) =>
-  //   getQuoteLineQuantities(client, line.id)
-  // );
-
-  // const quoteLineQuantities = await Promise.all(promises);
-  // console.log(quoteLineQuantities[0]);
 
   const stream = await renderToStream(
     <QuotePDF
       company={company.data}
       quote={quote.data}
       quoteLines={quoteLines.data}
-      // quoteLineQuantities={quoteLineQuantities.data}
+      quoteLineQuantities={quoteLineQuantitiesByQuoteId.data}
     />
   );
 

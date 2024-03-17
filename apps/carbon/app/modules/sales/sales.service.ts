@@ -394,6 +394,17 @@ export async function getQuoteLineQuantities(
     .order("createdAt");
 }
 
+export async function getQuoteLineQuantitiesByQuoteId(
+  client: SupabaseClient<Database>,
+  quoteId: string
+) {
+  return client
+    .from("quoteLineQuantity")
+    .select("*")
+    .eq("quoteId", quoteId)
+    .order("createdAt");
+}
+
 export async function getQuoteMaterials(
   client: SupabaseClient<Database>,
   quoteId: string

@@ -8,7 +8,9 @@ import { Header, Summary, Template } from "./components";
 interface QuotePDFProps extends PDF {
   quote: Database["public"]["Views"]["quotes"]["Row"];
   quoteLines: Database["public"]["Tables"]["quoteLine"]["Row"][];
-  // quoteLineQuantities: Database["public"]["Tables"]["quoteLineQuantity"]["Row"][][];
+  quoteLineQuantities:
+    | Database["public"]["Tables"]["quoteLineQuantity"]["Row"][]
+    | null;
 }
 
 const QuotePDF = ({
@@ -16,7 +18,7 @@ const QuotePDF = ({
   meta,
   quote,
   quoteLines,
-  // quoteLineQuantities,
+  quoteLineQuantities,
   title = "Quote",
 }: QuotePDFProps) => {
   return (
@@ -48,7 +50,7 @@ const QuotePDF = ({
             <Text style={styles.tableCol1}>Description</Text>
             <Text style={styles.tableCol2}>Qty</Text>
             <Text style={styles.tableCol3}>Price</Text>
-            <Text style={styles.tableCol4}>Total</Text>
+            {/* <Text style={styles.tableCol4}>Total</Text> */}
           </View>
           {quoteLines.map((line) => (
             <View key={line.id} style={styles.tr}>
@@ -56,16 +58,19 @@ const QuotePDF = ({
                 <Text style={styles.bold}>{line.description}</Text>
                 <Text style={{ fontSize: 9, opacity: 0.8 }}>{line.partId}</Text>
               </View>
-              {/* {quoteLinePrices.map((price) => {} */}
-              <View style={styles.tableCol2}>
-                <Text>10</Text>
-              </View>
-              <View style={styles.tableCol3}>
-                <Text>10</Text>
-              </View>
-              <View style={styles.tableCol4}>
-                <Text>100</Text>
-              </View>
+              {quoteLineQuantities &&
+                quoteLineQuantities.map((quantity) =>
+                  quantity.quoteLineId === line.id ? (
+                    <View style={styles.tableCol2} key={quantity.id}>
+                      <View>
+                        <Text>{quantity.quantity}</Text>
+                      </View>
+                      <View>
+                        <Text>{quantity.unitCostBase}</Text>
+                      </View>
+                    </View>
+                  ) : null
+                )}
             </View>
           ))}
         </View>
