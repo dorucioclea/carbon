@@ -10,6 +10,7 @@ import {
 } from "~/modules/parts";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost, notFound } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -36,22 +37,21 @@ export async function action({ request }: ActionFunctionArgs) {
     update: "parts",
   });
 
-  const validation = await validator(unitOfMeasureValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const validation = await validator(unitOfMeasureValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
   }
 
-  const { id, name, code } = validation.data;
+  const { id, ...data } = validation.data;
   if (!id) throw notFound("id not found");
 
   const updateUnitOfMeasure = await upsertUnitOfMeasure(client, {
     id,
-    name,
-    code,
+    ...data,
     updatedBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (updateUnitOfMeasure.error) {
@@ -78,6 +78,7 @@ export default function EditUnitOfMeasuresRoute() {
     id: unitOfMeasure?.id ?? undefined,
     name: unitOfMeasure?.name ?? "",
     code: unitOfMeasure?.code ?? "",
+    ...getCustomFields(unitOfMeasure?.customFields),
   };
 
   return (

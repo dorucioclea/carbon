@@ -313,18 +313,14 @@ export async function getUnitOfMeasure(
   client: SupabaseClient<Database>,
   id: string
 ) {
-  return client
-    .from("unitOfMeasure")
-    .select("id, name, code")
-    .eq("id", id)
-    .single();
+  return client.from("unitOfMeasure").select("*").eq("id", id).single();
 }
 
 export async function getUnitOfMeasures(
   client: SupabaseClient<Database>,
   args: GenericQueryFilters & { name: string | null }
 ) {
-  let query = client.from("unitOfMeasure").select("id, name, code", {
+  let query = client.from("unitOfMeasure").select("*", {
     count: "exact",
   });
 

@@ -9,6 +9,7 @@ import {
 } from "~/modules/parts";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -42,6 +43,7 @@ export async function action({ request }: ActionFunctionArgs) {
     name,
     code,
     createdBy: userId,
+    customFields: setCustomFields(formData),
   });
   if (insertUnitOfMeasure.error) {
     return json(
@@ -49,17 +51,6 @@ export async function action({ request }: ActionFunctionArgs) {
       await flash(
         request,
         error(insertUnitOfMeasure.error, "Failed to insert unit of measure")
-      )
-    );
-  }
-
-  const unitOfMeasureId = insertUnitOfMeasure.data?.id;
-  if (!unitOfMeasureId) {
-    return json(
-      {},
-      await flash(
-        request,
-        error(insertUnitOfMeasure, "Failed to insert unit of measure")
       )
     );
   }
