@@ -17,6 +17,7 @@ import type {
   partnerValidator,
   shiftValidator,
   workCellTypeValidator,
+  workCellValidator,
 } from "./resources.models";
 
 export async function deleteAbility(
@@ -1191,31 +1192,23 @@ export async function upsertShift(
 export async function upsertWorkCell(
   client: SupabaseClient<Database>,
   workCell:
-    | {
-        name: string;
-        description: string;
-        workCellTypeId: string;
-        locationId: string;
-        departmentId: string;
-        activeDate?: string;
+    | (Omit<z.infer<typeof workCellValidator>, "id"> & {
         createdBy: string;
-      }
-    | {
+        customFields?: Json;
+      })
+    | (Omit<z.infer<typeof workCellValidator>, "id"> & {
         id: string;
-        name: string;
-        description: string;
-        workCellTypeId: string;
-        locationId: string;
-        departmentId: string;
-        activeDate?: string;
         updatedBy: string;
-      }
+        customFields?: Json;
+      })
 ) {
-  if ("id" in workCell) {
-    const { id, ...update } = workCell;
-    return client.from("workCell").update(sanitize(update)).eq("id", id);
+  if ("createdBy" in workCell) {
+    return client.from("workCell").insert([workCell]).select("*").single();
   }
-  return client.from("workCell").insert([workCell]).select("*").single();
+  return client
+    .from("workCell")
+    .update(sanitize(workCell))
+    .eq("id", workCell.id);
 }
 
 export async function upsertWorkCellType(
@@ -1223,19 +1216,23 @@ export async function upsertWorkCellType(
   workCellType:
     | (Omit<z.infer<typeof workCellTypeValidator>, "id"> & {
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof workCellTypeValidator>, "id"> & {
         id: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
-  if ("id" in workCellType) {
-    const { id, ...update } = workCellType;
-    return client.from("workCellType").update(sanitize(update)).eq("id", id);
+  if ("createdBy" in workCellType) {
+    return client
+      .from("workCellType")
+      .insert([workCellType])
+      .select("id")
+      .single();
   }
   return client
     .from("workCellType")
-    .insert([workCellType])
-    .select("id")
-    .single();
+    .update(sanitize(workCellType))
+    .eq("id", workCellType.id);
 }

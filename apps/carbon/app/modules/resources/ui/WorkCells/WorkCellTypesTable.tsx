@@ -1,7 +1,7 @@
 import {
   Button,
+  Enumerable,
   HStack,
-  Hyperlink,
   MenuIcon,
   MenuItem,
   useDisclosure,
@@ -47,9 +47,12 @@ const WorkCellTypesTable = memo(({ data, count }: WorkCellTypesTableProps) => {
         header: "Work Cell Type",
         cell: ({ row }) => (
           <HStack>
-            <Hyperlink onClick={() => navigate(row.original.id)}>
-              {row.original.name}
-            </Hyperlink>
+            <Enumerable
+              value={row.original.name}
+              onClick={() => navigate(row.original.id)}
+              className="cursor-pointer"
+            />
+
             {row.original.requiredAbility && (
               <BsFillCheckCircleFill
                 className="text-green-500"

@@ -6,6 +6,7 @@ import type { WorkCellType } from "~/modules/resources";
 import { WorkCellForm, getWorkCell } from "~/modules/resources";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields } from "~/utils/form";
 import { notFound } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";
@@ -65,6 +66,7 @@ export default function EditWorkCellRoute() {
         locationId: workCell?.location?.id ?? "",
         departmentId: workCell?.department?.id ?? "",
         activeDate: workCell?.activeDate ?? "",
+        ...getCustomFields(workCell?.customFields),
       }}
       workCellTypes={workCellRouteData?.workCellTypes ?? []}
       onClose={onClose}

@@ -83,6 +83,5 @@ export default function PersonJobRoute() {
     ...getCustomFields(job.customFields),
   };
 
-  console.log({ initialValues });
   return <PersonJob key={personId} initialValues={initialValues} />;
 }

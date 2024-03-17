@@ -4,6 +4,7 @@ import { json, redirect } from "@remix-run/node";
 import { upsertWorkCell, workCellValidator } from "~/modules/resources";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";
@@ -14,31 +15,19 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "resources",
   });
 
-  const validation = await validator(workCellValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const validation = await validator(workCellValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
   }
 
-  const {
-    name,
-    description,
-    workCellTypeId,
-    locationId,
-    departmentId,
-    activeDate,
-  } = validation.data;
+  const { id, ...data } = validation.data;
 
   const insertWorkCell = await upsertWorkCell(client, {
-    name,
-    description,
-    workCellTypeId,
-    locationId,
-    departmentId,
-    activeDate,
+    ...data,
     createdBy: userId,
+    customFields: setCustomFields(formData),
   });
   if (insertWorkCell.error) {
     return json(
