@@ -706,6 +706,7 @@ export async function updateSupplierPayment(
   client: SupabaseClient<Database>,
   supplierPayment: z.infer<typeof supplierPaymentValidator> & {
     updatedBy: string;
+    customFields?: Json;
   }
 ) {
   return client
