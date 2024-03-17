@@ -11,6 +11,7 @@ import {
 } from "~/modules/inventory";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost, notFound } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -37,8 +38,9 @@ export async function action({ request }: ActionFunctionArgs) {
     update: "inventory",
   });
 
+  const formData = await request.formData();
   const validation = await validator(shippingMethodValidator).validate(
-    await request.formData()
+    formData
   );
 
   if (validation.error) {
@@ -52,6 +54,7 @@ export async function action({ request }: ActionFunctionArgs) {
     id,
     ...data,
     updatedBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (updateShippingMethod.error) {
@@ -79,6 +82,7 @@ export default function EditShippingMethodsRoute() {
     carrier: (shippingMethod?.carrier ?? "") as ShippingCarrier,
     carrierAccountId: shippingMethod?.carrierAccountId ?? "",
     trackingUrl: shippingMethod?.trackingUrl ?? "",
+    ...getCustomFields(shippingMethod?.customFields),
   };
 
   return (

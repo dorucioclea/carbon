@@ -156,10 +156,12 @@ export async function upsertShippingMethod(
   shippingMethod:
     | (Omit<z.infer<typeof shippingMethodValidator>, "id"> & {
         createdBy: string;
+        customFields?: Json;
       })
     | (Omit<z.infer<typeof shippingMethodValidator>, "id"> & {
         id: string;
         updatedBy: string;
+        customFields?: Json;
       })
 ) {
   if ("createdBy" in shippingMethod) {

@@ -9,6 +9,7 @@ import {
 } from "~/modules/inventory";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -27,22 +28,21 @@ export async function action({ request }: ActionFunctionArgs) {
     create: "inventory",
   });
 
+  const formData = await request.formData();
   const validation = await validator(shippingMethodValidator).validate(
-    await request.formData()
+    formData
   );
 
   if (validation.error) {
     return validationError(validation.error);
   }
 
-  const { name, carrier, carrierAccountId, trackingUrl } = validation.data;
+  const { id, ...data } = validation.data;
 
   const insertShippingMethod = await upsertShippingMethod(client, {
-    name,
-    carrier,
-    carrierAccountId,
-    trackingUrl,
+    ...data,
     createdBy: userId,
+    customFields: setCustomFields(formData),
   });
   if (insertShippingMethod.error) {
     return json(
