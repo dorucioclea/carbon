@@ -1,9 +1,9 @@
 import { Enumerable, Hyperlink, MenuIcon, MenuItem } from "@carbon/react";
 import { useNavigate } from "@remix-run/react";
-import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
 import { Table } from "~/components";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Customer } from "~/modules/sales";
 import { path } from "~/utils/path";
 
@@ -14,9 +14,10 @@ type CustomersTableProps = {
 
 const CustomersTable = memo(({ data, count }: CustomersTableProps) => {
   const navigate = useNavigate();
+  const customColumns = useCustomColumns("customer");
 
-  const columns = useMemo<ColumnDef<Customer>[]>(() => {
-    return [
+  const columns = useMemo(() => {
+    const defaultColumns = [
       {
         accessorKey: "name",
         header: "Name",
@@ -54,7 +55,9 @@ const CustomersTable = memo(({ data, count }: CustomersTableProps) => {
       //   ),
       // },
     ];
-  }, [navigate]);
+
+    return [...defaultColumns, ...customColumns];
+  }, [navigate, customColumns]);
 
   const renderContextMenu = useMemo(
     // eslint-disable-next-line react/display-name
