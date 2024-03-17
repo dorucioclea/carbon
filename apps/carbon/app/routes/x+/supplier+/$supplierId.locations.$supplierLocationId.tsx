@@ -10,6 +10,7 @@ import {
 } from "~/modules/purchasing";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost, badRequest, notFound } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -49,8 +50,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   if (!supplierId) throw notFound("supplierId not found");
   if (!supplierLocationId) throw notFound("supplierLocationId not found");
 
+  const formData = await request.formData();
   const validation = await validator(supplierLocationValidator).validate(
-    await request.formData()
+    formData
   );
 
   if (validation.error) {
@@ -65,6 +67,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const update = await updateSupplierLocation(client, {
     addressId,
     address,
+    customFields: setCustomFields(formData),
   });
   if (update.error) {
     return redirect(
@@ -98,6 +101,7 @@ export default function EditSupplierLocationRoute() {
     city: location?.address?.city ?? "",
     state: location?.address?.state ?? "",
     postalCode: location?.address?.postalCode ?? "",
+    ...getCustomFields(location?.customFields),
   };
 
   return (
