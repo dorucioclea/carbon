@@ -1,4 +1,5 @@
 import type { Database, Json } from "@carbon/database";
+import { getLocalTimeZone, today } from "@internationalized/date";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { z } from "zod";
 import type { GenericQueryFilters } from "~/utils/query";
@@ -560,6 +561,21 @@ export async function insertQuoteLineQuantity(
       materialCost,
     },
   ]);
+}
+
+export async function releaseQuote(
+  client: SupabaseClient<Database>,
+  quoteId: string,
+  usedId: string
+) {
+  return client
+    .from("quote")
+    .update({
+      status: "Open",
+      updatedAt: today(getLocalTimeZone()).toString(),
+      updatedBy: usedId,
+    })
+    .eq("id", quoteId);
 }
 
 export async function upsertCustomer(
