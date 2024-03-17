@@ -3,11 +3,12 @@ import type { ActionFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
   SupplierForm,
-  insertSupplier,
   supplierValidator,
+  upsertSupplier,
 } from "~/modules/purchasing";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";
@@ -29,9 +30,10 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const { id, ...data } = validation.data;
 
-  const createSupplier = await insertSupplier(client, {
+  const createSupplier = await upsertSupplier(client, {
     ...data,
     createdBy: userId,
+    customFields: setCustomFields(formData),
   });
   if (createSupplier.error) {
     return modal

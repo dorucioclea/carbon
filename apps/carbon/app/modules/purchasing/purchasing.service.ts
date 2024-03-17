@@ -452,14 +452,10 @@ export async function getSupplierTypesList(client: SupabaseClient<Database>) {
 
 export async function insertSupplier(
   client: SupabaseClient<Database>,
-  supplier:
-    | (Omit<z.infer<typeof supplierValidator>, "id"> & {
-        createdBy: string;
-      })
-    | (Omit<z.infer<typeof supplierValidator>, "id"> & {
-        id: string;
-        updatedBy: string;
-      })
+  supplier: Omit<z.infer<typeof supplierValidator>, "id"> & {
+    createdBy: string;
+    customFields?: Json;
+  }
 ) {
   return client.from("supplier").insert([supplier]).select("*").single();
 }
@@ -619,13 +615,22 @@ export async function updateRequestForQuoteFavorite(
   }
 }
 
-export async function updateSupplier(
+export async function upsertSupplier(
   client: SupabaseClient<Database>,
-  supplier: Omit<z.infer<typeof supplierValidator>, "id"> & {
-    id: string;
-    updatedBy: string;
-  }
+  supplier:
+    | (Omit<z.infer<typeof supplierValidator>, "id"> & {
+        createdBy: string;
+        customFields?: Json;
+      })
+    | (Omit<z.infer<typeof supplierValidator>, "id"> & {
+        id: string;
+        updatedBy: string;
+        customFields?: Json;
+      })
 ) {
+  if ("createdBy" in supplier) {
+    return client.from("supplier").insert([supplier]).select("*").single();
+  }
   return client
     .from("supplier")
     .update(sanitize(supplier))
