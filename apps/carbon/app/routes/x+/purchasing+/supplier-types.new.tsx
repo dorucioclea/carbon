@@ -9,6 +9,7 @@ import {
 } from "~/modules/purchasing";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path, requestReferrer } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -41,6 +42,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const insertSupplierType = await upsertSupplierType(client, {
     ...data,
     createdBy: userId,
+    customFields: setCustomFields(formData),
   });
   if (insertSupplierType.error) {
     return modal
