@@ -508,7 +508,7 @@ VALUES
 ('shelf', 'Shelf', 'Inventory'),
 ('shift', 'Shift', 'Resources'),
 ('shippingMethod', 'Shipping Method', 'Inventory'),
--- ('shippingTerm', 'Shipping Term', 'Accounting'),
+('shippingTerm', 'Shipping Term', 'Accounting'),
 ('supplier', 'Supplier', 'Purchasing'),
 ('supplierContact', 'Supplier Contact', 'Purchasing'),
 ('supplierLocation', 'Supplier Location', 'Purchasing'),

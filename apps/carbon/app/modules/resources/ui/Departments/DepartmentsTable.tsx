@@ -1,4 +1,4 @@
-import { Hyperlink, MenuIcon, MenuItem } from "@carbon/react";
+import { Enumerable, HStack, MenuIcon, MenuItem } from "@carbon/react";
 import { useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
@@ -33,14 +33,22 @@ const DepartmentsTable = memo(({ data, count }: DepartmentsTableProps) => {
         accessorKey: "name",
         header: "Department",
         cell: ({ row }) => (
-          <Hyperlink onClick={() => navigate(row.original.id)}>
-            {row.original.name}
-          </Hyperlink>
+          <Enumerable
+            value={row.original.name}
+            onClick={() => navigate(row.original.id)}
+            className="cursor-pointer"
+          />
         ),
       },
       {
         header: "Sub-Departments",
-        cell: ({ row }) => row.original.parentDepartment,
+        cell: ({ row }) => (
+          <HStack>
+            {row.original.parentDepartment.split(", ").map((v) => (
+              <Enumerable key={v} value={v} />
+            ))}
+          </HStack>
+        ),
       },
     ];
   }, [navigate]);

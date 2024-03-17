@@ -105,22 +105,36 @@ export const PaginationButtons = ({
   return (
     <>
       {condensed ? (
-        <>
-          <IconButton
-            aria-label="Previous"
-            icon={<BsChevronLeft />}
-            isDisabled={!canPreviousPage}
-            onClick={previousPage}
-            variant="secondary"
-          />
-          <IconButton
-            aria-label="Next"
-            icon={<BsChevronRight />}
-            isDisabled={!canNextPage}
-            onClick={nextPage}
-            variant="secondary"
-          />
-        </>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <IconButton
+                aria-label="Previous"
+                icon={<BsChevronLeft />}
+                isDisabled={!canPreviousPage}
+                onClick={previousPage}
+                variant="secondary"
+              />
+            </TooltipTrigger>
+            <TooltipContent>
+              <HStack>F</HStack>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger>
+              <IconButton
+                aria-label="Next"
+                icon={<BsChevronRight />}
+                isDisabled={!canNextPage}
+                onClick={nextPage}
+                variant="secondary"
+              />
+            </TooltipTrigger>
+            <TooltipContent>
+              <HStack>J</HStack>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       ) : (
         <TooltipProvider>
           <div className="text-foreground flex text-sm font-medium align-center">

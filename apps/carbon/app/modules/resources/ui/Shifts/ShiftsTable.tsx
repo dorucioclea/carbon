@@ -3,6 +3,7 @@ import {
   AvatarGroupList,
   AvatarOverflowIndicator,
   Badge,
+  Enumerable,
   Hyperlink,
   MenuIcon,
   MenuItem,
@@ -136,7 +137,7 @@ const ShiftsTable = memo(({ data, count }: ShiftsTableProps) => {
       {
         accessorKey: "location.name",
         header: "Location",
-        cell: (item) => item.getValue(),
+        cell: (item) => <Enumerable value={item.getValue<string>()} />,
       },
       {
         header: "Days",

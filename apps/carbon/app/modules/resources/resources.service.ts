@@ -15,6 +15,7 @@ import type {
   holidayValidator,
   locationValidator,
   partnerValidator,
+  shiftValidator,
   workCellTypeValidator,
 } from "./resources.models";
 
@@ -650,9 +651,7 @@ export async function getShift(
   return client
     .from("shift")
     .select(
-      `id, name, startTime, endTime, locationId,
-      monday, tuesday, wednesday, thursday, friday, saturday, sunday, 
-      employeeShift(user(id, fullName, avatarUrl)), location(name, timezone)`
+      `*, employeeShift(user(id, fullName, avatarUrl)), location(name, timezone)`
     )
     .eq("id", shiftId)
     .eq("active", true)
@@ -666,9 +665,7 @@ export async function getShifts(
   let query = client
     .from("shift")
     .select(
-      `id, name, startTime, endTime, locationId, 
-      monday, tuesday, wednesday, thursday, friday, saturday, sunday,
-      employeeShift(user(id, fullName, avatarUrl)), location(name, timezone)`,
+      `*, employeeShift(user(id, fullName, avatarUrl)), location(name, timezone)`,
       {
         count: "exact",
       }
@@ -1174,27 +1171,21 @@ export async function upsertPartner(
 
 export async function upsertShift(
   client: SupabaseClient<Database>,
-  shift: {
-    id?: string;
-    name: string;
-    startTime: string;
-    endTime: string;
-    locationId: string;
-    monday: boolean;
-    tuesday: boolean;
-    wednesday: boolean;
-    thursday: boolean;
-    friday: boolean;
-    saturday: boolean;
-    sunday: boolean;
-  }
+  shift:
+    | (Omit<z.infer<typeof shiftValidator>, "id"> & {
+        createdBy: string;
+        customFields?: Json;
+      })
+    | (Omit<z.infer<typeof shiftValidator>, "id"> & {
+        id: string;
+        updatedBy: string;
+        customFields?: Json;
+      })
 ) {
-  const { id, ...update } = shift;
-  if (id) {
-    return client.from("shift").update(sanitize(update)).eq("id", id);
+  if ("createdBy" in shift) {
+    return client.from("shift").insert([shift]).select("*").single();
   }
-
-  return client.from("shift").insert([update]).select("*").single();
+  return client.from("shift").update(sanitize(shift)).eq("id", shift.id);
 }
 
 export async function upsertWorkCell(

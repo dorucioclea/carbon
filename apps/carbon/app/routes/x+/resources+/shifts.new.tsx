@@ -4,26 +4,30 @@ import { redirect } from "@remix-run/node";
 import { ShiftForm, shiftValidator, upsertShift } from "~/modules/resources";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client } = await requirePermissions(request, {
+  const { client, userId } = await requirePermissions(request, {
     create: "resources",
   });
 
-  const validation = await validator(shiftValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const validation = await validator(shiftValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
   }
 
+  const { id, ...data } = validation.data;
+
   const createShift = await upsertShift(client, {
-    ...validation.data,
+    ...data,
+    createdBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (createShift.error) {

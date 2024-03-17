@@ -9860,6 +9860,8 @@ export type Database = {
       shift: {
         Row: {
           active: boolean
+          createdAt: string
+          createdBy: string
           customFields: Json | null
           endTime: string
           friday: boolean
@@ -9872,10 +9874,14 @@ export type Database = {
           sunday: boolean
           thursday: boolean
           tuesday: boolean
+          updatedAt: string | null
+          updatedBy: string | null
           wednesday: boolean
         }
         Insert: {
           active?: boolean
+          createdAt?: string
+          createdBy: string
           customFields?: Json | null
           endTime: string
           friday?: boolean
@@ -9888,10 +9894,14 @@ export type Database = {
           sunday?: boolean
           thursday?: boolean
           tuesday?: boolean
+          updatedAt?: string | null
+          updatedBy?: string | null
           wednesday?: boolean
         }
         Update: {
           active?: boolean
+          createdAt?: string
+          createdBy?: string
           customFields?: Json | null
           endTime?: string
           friday?: boolean
@@ -9904,9 +9914,32 @@ export type Database = {
           sunday?: boolean
           thursday?: boolean
           tuesday?: boolean
+          updatedAt?: string | null
+          updatedBy?: string | null
           wednesday?: boolean
         }
         Relationships: [
+          {
+            foreignKeyName: "shifts_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
           {
             foreignKeyName: "shifts_locationId_fkey"
             columns: ["locationId"]
@@ -9927,6 +9960,27 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "purchaseOrders"
             referencedColumns: ["locationId"]
+          },
+          {
+            foreignKeyName: "shifts_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
           },
         ]
       }

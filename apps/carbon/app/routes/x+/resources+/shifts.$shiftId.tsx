@@ -10,6 +10,7 @@ import {
 } from "~/modules/resources";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost, notFound } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -38,20 +39,25 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client } = await requirePermissions(request, {
+  const { client, userId } = await requirePermissions(request, {
     create: "resources",
   });
 
-  const validation = await validator(shiftValidator).validate(
-    await request.formData()
-  );
+  const formData = await request.formData();
+  const validation = await validator(shiftValidator).validate(formData);
 
   if (validation.error) {
     return validationError(validation.error);
   }
 
+  const { id, ...data } = validation.data;
+  if (!id) throw new Error("Shift ID is required");
+
   const createShift = await upsertShift(client, {
-    ...validation.data,
+    id,
+    ...data,
+    updatedBy: userId,
+    customFields: setCustomFields(formData),
   });
 
   if (createShift.error) {
@@ -87,6 +93,7 @@ export default function ShiftRoute() {
     friday: shift.friday,
     saturday: shift.saturday,
     sunday: shift.sunday,
+    ...getCustomFields(shift.customFields),
   };
 
   return <ShiftForm key={initialValues.id} initialValues={initialValues} />;
