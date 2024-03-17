@@ -10,6 +10,7 @@ import {
 } from "~/modules/purchasing";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
+import { setCustomFields } from "~/utils/form";
 import { assertIsPost, notFound } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
@@ -42,6 +43,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const createSupplierContact = await insertSupplierContact(client, {
     supplierId,
     contact,
+    customFields: setCustomFields(formData),
   });
   if (createSupplierContact.error) {
     return modal
