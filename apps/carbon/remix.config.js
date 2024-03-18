@@ -4,10 +4,6 @@ const { flatRoutes } = require("remix-flat-routes");
 /** @type {import('@remix-run/dev').AppConfig} */
 
 module.exports = {
-  // appDirectory: "app",
-  // assetsBuildDirectory: "public/build",
-  // publicPath: "/build/",
-  // serverBuildPath: "build/index.js",
   browserNodeBuiltinsPolyfill: { modules: { events: true } },
   dev: {
     port: 3601,
