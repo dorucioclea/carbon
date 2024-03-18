@@ -4,13 +4,13 @@ import {
   validationError,
   validator,
 } from "@carbon/remix-validated-form";
+import { Link, useActionData, useSearchParams } from "@remix-run/react";
 import type {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   MetaFunction,
-} from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
-import { Link, useActionData, useSearchParams } from "@remix-run/react";
+} from "@vercel/remix";
+import { json, redirect } from "@vercel/remix";
 import { LuAlertCircle } from "react-icons/lu";
 
 import { Hidden, Input, Password, Submit } from "~/components/Form";

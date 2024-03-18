@@ -1,7 +1,7 @@
 import { validator } from "@carbon/remix-validated-form";
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
 import { useFetcher } from "@remix-run/react";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@vercel/remix";
+import { json, redirect } from "@vercel/remix";
 import { useEffect, useMemo } from "react";
 import { getSupabase } from "~/lib/supabase";
 import { getUserByEmail } from "~/modules/users/users.server";

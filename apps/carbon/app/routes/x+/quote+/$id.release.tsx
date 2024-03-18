@@ -1,15 +1,15 @@
 import { QuoteEmail } from "@carbon/documents";
 import { validationError, validator } from "@carbon/remix-validated-form";
 import { renderAsync } from "@react-email/components";
-import { redirect, type ActionFunctionArgs } from "@remix-run/node";
+import { redirect, type ActionFunctionArgs } from "@vercel/remix";
 import { triggerClient } from "~/lib/trigger.server";
 import {
-  getQuote,
-  releaseQuote,
-  quotationReleaseValidator,
   getCustomer,
-  getQuoteLines,
   getCustomerContact,
+  getQuote,
+  getQuoteLines,
+  quotationReleaseValidator,
+  releaseQuote,
 } from "~/modules/sales";
 import { getCompany } from "~/modules/settings";
 import { getUser } from "~/modules/users/users.server";

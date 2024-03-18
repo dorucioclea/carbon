@@ -1,5 +1,5 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
-import { json, type ActionFunctionArgs } from "@remix-run/node";
+import { json, type ActionFunctionArgs } from "@vercel/remix";
 import { updateQuoteFavorite } from "~/modules/sales";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";

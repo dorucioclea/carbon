@@ -1,6 +1,6 @@
 import { PurchaseOrderPDF } from "@carbon/documents";
 import { renderToStream } from "@react-pdf/renderer";
-import { type LoaderFunctionArgs } from "@remix-run/node";
+import { type LoaderFunctionArgs } from "@vercel/remix";
 import logger from "~/lib/logger";
 import {
   getPurchaseOrder,

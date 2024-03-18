@@ -1,6 +1,6 @@
 import { json, redirect, useNavigate, useParams } from "@remix-run/react";
 
-import type { ActionFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs } from "@vercel/remix";
 import { ConfirmDelete } from "~/components/Modals";
 import { useRouteData } from "~/hooks";
 import type { QuotationAssembly } from "~/modules/sales";

@@ -1,6 +1,6 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
-import type { ActionFunctionArgs } from "@remix-run/node";
 import { redirect, useParams } from "@remix-run/react";
+import type { ActionFunctionArgs } from "@vercel/remix";
 import { useUrlParams } from "~/hooks";
 import {
   QuotationAssemblyForm,

@@ -1,6 +1,6 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
-import type { ActionFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import type { ActionFunctionArgs } from "@vercel/remix";
+import { json, redirect } from "@vercel/remix";
 import { upsertWorkCell, workCellValidator } from "~/modules/resources";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";

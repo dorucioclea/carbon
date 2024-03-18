@@ -6,10 +6,10 @@ import {
   useDisclosure,
   useKeyboardShortcuts,
 } from "@carbon/react";
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
 import type { ShouldRevalidateFunction } from "@remix-run/react";
 import { Outlet, useLoaderData, useParams } from "@remix-run/react";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@vercel/remix";
+import { json, redirect } from "@vercel/remix";
 import { useEffect, useRef } from "react";
 import { CollapsibleSidebar } from "~/components/Layout";
 import { useSupabase } from "~/lib/supabase";

@@ -5,9 +5,9 @@ import {
   CardTitle,
   VStack,
 } from "@carbon/react";
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import type { LoaderFunctionArgs } from "@vercel/remix";
+import { json, redirect } from "@vercel/remix";
 import type { PrivateAttributes } from "~/modules/account";
 import { UserAttributesForm, getPrivateAttributes } from "~/modules/account";
 import { requirePermissions } from "~/services/auth";

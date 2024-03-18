@@ -15,8 +15,8 @@ import {
   validator,
 } from "@carbon/remix-validated-form";
 import { getLocalTimeZone } from "@internationalized/date";
-import { json, redirect, type ActionFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
+import { json, redirect, type ActionFunctionArgs } from "@vercel/remix";
 import { Hidden, Input, Submit } from "~/components/Form";
 import { useOnboarding } from "~/hooks";
 import {

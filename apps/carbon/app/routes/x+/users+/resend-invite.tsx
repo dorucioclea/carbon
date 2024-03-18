@@ -1,6 +1,6 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
-import type { ActionFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import type { ActionFunctionArgs } from "@vercel/remix";
+import { json } from "@vercel/remix";
 import { resendInviteValidator } from "~/modules/users";
 import { resendInvite } from "~/modules/users/users.server";
 import type { UserAdminQueueData } from "~/queues";

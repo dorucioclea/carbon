@@ -1,4 +1,4 @@
-import { type LoaderFunctionArgs } from "@remix-run/node";
+import { type LoaderFunctionArgs } from "@vercel/remix";
 import { requirePermissions } from "~/services/auth";
 
 export let loader = async ({ request, params }: LoaderFunctionArgs) => {

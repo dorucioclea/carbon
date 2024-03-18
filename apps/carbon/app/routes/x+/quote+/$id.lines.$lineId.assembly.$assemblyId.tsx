@@ -2,7 +2,7 @@ import { Outlet, json, redirect, useLoaderData } from "@remix-run/react";
 import QuotationAssemblyForm from "~/modules/sales/ui/Quotation/QuotationAssemblyForm";
 
 import { validationError, validator } from "@carbon/remix-validated-form";
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@vercel/remix";
 import {
   getQuoteAssembly,
   quotationAssemblyValidator,

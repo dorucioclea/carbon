@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@carbon/react";
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
 import { useLoaderData, useParams } from "@remix-run/react";
+import type { LoaderFunctionArgs } from "@vercel/remix";
+import { json, redirect } from "@vercel/remix";
 
 import { Notes, getNotes } from "~/modules/shared";
 import { requirePermissions } from "~/services/auth";

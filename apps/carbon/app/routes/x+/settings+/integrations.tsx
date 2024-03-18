@@ -1,5 +1,5 @@
-import { type LoaderFunctionArgs } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
+import { type LoaderFunctionArgs } from "@vercel/remix";
 import { useIntegrations } from "~/hooks/useIntegrations";
 import { IntegrationsList } from "~/modules/settings";
 import { requirePermissions } from "~/services/auth";

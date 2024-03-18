@@ -1,8 +1,8 @@
 import { VStack } from "@carbon/react";
 import { validationError, validator } from "@carbon/remix-validated-form";
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@vercel/remix";
+import { json, redirect } from "@vercel/remix";
 import type { Theme as ThemeValue } from "~/modules/settings";
 import {
   ThemeForm,

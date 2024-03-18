@@ -1,12 +1,6 @@
 // root.tsx
 import { Heading } from "@carbon/react";
 import { validator } from "@carbon/remix-validated-form";
-import type {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  MetaFunction,
-} from "@remix-run/node";
-import { json } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -19,6 +13,13 @@ import {
   useRouteError,
 } from "@remix-run/react";
 import { Analytics } from "@vercel/analytics/react";
+import type {
+  ActionFunctionArgs,
+  LinksFunction,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from "@vercel/remix";
+import { json } from "@vercel/remix";
 import React from "react";
 import { getBrowserEnv } from "~/config/env";
 import { getMode, setMode } from "~/services/mode.server";
@@ -29,13 +30,13 @@ import { error } from "~/utils/result";
 import { useMode } from "./hooks/useMode";
 import { modeValidator } from "./types/validators";
 
-export function links() {
+export const links: LinksFunction = () => {
   return [
     { rel: "stylesheet", href: Tailwind },
     { rel: "stylesheet", href: Background },
     { rel: "stylesheet", href: NProgress },
   ];
-}
+};
 
 export const meta: MetaFunction = () => {
   return [

@@ -2,7 +2,7 @@ import { redirect, useParams } from "@remix-run/react";
 import { useUrlParams } from "~/hooks";
 
 import { validationError, validator } from "@carbon/remix-validated-form";
-import type { ActionFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs } from "@vercel/remix";
 import {
   QuotationOperationForm,
   quotationOperationValidator,

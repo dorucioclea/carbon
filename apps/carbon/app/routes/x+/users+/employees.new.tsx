@@ -1,6 +1,6 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
-import type { ActionFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import type { ActionFunctionArgs } from "@vercel/remix";
+import { redirect } from "@vercel/remix";
 import { CreateEmployeeModal, createEmployeeValidator } from "~/modules/users";
 import { createEmployeeAccount } from "~/modules/users/users.server";
 import { requirePermissions } from "~/services/auth";

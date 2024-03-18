@@ -1,6 +1,6 @@
 import { VStack } from "@carbon/react";
-import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
+import type { LoaderFunctionArgs, MetaFunction } from "@vercel/remix";
 import { getPaymentTermsList } from "~/modules/accounting";
 import { requirePermissions } from "~/services/auth";
 import type { Handle } from "~/utils/handle";

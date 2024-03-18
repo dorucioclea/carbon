@@ -16,9 +16,9 @@ import {
   validator,
 } from "@carbon/remix-validated-form";
 import { themes, type Theme } from "@carbon/utils";
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@vercel/remix";
+import { json, redirect } from "@vercel/remix";
 import { useEffect, useState } from "react";
 import { RxCheck } from "react-icons/rx";
 import { Hidden, Submit } from "~/components/Form";

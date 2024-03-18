@@ -1,6 +1,6 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
 import { useLoaderData, useNavigate, useParams } from "@remix-run/react";
+import type { LoaderFunctionArgs } from "@vercel/remix";
+import { json, redirect } from "@vercel/remix";
 import { useRouteData } from "~/hooks";
 import type { WorkCellType } from "~/modules/resources";
 import { WorkCellForm, getWorkCell } from "~/modules/resources";
