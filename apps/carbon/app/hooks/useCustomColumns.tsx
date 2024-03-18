@@ -38,15 +38,15 @@ export function useCustomColumns(table: string) {
       cell: (item) => {
         switch (field.dataTypeId) {
           case DataType.Boolean:
-            return item.row.original.customFields[field.id] === "on" ? "Yes" : "No";
+            return item.row.original?.customFields ? (item.row.original?.customFields[field.id] === "on" ? "Yes" : "No") : null;
           case DataType.Date:
-            return item.row.original.customFields[field.id];
+            return item.row.original?.customFields ? item.row.original?.customFields[field.id] : null;
           case DataType.List:
-            return item.row.original.customFields[field.id];
+            return item.row.original?.customFields ? item.row.original?.customFields[field.id] : null;
           case DataType.Numeric:
-            return item.row.original.customFields[field.id];
+            return item.row.original?.customFields ? item.row.original?.customFields[field.id] : null;
           case DataType.Text:
-            return item.row.original.customFields[field.id];
+            return item.row.original?.customFields ? item.row.original?.customFields[field.id] : null;
           case DataType.User:
             return null /*<UserSelect
                     type="employee"

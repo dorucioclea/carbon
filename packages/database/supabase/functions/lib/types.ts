@@ -11921,6 +11921,7 @@ export type Database = {
             | null
           createdAt: string | null
           createdBy: string | null
+          customFields: Json | null
           directPosting: boolean | null
           id: string | null
           incomeBalance: Database["public"]["Enums"]["glIncomeBalance"] | null
@@ -11942,6 +11943,7 @@ export type Database = {
             | null
           createdAt?: string | null
           createdBy?: string | null
+          customFields?: Json | null
           directPosting?: boolean | null
           id?: string | null
           incomeBalance?: Database["public"]["Enums"]["glIncomeBalance"] | null
@@ -11963,6 +11965,7 @@ export type Database = {
             | null
           createdAt?: string | null
           createdBy?: string | null
+          customFields?: Json | null
           directPosting?: boolean | null
           id?: string | null
           incomeBalance?: Database["public"]["Enums"]["glIncomeBalance"] | null

@@ -210,6 +210,7 @@ CREATE TABLE "account" (
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
+  "customFields" JSONB,
 
   CONSTRAINT "account_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "account_number_key" UNIQUE ("number"),

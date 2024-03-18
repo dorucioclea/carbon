@@ -12,6 +12,7 @@ import { memo, useMemo } from "react";
 import { MdMoreHoriz } from "react-icons/md";
 import Grid from "~/components/Grid";
 import { useRealtime } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Chart } from "~/modules/accounting";
 
 type ChartOfAccountsTableProps = {
@@ -22,8 +23,10 @@ const ChartOfAccountsTable = memo(({ data }: ChartOfAccountsTableProps) => {
   useRealtime("journal");
 
   const navigate = useNavigate();
-  const columns = useMemo<ColumnDef<Chart>[]>(() => {
-    return [
+  const customColumns = useCustomColumns("account");
+
+  const columns = useMemo<ColumnDef<any>[]>(() => {
+    const defaultColumns = [
       {
         accessorKey: "number",
         header: "Number",
@@ -133,7 +136,8 @@ const ChartOfAccountsTable = memo(({ data }: ChartOfAccountsTableProps) => {
         cell: (item) => <Checkbox isChecked={item.getValue<boolean>()} />,
       },
     ];
-  }, [navigate]);
+    return [...defaultColumns, ...customColumns]
+  }, [navigate, customColumns]);
 
   return <Grid<Chart> data={data} columns={columns} withSimpleSorting />;
 });
