@@ -13,6 +13,7 @@ import { IoMdTrash } from "react-icons/io";
 import { Avatar, Table } from "~/components";
 import { ConfirmDelete } from "~/components/Modals";
 import { usePermissions } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import { type Quotation, type quoteStatusType } from "~/modules/sales";
 import { favoriteSchema } from "~/types/validators";
 import { path } from "~/utils/path";
@@ -49,9 +50,10 @@ const QuotationsTable = memo(({ data, count }: QuotationsTableProps) => {
     null
   );
   const deleteQuotationModal = useDisclosure();
+  const customColumns = useCustomColumns("quotations");
 
-  const columns = useMemo<ColumnDef<Quotation>[]>(() => {
-    return [
+  const columns = useMemo<ColumnDef<any>[]>(() => {
+    const defaultColumns: ColumnDef<Quotation>[] = [
       {
         accessorKey: "quoteId",
         header: "Quote Number",
@@ -179,7 +181,8 @@ const QuotationsTable = memo(({ data, count }: QuotationsTableProps) => {
         cell: (item) => item.getValue(),
       },
     ];
-  }, [fetcher, navigate]);
+    return [...defaultColumns, ...customColumns];
+  }, [fetcher, navigate, customColumns]);
 
   const defaultColumnVisibility = {
     expirationDate: false,

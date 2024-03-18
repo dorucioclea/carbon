@@ -7,6 +7,7 @@ import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
 import { Table } from "~/components";
 import { usePermissions, useRealtime, useUrlParams } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Receipt, receiptStatusType } from "~/modules/inventory";
 import { ReceiptStatus } from "~/modules/inventory";
 import { path } from "~/utils/path";
@@ -24,9 +25,10 @@ const ReceiptsTable = memo(({ data, count }: ReceiptsTableProps) => {
   const permissions = usePermissions();
 
   const rows = useMemo(() => data, [data]);
+  const customColumns = useCustomColumns("receipts");
 
   const columns = useMemo<ColumnDef<Receipt>[]>(() => {
-    const result: ColumnDef<(typeof rows)[number]>[] = [
+    const defaultColumns: ColumnDef<(typeof rows)[number]>[] = [
       {
         accessorKey: "receiptId",
         header: "Receipt ID",
@@ -96,8 +98,8 @@ const ReceiptsTable = memo(({ data, count }: ReceiptsTableProps) => {
       },
     ];
 
-    return result;
-  }, [navigate]);
+    return [...defaultColumns, ...customColumns];
+  }, [navigate, customColumns]);
 
   const renderContextMenu = useCallback(
     (row: Receipt) => {

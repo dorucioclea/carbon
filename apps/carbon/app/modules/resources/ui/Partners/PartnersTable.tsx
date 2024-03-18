@@ -13,6 +13,7 @@ import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
 import { Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Partner } from "~/modules/resources";
 import { path } from "~/utils/path";
 
@@ -30,8 +31,9 @@ const PartnersTable = memo(({ data, count }: PartnersTableProps) => {
     ...row,
   }));
 
+  const customColumns = useCustomColumns("partner");
   const columns = useMemo<ColumnDef<(typeof rows)[number]>[]>(() => {
-    return [
+    const defaultColumns = [
       {
         accessorKey: "supplierName",
         header: "Supplier",
@@ -69,7 +71,8 @@ const PartnersTable = memo(({ data, count }: PartnersTableProps) => {
         cell: (item) => item.getValue(),
       },
     ];
-  }, [navigate, params]);
+    return [...defaultColumns, ...customColumns];
+  }, [navigate, params, customColumns]);
 
   const renderContextMenu = useCallback(
     (row: (typeof rows)[number]) => {
