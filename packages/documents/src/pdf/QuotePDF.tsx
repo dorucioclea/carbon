@@ -48,9 +48,10 @@ const QuotePDF = ({
         <View style={styles.table}>
           <View style={styles.thead}>
             <Text style={styles.tableCol1}>Description</Text>
-            <Text style={styles.tableCol2}>Qty</Text>
-            <Text style={styles.tableCol3}>Cost</Text>
-            <Text style={styles.tableCol4}>Total</Text>
+            <Text style={styles.tableCol2}>Lead Time</Text>
+            <Text style={styles.tableCol3}>Qty</Text>
+            <Text style={styles.tableCol4}>Cost</Text>
+            <Text style={styles.tableCol5}>Total</Text>
           </View>
           {quoteLines.map((line) => (
             <View key={line.id} style={styles.tr}>
@@ -64,13 +65,16 @@ const QuotePDF = ({
                     quantity.quoteLineId === line.id ? (
                       <View style={styles.quantityRow} key={quantity.id}>
                         <View style={styles.quantityCol1}>
-                          <Text>{quantity.quantity}</Text>
+                          <Text>{quantity.leadTime} days</Text>
                         </View>
                         <View style={styles.quantityCol2}>
-                          <Text>{getUnitCost(quantity).toFixed(2)}</Text>
+                          <Text>{quantity.quantity}</Text>
                         </View>
                         <View style={styles.quantityCol3}>
-                          <Text>{getExtendedPrice(quantity).toFixed(2)}</Text>
+                          <Text>{getUnitCost(quantity).toFixed(2)}</Text>
+                        </View>
+                        <View style={styles.quantityCol4}>
+                          <Text>${getExtendedPrice(quantity).toFixed(2)}</Text>
                         </View>
                       </View>
                     ) : null
@@ -178,7 +182,7 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   tableCol1: {
-    width: "50%",
+    width: "40%",
     textAlign: "left",
   },
   tableCol2: {
@@ -186,15 +190,19 @@ const styles = StyleSheet.create({
     textAlign: "left",
   },
   tableCol3: {
-    width: "15%",
-    textAlign: "right",
+    width: "12.5%",
+    textAlign: "left",
   },
   tableCol4: {
-    width: "20%",
-    textAlign: "right",
+    width: "12.5%",
+    textAlign: "left",
+  },
+  tableCol5: {
+    width: "15%",
+    textAlign: "left",
   },
   quantityTable: {
-    width: "50%",
+    width: "60%",
   },
   quantityRow: {
     display: "flex",
@@ -207,11 +215,15 @@ const styles = StyleSheet.create({
     textAlign: "left",
   },
   quantityCol2: {
-    width: "15%",
-    textAlign: "right",
+    width: "12.5%",
+    textAlign: "left",
   },
   quantityCol3: {
+    width: "12.5%",
+    textAlign: "left",
+  },
+  quantityCol4: {
     width: "20%",
-    textAlign: "right",
+    textAlign: "left",
   },
 });
