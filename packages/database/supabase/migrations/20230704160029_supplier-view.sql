@@ -33,7 +33,8 @@ CREATE OR REPLACE VIEW "suppliers" AS
     c."customerTypeId",
     ct.name AS "type",
     c."customerStatusId",
-    cs.name AS "status"
+    cs.name AS "status",
+    c."customFields"
     -- so.count AS "orderCount"
   FROM "customer" c
   LEFT JOIN "customerType" ct ON ct.id = c."customerTypeId"

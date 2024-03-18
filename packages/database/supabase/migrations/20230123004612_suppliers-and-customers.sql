@@ -175,6 +175,7 @@ CREATE TABLE "customer" (
     "createdBy" TEXT,
     "updatedAt" TIMESTAMP WITH TIME ZONE,
     "updatedBy" TEXT,
+    "customFields" JSONB,
 
     CONSTRAINT "customer_pkey" PRIMARY KEY ("id"),
     CONSTRAINT "customer_customerTypeId_fkey" FOREIGN KEY ("customerTypeId") REFERENCES "customerType"("id") ON UPDATE CASCADE ON DELETE SET NULL,

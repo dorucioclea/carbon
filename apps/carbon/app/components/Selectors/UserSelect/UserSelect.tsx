@@ -37,7 +37,6 @@ const UserSelect = (props: UserSelectProps) => {
     refs: { containerRef },
     selectionItemsById,
   } = state;
-
   return (
     <UserSelectContext.Provider value={state}>
       {label && <FormLabel>{label}</FormLabel>}

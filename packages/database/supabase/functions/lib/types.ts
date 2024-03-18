@@ -12058,6 +12058,7 @@ export type Database = {
         Row: {
           customerStatusId: string | null
           customerTypeId: string | null
+          customFields: Json | null
           id: string | null
           name: string | null
           status: string | null

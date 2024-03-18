@@ -1,10 +1,11 @@
 import type { Json } from "@carbon/database";
-import { Enumerable } from "@carbon/react";
 import { useMemo } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { z } from "zod";
+import { DataType } from "~/modules/shared";
 import { path } from "~/utils/path";
 import { useRouteData } from "./useRouteData";
+//import UserSelect from "~/components/Selectors/UserSelect";
 
 export function useCustomColumns(table: string) {
   const data = useRouteData<{
@@ -32,10 +33,32 @@ export function useCustomColumns(table: string) {
 
   schema.forEach((field) => {
     customColumns.push({
-      accessorKey: field.name,
+      accessorKey: `customFields.${field.id}`,
       header: field.name,
-      cell: (item) => <Enumerable value={item.getValue<string>()} />,
-    });
+      cell: (item) => {
+        switch (field.dataTypeId) {
+          case DataType.Boolean:
+            return item.row.original.customFields[field.id] === "on" ? "Yes" : "No";
+          case DataType.Date:
+            return item.row.original.customFields[field.id];
+          case DataType.List:
+            return item.row.original.customFields[field.id];
+          case DataType.Numeric:
+            return item.row.original.customFields[field.id];
+          case DataType.Text:
+            return item.row.original.customFields[field.id];
+          case DataType.User:
+            return null /*<UserSelect
+                    type="employee"
+                    usersOnly
+                    isMulti={false}
+                    readOnly={true}
+                    value={item.row.original.customFields[field.id]}
+                  />*/
+          default:
+            return null;
+        }
+      }});
   });
 
   return customColumns;
