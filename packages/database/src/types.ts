@@ -11835,6 +11835,7 @@ export type Database = {
           class: Database["public"]["Enums"]["glAccountClass"] | null
           createdAt: string | null
           createdBy: string | null
+          customFields: Json | null
           id: string | null
           incomeBalance: Database["public"]["Enums"]["glIncomeBalance"] | null
           subCategoriesCount: number | null
@@ -11846,6 +11847,7 @@ export type Database = {
           class?: Database["public"]["Enums"]["glAccountClass"] | null
           createdAt?: string | null
           createdBy?: string | null
+          customFields?: Json | null
           id?: string | null
           incomeBalance?: Database["public"]["Enums"]["glIncomeBalance"] | null
           subCategoriesCount?: never
@@ -11857,6 +11859,7 @@ export type Database = {
           class?: Database["public"]["Enums"]["glAccountClass"] | null
           createdAt?: string | null
           createdBy?: string | null
+          customFields?: Json | null
           id?: string | null
           incomeBalance?: Database["public"]["Enums"]["glIncomeBalance"] | null
           subCategoriesCount?: never
@@ -12391,6 +12394,7 @@ export type Database = {
       parts: {
         Row: {
           active: boolean | null
+          customFields: Json | null
           description: string | null
           id: string | null
           name: string | null
@@ -12595,6 +12599,7 @@ export type Database = {
           assetId: string | null
           createdAt: string | null
           createdBy: string | null
+          customFields: Json | null
           description: string | null
           id: string | null
           invoicedComplete: boolean | null
@@ -13284,6 +13289,7 @@ export type Database = {
       }
       suppliers: {
         Row: {
+          customFields: Json | null
           id: string | null
           name: string | null
           orderCount: number | null
