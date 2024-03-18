@@ -10,6 +10,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
 import { Table } from "~/components";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Supplier } from "~/modules/purchasing";
 import { path } from "~/utils/path";
 
@@ -20,9 +21,10 @@ type SuppliersTableProps = {
 
 const SuppliersTable = memo(({ data, count }: SuppliersTableProps) => {
   const navigate = useNavigate();
+  const customColumns = useCustomColumns("supplier");
 
-  const columns = useMemo<ColumnDef<Supplier>[]>(() => {
-    return [
+  const columns = useMemo<ColumnDef<any>[]>(() => {
+    const defaultColumns = [
       {
         accessorKey: "name",
         header: "Name",
@@ -75,7 +77,8 @@ const SuppliersTable = memo(({ data, count }: SuppliersTableProps) => {
         ),
       },
     ];
-  }, [navigate]);
+    return [...defaultColumns, ...customColumns];
+  }, [navigate, customColumns]);
 
   const renderContextMenu = useMemo(
     // eslint-disable-next-line react/display-name

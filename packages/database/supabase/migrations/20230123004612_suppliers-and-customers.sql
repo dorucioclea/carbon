@@ -85,6 +85,7 @@ CREATE TABLE "supplier" (
     "createdBy" TEXT,
     "updatedAt" TIMESTAMP WITH TIME ZONE,
     "updatedBy" TEXT,
+    "customFields" JSONB,
 
     CONSTRAINT "supplier_pkey" PRIMARY KEY ("id"),
     CONSTRAINT "supplier_supplierTypeId_fkey" FOREIGN KEY ("supplierTypeId") REFERENCES "supplierType"("id") ON UPDATE CASCADE ON DELETE SET NULL,

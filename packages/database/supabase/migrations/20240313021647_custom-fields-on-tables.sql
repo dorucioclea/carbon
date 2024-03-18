@@ -45,7 +45,6 @@ ALTER TABLE "serviceSupplier" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "shelf" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "shift" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "shippingMethod" ADD COLUMN "customFields" JSONB;
-ALTER TABLE "supplier" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "supplierContact" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "supplierLocation" ADD COLUMN "customFields" JSONB;
 ALTER TABLE "supplierPayment" ADD COLUMN "customFields" JSONB;
