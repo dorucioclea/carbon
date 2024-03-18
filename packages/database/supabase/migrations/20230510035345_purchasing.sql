@@ -16,6 +16,7 @@ CREATE TABLE "paymentTerm" (
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
+  "customFields" JSONB,
 
   CONSTRAINT "paymentTerm_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "paymentTerm_name_key" UNIQUE ("name", "active"),
@@ -80,6 +81,7 @@ CREATE TABLE "shippingMethod" (
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
+  "customFields" JSONB,
 
   CONSTRAINT "shippingMethod_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "shippingMethod_name_key" UNIQUE ("name"),
@@ -240,6 +242,7 @@ CREATE TABLE "purchaseOrderLine" (
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
+  "customFields" JSONB,
 
   CONSTRAINT "purchaseOrderLineType_number"
     CHECK (
@@ -305,6 +308,7 @@ CREATE TABLE "purchaseOrderPayment" (
   "currencyCode" TEXT NOT NULL DEFAULT 'USD',
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
+  "customFields" JSONB,
 
   CONSTRAINT "purchaseOrderPayment_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "purchaseOrderPayment_id_fkey" FOREIGN KEY ("id") REFERENCES "purchaseOrder" ("id") ON DELETE CASCADE,
@@ -334,6 +338,7 @@ CREATE TABLE "purchaseOrderDelivery" (
   "customerLocationId" TEXT,
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
+  "customFields" JSONB,
 
   CONSTRAINT "purchaseOrderDelivery_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "purchaseOrderDelivery_id_fkey" FOREIGN KEY ("id") REFERENCES "purchaseOrder" ("id") ON DELETE CASCADE,

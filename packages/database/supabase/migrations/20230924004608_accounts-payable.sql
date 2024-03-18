@@ -139,6 +139,7 @@ CREATE TABLE "purchaseInvoiceLine" (
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
+  "customFields" JSONB,
 
   CONSTRAINT "invoiceLineType_number"
     CHECK (
@@ -296,6 +297,7 @@ CREATE TABLE "purchasePayment" (
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
+  "customFields" JSONB,
 
   CONSTRAINT "purchasePayment_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "purchasePayment_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "supplier" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,

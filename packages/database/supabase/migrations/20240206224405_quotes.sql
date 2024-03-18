@@ -68,6 +68,7 @@ CREATE TABLE "quoteLine" (
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
+  "customFields" JSONB,
 
   CONSTRAINT "quoteLine_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "quoteLine_quoteId_fkey" FOREIGN KEY ("quoteId") REFERENCES "quote" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
@@ -125,6 +126,7 @@ CREATE TABLE "quoteAssembly" (
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
+  "customFields" JSONB,
 
   CONSTRAINT "quoteAssembly_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "quoteAssembly_quoteId_fkey" FOREIGN KEY ("quoteId") REFERENCES "quote" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
@@ -156,6 +158,7 @@ CREATE TABLE "quoteOperation" (
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
+  "customFields" JSONB,
 
   CONSTRAINT "quoteOperation_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "quoteOperation_quoteId_fkey" FOREIGN KEY ("quoteId") REFERENCES "quote" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
@@ -185,6 +188,7 @@ CREATE TABLE "quoteMaterial" (
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
+  "customFields" JSONB,
 
   CONSTRAINT "quoteMaterial_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "quoteMaterial_quoteId_fkey" FOREIGN KEY ("quoteId") REFERENCES "quote" ("id") ON DELETE CASCADE ON UPDATE CASCADE,

@@ -7,6 +7,7 @@ CREATE TABLE "partGroup" (
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
+  "customFields" JSONB,
 
   CONSTRAINT "partGroup_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "partGroup_name_key" UNIQUE ("name"),
@@ -85,6 +86,7 @@ CREATE TABLE "unitOfMeasure" (
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
+  "customFields" JSONB,
 
   CONSTRAINT "unitOfMeasure_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "unitOfMeasure_code_key" UNIQUE ("code"),
@@ -145,6 +147,7 @@ CREATE TABLE "part" (
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
+  "customFields" JSONB,
 
   CONSTRAINT "part_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "part_unitOfMeasureCode_fkey" FOREIGN KEY ("unitOfMeasureCode") REFERENCES "unitOfMeasure"("code") ON DELETE SET NULL ON UPDATE CASCADE,
@@ -263,6 +266,7 @@ CREATE TABLE "partCost" (
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
+  "customFields" JSONB,
 
   CONSTRAINT "partCost_partId_fkey" FOREIGN KEY ("partId") REFERENCES "part"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "partGroup_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id"),
@@ -299,6 +303,7 @@ CREATE TABLE "partUnitSalePrice" (
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
+  "customFields" JSONB,
 
   CONSTRAINT "partUnitSalePrice_partId_fkey" FOREIGN KEY ("partId") REFERENCES "part"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "partUnitSalePrice_currencyCode_fkey" FOREIGN KEY ("currencyCode") REFERENCES "currency"("code") ON DELETE SET NULL ON UPDATE CASCADE,
@@ -338,6 +343,7 @@ CREATE TABLE "partSupplier" (
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
+  "customFields" JSONB,
 
   CONSTRAINT "partSupplier_id_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "partSupplier_partId_fkey" FOREIGN KEY ("partId") REFERENCES "part"("id") ON DELETE CASCADE ON UPDATE CASCADE,
@@ -420,6 +426,7 @@ CREATE TABLE "partReplenishment" (
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
+  "customFields" JSONB,
   
   CONSTRAINT "partReplenishment_partId_fkey" FOREIGN KEY ("partId") REFERENCES "part"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "partReplenishment_preferredSupplierId_fkey" FOREIGN KEY ("preferredSupplierId") REFERENCES "supplier"("id") ON DELETE SET NULL,
@@ -593,6 +600,7 @@ CREATE TABLE "shelf" (
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
+  "customFields" JSONB,
 
   CONSTRAINT "shelf_pkey" PRIMARY KEY ("id", "locationId"),
   CONSTRAINT "shelf_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "location"("id") ON DELETE CASCADE,
@@ -655,6 +663,7 @@ CREATE TABLE "partPlanning" (
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
+  "customFields" JSONB,
 
 
   CONSTRAINT "partPlanning_partId_locationId_key" UNIQUE ("partId", "locationId"),
@@ -698,6 +707,7 @@ CREATE TABLE "partInventory" (
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
+  "customFields" JSONB,
 
   CONSTRAINT "partInventory_partId_locationId_key" UNIQUE ("partId", "locationId"),
   CONSTRAINT "partInventory_partId_fkey" FOREIGN KEY ("partId") REFERENCES "part"("id") ON DELETE CASCADE ON UPDATE CASCADE,

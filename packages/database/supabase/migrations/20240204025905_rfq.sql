@@ -38,6 +38,7 @@ CREATE TABLE "requestForQuoteLine" (
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT now(),
   "updatedBy" TEXT,
+  "customFields" JSONB,
 
   CONSTRAINT "requestForQuoteLine_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "requestForQuoteLine_requestForQuoteId_fkey" FOREIGN KEY ("requestForQuoteId") REFERENCES "requestForQuote"("id") ON DELETE CASCADE ON UPDATE CASCADE,
@@ -66,6 +67,7 @@ CREATE TABLE "requestForQuoteSupplier" (
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT now(),
   "updatedBy" TEXT,
+  "customFields" JSONB,
 
   CONSTRAINT "requestForQuoteSupplier_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "requestForQuoteSupplier_requestForQuoteId_fkey" FOREIGN KEY ("requestForQuoteId") REFERENCES "requestForQuote"("id") ON DELETE CASCADE ON UPDATE CASCADE,

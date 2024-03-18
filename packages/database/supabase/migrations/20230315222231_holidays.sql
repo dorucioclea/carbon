@@ -7,6 +7,7 @@ CREATE TABLE "holiday" (
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP,
+  "customFields" JSONB,
 
   CONSTRAINT "holiday_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "uq_holiday_date" UNIQUE ("date"),

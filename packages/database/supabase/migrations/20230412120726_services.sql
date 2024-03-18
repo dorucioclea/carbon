@@ -66,6 +66,7 @@ CREATE TABLE "serviceSupplier" (
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
+  "customFields" JSONB,
 
   CONSTRAINT "serviceSupplier_id_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "serviceSupplier_serviceId_fkey" FOREIGN KEY ("serviceId") REFERENCES "service"("id") ON DELETE CASCADE ON UPDATE CASCADE,

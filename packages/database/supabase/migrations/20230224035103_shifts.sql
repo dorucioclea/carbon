@@ -14,6 +14,7 @@ CREATE TABLE "location" (
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP,
+  "customFields" JSONB,
 
   CONSTRAINT "location_pkey" PRIMARY KEY ("id")
 );
@@ -67,6 +68,7 @@ CREATE TABLE "shift" (
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP,
+  "customFields" JSONB,
   
   CONSTRAINT "shifts_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "shifts_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "location"("id") ON DELETE CASCADE ON UPDATE CASCADE,
@@ -157,6 +159,7 @@ CREATE TABLE "employeeJob" (
   "startDate" DATE,
   "updatedAt" TIMESTAMP,
   "updatedBy" TEXT,
+  "customFields" JSONB,
 
   CONSTRAINT "employeeJob_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "employeeJob_id_fkey" FOREIGN KEY ("id") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE,

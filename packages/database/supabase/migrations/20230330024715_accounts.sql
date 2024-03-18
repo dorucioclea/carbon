@@ -11,6 +11,7 @@ CREATE TABLE "currency" (
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
+  "customFields" JSONB,
 
   CONSTRAINT "currency_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "currency_code_key" UNIQUE ("code"),
@@ -100,6 +101,7 @@ CREATE TABLE "accountCategory" (
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
+  "customFields" JSONB,
 
   CONSTRAINT "accountCategory_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "accountCategory_unique_category" UNIQUE ("category"),
@@ -153,6 +155,7 @@ CREATE TABLE "accountSubcategory" (
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
+  "customFields" JSONB,
 
   CONSTRAINT "accountSubcategory_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "accountSubcategory_name_key" UNIQUE ("name"),
@@ -274,6 +277,7 @@ CREATE OR REPLACE VIEW "accountCategories" AS
     "createdAt",
     "updatedBy",
     "updatedAt",
+    "customFields",
     (SELECT count(*) FROM "accountSubcategory" WHERE "accountSubcategory"."accountCategoryId" = "accountCategory"."id" AND "accountSubcategory"."active" = true) AS "subCategoriesCount"
   FROM "accountCategory"
 ;

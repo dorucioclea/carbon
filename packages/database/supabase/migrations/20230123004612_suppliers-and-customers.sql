@@ -51,6 +51,7 @@ CREATE TABLE "supplierStatus" (
     "createdBy" TEXT NOT NULL,
     "updatedBy" TEXT,
     "updatedAt" TIMESTAMP WITH TIME ZONE,
+    "customFields" JSONB,
 
     CONSTRAINT "supplierStatus_pkey" PRIMARY KEY ("id"),
     CONSTRAINT "supplierStatus_name_unique" UNIQUE ("name"),
@@ -66,6 +67,7 @@ CREATE TABLE "supplierType" (
     "createdBy" TEXT NOT NULL,
     "updatedBy" TEXT,
     "updatedAt" TIMESTAMP WITH TIME ZONE,
+    "customFields" JSONB,
 
     CONSTRAINT "supplierType_pkey" PRIMARY KEY ("id"),
     CONSTRAINT "supplierType_name_unique" UNIQUE ("name"),
@@ -102,6 +104,7 @@ CREATE TABLE "supplierLocation" (
   "id" TEXT NOT NULL DEFAULT xid(),
   "supplierId" TEXT NOT NULL,
   "addressId" TEXT NOT NULL,
+  "customFields" JSONB,
 
   CONSTRAINT "supplierLocation_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "supplierLocation_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "supplier"("id") ON UPDATE CASCADE ON DELETE CASCADE,
@@ -114,6 +117,7 @@ CREATE TABLE "supplierContact" (
   "contactId" TEXT NOT NULL,
   "supplierLocationId" TEXT,
   "userId" TEXT,
+  "customFields" JSONB,
 
   CONSTRAINT "supplierContact_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "supplierContact_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "supplier"("id") ON UPDATE CASCADE ON DELETE CASCADE,
@@ -142,6 +146,7 @@ CREATE TABLE "customerStatus" (
     "createdBy" TEXT NOT NULL,
     "updatedBy" TEXT,
     "updatedAt" TIMESTAMP WITH TIME ZONE,
+    "customFields" JSONB,
 
     CONSTRAINT "customerStatus_pkey" PRIMARY KEY ("id"),
     CONSTRAINT "customerStatus_name_unique" UNIQUE ("name"),
@@ -157,6 +162,7 @@ CREATE TABLE "customerType" (
     "createdBy" TEXT NOT NULL,
     "updatedBy" TEXT,
     "updatedAt" TIMESTAMP WITH TIME ZONE,
+    "customFields" JSONB,
 
     CONSTRAINT "customerType_pkey" PRIMARY KEY ("id"),
     CONSTRAINT "customerType_name_unique" UNIQUE ("name"),
@@ -193,6 +199,7 @@ CREATE TABLE "customerLocation" (
   "id" TEXT NOT NULL DEFAULT xid(),
   "customerId" TEXT NOT NULL,
   "addressId" TEXT NOT NULL,
+  "customFields" JSONB,
 
   CONSTRAINT "customerLocation_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "customerLocation_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "customer"("id") ON UPDATE CASCADE ON DELETE CASCADE,
@@ -205,6 +212,7 @@ CREATE TABLE "customerContact" (
   "contactId" TEXT NOT NULL,
   "customerLocationId" TEXT,
   "userId" TEXT,
+  "customFields" JSONB,
 
   CONSTRAINT "customerContact_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "customerContact_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "customer"("id") ON UPDATE CASCADE ON DELETE CASCADE,

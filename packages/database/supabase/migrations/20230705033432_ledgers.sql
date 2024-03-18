@@ -54,6 +54,7 @@ CREATE TABLE "journal" (
   "accountingPeriodId" TEXT,
   "postingDate" DATE NOT NULL DEFAULT CURRENT_DATE,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+  "customFields" JSONB,
 
   CONSTRAINT "journal_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "journal_accountPeriodId_fkey" FOREIGN KEY ("accountingPeriodId") REFERENCES "accountingPeriod" ("id") ON DELETE RESTRICT
@@ -104,6 +105,7 @@ CREATE TABLE "journalLine" (
   "documentLineReference" TEXT,
   "accrual" BOOLEAN NOT NULL DEFAULT false,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+  "customFields" JSONB,
 
   CONSTRAINT "journalLine_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "journalLine_accountNumber_fkey" FOREIGN KEY ("accountNumber") REFERENCES "account"("number") ON UPDATE CASCADE ON DELETE SET NULL

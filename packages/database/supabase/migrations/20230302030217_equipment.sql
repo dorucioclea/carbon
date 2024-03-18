@@ -21,6 +21,7 @@ CREATE TABLE "department" (
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP,
+  "customFields" JSONB,
 
   CONSTRAINT "department_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "department_parentDepartmentId_fkey" FOREIGN KEY ("parentDepartmentId") REFERENCES "department"("id") ON DELETE CASCADE ON UPDATE CASCADE
@@ -70,6 +71,7 @@ CREATE TABLE "workCellType" (
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP,
+  "customFields" JSONB,
 
   CONSTRAINT "workCellType_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "workCellType_requiredAbility_fkey" FOREIGN KEY ("requiredAbility") REFERENCES "ability"("id") ON DELETE CASCADE ON UPDATE CASCADE,
@@ -121,6 +123,7 @@ CREATE TABLE "workCell" (
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP,
+  "customFields" JSONB,
 
   CONSTRAINT "workCell_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "workCell_workCellTypeId_fkey" FOREIGN KEY ("workCellTypeId") REFERENCES "workCellType"("id") ON DELETE CASCADE ON UPDATE CASCADE,
@@ -260,6 +263,7 @@ CREATE TABLE "equipmentType" (
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP,
+  "customFields" JSONB,
 
   CONSTRAINT "equipmentType_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "equipmentType_requiredAbility_fkey" FOREIGN KEY ("requiredAbility") REFERENCES "ability"("id") ON DELETE CASCADE ON UPDATE CASCADE,
@@ -312,6 +316,7 @@ CREATE TABLE "equipment" (
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP,
+  "customFields" JSONB,
 
   CONSTRAINT "equipment_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "equipment_equipmentTypeId_fkey" FOREIGN KEY ("equipmentTypeId") REFERENCES "equipmentType"("id") ON DELETE CASCADE ON UPDATE CASCADE,

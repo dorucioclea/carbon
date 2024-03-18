@@ -8,6 +8,7 @@ CREATE OR REPLACE VIEW "parts" AS
     pg.name AS "partGroup",
     p."replenishmentSystem",
     p.active,
+    p."customFields",
     array_agg(ps."supplierId") AS "supplierIds"
   FROM "part" p
   LEFT JOIN "partGroup" pg ON pg.id = p."partGroupId"
@@ -19,5 +20,6 @@ CREATE OR REPLACE VIEW "parts" AS
     p."partGroupId",
     pg.name,
     p."replenishmentSystem",
-    p.active;
+    p.active,
+    p."customFields";
   

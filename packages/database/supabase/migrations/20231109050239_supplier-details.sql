@@ -9,6 +9,7 @@ CREATE TABLE "supplierPayment" (
   "currencyCode" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
+  "customFields" JSONB,
   
   CONSTRAINT "supplierPayment_pkey" PRIMARY KEY ("supplierId"),
   CONSTRAINT "supplierPayment_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "supplier"("id") ON UPDATE CASCADE ON DELETE CASCADE,
@@ -39,6 +40,7 @@ CREATE TABLE "supplierShipping" (
   "shippingMethodId" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
+  "customFields" JSONB,
 
   CONSTRAINT "supplierShipping_pkey" PRIMARY KEY ("supplierId"),
   CONSTRAINT "supplierShipping_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "supplier"("id") ON UPDATE CASCADE ON DELETE CASCADE,

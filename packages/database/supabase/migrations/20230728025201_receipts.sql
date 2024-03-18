@@ -33,6 +33,7 @@ CREATE TABLE "receipt" (
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
+  "customFields" JSONB,
 
   CONSTRAINT "receipt_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "receipt_receiptId_key" UNIQUE ("receiptId"),
