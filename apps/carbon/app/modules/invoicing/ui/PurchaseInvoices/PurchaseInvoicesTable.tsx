@@ -13,6 +13,7 @@ import { IoMdTrash } from "react-icons/io";
 import { Avatar, Table } from "~/components";
 import { ConfirmDelete } from "~/components/Modals";
 import { usePermissions, useRealtime } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type {
   PurchaseInvoice,
   purchaseInvoiceStatusType,
@@ -39,8 +40,10 @@ const PurchaseInvoicesTable = memo(
       useState<PurchaseInvoice | null>(null);
     const closePurchaseInvoiceModal = useDisclosure();
 
+    const customColumns = useCustomColumns("customer");
+
     const columns = useMemo<ColumnDef<PurchaseInvoice>[]>(() => {
-      return [
+      const defaultColumns = [
         {
           accessorKey: "invoiceId",
           header: "Invoice Number",
@@ -115,7 +118,8 @@ const PurchaseInvoicesTable = memo(
           cell: (item) => item.getValue(),
         },
       ];
-    }, [navigate]);
+      return [...defaultColumns, ...customColumns];
+    }, [navigate, customColumns]);
 
     const defaultColumnVisibility = {
       createdAt: false,

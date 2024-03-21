@@ -14,6 +14,7 @@ import { MdCallReceived } from "react-icons/md";
 import { Avatar, Table } from "~/components";
 import { ConfirmDelete } from "~/components/Modals";
 import { usePermissions } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type {
   PurchaseOrder,
   purchaseOrderStatusType,
@@ -55,8 +56,10 @@ const PurchaseOrdersTable = memo(
       useState<PurchaseOrder | null>(null);
     const deletePurchaseOrderModal = useDisclosure();
 
+    const customColumns = useCustomColumns("customer");
+
     const columns = useMemo<ColumnDef<PurchaseOrder>[]>(() => {
-      return [
+      const defaultColumns = [
         {
           accessorKey: "purchaseOrderId",
           header: "PO Number",
@@ -159,7 +162,8 @@ const PurchaseOrdersTable = memo(
           cell: (item) => item.getValue(),
         },
       ];
-    }, [edit, fetcher]);
+      return [...defaultColumns, ...customColumns];
+    }, [edit, fetcher, customColumns]);
 
     const defaultColumnVisibility = {
       createdAt: false,

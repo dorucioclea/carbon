@@ -12,6 +12,7 @@ import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
 import { Avatar, Table } from "~/components";
 import { usePermissions } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Group } from "~/modules/users";
 import { path } from "~/utils/path";
 
@@ -40,8 +41,10 @@ const GroupsTable = memo(({ data, count }: GroupsTableProps) => {
       ),
   }));
 
+  const customColumns = useCustomColumns("group");
+
   const columns = useMemo<ColumnDef<(typeof rows)[number]>[]>(() => {
-    return [
+    const defaultColumns = [
       {
         accessorKey: "name",
         header: "Group Name",
@@ -72,7 +75,8 @@ const GroupsTable = memo(({ data, count }: GroupsTableProps) => {
         ),
       },
     ];
-  }, []);
+    return [...defaultColumns, ...customColumns];
+  }, [customColumns]);
 
   const renderContextMenu = useCallback(
     (row: (typeof rows)[number]) => {

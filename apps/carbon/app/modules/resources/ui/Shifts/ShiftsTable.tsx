@@ -15,6 +15,7 @@ import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
 import { Avatar, Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Shift } from "~/modules/resources";
 import { path } from "~/utils/path";
 
@@ -94,8 +95,10 @@ const ShiftsTable = memo(({ data, count }: ShiftsTableProps) => {
     ));
   }, []);
 
+  const customColumns = useCustomColumns("shift");
+
   const columns = useMemo<ColumnDef<(typeof rows)[number]>[]>(() => {
-    return [
+    const defaultColumns = [
       {
         accessorKey: "name",
         header: "Shift",
@@ -144,7 +147,8 @@ const ShiftsTable = memo(({ data, count }: ShiftsTableProps) => {
         cell: ({ row }) => renderDays(row.original),
       },
     ];
-  }, [navigate, renderDays]);
+    return [...defaultColumns, ...customColumns];
+  }, [navigate, renderDays, customColumns]);
 
   const renderContextMenu = useCallback(
     (row: (typeof rows)[number]) => {

@@ -5,6 +5,7 @@ import { memo, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
 import { Table } from "~/components";
 import { useUrlParams } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Part } from "~/modules/parts";
 import { path } from "~/utils/path";
 
@@ -16,9 +17,10 @@ type PartsTableProps = {
 const PartsTable = memo(({ data, count }: PartsTableProps) => {
   const navigate = useNavigate();
   const [params] = useUrlParams();
+  const customColumns = useCustomColumns("part");
 
   const columns = useMemo<ColumnDef<Part>[]>(() => {
-    return [
+    const defaultColumns = [
       {
         accessorKey: "id",
         header: "Part ID",
@@ -54,6 +56,7 @@ const PartsTable = memo(({ data, count }: PartsTableProps) => {
         cell: (item) => <Enumerable value={item.getValue<string>()} />,
       },
     ];
+    return [...defaultColumns, ...customColumns];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
