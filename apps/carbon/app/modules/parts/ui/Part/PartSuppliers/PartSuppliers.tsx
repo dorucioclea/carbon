@@ -17,6 +17,7 @@ import {
 } from "~/components/Editable";
 import Grid from "~/components/Grid";
 import { useRouteData } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { PartSupplier, UnitOfMeasureListItem } from "~/modules/parts";
 import { path } from "~/utils/path";
 import usePartSuppliers from "./usePartSuppliers";
@@ -41,8 +42,10 @@ const PartSuppliers = ({ partSuppliers }: PartSuppliersProps) => {
     );
   }, [sharedPartData?.unitOfMeasures]);
 
+  const customColumns = useCustomColumns("partSupplier");
+
   const columns = useMemo<ColumnDef<PartSupplier>[]>(() => {
-    return [
+    const defaultColumns = [
       {
         accessorKey: "supplier.id",
         header: "Supplier",
@@ -90,7 +93,8 @@ const PartSuppliers = ({ partSuppliers }: PartSuppliersProps) => {
         cell: (item) => item.getValue(),
       },
     ];
-  }, []);
+    return [...defaultColumns, ...customColumns];
+  }, [customColumns]);
 
   const editableComponents = useMemo(
     () => ({

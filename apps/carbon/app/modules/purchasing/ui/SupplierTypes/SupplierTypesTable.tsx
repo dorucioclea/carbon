@@ -6,6 +6,7 @@ import { BsFillPenFill, BsPeopleFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
 import { Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { SupplierType } from "~/modules/purchasing";
 import { path } from "~/utils/path";
 
@@ -18,9 +19,10 @@ const SupplierTypesTable = memo(({ data, count }: SupplierTypesTableProps) => {
   const [params] = useUrlParams();
   const navigate = useNavigate();
   const permissions = usePermissions();
+  const customColumns = useCustomColumns("customer");
 
   const columns = useMemo<ColumnDef<SupplierType>[]>(() => {
-    return [
+    const defaultColumns = [
       {
         accessorKey: "name",
         header: "Supplier Type",
@@ -33,7 +35,8 @@ const SupplierTypesTable = memo(({ data, count }: SupplierTypesTableProps) => {
         ),
       },
     ];
-  }, [navigate]);
+    return [...defaultColumns, ...customColumns];
+  }, [navigate, customColumns]);
 
   const renderContextMenu = useCallback(
     (row: SupplierType) => {

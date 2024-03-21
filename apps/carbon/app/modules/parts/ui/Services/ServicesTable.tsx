@@ -5,6 +5,7 @@ import { memo, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
 import { Table } from "~/components";
 import { useUrlParams } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Service } from "~/modules/parts";
 import { path } from "~/utils/path";
 
@@ -17,8 +18,9 @@ const ServicesTable = memo(({ data, count }: ServicesTableProps) => {
   const navigate = useNavigate();
   const [params] = useUrlParams();
 
+  const customColumns = useCustomColumns("service");
   const columns = useMemo<ColumnDef<Service>[]>(() => {
-    return [
+    const defaultColumns = [
       {
         accessorKey: "id",
         header: "Service ID",
@@ -52,6 +54,7 @@ const ServicesTable = memo(({ data, count }: ServicesTableProps) => {
         cell: (item) => <Enumerable value={item.getValue<string>()} />,
       },
     ];
+    return [...defaultColumns, customColumns];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 

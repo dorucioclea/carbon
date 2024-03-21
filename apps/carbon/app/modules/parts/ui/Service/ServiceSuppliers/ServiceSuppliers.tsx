@@ -12,6 +12,7 @@ import { useMemo } from "react";
 import { New } from "~/components";
 import { EditableText } from "~/components/Editable";
 import Grid from "~/components/Grid";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { ServiceSupplier } from "~/modules/parts";
 import useServiceSuppliers from "./useServiceSuppliers";
 
@@ -23,8 +24,9 @@ const ServiceSuppliers = ({ serviceSuppliers }: ServiceSuppliersProps) => {
   const navigate = useNavigate();
   const { canEdit, onCellEdit } = useServiceSuppliers();
 
+  const customColumns = useCustomColumns("customer");
   const columns = useMemo<ColumnDef<ServiceSupplier>[]>(() => {
-    return [
+    const defaultColumns = [
       {
         accessorKey: "supplier.id",
         header: "Supplier",
@@ -57,7 +59,8 @@ const ServiceSuppliers = ({ serviceSuppliers }: ServiceSuppliersProps) => {
         cell: (item) => item.getValue(),
       },
     ];
-  }, []);
+    return [...defaultColumns, ...customColumns];
+  }, [customColumns]);
 
   const editableComponents = useMemo(
     () => ({

@@ -56,7 +56,7 @@ const PurchaseOrdersTable = memo(
       useState<PurchaseOrder | null>(null);
     const deletePurchaseOrderModal = useDisclosure();
 
-    const customColumns = useCustomColumns("customer");
+    const customColumns = useCustomColumns("purchaseOrder");
 
     const columns = useMemo<ColumnDef<PurchaseOrder>[]>(() => {
       const defaultColumns = [

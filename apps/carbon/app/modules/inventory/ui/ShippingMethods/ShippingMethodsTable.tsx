@@ -6,6 +6,7 @@ import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
 import { Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { ShippingMethod } from "~/modules/inventory";
 import { path } from "~/utils/path";
 
@@ -24,8 +25,10 @@ const ShippingMethodsTable = memo(
 
     const rows = useMemo(() => data, [data]);
 
+    const customColumns = useCustomColumns("shippingMethod");
+
     const columns = useMemo<ColumnDef<(typeof data)[number]>[]>(() => {
-      const result: ColumnDef<(typeof rows)[number]>[] = [
+      let result: ColumnDef<(typeof rows)[number]>[] = [
         {
           accessorKey: "name",
           header: "Name",
@@ -46,6 +49,7 @@ const ShippingMethodsTable = memo(
           cell: (item) => item.getValue(),
         },
       ];
+      result = [...result, customColumns];
 
       return hasAccounting
         ? result.concat([
@@ -57,7 +61,7 @@ const ShippingMethodsTable = memo(
           ])
         : result;
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [permissions]);
+    }, [permissions, customColumns]);
 
     const renderContextMenu = useCallback(
       (row: (typeof data)[number]) => {

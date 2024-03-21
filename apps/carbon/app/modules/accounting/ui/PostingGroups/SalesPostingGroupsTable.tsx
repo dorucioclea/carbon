@@ -3,6 +3,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { Table } from "~/components";
 import { EditableList } from "~/components/Editable";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { AccountListItem, SalesPostingGroup } from "~/modules/accounting";
 import type { ListItem } from "~/types";
 import usePostingGroups from "./usePostingGroups";
@@ -40,8 +41,10 @@ const SalesPostingGroupsTable = ({
     }));
   }, [incomeStatementAccounts]);
 
+  const customColumns = useCustomColumns("salesPostingGroup");
+
   const columns = useMemo<ColumnDef<SalesPostingGroup>[]>(() => {
-    return [
+    const defaultColumns = [
       {
         id: "partGroup",
         header: "Part Group",
@@ -98,7 +101,8 @@ const SalesPostingGroupsTable = ({
         cell: (item) => item.getValue(),
       },
     ];
-  }, [customerTypes, partGroups]);
+    return [...defaultColumns, ...customColumns];
+  }, [customerTypes, partGroups, customColumns]);
 
   const editableComponents = useMemo(
     () => ({

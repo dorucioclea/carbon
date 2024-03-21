@@ -6,6 +6,7 @@ import { BsFillPenFill, BsPeopleFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
 import { Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { SupplierStatus } from "~/modules/purchasing";
 import { path } from "~/utils/path";
 
@@ -20,8 +21,9 @@ const SupplierStatusesTable = memo(
     const navigate = useNavigate();
     const permissions = usePermissions();
 
+    const customColumns = useCustomColumns("supplierStatus");
     const columns = useMemo<ColumnDef<SupplierStatus>[]>(() => {
-      return [
+      const defaultColumns = [
         {
           accessorKey: "name",
           header: "Supplier Status",
@@ -34,7 +36,8 @@ const SupplierStatusesTable = memo(
           ),
         },
       ];
-    }, [navigate]);
+      return [...defaultColumns, ...customColumns];
+    }, [navigate, customColumns]);
 
     const renderContextMenu = useCallback(
       (row: SupplierStatus) => {
