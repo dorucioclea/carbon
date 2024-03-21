@@ -44,7 +44,7 @@ const AccountCategoriesTable = memo(
       deleteModal.onClose();
     };
 
-    const customColumns = useCustomColumns("accountCat");
+    const customColumns = useCustomColumns("accountCategory");
 
     const columns = useMemo<ColumnDef<(typeof data)[number]>[]>(() => {
       const defaultColumns = [
