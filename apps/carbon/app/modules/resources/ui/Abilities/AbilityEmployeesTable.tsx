@@ -12,6 +12,7 @@ import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
 import { Avatar, Table } from "~/components";
 import { usePermissions } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { AbilityEmployees } from "~/modules/resources";
 import { AbilityEmployeeStatus } from "~/modules/resources";
 import { path } from "~/utils/path";
@@ -61,8 +62,9 @@ const AbilityEmployeesTable = ({
     [employees, weeks]
   );
 
+  const customColumns = useCustomColumns("abilityEmployee");
   const columns = useMemo<ColumnDef<(typeof rows)[number]>[]>(() => {
-    return [
+    const defaultColumns = [
       {
         accessorKey: "name",
         header: "Name",
@@ -115,7 +117,8 @@ const AbilityEmployeesTable = ({
         },
       },
     ];
-  }, []);
+    return [...defaultColumns, ...customColumns];
+  }, [customColumns]);
 
   const renderContextMenu = useCallback(
     (row: (typeof rows)[number]) => {

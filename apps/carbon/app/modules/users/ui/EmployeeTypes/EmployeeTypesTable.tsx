@@ -6,6 +6,7 @@ import { BsFillPenFill, BsPeopleFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
 import { Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { EmployeeType } from "~/modules/users";
 import { path } from "~/utils/path";
 
@@ -19,8 +20,9 @@ const EmployeeTypesTable = memo(({ data, count }: EmployeeTypesTableProps) => {
   const navigate = useNavigate();
   const permissions = usePermissions();
 
+  const customColumns = useCustomColumns("employeeType");
   const columns = useMemo<ColumnDef<(typeof data)[number]>[]>(() => {
-    return [
+    const defaultColumns = [
       {
         accessorKey: "name",
         header: "Employee Type",
@@ -39,7 +41,8 @@ const EmployeeTypesTable = memo(({ data, count }: EmployeeTypesTableProps) => {
           ),
       },
     ];
-  }, [navigate]);
+    return [...defaultColumns, ...customColumns];
+  }, [navigate, customColumns]);
 
   const renderContextMenu = useCallback(
     (row: (typeof data)[number]) => {

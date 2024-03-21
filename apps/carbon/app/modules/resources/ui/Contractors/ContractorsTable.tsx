@@ -6,6 +6,7 @@ import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
 import { Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Contractor } from "~/modules/resources";
 import { path } from "~/utils/path";
 
@@ -18,9 +19,9 @@ const ContractorsTable = memo(({ data, count }: ContractorsTableProps) => {
   const navigate = useNavigate();
   const permissions = usePermissions();
   const [params] = useUrlParams();
-
+  const customColumns = useCustomColumns("contractor");
   const columns = useMemo<ColumnDef<Contractor>[]>(() => {
-    return [
+    const defaultColumns = [
       {
         header: "Contractor",
         cell: ({ row }) => (
@@ -65,7 +66,9 @@ const ContractorsTable = memo(({ data, count }: ContractorsTableProps) => {
         cell: (item) => item.getValue(),
       },
     ];
-  }, [navigate]);
+    return [...defaultColumns, ...customColumns];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigate, customColumns]);
 
   const renderContextMenu = useCallback(
     (row: Contractor) => {

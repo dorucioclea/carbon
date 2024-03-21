@@ -15,6 +15,7 @@ import { IoMdTrash } from "react-icons/io";
 import { Table } from "~/components";
 import { ConfirmDelete } from "~/components/Modals";
 import { usePermissions, useUrlParams } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { EquipmentType } from "~/modules/resources";
 import { path } from "~/utils/path";
 
@@ -43,8 +44,9 @@ const EquipmentTypesTable = memo(
       deleteModal.onClose();
     };
 
+    const customColumns = useCustomColumns("equipmentType");
     const columns = useMemo<ColumnDef<(typeof data)[number]>[]>(() => {
-      return [
+      const defaultColumns = [
         {
           accessorKey: "name",
           header: "Equipment Type",
@@ -94,7 +96,8 @@ const EquipmentTypesTable = memo(
           ),
         },
       ];
-    }, [navigate, params]);
+      return [...defaultColumns, ...customColumns];
+    }, [navigate, params, customColumns]);
 
     const renderContextMenu = useCallback<
       (row: (typeof data)[number]) => JSX.Element

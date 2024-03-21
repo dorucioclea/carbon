@@ -15,6 +15,7 @@ import { IoMdTrash } from "react-icons/io";
 import { Table } from "~/components";
 import { ConfirmDelete } from "~/components/Modals";
 import { usePermissions, useUrlParams } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { AttributeCategory } from "~/modules/resources";
 import { path } from "~/utils/path";
 
@@ -43,8 +44,9 @@ const AttributeCategoriesTable = memo(
       deleteModal.onClose();
     };
 
+    const customColumns = useCustomColumns("attributeCategory");
     const columns = useMemo<ColumnDef<(typeof data)[number]>[]>(() => {
-      return [
+      const defaultColumns = [
         {
           accessorKey: "name",
           header: "Category",
@@ -87,7 +89,8 @@ const AttributeCategoriesTable = memo(
           },
         },
       ];
-    }, [navigate, params]);
+      return [...defaultColumns, ...customColumns];
+    }, [navigate, params, customColumns]);
 
     const renderContextMenu = useCallback(
       (row: (typeof data)[number]) => {

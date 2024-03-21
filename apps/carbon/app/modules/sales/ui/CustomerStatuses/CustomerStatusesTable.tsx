@@ -6,6 +6,7 @@ import { BsFillPenFill, BsPeopleFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
 import { Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { CustomerStatus } from "~/modules/sales";
 import { path } from "~/utils/path";
 
@@ -20,8 +21,9 @@ const CustomerStatusesTable = memo(
     const navigate = useNavigate();
     const permissions = usePermissions();
 
+    const customColumns = useCustomColumns("customerStatus");
     const columns = useMemo<ColumnDef<CustomerStatus>[]>(() => {
-      return [
+      const defaultColumns = [
         {
           accessorKey: "name",
           header: "Customer Status",
@@ -34,7 +36,8 @@ const CustomerStatusesTable = memo(
           ),
         },
       ];
-    }, [navigate]);
+      return [...defaultColumns, ...customColumns];
+    }, [navigate, customColumns]);
 
     const renderContextMenu = useCallback(
       (row: CustomerStatus) => {

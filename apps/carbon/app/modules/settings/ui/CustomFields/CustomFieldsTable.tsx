@@ -12,6 +12,7 @@ import { BiAddToQueue } from "react-icons/bi";
 import { BsListUl } from "react-icons/bs";
 import { Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { CustomFieldsTableType } from "~/modules/settings";
 import { path } from "~/utils/path";
 
@@ -25,8 +26,9 @@ const CustomFieldsTable = memo(({ data, count }: CustomFieldsTableProps) => {
   const [params] = useUrlParams();
   const permissions = usePermissions();
 
+  const customColumns = useCustomColumns("customField");
   const columns = useMemo<ColumnDef<CustomFieldsTableType>[]>(() => {
-    return [
+    const defaultColumns = [
       {
         accessorKey: "name",
         header: "Table",
@@ -59,7 +61,8 @@ const CustomFieldsTable = memo(({ data, count }: CustomFieldsTableProps) => {
         ),
       },
     ];
-  }, [navigate, params]);
+    return [...defaultColumns, ...customColumns];
+  }, [navigate, params, customColumns]);
 
   const renderContextMenu = useCallback(
     (row: (typeof data)[number]) => {

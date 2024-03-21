@@ -6,6 +6,7 @@ import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
 import { Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Department } from "~/modules/resources";
 import { path } from "~/utils/path";
 
@@ -27,8 +28,9 @@ const DepartmentsTable = memo(({ data, count }: DepartmentsTableProps) => {
         : row.department?.name) ?? "",
   }));
 
+  const customColumns = useCustomColumns("department");
   const columns = useMemo<ColumnDef<(typeof rows)[number]>[]>(() => {
-    return [
+    const defaultColumns = [
       {
         accessorKey: "name",
         header: "Department",
@@ -51,7 +53,8 @@ const DepartmentsTable = memo(({ data, count }: DepartmentsTableProps) => {
         ),
       },
     ];
-  }, [navigate]);
+    return [...defaultColumns, ...customColumns];
+  }, [navigate, customColumns]);
 
   const renderContextMenu = useCallback(
     (row: (typeof data)[number]) => {

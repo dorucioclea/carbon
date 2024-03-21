@@ -6,6 +6,7 @@ import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
 import { Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { ShiftLocation } from "~/modules/resources";
 import { path } from "~/utils/path";
 
@@ -23,8 +24,9 @@ const LocationsTable = memo(({ data, count }: LocationsTableProps) => {
     ...row,
   }));
 
+  const customColumns = useCustomColumns("location");
   const columns = useMemo<ColumnDef<(typeof rows)[number]>[]>(() => {
-    return [
+    const defaultColumns = [
       {
         accessorKey: "name",
         header: "Location",
@@ -58,7 +60,8 @@ const LocationsTable = memo(({ data, count }: LocationsTableProps) => {
         cell: (item) => item.getValue(),
       },
     ];
-  }, [navigate]);
+    return [...defaultColumns, ...customColumns];
+  }, [navigate, customColumns]);
 
   const renderContextMenu = useCallback(
     (row: (typeof data)[number]) => {

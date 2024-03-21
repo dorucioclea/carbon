@@ -11,6 +11,7 @@ import { BsEnvelope } from "react-icons/bs";
 import { FaBan } from "react-icons/fa";
 import { Avatar, Table } from "~/components";
 import { usePermissions } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Customer } from "~/modules/users";
 import { DeactivateUsersModal, ResendInviteModal } from "~/modules/users";
 import { path } from "~/utils/path";
@@ -53,8 +54,9 @@ const CustomerAccountsTable = memo(
       [data]
     );
 
+    const customColumns = useCustomColumns("customerAccount");
     const columns = useMemo<ColumnDef<(typeof rows)[number]>[]>(() => {
-      return [
+      const defaultColumns = [
         {
           header: "User",
           cell: ({ row }) => (
@@ -105,7 +107,8 @@ const CustomerAccountsTable = memo(
           ),
         },
       ];
-    }, []);
+      return [...defaultColumns, ...customColumns];
+    }, [customColumns]);
 
     const actions = useMemo(() => {
       return [
