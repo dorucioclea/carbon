@@ -17,10 +17,10 @@ type PartsTableProps = {
 const PartsTable = memo(({ data, count }: PartsTableProps) => {
   const navigate = useNavigate();
   const [params] = useUrlParams();
-  const customColumns = useCustomColumns("part");
+  const customColumns = useCustomColumns<Part>("part");
 
   const columns = useMemo<ColumnDef<Part>[]>(() => {
-    const defaultColumns = [
+    const defaultColumns: ColumnDef<Part>[] = [
       {
         accessorKey: "id",
         header: "Part ID",

@@ -1,12 +1,15 @@
+import type { Json } from "@carbon/database";
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataType } from "~/modules/shared";
 import { useCustomFieldsSchema } from "./useCustomFieldsSchema";
 
-export function useCustomColumns(table: string) {
+export function useCustomColumns<T extends { customFields: Json }>(
+  table: string
+) {
   const customFieldsSchemas = useCustomFieldsSchema();
   const schema = customFieldsSchemas?.[table];
 
-  const customColumns: ColumnDef<any>[] = [];
+  const customColumns: ColumnDef<T>[] = [];
 
   schema?.forEach((field) => {
     customColumns.push({
@@ -15,25 +18,30 @@ export function useCustomColumns(table: string) {
       cell: (item) => {
         switch (field.dataTypeId) {
           case DataType.Boolean:
-            return item.row.original?.customFields
+            return isObject(item.row.original.customFields) &&
+              field.id in item.row.original.customFields
               ? item.row.original?.customFields[field.id] === "on"
                 ? "Yes"
                 : "No"
               : null;
           case DataType.Date:
-            return item.row.original?.customFields
+            return isObject(item.row.original.customFields) &&
+              field.id in item.row.original.customFields
               ? item.row.original?.customFields[field.id]
               : null;
           case DataType.List:
-            return item.row.original?.customFields
+            return isObject(item.row.original.customFields) &&
+              field.id in item.row.original.customFields
               ? item.row.original?.customFields[field.id]
               : null;
           case DataType.Numeric:
-            return item.row.original?.customFields
+            return isObject(item.row.original.customFields) &&
+              field.id in item.row.original.customFields
               ? item.row.original?.customFields[field.id]
               : null;
           case DataType.Text:
-            return item.row.original?.customFields
+            return isObject(item.row.original.customFields) &&
+              field.id in item.row.original.customFields
               ? item.row.original?.customFields[field.id]
               : null;
           case DataType.User:
@@ -51,5 +59,9 @@ export function useCustomColumns(table: string) {
     });
   });
 
-  return customColumns;
+  return customColumns as ColumnDef<T>[];
+}
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object";
 }
