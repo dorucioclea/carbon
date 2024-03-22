@@ -1,12 +1,15 @@
 import { VStack } from "@carbon/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import { ReceiptsTable, getReceipts } from "~/modules/inventory";
+import { getLocationsList } from "~/modules/resources";
 import { requirePermissions } from "~/services/auth";
+import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";
 import { path } from "~/utils/path";
 import { getGenericQueryFilters } from "~/utils/query";
+import { error } from "~/utils/result";
 
 export const handle: Handle = {
   breadcrumb: "Receipts",
@@ -24,7 +27,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const { limit, offset, sorts, filters } =
     getGenericQueryFilters(searchParams);
 
-  const [receipts] = await Promise.all([
+  const [receipts, locations] = await Promise.all([
     getReceipts(client, {
       search,
       limit,
@@ -32,26 +35,20 @@ export async function loader({ request }: LoaderFunctionArgs) {
       sorts,
       filters,
     }),
-    // getLocationsList(client),
+    getLocationsList(client),
   ]);
 
-  // if (receipts.error) {
-  //   return redirect(
-  //     path.to.inventory,
-  //     await flash(request, error(null, "Error loading receipts"))
-  //   );
-  // }
-
-  // return json({
-  //   receipts: receipts.data ?? [],
-  //   count: receipts.count ?? 0,
-  //   locations: locations.data ?? [],
-  // });
+  if (receipts.error) {
+    return redirect(
+      path.to.authenticatedRoot,
+      await flash(request, error(null, "Error loading receipts"))
+    );
+  }
 
   return json({
     receipts: receipts.data ?? [],
-    count: 0,
-    locations: [],
+    count: receipts.count ?? 0,
+    locations: locations.data ?? [],
   });
 }
 
