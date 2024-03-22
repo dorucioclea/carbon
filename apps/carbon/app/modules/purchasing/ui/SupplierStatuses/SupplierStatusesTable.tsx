@@ -21,9 +21,9 @@ const SupplierStatusesTable = memo(
     const navigate = useNavigate();
     const permissions = usePermissions();
 
-    const customColumns = useCustomColumns("supplierStatus");
+    const customColumns = useCustomColumns<SupplierStatus>("supplierStatus");
     const columns = useMemo<ColumnDef<SupplierStatus>[]>(() => {
-      const defaultColumns = [
+      const defaultColumns: ColumnDef<SupplierStatus>[] = [
         {
           accessorKey: "name",
           header: "Supplier Status",

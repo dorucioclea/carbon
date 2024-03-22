@@ -19,10 +19,10 @@ const SupplierTypesTable = memo(({ data, count }: SupplierTypesTableProps) => {
   const [params] = useUrlParams();
   const navigate = useNavigate();
   const permissions = usePermissions();
-  const customColumns = useCustomColumns("customer");
+  const customColumns = useCustomColumns<SupplierType>("supplierType");
 
   const columns = useMemo<ColumnDef<SupplierType>[]>(() => {
-    const defaultColumns = [
+    const defaultColumns: ColumnDef<SupplierType>[] = [
       {
         accessorKey: "name",
         header: "Supplier Type",

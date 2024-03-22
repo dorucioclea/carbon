@@ -1,5 +1,6 @@
 import { Enumerable, Hyperlink, MenuIcon, MenuItem } from "@carbon/react";
 import { useNavigate } from "@remix-run/react";
+import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
 import { Table } from "~/components";
@@ -14,10 +15,10 @@ type CustomersTableProps = {
 
 const CustomersTable = memo(({ data, count }: CustomersTableProps) => {
   const navigate = useNavigate();
-  const customColumns = useCustomColumns("customer");
+  const customColumns = useCustomColumns<Customer>("customer");
 
-  const columns = useMemo(() => {
-    const defaultColumns = [
+  const columns = useMemo<ColumnDef<Customer>[]>(() => {
+    const defaultColumns: ColumnDef<Customer>[] = [
       {
         accessorKey: "name",
         header: "Name",

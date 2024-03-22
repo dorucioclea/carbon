@@ -19,9 +19,9 @@ const ContractorsTable = memo(({ data, count }: ContractorsTableProps) => {
   const navigate = useNavigate();
   const permissions = usePermissions();
   const [params] = useUrlParams();
-  const customColumns = useCustomColumns("contractor");
+  const customColumns = useCustomColumns<Contractor>("contractor");
   const columns = useMemo<ColumnDef<Contractor>[]>(() => {
-    const defaultColumns = [
+    const defaultColumns: ColumnDef<Contractor>[] = [
       {
         header: "Contractor",
         cell: ({ row }) => (

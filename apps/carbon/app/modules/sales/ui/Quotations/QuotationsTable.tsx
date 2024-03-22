@@ -50,9 +50,9 @@ const QuotationsTable = memo(({ data, count }: QuotationsTableProps) => {
     null
   );
   const deleteQuotationModal = useDisclosure();
-  const customColumns = useCustomColumns("quotations");
+  const customColumns = useCustomColumns<Quotation>("quote");
 
-  const columns = useMemo<ColumnDef<any>[]>(() => {
+  const columns = useMemo<ColumnDef<Quotation>[]>(() => {
     const defaultColumns: ColumnDef<Quotation>[] = [
       {
         accessorKey: "quoteId",

@@ -229,7 +229,7 @@ export async function getCustomerStatuses(
 ) {
   let query = client
     .from("customerStatus")
-    .select("id, name", { count: "exact" });
+    .select("id, name, customFields", { count: "exact" });
 
   if (args?.name) {
     query = query.ilike("name", `%${args.name}%`);

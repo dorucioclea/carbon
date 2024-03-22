@@ -21,10 +21,10 @@ type SuppliersTableProps = {
 
 const SuppliersTable = memo(({ data, count }: SuppliersTableProps) => {
   const navigate = useNavigate();
-  const customColumns = useCustomColumns("supplier");
 
-  const columns = useMemo<ColumnDef<any>[]>(() => {
-    const defaultColumns = [
+  const customColumns = useCustomColumns<Supplier>("supplier");
+  const columns = useMemo<ColumnDef<Supplier>[]>(() => {
+    const defaultColumns: ColumnDef<Supplier>[] = [
       {
         accessorKey: "name",
         header: "Name",

@@ -21,9 +21,9 @@ const CustomerStatusesTable = memo(
     const navigate = useNavigate();
     const permissions = usePermissions();
 
-    const customColumns = useCustomColumns("customerStatus");
+    const customColumns = useCustomColumns<CustomerStatus>("customerStatus");
     const columns = useMemo<ColumnDef<CustomerStatus>[]>(() => {
-      const defaultColumns = [
+      const defaultColumns: ColumnDef<CustomerStatus>[] = [
         {
           accessorKey: "name",
           header: "Customer Status",
