@@ -2,7 +2,7 @@ import { VStack } from "@carbon/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import { ReceiptsTable } from "~/modules/inventory";
+import { ReceiptsTable, getReceipts } from "~/modules/inventory";
 import { requirePermissions } from "~/services/auth";
 import type { Handle } from "~/utils/handle";
 import { path } from "~/utils/path";
@@ -24,16 +24,16 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const { limit, offset, sorts, filters } =
     getGenericQueryFilters(searchParams);
 
-  // const [receipts, locations] = await Promise.all([
-  //   getReceipts(client, {
-  //     search,
-  //     limit,
-  //     offset,
-  //     sorts,
-  //     filters,
-  //   }),
-  //   getLocationsList(client),
-  // ]);
+  const [receipts] = await Promise.all([
+    getReceipts(client, {
+      search,
+      limit,
+      offset,
+      sorts,
+      filters,
+    }),
+    // getLocationsList(client),
+  ]);
 
   // if (receipts.error) {
   //   return redirect(
@@ -49,7 +49,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // });
 
   return json({
-    receipts: [],
+    receipts: receipts.data ?? [],
     count: 0,
     locations: [],
   });
