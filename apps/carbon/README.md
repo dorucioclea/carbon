@@ -7,13 +7,16 @@ ERP Application built with:
 - [Postgres](https://postgresql.org/)
 - [shadcn](https://ui.shadcn.com/)
 - [Redis](https://redis.io)
-- [BullMQ](https://docs.bullmq.io)
 
 ## Code Organization
 
 ### `app/components`
 
 Reusable react components that are specific to this project (and remix). Shared components should live in `packages/react` if they don't rely on some application-specific library. For example, the `Table` relies on some remix internals, so it lives in `app/components`, but the `Date` component is framework agnostic, so it lives in `packages/react`.
+
+### `app/jobs`
+
+Where background tasks are defined.
 
 ### `app/modules`
 
@@ -26,7 +29,3 @@ File-based route definitions using `remix`. This is where the services and inter
 1. `export async function loader`: The data that the route returns, which can be accessed via `GET` or `useLoaderData` in the component (3)
 2. `export async function action`: The actions (`POST` or `DELETE`) for the route, which can be accessed via http methods or through the `ValidatedForm` component.
 3. `export default function`: The nested react component for the route. This renders inside the `<Outlet/>` component of the parent route.
-
-### `app/queues`
-
-Where async tasks are defined. For example, scheduling calculations or bulk updates to user permissions that could take a long time to run are put into a job queue to run when the resources become available. Under the hood this relies on `@carbon/redis` (to store the jobs) and `~/lib/bullmq` to manage execution.

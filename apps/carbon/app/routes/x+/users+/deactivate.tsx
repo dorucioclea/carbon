@@ -1,10 +1,11 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
+import type { z } from "zod";
+import type { userAdminSchema } from "~/jobs/user-admin.server";
+import { triggerClient } from "~/lib/trigger.server";
 import { deactivateUsersValidator } from "~/modules/users";
 import { deactivateUser } from "~/modules/users/users.server";
-import type { UserAdminQueueData } from "~/queues";
-import { UserAdminQueueType, userAdminQueue } from "~/queues";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { safeRedirect } from "~/utils/http";
@@ -31,18 +32,19 @@ export async function action({ request }: ActionFunctionArgs) {
 
     return redirect(safeRedirect(redirectTo), await flash(request, result));
   } else {
-    const jobs = users.map<{ name: string; data: UserAdminQueueData }>(
-      (id) => ({
-        name: `deactivate user ${id}`,
-        data: {
-          id,
-          type: UserAdminQueueType.Deactivate,
-        },
-      })
-    );
+    const jobs = users.map<{
+      name: string;
+      payload: z.infer<typeof userAdminSchema>;
+    }>((id) => ({
+      name: "user.admin",
+      payload: {
+        id,
+        type: "deactivate",
+      },
+    }));
 
     try {
-      await userAdminQueue.addBulk(jobs);
+      await triggerClient.sendEvents(jobs);
       return redirect(
         safeRedirect(redirectTo),
         await flash(

@@ -40,7 +40,6 @@
     "@visx/scale": "3.3.0",
     "@visx/shape": "3.3.0",
     "axios": "^1.6.5",
-    "bullmq": "^4.6.2",
     "clsx": "^2.0.0",
     "cookie": "^0.6.0",
     "d3-array": "^3.2.4",

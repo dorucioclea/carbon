@@ -1,7 +1,7 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
+import { triggerClient } from "~/lib/trigger.server";
 import { ReceiptPostModal } from "~/modules/inventory";
-import { postingQueue, PostingQueueType } from "~/queues";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { path } from "~/utils/path";
@@ -32,9 +32,12 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  postingQueue.add(`posting receipt ${receiptId}`, {
-    type: PostingQueueType.Receipt,
-    documentId: receiptId,
+  triggerClient.sendEvent({
+    name: "post.transactions",
+    payload: {
+      type: "receipt",
+      documentId: receiptId,
+    },
   });
 
   return redirect(path.to.receipts);

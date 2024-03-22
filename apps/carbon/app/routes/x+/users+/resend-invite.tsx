@@ -1,10 +1,11 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
+import type { z } from "zod";
+import type { userAdminSchema } from "~/jobs/user-admin.server";
+import { triggerClient } from "~/lib/trigger.server";
 import { resendInviteValidator } from "~/modules/users";
 import { resendInvite } from "~/modules/users/users.server";
-import type { UserAdminQueueData } from "~/queues";
-import { UserAdminQueueType, userAdminQueue } from "~/queues";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { error, success } from "~/utils/result";
@@ -30,18 +31,19 @@ export async function action({ request }: ActionFunctionArgs) {
 
     return json({}, await flash(request, result));
   } else {
-    const jobs = users.map<{ name: string; data: UserAdminQueueData }>(
-      (id) => ({
-        name: `reinvite user ${id}`,
-        data: {
-          id,
-          type: UserAdminQueueType.Resend,
-        },
-      })
-    );
+    const jobs = users.map<{
+      name: string;
+      payload: z.infer<typeof userAdminSchema>;
+    }>((id) => ({
+      name: "user.admin",
+      payload: {
+        id,
+        type: "resend",
+      },
+    }));
 
     try {
-      await userAdminQueue.addBulk(jobs);
+      await triggerClient.sendEvents(jobs);
       return json(
         {},
         await flash(request, success("Successfully added invites to queue"))
