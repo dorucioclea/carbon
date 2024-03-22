@@ -292,7 +292,7 @@ export async function getServiceSuppliers(
 ) {
   return client
     .from("serviceSupplier")
-    .select(`id, supplier(id, name), supplierServiceId`)
+    .select(`id, supplier(id, name), customFields, supplierServiceId`)
     .eq("active", true)
     .eq("serviceId", id);
 }

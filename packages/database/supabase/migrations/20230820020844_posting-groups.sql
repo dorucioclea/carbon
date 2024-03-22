@@ -146,6 +146,7 @@ CREATE TABLE "postingGroupInventory" (
   "materialVarianceAccount" TEXT NOT NULL,
   "capacityVarianceAccount" TEXT NOT NULL,
   "updatedBy" TEXT,
+  "customFields" JSONB,
 
   CONSTRAINT "postingGroupInventory_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "postingGroupInventory_id_partGroupId_locationId_key" UNIQUE ("partGroupId", "locationId"),

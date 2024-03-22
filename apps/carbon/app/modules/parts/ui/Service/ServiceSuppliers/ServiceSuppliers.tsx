@@ -24,9 +24,9 @@ const ServiceSuppliers = ({ serviceSuppliers }: ServiceSuppliersProps) => {
   const navigate = useNavigate();
   const { canEdit, onCellEdit } = useServiceSuppliers();
 
-  const customColumns = useCustomColumns("customer");
+  const customColumns = useCustomColumns<ServiceSupplier>("serviceSupplier");
   const columns = useMemo<ColumnDef<ServiceSupplier>[]>(() => {
-    const defaultColumns = [
+    const defaultColumns: ColumnDef<ServiceSupplier>[] = [
       {
         accessorKey: "supplier.id",
         header: "Supplier",

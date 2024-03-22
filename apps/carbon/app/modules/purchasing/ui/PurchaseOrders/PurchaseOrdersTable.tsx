@@ -56,10 +56,10 @@ const PurchaseOrdersTable = memo(
       useState<PurchaseOrder | null>(null);
     const deletePurchaseOrderModal = useDisclosure();
 
-    const customColumns = useCustomColumns("purchaseOrder");
+    const customColumns = useCustomColumns<PurchaseOrder>("purchaseOrder");
 
     const columns = useMemo<ColumnDef<PurchaseOrder>[]>(() => {
-      const defaultColumns = [
+      const defaultColumns: ColumnDef<PurchaseOrder>[] = [
         {
           accessorKey: "purchaseOrderId",
           header: "PO Number",

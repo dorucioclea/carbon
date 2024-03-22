@@ -18,9 +18,9 @@ const ServicesTable = memo(({ data, count }: ServicesTableProps) => {
   const navigate = useNavigate();
   const [params] = useUrlParams();
 
-  const customColumns = useCustomColumns("service");
+  const customColumns = useCustomColumns<Service>("service");
   const columns = useMemo<ColumnDef<Service>[]>(() => {
-    const defaultColumns = [
+    const defaultColumns: ColumnDef<Service>[] = [
       {
         accessorKey: "id",
         header: "Service ID",
@@ -54,9 +54,9 @@ const ServicesTable = memo(({ data, count }: ServicesTableProps) => {
         cell: (item) => <Enumerable value={item.getValue<string>()} />,
       },
     ];
-    return [...defaultColumns, customColumns];
+    return [...defaultColumns, ...customColumns];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params]);
+  }, [params, customColumns]);
 
   const renderContextMenu = useMemo(() => {
     // eslint-disable-next-line react/display-name

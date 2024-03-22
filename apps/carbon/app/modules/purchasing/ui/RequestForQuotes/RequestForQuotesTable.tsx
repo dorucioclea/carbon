@@ -54,9 +54,9 @@ const RequestForQuotesTable = memo(
       useState<RequestForQuote | null>(null);
     const deleteRequestForQuoteModal = useDisclosure();
 
-    const customColumns = useCustomColumns("requestForQuote");
+    const customColumns = useCustomColumns<RequestForQuote>("requestForQuote");
     const columns = useMemo<ColumnDef<RequestForQuote>[]>(() => {
-      const defaultColumns = [
+      const defaultColumns: ColumnDef<RequestForQuote>[] = [
         {
           accessorKey: "requestForQuoteId",
           header: "RFQ Number",

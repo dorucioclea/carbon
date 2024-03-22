@@ -44,10 +44,12 @@ const InventoryPostingGroupsTable = ({
     }));
   }, [incomeStatementAccounts]);
 
-  const customColumns = useCustomColumns("inventoryPostingGroup");
+  const customColumns = useCustomColumns<InventoryPostingGroup>(
+    "inventoryPostingGroup"
+  );
 
   const columns = useMemo<ColumnDef<InventoryPostingGroup>[]>(() => {
-    const defaultColumns = [
+    const defaultColumns: ColumnDef<InventoryPostingGroup>[] = [
       {
         id: "partGroup",
         header: "Part Group",

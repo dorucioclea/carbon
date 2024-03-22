@@ -23,10 +23,10 @@ const ChartOfAccountsTable = memo(({ data }: ChartOfAccountsTableProps) => {
   useRealtime("journal");
 
   const navigate = useNavigate();
-  const customColumns = useCustomColumns("account");
+  const customColumns = useCustomColumns<Chart>("journal");
 
-  const columns = useMemo<ColumnDef<any>[]>(() => {
-    const defaultColumns = [
+  const columns = useMemo<ColumnDef<Chart>[]>(() => {
+    const defaultColumns: ColumnDef<Chart>[] = [
       {
         accessorKey: "number",
         header: "Number",
@@ -116,7 +116,7 @@ const ChartOfAccountsTable = memo(({ data }: ChartOfAccountsTableProps) => {
         cell: (item) => <Enumerable value={item.getValue<string>()} />,
       },
       {
-        acessorKey: "totaling",
+        accessorKey: "totaling",
         header: "Totaling",
         cell: ({ row }) => row.original.totaling ?? "",
       },
@@ -136,7 +136,7 @@ const ChartOfAccountsTable = memo(({ data }: ChartOfAccountsTableProps) => {
         cell: (item) => <Checkbox isChecked={item.getValue<boolean>()} />,
       },
     ];
-    return [...defaultColumns, ...customColumns]
+    return [...defaultColumns, ...customColumns];
   }, [navigate, customColumns]);
 
   return <Grid<Chart> data={data} columns={columns} withSimpleSorting />;
