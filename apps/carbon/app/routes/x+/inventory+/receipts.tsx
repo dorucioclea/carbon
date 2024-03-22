@@ -1,15 +1,12 @@
 import { VStack } from "@carbon/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import { ReceiptsTable, getReceipts } from "~/modules/inventory";
-import { getLocationsList } from "~/modules/resources";
+import { ReceiptsTable } from "~/modules/inventory";
 import { requirePermissions } from "~/services/auth";
-import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";
 import { path } from "~/utils/path";
 import { getGenericQueryFilters } from "~/utils/query";
-import { error } from "~/utils/result";
 
 export const handle: Handle = {
   breadcrumb: "Receipts",
@@ -19,7 +16,6 @@ export const handle: Handle = {
 export async function loader({ request }: LoaderFunctionArgs) {
   const { client } = await requirePermissions(request, {
     view: "inventory",
-    role: "employee",
   });
 
   const url = new URL(request.url);
@@ -28,28 +24,34 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const { limit, offset, sorts, filters } =
     getGenericQueryFilters(searchParams);
 
-  const [receipts, locations] = await Promise.all([
-    getReceipts(client, {
-      search,
-      limit,
-      offset,
-      sorts,
-      filters,
-    }),
-    getLocationsList(client),
-  ]);
+  // const [receipts, locations] = await Promise.all([
+  //   getReceipts(client, {
+  //     search,
+  //     limit,
+  //     offset,
+  //     sorts,
+  //     filters,
+  //   }),
+  //   getLocationsList(client),
+  // ]);
 
-  if (receipts.error) {
-    return redirect(
-      path.to.inventory,
-      await flash(request, error(null, "Error loading receipts"))
-    );
-  }
+  // if (receipts.error) {
+  //   return redirect(
+  //     path.to.inventory,
+  //     await flash(request, error(null, "Error loading receipts"))
+  //   );
+  // }
+
+  // return json({
+  //   receipts: receipts.data ?? [],
+  //   count: receipts.count ?? 0,
+  //   locations: locations.data ?? [],
+  // });
 
   return json({
-    receipts: receipts.data ?? [],
-    count: receipts.count ?? 0,
-    locations: locations.data ?? [],
+    receipts: [],
+    count: 0,
+    locations: [],
   });
 }
 
