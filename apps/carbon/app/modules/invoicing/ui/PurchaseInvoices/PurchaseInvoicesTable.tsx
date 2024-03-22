@@ -40,10 +40,10 @@ const PurchaseInvoicesTable = memo(
       useState<PurchaseInvoice | null>(null);
     const closePurchaseInvoiceModal = useDisclosure();
 
-    const customColumns = useCustomColumns("customer");
+    const customColumns = useCustomColumns<PurchaseInvoice>("purchaseInvoice");
 
     const columns = useMemo<ColumnDef<PurchaseInvoice>[]>(() => {
-      const defaultColumns = [
+      const defaultColumns: ColumnDef<PurchaseInvoice>[] = [
         {
           accessorKey: "invoiceId",
           header: "Invoice Number",

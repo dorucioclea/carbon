@@ -28,9 +28,9 @@ const DepartmentsTable = memo(({ data, count }: DepartmentsTableProps) => {
         : row.department?.name) ?? "",
   }));
 
-  const customColumns = useCustomColumns("department");
+  const customColumns = useCustomColumns<(typeof rows)[number]>("department");
   const columns = useMemo<ColumnDef<(typeof rows)[number]>[]>(() => {
-    const defaultColumns = [
+    const defaultColumns: ColumnDef<(typeof rows)[number]>[] = [
       {
         accessorKey: "name",
         header: "Department",

@@ -22,9 +22,9 @@ const HolidaysTable = memo(({ data, count }: HolidaysTableProps) => {
 
   const rows = data;
 
-  const customColumns = useCustomColumns("holiday");
+  const customColumns = useCustomColumns<(typeof rows)[number]>("holiday");
   const columns = useMemo<ColumnDef<(typeof rows)[number]>[]>(() => {
-    const defaultColumns = [
+    const defaultColumns: ColumnDef<(typeof rows)[number]>[] = [
       {
         accessorKey: "name",
         header: "Holiday",

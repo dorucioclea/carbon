@@ -42,10 +42,10 @@ const PartSuppliers = ({ partSuppliers }: PartSuppliersProps) => {
     );
   }, [sharedPartData?.unitOfMeasures]);
 
-  const customColumns = useCustomColumns("partSupplier");
+  const customColumns = useCustomColumns<PartSupplier>("partSupplier");
 
   const columns = useMemo<ColumnDef<PartSupplier>[]>(() => {
-    const defaultColumns = [
+    const defaultColumns: ColumnDef<PartSupplier>[] = [
       {
         accessorKey: "supplier.id",
         header: "Supplier",
