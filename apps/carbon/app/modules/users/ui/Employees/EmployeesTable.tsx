@@ -13,7 +13,6 @@ import { BsEnvelope, BsFillPenFill, BsShieldLock } from "react-icons/bs";
 import { FaBan } from "react-icons/fa";
 import { Avatar, Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
-import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Employee } from "~/modules/users";
 import {
   BulkEditPermissionsForm,
@@ -45,8 +44,6 @@ const EmployeesTable = memo(
     const deactivateEmployeeModal = useDisclosure();
     const resendInviteModal = useDisclosure();
 
-    const customColumns = useCustomColumns("employee");
-
     const rows = useMemo(
       () =>
         data.map((d) => {
@@ -66,7 +63,7 @@ const EmployeesTable = memo(
     );
 
     const columns = useMemo<ColumnDef<(typeof rows)[number]>[]>(() => {
-      const defaultColumns = [
+      return [
         {
           header: "User",
           cell: ({ row }) => (
@@ -113,9 +110,8 @@ const EmployeesTable = memo(
           cell: (item) => <Enumerable value={item.getValue<string>()} />,
         },
       ];
-      return [...defaultColumns, ...customColumns];
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [params, customColumns]);
+    }, [params]);
 
     const actions = useMemo(() => {
       return [

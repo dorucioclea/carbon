@@ -44,10 +44,10 @@ const AccountCategoriesTable = memo(
       deleteModal.onClose();
     };
 
-    const customColumns = useCustomColumns("accountCategory");
+    const customColumns = useCustomColumns<AccountCategory>("accountCategory");
 
     const columns = useMemo<ColumnDef<(typeof data)[number]>[]>(() => {
-      const defaultColumns = [
+      const defaultColumns: ColumnDef<(typeof data)[number]>[] = [
         {
           accessorKey: "category",
           header: "Category",

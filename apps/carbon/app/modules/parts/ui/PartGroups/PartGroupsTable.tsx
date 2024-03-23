@@ -21,10 +21,10 @@ const PartGroupsTable = memo(({ data, count }: PartGroupsTableProps) => {
   const permissions = usePermissions();
 
   const rows = useMemo(() => data, [data]);
-  const customColumns = useCustomColumns("partGroup");
+  const customColumns = useCustomColumns<PartGroup>("partGroup");
 
   const columns = useMemo<ColumnDef<(typeof rows)[number]>[]>(() => {
-    const defaultColumns = [
+    const defaultColumns: ColumnDef<(typeof rows)[number]>[] = [
       {
         accessorKey: "name",
         header: "Name",

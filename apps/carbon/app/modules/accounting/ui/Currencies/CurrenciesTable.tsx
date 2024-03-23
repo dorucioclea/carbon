@@ -19,10 +19,10 @@ const CurrenciesTable = memo(({ data, count }: CurrenciesTableProps) => {
   const [params] = useUrlParams();
   const navigate = useNavigate();
   const permissions = usePermissions();
-  const customColumns = useCustomColumns("currency");
+  const customColumns = useCustomColumns<Currency>("currency");
 
   const columns = useMemo<ColumnDef<(typeof data)[number]>[]>(() => {
-    const defaultColumns = [
+    const defaultColumns: ColumnDef<(typeof data)[number]>[] = [
       {
         accessorKey: "name",
         header: "Name",

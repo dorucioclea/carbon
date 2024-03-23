@@ -44,9 +44,10 @@ const EquipmentTypesTable = memo(
       deleteModal.onClose();
     };
 
-    const customColumns = useCustomColumns("equipmentType");
+    const customColumns =
+      useCustomColumns<(typeof data)[number]>("equipmentType");
     const columns = useMemo<ColumnDef<(typeof data)[number]>[]>(() => {
-      const defaultColumns = [
+      const defaultColumns: ColumnDef<(typeof data)[number]>[] = [
         {
           accessorKey: "name",
           header: "Equipment Type",

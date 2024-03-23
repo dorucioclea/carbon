@@ -7,7 +7,6 @@ import type {
   AccountListItem,
   InventoryPostingGroup,
 } from "~/modules/accounting";
-import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { ListItem } from "~/types";
 import usePostingGroups from "./usePostingGroups";
 
@@ -44,12 +43,8 @@ const InventoryPostingGroupsTable = ({
     }));
   }, [incomeStatementAccounts]);
 
-  const customColumns = useCustomColumns<InventoryPostingGroup>(
-    "inventoryPostingGroup"
-  );
-
   const columns = useMemo<ColumnDef<InventoryPostingGroup>[]>(() => {
-    const defaultColumns: ColumnDef<InventoryPostingGroup>[] = [
+    return [
       {
         id: "partGroup",
         header: "Part Group",
@@ -145,8 +140,7 @@ const InventoryPostingGroupsTable = ({
         cell: (item) => item.getValue(),
       },
     ];
-    return [...defaultColumns, customColumns];
-  }, [locations, partGroups, customColumns]);
+  }, [locations, partGroups]);
 
   const editableComponents = useMemo(
     () => ({

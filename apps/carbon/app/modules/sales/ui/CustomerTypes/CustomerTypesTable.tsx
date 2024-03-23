@@ -20,9 +20,9 @@ const CustomerTypesTable = memo(({ data, count }: CustomerTypesTableProps) => {
   const navigate = useNavigate();
   const permissions = usePermissions();
 
-  const customColumns = useCustomColumns("customerType");
+  const customColumns = useCustomColumns<CustomerType>("customerType");
   const columns = useMemo<ColumnDef<(typeof data)[number]>[]>(() => {
-    const defaultColumns = [
+    const defaultColumns: ColumnDef<(typeof data)[number]>[] = [
       {
         accessorKey: "name",
         header: "Customer Type",
