@@ -24,11 +24,10 @@ const ReceiptsTable = memo(({ data, count }: ReceiptsTableProps) => {
   const navigate = useNavigate();
   const permissions = usePermissions();
 
-  const rows = useMemo(() => data, [data]);
-  const customColumns = useCustomColumns("receipts");
+  const customColumns = useCustomColumns<Receipt>("receipt");
 
   const columns = useMemo<ColumnDef<Receipt>[]>(() => {
-    const defaultColumns: ColumnDef<(typeof rows)[number]>[] = [
+    const defaultColumns: ColumnDef<Receipt>[] = [
       {
         accessorKey: "receiptId",
         header: "Receipt ID",

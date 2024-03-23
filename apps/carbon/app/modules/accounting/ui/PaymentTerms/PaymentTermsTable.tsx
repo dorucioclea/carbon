@@ -19,10 +19,10 @@ const PaymentTermsTable = memo(({ data, count }: PaymentTermsTableProps) => {
   const [params] = useUrlParams();
   const navigate = useNavigate();
   const permissions = usePermissions();
-  const customColumns = useCustomColumns("paymentTerms");
+  const customColumns = useCustomColumns<PaymentTerm>("paymentTerm");
 
   const columns = useMemo<ColumnDef<(typeof data)[number]>[]>(() => {
-    const defaultColumns = [
+    const defaultColumns: ColumnDef<(typeof data)[number]>[] = [
       {
         accessorKey: "name",
         header: "Name",

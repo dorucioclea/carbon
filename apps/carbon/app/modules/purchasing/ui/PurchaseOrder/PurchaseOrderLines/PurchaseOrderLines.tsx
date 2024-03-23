@@ -27,6 +27,7 @@ import {
 } from "~/components/Editable";
 import Grid from "~/components/Grid";
 import { useRealtime, useRouteData, useUser } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { PurchaseOrder, PurchaseOrderLine } from "~/modules/purchasing";
 import { usePurchaseOrderTotals } from "~/modules/purchasing";
 import type { ListItem } from "~/types";
@@ -64,8 +65,11 @@ const PurchaseOrderLines = () => {
     routeData?.purchaseOrder?.status ?? ""
   );
 
+  const customColumns =
+    useCustomColumns<PurchaseOrderLine>("purchaseOrderLine");
+
   const columns = useMemo<ColumnDef<PurchaseOrderLine>[]>(() => {
-    return [
+    const defaultColumns: ColumnDef<PurchaseOrderLine>[] = [
       {
         header: "Line",
         cell: ({ row }) => row.index + 1,
@@ -255,8 +259,9 @@ const PurchaseOrderLines = () => {
         },
       },
     ];
+    return [...defaultColumns, ...customColumns];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigate]);
+  }, [navigate, customColumns]);
 
   const editableComponents = useMemo(
     () => ({

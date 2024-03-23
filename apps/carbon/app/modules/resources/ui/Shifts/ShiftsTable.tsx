@@ -95,10 +95,10 @@ const ShiftsTable = memo(({ data, count }: ShiftsTableProps) => {
     ));
   }, []);
 
-  const customColumns = useCustomColumns("shift");
+  const customColumns = useCustomColumns<Shift>("shift");
 
   const columns = useMemo<ColumnDef<(typeof rows)[number]>[]>(() => {
-    const defaultColumns = [
+    const defaultColumns: ColumnDef<(typeof rows)[number]>[] = [
       {
         accessorKey: "name",
         header: "Shift",

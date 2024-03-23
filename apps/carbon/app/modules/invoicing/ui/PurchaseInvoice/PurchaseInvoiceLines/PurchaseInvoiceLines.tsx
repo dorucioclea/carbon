@@ -31,6 +31,7 @@ import { usePurchaseInvoiceTotals } from "~/modules/invoicing";
 import type { ListItem } from "~/types";
 import { path } from "~/utils/path";
 import usePurchaseInvoiceLines from "./usePurchaseInvoiceLines";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 
 const PurchaseInvoiceLines = () => {
   const { invoiceId } = useParams();
@@ -60,8 +61,12 @@ const PurchaseInvoiceLines = () => {
 
   const isEditable = !routeData?.purchaseInvoice?.postingDate;
 
+  const customColumns = useCustomColumns<PurchaseInvoiceLine>(
+    "purchaseInvoiceLine"
+  );
+
   const columns = useMemo<ColumnDef<PurchaseInvoiceLine>[]>(() => {
-    return [
+    const defaultColumns: ColumnDef<PurchaseInvoiceLine>[] = [
       {
         header: "Line",
         cell: ({ row }) => row.index + 1,
@@ -167,8 +172,9 @@ const PurchaseInvoiceLines = () => {
         cell: (item) => item.getValue(),
       },
     ];
+    return [...defaultColumns, ...customColumns];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigate]);
+  }, [navigate, customColumns]);
 
   const editableComponents = useMemo(
     () => ({

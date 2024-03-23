@@ -24,9 +24,9 @@ const LocationsTable = memo(({ data, count }: LocationsTableProps) => {
     ...row,
   }));
 
-  const customColumns = useCustomColumns("location");
+  const customColumns = useCustomColumns<ShiftLocation>("location");
   const columns = useMemo<ColumnDef<(typeof rows)[number]>[]>(() => {
-    const defaultColumns = [
+    const defaultColumns: ColumnDef<(typeof rows)[number]>[] = [
       {
         accessorKey: "name",
         header: "Location",

@@ -41,9 +41,9 @@ const WorkCellTypesTable = memo(({ data, count }: WorkCellTypesTableProps) => {
     deleteModal.onClose();
   };
 
-  const customColumns = useCustomColumns("workCellType");
+  const customColumns = useCustomColumns<WorkCellType>("workCellType");
   const columns = useMemo<ColumnDef<(typeof data)[number]>[]>(() => {
-    const defaultColumns = [
+    const defaultColumns: ColumnDef<(typeof data)[number]>[] = [
       {
         accessorKey: "name",
         header: "Work Cell Type",

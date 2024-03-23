@@ -31,9 +31,9 @@ const PartnersTable = memo(({ data, count }: PartnersTableProps) => {
     ...row,
   }));
 
-  const customColumns = useCustomColumns("partner");
+  const customColumns = useCustomColumns<Partner>("partner");
   const columns = useMemo<ColumnDef<(typeof rows)[number]>[]>(() => {
-    const defaultColumns = [
+    const defaultColumns: ColumnDef<(typeof rows)[number]>[] = [
       {
         accessorKey: "supplierName",
         header: "Supplier",

@@ -21,9 +21,9 @@ const UnitOfMeasuresTable = memo(
     const navigate = useNavigate();
     const permissions = usePermissions();
 
-    const customColumns = useCustomColumns("customer");
+    const customColumns = useCustomColumns<UnitOfMeasure>("unitOfMeasure");
     const columns = useMemo<ColumnDef<(typeof data)[number]>[]>(() => {
-      const defaultColumns = [
+      const defaultColumns: ColumnDef<(typeof data)[number]>[] = [
         {
           accessorKey: "name",
           header: "Name",
