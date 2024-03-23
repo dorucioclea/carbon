@@ -12410,14 +12410,14 @@ export type Database = {
           },
           {
             foreignKeyName: "partner_id_fkey"
-            columns: ["id"]
+            columns: ["supplierLocationId"]
             isOneToOne: false
             referencedRelation: "supplierLocation"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "partner_id_fkey"
-            columns: ["supplierLocationId"]
+            columns: ["id"]
             isOneToOne: false
             referencedRelation: "supplierLocation"
             referencedColumns: ["id"]
@@ -13213,6 +13213,7 @@ export type Database = {
           createdBy: string | null
           createdByAvatar: string | null
           createdByFullName: string | null
+          customFields: Json | null
           externalDocumentId: string | null
           id: string | null
           invoiced: boolean | null
@@ -13506,6 +13507,7 @@ export type Database = {
           active: boolean | null
           createdAt: string | null
           createdBy: string | null
+          customFields: Json | null
           endTime: string | null
           friday: boolean | null
           id: string | null
