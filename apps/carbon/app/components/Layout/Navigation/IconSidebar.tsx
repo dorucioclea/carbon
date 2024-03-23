@@ -55,6 +55,7 @@ const IconSidebar = () => {
                 link={link}
                 isActive={isActive}
                 isOpen={navigationPanel.isOpen}
+                onClick={navigationPanel.onClose}
               />
             );
           })}

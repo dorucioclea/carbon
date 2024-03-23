@@ -4,7 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
 import { BsFillPenFill, BsPeopleFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { Table } from "~/components";
+import { New, Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { CustomerType } from "~/modules/sales";
@@ -44,7 +44,7 @@ const CustomerTypesTable = memo(({ data, count }: CustomerTypesTableProps) => {
         <>
           <MenuItem
             onClick={() => {
-              navigate(`${path.to.customers}?type=${row.id}`);
+              navigate(`${path.to.customers}?filter=type:eq:${row.name}`);
             }}
           >
             <MenuIcon icon={<BsPeopleFill />} />
@@ -81,6 +81,14 @@ const CustomerTypesTable = memo(({ data, count }: CustomerTypesTableProps) => {
       data={data}
       columns={columns}
       count={count}
+      primaryAction={
+        permissions.can("create", "sales") && (
+          <New
+            label="Customer Types"
+            to={`${path.to.newCustomerType}?${params.toString()}`}
+          />
+        )
+      }
       renderContextMenu={renderContextMenu}
     />
   );

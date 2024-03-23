@@ -45,17 +45,18 @@ const DocumentForm = ({ initialValues, ownerId }: DocumentFormProps) => {
           className="flex flex-col h-full"
         >
           <DrawerHeader>
-            <DrawerTitle>{`Edit ${initialValues.name}.${initialValues.type}`}</DrawerTitle>
+            <DrawerTitle>{`${initialValues.name}.${initialValues.extension}`}</DrawerTitle>
           </DrawerHeader>
           <DrawerBody>
             <Hidden name="id" />
+            <Hidden name="extension" />
             <Hidden name="type" />
             <Hidden name="size" />
             <VStack spacing={4}>
               <Input
                 name="name"
                 label="Name"
-                suffix={`.${initialValues.type}`}
+                suffix={`.${initialValues.extension}`}
               />
               <TextArea name="description" label="Description" />
               <Users

@@ -15,6 +15,7 @@ import {
   TooltipTrigger,
   useKeyboardShortcuts,
 } from "@carbon/react";
+import { prettifyKeyboardShortcut } from "@carbon/utils";
 import { useRef } from "react";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 
@@ -92,11 +93,11 @@ export const PaginationButtons = ({
   const previousButtonRef = useRef<HTMLButtonElement>(null);
 
   useKeyboardShortcuts({
-    j: (event: KeyboardEvent) => {
+    ArrowRight: (event: KeyboardEvent) => {
       event.stopPropagation();
       nextButtonRef.current?.click();
     },
-    f: (event: KeyboardEvent) => {
+    ArrowLeft: (event: KeyboardEvent) => {
       event.stopPropagation();
       previousButtonRef.current?.click();
     },
@@ -117,7 +118,7 @@ export const PaginationButtons = ({
               />
             </TooltipTrigger>
             <TooltipContent>
-              <HStack>F</HStack>
+              <HStack>{prettifyKeyboardShortcut("ArrowLeft")}</HStack>
             </TooltipContent>
           </Tooltip>
           <Tooltip>
@@ -131,7 +132,7 @@ export const PaginationButtons = ({
               />
             </TooltipTrigger>
             <TooltipContent>
-              <HStack>J</HStack>
+              <HStack>{prettifyKeyboardShortcut("ArrowRight")}</HStack>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -154,7 +155,7 @@ export const PaginationButtons = ({
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <HStack>F</HStack>
+              <HStack>{prettifyKeyboardShortcut("ArrowLeft")}</HStack>
             </TooltipContent>
           </Tooltip>
           <Tooltip>
@@ -170,7 +171,7 @@ export const PaginationButtons = ({
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <HStack>J</HStack>
+              <HStack>{prettifyKeyboardShortcut("ArrowRight")}</HStack>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

@@ -2,12 +2,7 @@ import { VStack } from "@carbon/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import {
-  ServicesTable,
-  ServicesTableFilters,
-  getPartGroupsList,
-  getServices,
-} from "~/modules/parts";
+import { ServicesTable, getPartGroupsList, getServices } from "~/modules/parts";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";
@@ -68,8 +63,7 @@ export default function ServicesSearchRoute() {
 
   return (
     <VStack spacing={0} className="h-full">
-      <ServicesTableFilters partGroups={partGroups} />
-      <ServicesTable data={services} count={count} />
+      <ServicesTable data={services} count={count} partGroups={partGroups} />
       <Outlet />
     </VStack>
   );

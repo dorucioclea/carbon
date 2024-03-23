@@ -50,14 +50,14 @@ export async function getPartGroup(
 
 export async function getPartGroups(
   client: SupabaseClient<Database>,
-  args?: GenericQueryFilters & { name: string | null }
+  args?: GenericQueryFilters & { search: string | null }
 ) {
   let query = client.from("partGroup").select("*", {
     count: "exact",
   });
 
-  if (args?.name) {
-    query = query.ilike("name", `%${args.name}%`);
+  if (args?.search) {
+    query = query.ilike("name", `%${args.search}%`);
   }
 
   if (args) {
@@ -69,23 +69,8 @@ export async function getPartGroups(
   return query;
 }
 
-export async function getPartGroupsList(
-  client: SupabaseClient<Database>,
-  args?: GenericQueryFilters & { name: string | null }
-) {
-  let query = client.from("partGroup").select("id, name", { count: "exact" });
-
-  if (args?.name) {
-    query = query.ilike("name", `%${args.name}%`);
-  }
-
-  if (args) {
-    query = setGenericQueryFilters(query, args, [
-      { column: "name", ascending: true },
-    ]);
-  }
-
-  return query;
+export async function getPartGroupsList(client: SupabaseClient<Database>) {
+  return client.from("partGroup").select("id, name", { count: "exact" });
 }
 
 export async function getPartInventory(
@@ -132,8 +117,6 @@ export async function getParts(
   client: SupabaseClient<Database>,
   args: GenericQueryFilters & {
     search: string | null;
-    type: string | null;
-    group: string | null;
     supplierId: string | null;
   }
 ) {
@@ -145,14 +128,6 @@ export async function getParts(
     query = query.or(
       `id.ilike.%${args.search}%,name.ilike.%${args.search}%,description.ilike.%${args.search}%`
     );
-  }
-
-  if (args.type) {
-    query = query.eq("partType", args.type);
-  }
-
-  if (args.group) {
-    query = query.eq("partGroupId", args.group);
   }
 
   if (args.supplierId) {
@@ -319,14 +294,14 @@ export async function getUnitOfMeasure(
 
 export async function getUnitOfMeasures(
   client: SupabaseClient<Database>,
-  args: GenericQueryFilters & { name: string | null }
+  args: GenericQueryFilters & { search: string | null }
 ) {
   let query = client.from("unitOfMeasure").select("*", {
     count: "exact",
   });
 
-  if (args.name) {
-    query = query.ilike("name", `%${args.name}%`);
+  if (args.search) {
+    query = query.or(`name.ilike.%${args.search}%,code.ilike.%${args.search}%`);
   }
 
   query = setGenericQueryFilters(query, args, [

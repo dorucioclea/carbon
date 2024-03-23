@@ -82,9 +82,11 @@ export function getGenericFilter<
     case "lte":
       return query.lte(column, getSafeNumber(value));
     case "contains":
-      return query.ilike(column, `%${value}%`);
+      return query.contains(column, value.split(","));
     case "startsWith":
       return query.ilike(column, `${value}%`);
+    case "in":
+      return query.in(column, value.split(","));
     default:
       throw badRequest(`Invalid filter operator: ${operator}`);
   }

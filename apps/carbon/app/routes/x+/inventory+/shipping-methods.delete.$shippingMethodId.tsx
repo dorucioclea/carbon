@@ -6,7 +6,7 @@ import { deleteShippingMethod, getShippingMethod } from "~/modules/inventory";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { notFound } from "~/utils/http";
-import { path } from "~/utils/path";
+import { getParams, path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -58,7 +58,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   }
 
   return redirect(
-    path.to.shippingMethods,
+    `${path.to.shippingMethods}?${getParams(request)}`,
     await flash(request, success("Successfully deleted shipping method"))
   );
 }

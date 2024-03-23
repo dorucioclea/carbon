@@ -1,4 +1,5 @@
 import {
+  Checkbox,
   Enumerable,
   HStack,
   MenuIcon,
@@ -9,16 +10,18 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo, useState } from "react";
 import { BsEnvelope } from "react-icons/bs";
 import { FaBan } from "react-icons/fa";
-import { Avatar, Table } from "~/components";
-import { usePermissions } from "~/hooks";
+import { Avatar, New, Table } from "~/components";
+import { usePermissions, useUrlParams } from "~/hooks";
 import type { Supplier } from "~/modules/users";
 import { DeactivateUsersModal, ResendInviteModal } from "~/modules/users";
+import { useSuppliers } from "~/stores";
+import type { ListItem } from "~/types";
 import { path } from "~/utils/path";
 
 type SupplierAccountsTableProps = {
   data: Supplier[];
   count: number;
-  isEditable?: boolean;
+  supplierTypes: ListItem[];
 };
 
 const defaultColumnVisibility = {
@@ -27,13 +30,17 @@ const defaultColumnVisibility = {
 };
 
 const SupplierAccountsTable = memo(
-  ({ data, count, isEditable = false }: SupplierAccountsTableProps) => {
+  ({ data, count, supplierTypes }: SupplierAccountsTableProps) => {
     const permissions = usePermissions();
+    const [params] = useUrlParams();
 
     const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
 
     const deactivateSupplierModal = useDisclosure();
     const resendInviteModal = useDisclosure();
+    const [suppliers] = useSuppliers();
+
+    const canEdit = permissions.can("update", "users");
 
     const rows = useMemo(
       () =>
@@ -89,16 +96,55 @@ const SupplierAccountsTable = memo(
           accessorKey: "supplier.name",
           header: "Supplier",
           cell: (item) => item.getValue(),
+          meta: {
+            filter: {
+              type: "static",
+              options: suppliers.map(({ name }) => ({
+                value: name,
+                label: name,
+              })),
+            },
+          },
         },
         {
-          header: "Supplier Type",
+          accessorKey: "supplier.supplierTypeId",
+          header: "Suppier Type",
           cell: ({ row }) => (
             // @ts-ignore
             <Enumerable value={row.original.supplier?.supplierType?.name} />
           ),
+          meta: {
+            filter: {
+              type: "static",
+              options: supplierTypes.map((type) => ({
+                value: type.id,
+                label: <Enumerable value={type.name} />,
+              })),
+            },
+          },
+        },
+        {
+          accessorKey: "user.active",
+          header: "Active",
+          cell: (item) => <Checkbox isChecked={item.getValue<boolean>()} />,
+          meta: {
+            filter: {
+              type: "static",
+              options: [
+                {
+                  value: "true",
+                  label: "Active",
+                },
+                {
+                  value: "false",
+                  label: "Inactive",
+                },
+              ],
+            },
+          },
         },
       ];
-    }, []);
+    }, [supplierTypes, suppliers]);
 
     const actions = useMemo(() => {
       return [
@@ -179,11 +225,14 @@ const SupplierAccountsTable = memo(
           columns={columns}
           data={rows}
           defaultColumnVisibility={defaultColumnVisibility}
+          primaryAction={
+            permissions.can("create", "users") && (
+              <New label="Customer" to={`new?${params.toString()}`} />
+            )
+          }
           renderContextMenu={renderContextMenu}
           withColumnOrdering
-          withFilters
-          withPagination
-          withSelectableRows={isEditable}
+          withSelectableRows={canEdit}
         />
 
         {deactivateSupplierModal.isOpen && (

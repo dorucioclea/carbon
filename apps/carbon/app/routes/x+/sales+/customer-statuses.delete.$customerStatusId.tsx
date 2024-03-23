@@ -6,7 +6,7 @@ import { deleteCustomerStatus, getCustomerStatus } from "~/modules/sales";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { notFound } from "~/utils/http";
-import { path } from "~/utils/path";
+import { getParams, path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -20,7 +20,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const customerStatus = await getCustomerStatus(client, customerStatusId);
   if (customerStatus.error) {
     return redirect(
-      path.to.customerStatuses,
+      `${path.to.customerStatuses}?${getParams(request)}`,
       await flash(
         request,
         error(customerStatus.error, "Failed to get customer status")
@@ -39,7 +39,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { customerStatusId } = params;
   if (!customerStatusId) {
     return redirect(
-      path.to.customerStatuses,
+      `${path.to.customerStatuses}?${getParams(request)}`,
       await flash(request, error(params, "Failed to get an customer status id"))
     );
   }
@@ -50,7 +50,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   );
   if (deleteStatusError) {
     return redirect(
-      path.to.customerStatuses,
+      `${path.to.customerStatuses}?${getParams(request)}`,
       await flash(
         request,
         error(deleteStatusError, "Failed to delete customer status")
@@ -59,7 +59,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   }
 
   return redirect(
-    path.to.customerStatuses,
+    `${path.to.customerStatuses}?${getParams(request)}`,
     await flash(request, success("Successfully deleted customer status"))
   );
 }

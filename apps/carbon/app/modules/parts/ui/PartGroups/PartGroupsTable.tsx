@@ -4,7 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { Table } from "~/components";
+import { New, Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { PartGroup } from "~/modules/parts";
@@ -31,7 +31,11 @@ const PartGroupsTable = memo(({ data, count }: PartGroupsTableProps) => {
         cell: ({ row }) => (
           <Enumerable
             value={row.original.name}
-            onClick={() => navigate(row.original.id)}
+            onClick={() =>
+              navigate(
+                `${path.to.partGroup(row.original.id)}?${params.toString()}`
+              )
+            }
             className="cursor-pointer"
           />
         ),
@@ -43,7 +47,7 @@ const PartGroupsTable = memo(({ data, count }: PartGroupsTableProps) => {
       },
     ];
     return [...defaultColumns, ...customColumns];
-  }, [navigate, customColumns]);
+  }, [navigate, params, customColumns]);
 
   const renderContextMenu = useCallback(
     (row: (typeof rows)[number]) => {
@@ -80,6 +84,14 @@ const PartGroupsTable = memo(({ data, count }: PartGroupsTableProps) => {
       data={data}
       columns={columns}
       count={count}
+      primaryAction={
+        permissions.can("create", "parts") && (
+          <New
+            label="Part Group"
+            to={`${path.to.newPartGroup}?${params.toString()}`}
+          />
+        )
+      }
       renderContextMenu={renderContextMenu}
     />
   );

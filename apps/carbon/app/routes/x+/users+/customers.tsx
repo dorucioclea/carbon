@@ -2,13 +2,8 @@ import { VStack } from "@carbon/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import { usePermissions } from "~/hooks";
 import { getCustomerTypes } from "~/modules/sales";
-import {
-  CustomerAccountsTable,
-  CustomerAccountsTableFilters,
-  getCustomers,
-} from "~/modules/users";
+import { CustomerAccountsTable, getCustomers } from "~/modules/users";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";
@@ -28,15 +23,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
-  const name = searchParams.get("name");
-  const type = searchParams.get("type");
-  const active = searchParams.get("active") !== "false";
+  const search = searchParams.get("search");
 
   const { limit, offset, sorts, filters } =
     getGenericQueryFilters(searchParams);
 
   const [customers, customerTypes] = await Promise.all([
-    getCustomers(client, { name, type, active, limit, offset, sorts, filters }),
+    getCustomers(client, { search, limit, offset, sorts, filters }),
     getCustomerTypes(client),
   ]);
 
@@ -56,15 +49,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function UsersCustomersRoute() {
   const { count, customers, customerTypes } = useLoaderData<typeof loader>();
-  const permissions = usePermissions();
 
   return (
     <VStack spacing={0} className="h-full">
-      <CustomerAccountsTableFilters customerTypes={customerTypes} />
       <CustomerAccountsTable
         data={customers}
         count={count}
-        isEditable={permissions.can("update", "users")}
+        customerTypes={customerTypes}
       />
       <Outlet />
     </VStack>

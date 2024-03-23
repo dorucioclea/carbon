@@ -29,6 +29,14 @@ export const receiptValidator = z.object({
   supplierId: zfd.text(z.string().optional()),
 });
 
+export const shippingCarrierType = [
+  "UPS",
+  "FedEx",
+  "USPS",
+  "DHL",
+  "Other",
+] as const;
+
 export const shippingMethodValidator = z.object({
   id: zfd.text(z.string().optional()),
   name: z.string().min(1, { message: "Name is required" }),

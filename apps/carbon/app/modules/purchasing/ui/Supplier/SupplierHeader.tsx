@@ -58,7 +58,7 @@ const SupplierHeader = () => {
               <CardAttributeValue>
                 {sharedSupplierData?.supplierTypes?.find(
                   (type) => type.id === routeData?.supplier?.supplierTypeId
-                )?.name ?? "--"}
+                )?.name ?? "-"}
               </CardAttributeValue>
             </CardAttribute>
             <CardAttribute>
@@ -67,7 +67,7 @@ const SupplierHeader = () => {
                 {sharedSupplierData?.supplierStatuses?.find(
                   (status) =>
                     status.id === routeData?.supplier?.supplierStatusId
-                )?.name ?? "--"}
+                )?.name ?? "-"}
               </CardAttributeValue>
             </CardAttribute>
             <CardAttribute>

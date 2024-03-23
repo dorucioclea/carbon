@@ -23,7 +23,10 @@ import {
 } from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import type { PaymentTermCalculationMethod } from "~/modules/accounting";
-import { paymentTermValidator } from "~/modules/accounting";
+import {
+  paymentTermValidator,
+  paymentTermsCalculationMethod,
+} from "~/modules/accounting";
 import { path } from "~/utils/path";
 
 type PaymentTermFormProps = {
@@ -44,12 +47,10 @@ const PaymentTermForm = ({ initialValues }: PaymentTermFormProps) => {
     initialValues.calculationMethod
   );
 
-  const calculationMethodOptions = ["Net", "End of Month", "Day of Month"].map(
-    (v) => ({
-      label: v,
-      value: v,
-    })
-  );
+  const calculationMethodOptions = paymentTermsCalculationMethod.map((v) => ({
+    label: v,
+    value: v,
+  }));
 
   return (
     <Drawer

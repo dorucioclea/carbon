@@ -50,13 +50,13 @@ export async function action({ request }: ActionFunctionArgs) {
     return validationError(validation.error);
   }
 
-  const { id, type, ...document } = validation.data;
+  const { id, extension, ...document } = validation.data;
   if (!id) throw new Error("Could not find documentId");
 
   const updateDocument = await upsertDocument(client, {
     id,
     ...document,
-    name: `${document.name}.${type}`,
+    name: `${document.name}.${extension}`,
     updatedBy: userId,
   });
 
@@ -87,6 +87,7 @@ export default function EditDocumentRoute() {
     name: name ?? "",
     description: document.description ?? "",
     type: document.type ?? "",
+    extension: document.extension ?? "",
     size: document.size ?? 0,
     readGroups: document.readGroups ?? [],
     writeGroups: document.writeGroups ?? [],

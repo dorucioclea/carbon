@@ -27,11 +27,6 @@ const resourcesRoutes: RouteGroup[] = [
         icon: <FaPeopleCarry />,
       },
       {
-        name: "Equipment",
-        to: path.to.equipment,
-        icon: <TbCrane />,
-      },
-      {
         name: "Partners",
         to: path.to.partners,
         icon: <FaPeopleArrows />,
@@ -40,6 +35,11 @@ const resourcesRoutes: RouteGroup[] = [
         name: "Work Cells",
         to: path.to.workCells,
         icon: <MdDashboardCustomize />,
+      },
+      {
+        name: "Equipment",
+        to: path.to.equipment,
+        icon: <TbCrane />,
       },
     ],
   },

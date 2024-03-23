@@ -5,7 +5,7 @@ import { Outlet, useLoaderData } from "@remix-run/react";
 import type { Document } from "~/modules/documents";
 import {
   DocumentsTable,
-  DocumentsTableFilters,
+  getDocumentExtensions,
   getDocumentLabels,
   getDocuments,
 } from "~/modules/documents";
@@ -23,8 +23,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
   const search = searchParams.get("search");
-  const type = searchParams.get("type");
-  const label = searchParams.get("label");
   const filter = searchParams.get("q");
 
   const createdBy = filter === "my" ? userId : undefined;
@@ -35,11 +33,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const { limit, offset, sorts, filters } =
     getGenericQueryFilters(searchParams);
 
-  const [documents, labels] = await Promise.all([
+  const [documents, labels, extensions] = await Promise.all([
     getDocuments(client, {
       search,
-      type,
-      label,
       favorite,
       recent,
       createdBy,
@@ -50,6 +46,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       filters,
     }),
     getDocumentLabels(client, userId),
+    getDocumentExtensions(client),
   ]);
 
   if (documents.error) {
@@ -63,16 +60,22 @@ export async function loader({ request }: LoaderFunctionArgs) {
     count: documents.count ?? 0,
     documents: (documents.data ?? []) as Document[],
     labels: labels.data ?? [],
+    extensions: extensions.data?.map(({ extension }) => extension) ?? [],
   });
 }
 
 export default function DocumentsAllRoute() {
-  const { count, documents, labels } = useLoaderData<typeof loader>();
+  const { count, documents, labels, extensions } =
+    useLoaderData<typeof loader>();
 
   return (
     <VStack spacing={0} className="h-full">
-      <DocumentsTableFilters labels={labels} />
-      <DocumentsTable data={documents} count={count} labels={labels} />
+      <DocumentsTable
+        data={documents}
+        count={count}
+        labels={labels}
+        extensions={extensions}
+      />
       <Outlet />
     </VStack>
   );

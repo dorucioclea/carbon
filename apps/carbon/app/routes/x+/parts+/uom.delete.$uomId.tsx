@@ -6,7 +6,7 @@ import { deleteUnitOfMeasure, getUnitOfMeasure } from "~/modules/parts";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { notFound } from "~/utils/http";
-import { path } from "~/utils/path";
+import { getParams, path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -19,7 +19,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const unitOfMeasure = await getUnitOfMeasure(client, uomId);
   if (unitOfMeasure.error) {
     return redirect(
-      path.to.uoms,
+      `${path.to.uoms}?${getParams(request)}`,
       await flash(
         request,
         error(unitOfMeasure.error, "Failed to get unit of measure")

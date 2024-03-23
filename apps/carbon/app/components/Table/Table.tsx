@@ -26,6 +26,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import type { ReactNode } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FaSort, FaSortDown, FaSortUp } from "react-icons/fa";
 import type {
@@ -40,6 +41,7 @@ import {
   usePagination,
   useSort,
 } from "./components";
+import type { ColumnFilter } from "./components/Filter/types";
 import type { TableAction } from "./types";
 import { getAccessorKey, updateNestedProperty } from "./utils";
 
@@ -52,10 +54,11 @@ interface TableProps<T extends object> {
   defaultColumnPinning?: ColumnPinningState;
   defaultColumnVisibility?: Record<string, boolean>;
   editableComponents?: Record<string, EditableTableCellComponent<T>>;
+  primaryAction?: ReactNode;
   withColumnOrdering?: boolean;
   withInlineEditing?: boolean;
-  withFilters?: boolean;
   withPagination?: boolean;
+  withSearch?: boolean;
   withSelectableRows?: boolean;
   withSimpleSorting?: boolean;
   onSelectedRowsChange?: (selectedRows: T[]) => void;
@@ -67,16 +70,17 @@ const Table = <T extends object>({
   columns,
   actions = [],
   count = 0,
-  editableComponents,
   defaultColumnOrder,
   defaultColumnPinning = {
     left: ["Select"],
   },
   defaultColumnVisibility,
-  withFilters = false,
+  editableComponents,
+  primaryAction,
   withInlineEditing = false,
   withColumnOrdering = false,
   withPagination = true,
+  withSearch = true,
   withSelectableRows = false,
   withSimpleSorting = true,
   onSelectedRowsChange,
@@ -413,40 +417,59 @@ const Table = <T extends object>({
     setColumnOrder(table.getAllLeafColumns().map((column) => column.id));
   });
 
+  const filters = useMemo(
+    () =>
+      columns.reduce<ColumnFilter[]>((acc, column) => {
+        if (
+          column.meta?.filter &&
+          column.header &&
+          typeof column.header === "string"
+        ) {
+          const filter: ColumnFilter = {
+            accessorKey: getAccessorKey(column) ?? column.id!,
+            header: column.header,
+            pluralHeader: column.meta.pluralHeader,
+            filter: column.meta.filter,
+          };
+          return [...acc, filter];
+        }
+        return acc;
+      }, []),
+    [columns]
+  );
+
   const rows = table.getRowModel().rows;
 
   return (
     <VStack spacing={0} className="h-full">
-      {(withColumnOrdering ||
-        withFilters ||
-        withSelectableRows ||
-        withInlineEditing) && (
-        <TableHeader
-          actions={actions}
-          columnAccessors={columnAccessors}
-          columnOrder={columnOrder}
-          columns={table.getAllLeafColumns()}
-          editMode={editMode}
-          selectedRows={selectedRows}
-          setColumnOrder={setColumnOrder}
-          setEditMode={setEditMode}
-          pagination={pagination}
-          withInlineEditing={withInlineEditing}
-          withColumnOrdering={withColumnOrdering}
-          withFilters={withFilters}
-          withPagination={withPagination}
-          withSelectableRows={withSelectableRows}
-        />
-      )}
+      <TableHeader
+        actions={actions}
+        columnAccessors={columnAccessors}
+        columnOrder={columnOrder}
+        columns={table.getAllLeafColumns()}
+        editMode={editMode}
+        filters={filters}
+        primaryAction={primaryAction}
+        selectedRows={selectedRows}
+        setColumnOrder={setColumnOrder}
+        setEditMode={setEditMode}
+        pagination={pagination}
+        withInlineEditing={withInlineEditing}
+        withColumnOrdering={withColumnOrdering}
+        withPagination={withPagination}
+        withSearch={withSearch}
+        withSelectableRows={withSelectableRows}
+      />
+
       <div
-        className="w-full h-full bg-card overflow-scroll"
+        className="w-full h-full bg-card"
         style={{ contain: "strict" }}
         ref={tableContainerRef}
         onKeyDown={editMode ? onKeyDown : undefined}
       >
         <div
           className={cn(
-            "grid w-full",
+            "grid w-full h-full",
             withColumnOrdering ? "grid-cols-[auto_1fr]" : "grid-cols-1"
           )}
         >
@@ -489,12 +512,18 @@ const Table = <T extends object>({
                                 header.column.columnDef.header,
                                 header.getContext()
                               )}
-                              <span className="pl-4">
+                              <span className="pl-2">
                                 {sorted ? (
                                   sorted === -1 ? (
-                                    <FaSortDown aria-label="sorted descending" />
+                                    <FaSortDown
+                                      aria-label="sorted descending"
+                                      className="text-primary"
+                                    />
                                   ) : (
-                                    <FaSortUp aria-label="sorted ascending" />
+                                    <FaSortUp
+                                      aria-label="sorted ascending"
+                                      className="text-primary"
+                                    />
                                   )
                                 ) : sortable ? (
                                   <FaSort aria-label="sort" />
@@ -599,12 +628,18 @@ const Table = <T extends object>({
                               header.column.columnDef.header,
                               header.getContext()
                             )}
-                            <span className="pl-4">
+                            <span className="pl-2">
                               {sorted ? (
                                 sorted === -1 ? (
-                                  <FaSortDown aria-label="sorted descending" />
+                                  <FaSortDown
+                                    aria-label="sorted descending"
+                                    className="text-primary"
+                                  />
                                 ) : (
-                                  <FaSortUp aria-label="sorted ascending" />
+                                  <FaSortUp
+                                    aria-label="sorted ascending"
+                                    className="text-primary"
+                                  />
                                 )
                               ) : sortable ? (
                                 <FaSort

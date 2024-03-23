@@ -228,7 +228,7 @@ import {
   useOutsideClick,
 } from "./hooks";
 import { cn } from "./utils/cn";
-import { getValidChildren } from "./utils/react";
+import { getValidChildren, reactNodeToString } from "./utils/react";
 
 export {
   ActionMenu,
@@ -429,6 +429,7 @@ export {
   cn,
   getValidChildren,
   multiSelectTriggerVariants,
+  reactNodeToString,
   toast,
   useDebounce,
   useDisclosure,

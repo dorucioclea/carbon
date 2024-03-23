@@ -345,6 +345,12 @@ export const partLedgerValidator = z.object({
   quantity: z.number(),
 });
 
+export const paymentTermsCalculationMethod = [
+  "Net",
+  "End of Month",
+  "Day of Month",
+] as const;
+
 export const paymentTermValidator = z.object({
   id: zfd.text(z.string().optional()),
   name: z.string().min(1, { message: "Name is required" }),

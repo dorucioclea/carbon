@@ -2,12 +2,7 @@ import { VStack } from "@carbon/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import {
-  ShiftsTable,
-  ShiftsTableFilters,
-  getLocations,
-  getShifts,
-} from "~/modules/resources";
+import { ShiftsTable, getLocations, getShifts } from "~/modules/resources";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";
@@ -28,12 +23,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
-  const name = searchParams.get("name");
-  const location = searchParams.get("location");
-  const { limit, offset, sorts } = getGenericQueryFilters(searchParams);
+  const search = searchParams.get("search");
+  const { limit, offset, sorts, filters } =
+    getGenericQueryFilters(searchParams);
 
   const [shifts, locations] = await Promise.all([
-    getShifts(client, { name, location, limit, offset, sorts }),
+    getShifts(client, { search, limit, offset, sorts, filters }),
     getLocations(client),
   ]);
 
@@ -56,8 +51,7 @@ export default function ShiftsRoute() {
 
   return (
     <VStack spacing={0} className="h-full">
-      <ShiftsTableFilters locations={locations} />
-      <ShiftsTable data={shifts} count={count} />
+      <ShiftsTable data={shifts} count={count} locations={locations} />
       <Outlet />
     </VStack>
   );

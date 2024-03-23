@@ -11,7 +11,7 @@ import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
-import { path, requestReferrer } from "~/utils/path";
+import { getParams, path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -48,7 +48,7 @@ export async function action({ request }: ActionFunctionArgs) {
     return modal
       ? json(insertSupplierType)
       : redirect(
-          requestReferrer(request) ?? path.to.supplierTypes,
+          `${path.to.supplierTypes}?${getParams(request)}`,
           await flash(
             request,
             error(insertSupplierType.error, "Failed to insert supplier type")
@@ -59,7 +59,7 @@ export async function action({ request }: ActionFunctionArgs) {
   return modal
     ? json(insertSupplierType, { status: 201 })
     : redirect(
-        path.to.supplierTypes,
+        `${path.to.supplierTypes}?${getParams(request)}`,
         await flash(request, success("Supplier type created"))
       );
 }

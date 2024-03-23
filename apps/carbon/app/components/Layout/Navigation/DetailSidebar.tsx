@@ -54,7 +54,7 @@ const DetailSidebar = ({ links }: DetailSidebarProps) => {
                   variant={isActive ? "primary" : "ghost"}
                   className="w-full justify-start"
                 >
-                  <Link to={route.to}>
+                  <Link to={route.to} prefetch="intent">
                     {route.icon && <route.icon className="mr-2" />}
                     <span>{route.name}</span>
                     {route.count !== undefined && (

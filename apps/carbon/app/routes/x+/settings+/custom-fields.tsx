@@ -3,11 +3,7 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import { getAttributeDataTypes } from "~/modules/resources";
-import {
-  CustomFieldsTable,
-  CustomFieldsTableFilters,
-  getCustomFieldsTables,
-} from "~/modules/settings";
+import { CustomFieldsTable, getCustomFieldsTables } from "~/modules/settings";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";
@@ -28,11 +24,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
-  const name = searchParams.get("name");
-  const { limit, offset, sorts } = getGenericQueryFilters(searchParams);
+  const search = searchParams.get("search");
+  const { limit, offset, sorts, filters } =
+    getGenericQueryFilters(searchParams);
 
   const [tables, dataTypes] = await Promise.all([
-    getCustomFieldsTables(client, { name, limit, offset, sorts }),
+    getCustomFieldsTables(client, { search, limit, offset, sorts, filters }),
     getAttributeDataTypes(client),
   ]);
 
@@ -55,7 +52,6 @@ export default function UserAttributesRoute() {
 
   return (
     <VStack spacing={0} className="h-full">
-      <CustomFieldsTableFilters />
       <CustomFieldsTable data={tables} count={count} />
       <Outlet />
     </VStack>

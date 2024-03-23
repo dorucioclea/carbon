@@ -62,7 +62,7 @@ export const quoteStatusType = [
   "Open",
   "Replied",
   "Ordered",
-  "Partially Ordered",
+  "Partial",
   "Lost",
   "Cancelled",
   "Expired",

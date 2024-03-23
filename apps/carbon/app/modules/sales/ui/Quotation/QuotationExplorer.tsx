@@ -1,16 +1,41 @@
-import { Button, cn, HStack, IconButton } from "@carbon/react";
+import {
+  Button,
+  cn,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandTrigger,
+  HStack,
+  IconButton,
+  Kbd,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  useKeyboardShortcuts,
+  VStack,
+} from "@carbon/react";
 import type { Params } from "@remix-run/react";
-import { Link, useLocation, useParams } from "@remix-run/react";
+import { Link, useLocation, useNavigate, useParams } from "@remix-run/react";
 import { arrayToTree } from "performant-array-to-tree";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { AiOutlinePartition } from "react-icons/ai";
 import { HiOutlineCube } from "react-icons/hi";
 import { IoMdAdd } from "react-icons/io";
 import { LuClock } from "react-icons/lu";
-import { RxChevronDown } from "react-icons/rx";
+import { RxCheck, RxChevronDown } from "react-icons/rx";
 import type { BillOfMaterialNode } from "~/modules/shared";
 import { path } from "~/utils/path";
-import type { QuotationMaterial } from "../..";
+import type {
+  QuotationAssembly,
+  QuotationLine,
+  QuotationMaterial,
+  QuotationOperation,
+} from "../..";
 import { useQuotation } from "./useQuotation";
 
 const QuotationExplorerItem = (
@@ -235,6 +260,7 @@ const QuotationExplorer = () => {
       if (!acc[operation.quoteAssemblyId]) {
         acc[operation.quoteAssemblyId] = [];
       }
+
       acc[operation.quoteAssemblyId].push({
         id: operation.id,
         parentId: operation.quoteAssemblyId ?? undefined,
@@ -243,7 +269,7 @@ const QuotationExplorer = () => {
         meta: operation,
         children: [
           {
-            id: operation.id,
+            id: `${operation.id}-materials`,
             label: "Materials",
             type: "materials",
             meta: operation,
@@ -290,7 +316,7 @@ const QuotationExplorer = () => {
         meta: operation,
         children: [
           {
-            id: operation.id,
+            id: `${operation.id}-materials`,
             label: "Materials",
             type: "materials",
             meta: operation,
@@ -392,14 +418,36 @@ const QuotationExplorer = () => {
     return tree;
   }, [quote]);
 
+  const nodeParentById = useMemo(() => {
+    let result: Record<string, string> = {};
+    traverseTree(tree, (node) => {
+      if (node.children) {
+        node.children.forEach((child) => {
+          // better to lose functionality than to have an infinite loop
+          if (child.id !== node.id) {
+            result[child.id] = node.id;
+          }
+        });
+      }
+    });
+    return result;
+  }, [tree]);
+
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({
     [params.id]: true,
   });
 
   const openNode = (id: string) => {
+    const result = { [id]: true };
+    let currentId = id;
+    while (nodeParentById[currentId]) {
+      result[nodeParentById[currentId]] = true;
+      currentId = nodeParentById[currentId];
+    }
+
     setExpandedNodes((prev) => ({
       ...prev,
-      [id]: true,
+      ...result,
     }));
   };
 
@@ -459,10 +507,37 @@ const QuotationExplorer = () => {
     });
   };
 
+  const newButtonRef = useRef<HTMLButtonElement>(null);
+  const navigate = useNavigate();
+  const { id } = useParams();
+  if (!id) throw new Error("id not found");
+
   return (
-    <div className="w-full h-full overflow-auto" role="tree">
-      {renderBillOfMaterial(tree)}
-    </div>
+    <>
+      <VStack className="border-b border-border p-2" spacing={0}>
+        <HStack className="w-full justify-between">
+          <QuotationSearch onSelect={openNode} />
+          <Tooltip>
+            <TooltipTrigger>
+              <IconButton
+                aria-label="Add Quote Line"
+                icon={<IoMdAdd />}
+                ref={newButtonRef}
+                onClick={() => navigate(path.to.newQuoteLine(id))}
+              />
+            </TooltipTrigger>
+            <TooltipContent>
+              Add Quote Line <Kbd>l</Kbd>
+            </TooltipContent>
+          </Tooltip>
+        </HStack>
+      </VStack>
+      <VStack className="h-[calc(100vh-183px)] p-2 w-full">
+        <div className="w-full h-full overflow-auto" role="tree">
+          {renderBillOfMaterial(tree)}
+        </div>
+      </VStack>
+    </>
   );
 };
 
@@ -479,3 +554,233 @@ function traverseTree(
     }
   });
 }
+
+type QuotationSearchProps = {
+  onSelect: (id: string) => void;
+};
+
+const QuotationSearch = ({ onSelect }: QuotationSearchProps) => {
+  const navigate = useNavigate();
+  const { pathname, search } = useLocation();
+  const [open, setOpen] = useState(false);
+  const [quote] = useQuotation();
+  const assembliesById = useMemo(
+    () =>
+      quote?.assemblies.reduce<Record<string, QuotationAssembly>>(
+        (acc, assembly) => {
+          acc[assembly.id] = assembly;
+          return acc;
+        },
+        {}
+      ),
+    [quote?.assemblies]
+  );
+
+  const linesById = useMemo(
+    () =>
+      quote?.lines.reduce<Record<string, QuotationLine>>((acc, line) => {
+        acc[line.id] = line;
+        return acc;
+      }, {}),
+    [quote?.lines]
+  );
+
+  const operationsById = useMemo(
+    () =>
+      quote?.operations.reduce<Record<string, QuotationOperation>>(
+        (acc, operation) => {
+          acc[operation.id] = operation;
+          return acc;
+        },
+        {}
+      ),
+    [quote?.operations]
+  );
+
+  const commandTriggerRef = useRef<HTMLButtonElement>(null);
+
+  useKeyboardShortcuts({
+    s: () => {
+      if (commandTriggerRef.current) {
+        commandTriggerRef.current.click();
+      }
+    },
+  });
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <CommandTrigger
+          ref={commandTriggerRef}
+          size="sm"
+          role="combobox"
+          onClick={() => setOpen(true)}
+        >
+          Search Quote
+        </CommandTrigger>
+      </PopoverTrigger>
+      <PopoverContent className="w-[250px] p-0" align="start">
+        <Command>
+          <CommandInput placeholder="Search..." className="h-9" />
+          <CommandEmpty>No option found.</CommandEmpty>
+          {quote?.lines.length > 0 && (
+            <CommandGroup heading="Lines">
+              {quote?.lines.map((line) => (
+                <CommandItem
+                  value={`lines ${line.partId} ${line.description}`}
+                  key={line.id}
+                  onSelect={() => {
+                    onSelect(line.id);
+                    navigate(path.to.quoteLine(line.quoteId, line.id));
+                    setOpen(false);
+                  }}
+                >
+                  <div className="flex flex-col">
+                    <p>{line.description}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {line.partId}
+                    </p>
+                  </div>
+
+                  <RxCheck
+                    className={cn(
+                      "ml-auto h-4 w-4",
+                      `${pathname}${search}` ===
+                        path.to.quoteLine(line.quoteId, line.id)
+                        ? "opacity-100"
+                        : "opacity-0"
+                    )}
+                  />
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
+          {quote?.assemblies.length > 0 && (
+            <CommandGroup heading="Assemblies">
+              {quote?.assemblies.map((assembly) => (
+                <CommandItem
+                  value={`assemblies ${assembly.partId} ${assembly.description}`}
+                  key={assembly.id}
+                  onSelect={() => {
+                    onSelect(assembly.id);
+                    navigate(
+                      path.to.quoteAssembly(
+                        assembly.quoteId,
+                        assembly.quoteLineId,
+                        assembly.id
+                      )
+                    );
+                    setOpen(false);
+                  }}
+                >
+                  <div className="flex flex-col">
+                    <p>{assembly.description}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {assembly.partId}
+                    </p>
+                  </div>
+
+                  <RxCheck
+                    className={cn(
+                      "ml-auto h-4 w-4",
+                      `${pathname}${search}` ===
+                        path.to.quoteAssembly(
+                          assembly.quoteId,
+                          assembly.quoteLineId,
+                          assembly.id
+                        )
+                        ? "opacity-100"
+                        : "opacity-0"
+                    )}
+                  />
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
+          {quote?.operations.length > 0 && (
+            <CommandGroup heading="Operations">
+              {quote?.operations.map((operation) => {
+                const parent = operation.quoteAssemblyId
+                  ? assembliesById[operation.quoteAssemblyId]
+                  : linesById[operation.quoteLineId];
+                const to = path.to.quoteOperation(
+                  operation.quoteId,
+                  operation.quoteLineId,
+                  operation.id
+                );
+                return (
+                  <CommandItem
+                    value={`operations ${operation.description} ${parent.description} ${operation.id}`}
+                    key={operation.id}
+                    onSelect={() => {
+                      onSelect(operation.id);
+                      navigate(to);
+                      setOpen(false);
+                    }}
+                  >
+                    <div className="flex flex-col">
+                      <p>{operation.description}</p>
+
+                      <p className="text-xs text-muted-foreground">
+                        {parent.description}
+                      </p>
+                    </div>
+
+                    <RxCheck
+                      className={cn(
+                        "ml-auto h-4 w-4",
+                        `${pathname}${search}` === to
+                          ? "opacity-100"
+                          : "opacity-0"
+                      )}
+                    />
+                  </CommandItem>
+                );
+              })}
+            </CommandGroup>
+          )}
+          {quote?.materials.length > 0 && (
+            <CommandGroup heading="Operations">
+              {quote?.materials.map((material) => {
+                const parent = operationsById[material.quoteOperationId];
+                const to = path.to.quoteOperation(
+                  material.quoteId,
+                  material.quoteLineId,
+                  material.quoteOperationId
+                );
+                return (
+                  <CommandItem
+                    value={`materials ${material.description} ${material.partId} ${parent.description}`}
+                    key={material.id}
+                    onSelect={() => {
+                      onSelect(material.id);
+                      navigate(to);
+                      setOpen(false);
+                    }}
+                  >
+                    <div className="flex flex-col">
+                      <p>{material.description}</p>
+
+                      <p className="text-xs text-muted-foreground">
+                        {parent.description}
+                      </p>
+                    </div>
+
+                    <RxCheck
+                      className={cn(
+                        "ml-auto h-4 w-4",
+                        `${pathname}${search}` === to
+                          ? "opacity-100"
+                          : "opacity-0"
+                      )}
+                    />
+                  </CommandItem>
+                );
+              })}
+            </CommandGroup>
+          )}
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+};

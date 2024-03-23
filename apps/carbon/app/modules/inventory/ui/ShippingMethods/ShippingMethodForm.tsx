@@ -22,7 +22,10 @@ import {
   Submit,
 } from "~/components/Form";
 import { usePermissions } from "~/hooks";
-import { shippingMethodValidator } from "~/modules/inventory";
+import {
+  shippingCarrierType,
+  shippingMethodValidator,
+} from "~/modules/inventory";
 import { path } from "~/utils/path";
 
 type ShippingMethodFormProps = {
@@ -39,12 +42,10 @@ const ShippingMethodForm = ({ initialValues }: ShippingMethodFormProps) => {
     ? !permissions.can("update", "inventory")
     : !permissions.can("create", "inventory");
 
-  const shippingCarrierOptions = ["UPS", "FedEx", "USPS", "DHL", "Other"].map(
-    (v) => ({
-      label: v,
-      value: v,
-    })
-  );
+  const shippingCarrierOptions = shippingCarrierType.map((v) => ({
+    label: v,
+    value: v,
+  }));
 
   return (
     <Drawer

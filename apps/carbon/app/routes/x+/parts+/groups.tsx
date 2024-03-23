@@ -3,11 +3,7 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import { getAccountsList } from "~/modules/accounting";
-import {
-  PartGroupsTable,
-  PartGroupsTableFilters,
-  getPartGroups,
-} from "~/modules/parts";
+import { PartGroupsTable, getPartGroups } from "~/modules/parts";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";
@@ -28,15 +24,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
-  const name = searchParams.get("name");
-  const { limit, offset, sorts } = getGenericQueryFilters(searchParams);
+  const search = searchParams.get("search");
+  const { limit, offset, sorts, filters } =
+    getGenericQueryFilters(searchParams);
 
   const [partGroups, accounts] = await Promise.all([
     getPartGroups(client, {
       limit,
       offset,
       sorts,
-      name,
+      search,
+      filters,
     }),
     getAccountsList(client),
   ]);
@@ -67,7 +65,6 @@ export default function PartGroupsRoute() {
 
   return (
     <VStack spacing={0} className="h-full">
-      <PartGroupsTableFilters />
       <PartGroupsTable data={partGroups} count={count ?? 0} />
       <Outlet />
     </VStack>

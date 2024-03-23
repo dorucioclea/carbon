@@ -6,7 +6,7 @@ import { deleteSupplierStatus, getSupplierStatus } from "~/modules/purchasing";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { notFound } from "~/utils/http";
-import { path } from "~/utils/path";
+import { getParams, path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -20,7 +20,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const supplierStatus = await getSupplierStatus(client, supplierStatusId);
   if (supplierStatus.error) {
     return redirect(
-      path.to.supplierStatuses,
+      `${path.to.supplierStatuses}?${getParams(request)}`,
       await flash(
         request,
         error(supplierStatus.error, "Failed to get supplier status")
@@ -39,7 +39,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { supplierStatusId } = params;
   if (!supplierStatusId) {
     return redirect(
-      path.to.supplierStatuses,
+      `${path.to.supplierStatuses}?${getParams(request)}`,
       await flash(request, error(params, "Failed to get an supplier status id"))
     );
   }
@@ -50,7 +50,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   );
   if (deleteStatusError) {
     return redirect(
-      path.to.supplierStatuses,
+      `${path.to.supplierStatuses}?${getParams(request)}`,
       await flash(
         request,
         error(deleteStatusError, "Failed to delete supplier status")
@@ -59,7 +59,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   }
 
   return redirect(
-    path.to.supplierStatuses,
+    `${path.to.supplierStatuses}?${getParams(request)}`,
     await flash(request, success("Successfully deleted supplier status"))
   );
 }

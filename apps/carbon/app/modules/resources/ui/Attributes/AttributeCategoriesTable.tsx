@@ -12,7 +12,7 @@ import { memo, useCallback, useMemo, useState } from "react";
 import { BiAddToQueue } from "react-icons/bi";
 import { BsFillPenFill, BsListUl } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { Table } from "~/components";
+import { New, Table } from "~/components";
 import { ConfirmDelete } from "~/components/Modals";
 import { usePermissions, useUrlParams } from "~/hooks";
 import type { AttributeCategory } from "~/modules/resources";
@@ -43,7 +43,7 @@ const AttributeCategoriesTable = memo(
       deleteModal.onClose();
     };
 
-    const columns = useMemo<ColumnDef<(typeof data)[number]>[]>(() => {
+    const columns = useMemo<ColumnDef<AttributeCategory>[]>(() => {
       return [
         {
           accessorKey: "name",
@@ -75,8 +75,8 @@ const AttributeCategoriesTable = memo(
           ),
         },
         {
-          header: "Visibility",
           accessorKey: "public",
+          header: "Visibility",
           cell: (item) => {
             const isPublic = item.getValue<boolean>()?.toString() === "true";
             return (
@@ -85,12 +85,22 @@ const AttributeCategoriesTable = memo(
               </Badge>
             );
           },
+          meta: {
+            filter: {
+              type: "static",
+              options: [
+                { label: "Public", value: "true" },
+                { label: "Private", value: "false" },
+              ],
+            },
+            pluralHeader: "Visibilities",
+          },
         },
       ];
     }, [navigate, params]);
 
     const renderContextMenu = useCallback(
-      (row: (typeof data)[number]) => {
+      (row: AttributeCategory) => {
         return (
           <>
             <MenuItem
@@ -141,10 +151,15 @@ const AttributeCategoriesTable = memo(
 
     return (
       <>
-        <Table<(typeof data)[number]>
+        <Table<AttributeCategory>
           data={data}
           columns={columns}
           count={count ?? 0}
+          primaryAction={
+            permissions.can("update", "resources") && (
+              <New label="Attribute Category" to={`new?${params.toString()}`} />
+            )
+          }
           renderContextMenu={renderContextMenu}
         />
         {selectedCategory && selectedCategory.id && (

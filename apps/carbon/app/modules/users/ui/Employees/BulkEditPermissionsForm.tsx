@@ -84,7 +84,7 @@ const BulkEditPermissions = ({
           className="flex flex-col h-full"
         >
           <DrawerHeader>
-            <DrawerTitle>Bulk Edit Permissions</DrawerTitle>
+            <DrawerTitle>Edit Permissions</DrawerTitle>
           </DrawerHeader>
           <DrawerBody>
             <VStack spacing={4}>

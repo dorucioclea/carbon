@@ -2,13 +2,8 @@ import { VStack } from "@carbon/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import { usePermissions } from "~/hooks";
 import { getSupplierTypes } from "~/modules/purchasing";
-import {
-  SupplierAccountsTable,
-  SupplierAccountsTableFilters,
-  getSuppliers,
-} from "~/modules/users";
+import { SupplierAccountsTable, getSuppliers } from "~/modules/users";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";
@@ -28,15 +23,19 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
-  const name = searchParams.get("name");
-  const type = searchParams.get("type");
-  const active = searchParams.get("active") !== "false";
+  const search = searchParams.get("search");
 
   const { limit, offset, sorts, filters } =
     getGenericQueryFilters(searchParams);
 
   const [suppliers, supplierTypes] = await Promise.all([
-    getSuppliers(client, { name, type, active, limit, offset, sorts, filters }),
+    getSuppliers(client, {
+      search,
+      limit,
+      offset,
+      sorts,
+      filters,
+    }),
     getSupplierTypes(client),
   ]);
   if (suppliers.error) {
@@ -64,15 +63,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function UsersSuppliersRoute() {
   const { count, suppliers, supplierTypes } = useLoaderData<typeof loader>();
-  const permissions = usePermissions();
 
   return (
     <VStack spacing={0} className="h-full">
-      <SupplierAccountsTableFilters supplierTypes={supplierTypes} />
       <SupplierAccountsTable
         data={suppliers}
         count={count}
-        isEditable={permissions.can("update", "users")}
+        supplierTypes={supplierTypes}
       />
       <Outlet />
     </VStack>

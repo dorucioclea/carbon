@@ -1,13 +1,11 @@
 import EquipmentForm from "./EquipmentForm";
-import EquipmentTypesTable from "./EquipmentTypesTable";
-import EquipmentTypesTableFilters from "./EquipmentTypesTableFilters";
 import EquipmentTypeDetail from "./EquipmentTypeDetail";
 import EquipmentTypeForm from "./EquipmentTypeForm";
+import EquipmentTypesTable from "./EquipmentTypesTable";
 
 export {
   EquipmentForm,
-  EquipmentTypesTable,
-  EquipmentTypesTableFilters,
   EquipmentTypeDetail,
   EquipmentTypeForm,
+  EquipmentTypesTable,
 };

@@ -6,7 +6,7 @@ import { deleteSupplierType, getSupplierType } from "~/modules/purchasing";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { notFound } from "~/utils/http";
-import { path } from "~/utils/path";
+import { getParams, path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -39,7 +39,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { supplierTypeId } = params;
   if (!supplierTypeId) {
     return redirect(
-      path.to.supplierTypes,
+      `${path.to.supplierTypes}?${getParams(request)}`,
       await flash(request, error(params, "Failed to get an supplier type id"))
     );
   }
@@ -50,7 +50,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   );
   if (deleteTypeError) {
     return redirect(
-      path.to.supplierTypes,
+      `${path.to.supplierTypes}?${getParams(request)}`,
       await flash(
         request,
         error(deleteTypeError, "Failed to delete supplier type")
@@ -59,7 +59,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   }
 
   return redirect(
-    path.to.supplierTypes,
+    `${path.to.supplierTypes}?${getParams(request)}`,
     await flash(request, success("Successfully deleted supplier type"))
   );
 }

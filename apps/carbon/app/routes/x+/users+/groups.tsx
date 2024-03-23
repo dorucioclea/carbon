@@ -4,7 +4,7 @@ import { json } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import { arrayToTree } from "performant-array-to-tree";
 import type { Group } from "~/modules/users";
-import { GroupsTable, GroupsTableFilters, getGroups } from "~/modules/users";
+import { GroupsTable, getGroups } from "~/modules/users";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";
@@ -25,11 +25,19 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
-  const name = searchParams.get("name");
+  const search = searchParams.get("search");
   const uid = searchParams.get("uid");
-  const { limit, offset, sorts } = getGenericQueryFilters(searchParams);
+  const { limit, offset, sorts, filters } =
+    getGenericQueryFilters(searchParams);
 
-  const groups = await getGroups(client, { name, uid, limit, offset, sorts });
+  const groups = await getGroups(client, {
+    search,
+    uid,
+    limit,
+    offset,
+    sorts,
+    filters,
+  });
 
   if (groups.error) {
     return json(
@@ -50,7 +58,6 @@ export default function GroupsRoute() {
 
   return (
     <VStack spacing={0} className="h-full">
-      <GroupsTableFilters />
       {/* @ts-ignore */}
       <GroupsTable data={groups} count={count} />
       <Outlet />

@@ -54,7 +54,7 @@ const CustomerHeader = () => {
               <CardAttributeValue>
                 {sharedCustomerData?.customerTypes?.find(
                   (type) => type.id === routeData?.customer?.customerTypeId
-                )?.name ?? "--"}
+                )?.name ?? "-"}
               </CardAttributeValue>
             </CardAttribute>
             <CardAttribute>
@@ -63,7 +63,7 @@ const CustomerHeader = () => {
                 {sharedCustomerData?.customerStatuses?.find(
                   (status) =>
                     status.id === routeData?.customer?.customerStatusId
-                )?.name ?? "--"}
+                )?.name ?? "-"}
               </CardAttributeValue>
             </CardAttribute>
             {/* <CardAttribute>

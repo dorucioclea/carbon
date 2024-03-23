@@ -5,7 +5,6 @@ import { Outlet, useLoaderData } from "@remix-run/react";
 import { useRouteData } from "~/hooks";
 import type { AccountListItem } from "~/modules/accounting";
 import {
-  InventoryPostingGroupsFilters,
   InventoryPostingGroupsTable,
   getInventoryPostingGroups,
 } from "~/modules/accounting";
@@ -30,17 +29,16 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
-  const partGroup = searchParams.get("partGroup");
-  const location = searchParams.get("location");
-  const { limit, offset, sorts } = getGenericQueryFilters(searchParams);
+
+  const { limit, offset, sorts, filters } =
+    getGenericQueryFilters(searchParams);
 
   const [inventoryGroups, partGroups, locations] = await Promise.all([
     getInventoryPostingGroups(client, {
-      partGroup,
-      location,
       limit,
       offset,
       sorts,
+      filters,
     }),
     getPartGroupsList(client),
     getLocationsList(client),
@@ -73,10 +71,6 @@ export default function InventoryPostingGroupsRoute() {
 
   return (
     <VStack spacing={0} className="h-full">
-      <InventoryPostingGroupsFilters
-        partGroups={partGroups}
-        locations={locations}
-      />
       <InventoryPostingGroupsTable
         data={data}
         count={count}

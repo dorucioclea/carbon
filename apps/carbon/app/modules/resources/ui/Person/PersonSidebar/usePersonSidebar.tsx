@@ -6,7 +6,7 @@ export function usePersonSidebar() {
   return [
     {
       name: "Profile",
-      to: "",
+      to: "details",
       icon: CgProfile,
     },
     {

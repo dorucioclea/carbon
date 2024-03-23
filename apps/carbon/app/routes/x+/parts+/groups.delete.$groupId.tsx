@@ -6,7 +6,7 @@ import { deletePartGroup, getPartGroup } from "~/modules/parts";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { notFound } from "~/utils/http";
-import { path } from "~/utils/path";
+import { getParams, path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -43,7 +43,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { error: deleteTypeError } = await deletePartGroup(client, groupId);
   if (deleteTypeError) {
     return redirect(
-      path.to.partGroups,
+      `${path.to.partGroups}?${getParams(request)}`,
       await flash(
         request,
         error(deleteTypeError, "Failed to delete part group")
@@ -66,7 +66,7 @@ export default function DeletePartGroupRoute() {
 
   if (!partGroup) return null;
 
-  const onCancel = () => navigate(path.to.partGroups);
+  const onCancel = () => navigate(-1);
 
   return (
     <ConfirmDelete

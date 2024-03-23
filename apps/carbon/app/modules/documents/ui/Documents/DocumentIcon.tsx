@@ -9,53 +9,33 @@ import {
   BsFileWordFill,
   BsFileZipFill,
 } from "react-icons/bs";
+import type { documentTypes } from "~/modules/documents";
 
 type DocumentIconProps = {
-  fileName: string;
+  type: (typeof documentTypes)[number];
 };
 
-const DocumentIcon = ({ fileName }: DocumentIconProps) => {
-  const fileExtension = [...fileName.split(".")].pop();
-
-  switch (fileExtension) {
-    case "doc":
-    case "docx":
-      return <BsFileWordFill className="w-6 h-6 color-blue-500" />;
-    case "xls":
-    case "xlsx":
+const DocumentIcon = ({ type }: DocumentIconProps) => {
+  switch (type) {
+    case "Document":
+      return <BsFileWordFill className="w-6 h-6 text-blue-500" />;
+    case "Spreadsheet":
       return <BsFileExcelFill className="w-6 h-6 text-green-700" />;
-    case "ppt":
-    case "pptx":
+    case "Presentation":
       return <BsFilePptFill className="w-6 h-6 text-orange-400" />;
-    case "pdf":
+    case "PDF":
       return <BsFilePdfFill className="w-6 h-6 text-red-600" />;
-    case "zip":
-    case "rar":
+    case "Archive":
       return <BsFileZipFill className="w-6 h-6" />;
-    case "txt":
+    case "Text":
       return <BsFileTextFill className="w-6 h-6" />;
-    case "png":
-    case "jpg":
-    case "jpeg":
-    case "gif":
-    case "svg":
-    case "avif":
-    case "webp":
+    case "Image":
       return <BsFileImageFill className="w-6 h-6 text-yellow-400" />;
-    case "mp4":
-    case "avi":
-    case "mov":
-    case "wmv":
-    case "flv":
-    case "mkv":
+    case "Video":
       return <BsFileEarmarkPlayFill className="w-6 h-6 text-purple-500" />;
-    case "mp3":
-    case "wav":
-    case "wma":
-    case "aac":
-    case "ogg":
-    case "m4a":
+    case "Audio":
       return <BsFileEarmarkPlayFill className="w-6 h-6 text-cyan-400" />;
+    case "Other":
     default:
       return <BsFileEarmarkFill className="w-6 h-6" />;
   }

@@ -4,7 +4,6 @@ import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import {
   SuppliersTable,
-  SuppliersTableFilters,
   getSupplierStatuses,
   getSupplierTypes,
   getSuppliers,
@@ -28,7 +27,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
-  const name = searchParams.get("name");
+  const search = searchParams.get("search");
   const type = searchParams.get("type");
   const status = searchParams.get("status");
 
@@ -36,7 +35,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getGenericQueryFilters(searchParams);
 
   const [suppliers, supplierTypes, supplierStatuses] = await Promise.all([
-    getSuppliers(client, { name, type, status, limit, offset, sorts, filters }),
+    getSuppliers(client, {
+      search,
+      type,
+      status,
+      limit,
+      offset,
+      sorts,
+      filters,
+    }),
     getSupplierTypes(client),
     getSupplierStatuses(client),
   ]);
@@ -62,11 +69,12 @@ export default function PurchasingSuppliersRoute() {
 
   return (
     <VStack spacing={0} className="h-full">
-      <SuppliersTableFilters
+      <SuppliersTable
+        data={suppliers}
+        count={count}
         supplierTypes={supplierTypes}
         supplierStatuses={supplierStatuses}
       />
-      <SuppliersTable data={suppliers} count={count} />
       <Outlet />
     </VStack>
   );

@@ -142,7 +142,7 @@ export async function deleteWorkCellType(
 
 export async function getAbilities(
   client: SupabaseClient<Database>,
-  args: GenericQueryFilters & { name: string | null }
+  args: GenericQueryFilters & { search: string | null }
 ) {
   let query = client
     .from("ability")
@@ -153,8 +153,8 @@ export async function getAbilities(
     .eq("employeeAbility.active", true)
     .eq("employeeAbility.user.active", true);
 
-  if (args?.name) {
-    query = query.ilike("name", `%${args.name}%`);
+  if (args?.search) {
+    query = query.ilike("name", `%${args.search}%`);
   }
 
   query = setGenericQueryFilters(query, args, [
@@ -220,7 +220,7 @@ async function getAttributes(
 
 export async function getAttributeCategories(
   client: SupabaseClient<Database>,
-  args?: { name: string | null } & GenericQueryFilters
+  args?: { search: string | null } & GenericQueryFilters
 ) {
   let query = client
     .from("userAttributeCategory")
@@ -230,8 +230,8 @@ export async function getAttributeCategories(
     .eq("active", true)
     .eq("userAttribute.active", true);
 
-  if (args?.name) {
-    query = query.ilike("name", `%${args.name}%`);
+  if (args?.search) {
+    query = query.ilike("name", `%${args.search}%`);
   }
 
   if (args) {
@@ -282,16 +282,14 @@ export async function getContractor(
 
 export async function getContractors(
   client: SupabaseClient<Database>,
-  args?: GenericQueryFilters & { name: string | null; ability: string | null }
+  args?: GenericQueryFilters & { search: string | null }
 ) {
   let query = client.from("contractors").select("*").eq("active", true);
 
-  if (args?.name) {
-    query = query.ilike("supplierName", `%${args.name}%`);
-  }
-
-  if (args?.ability) {
-    query.eq("abilityId", args?.ability);
+  if (args?.search) {
+    query = query.or(
+      `supplierName.ilike.%${args.search}%,firstName.ilike.%${args.search}%,lastName.ilike.%${args.search}%`
+    );
   }
 
   if (args) {
@@ -312,14 +310,14 @@ export async function getDepartment(
 
 export async function getDepartments(
   client: SupabaseClient<Database>,
-  args?: GenericQueryFilters & { name: string | null }
+  args?: GenericQueryFilters & { search: string | null }
 ) {
   let query = client.from("department").select(`*, department(id, name)`, {
     count: "exact",
   });
 
-  if (args?.name) {
-    query = query.ilike("name", `%${args.name}%`);
+  if (args?.search) {
+    query = query.ilike("name", `%${args.search}%`);
   }
 
   if (args) {
@@ -406,7 +404,7 @@ export async function getEquipmentType(
 
 export async function getEquipmentTypes(
   client: SupabaseClient<Database>,
-  args?: { name: string | null } & GenericQueryFilters
+  args?: { search: string | null } & GenericQueryFilters
 ) {
   let query = client
     .from("equipmentType")
@@ -416,8 +414,8 @@ export async function getEquipmentTypes(
     .eq("active", true)
     .eq("equipment.active", true);
 
-  if (args?.name) {
-    query = query.ilike("name", `%${args.name}%`);
+  if (args?.search) {
+    query = query.ilike("name", `%${args.search}%`);
   }
 
   if (args) {
@@ -442,18 +440,14 @@ export async function getHoliday(
 
 export async function getHolidays(
   client: SupabaseClient<Database>,
-  args?: GenericQueryFilters & { name: string | null; year: number | null }
+  args?: GenericQueryFilters & { search: string | null }
 ) {
   let query = client.from("holiday").select("*", {
     count: "exact",
   });
 
-  if (args?.name) {
-    query = query.ilike("name", `%${args.name}%`);
-  }
-
-  if (args?.year) {
-    query = query.eq("year", args.year);
+  if (args?.search) {
+    query = query.ilike("name", `%${args.search}%`);
   }
 
   if (args) {
@@ -478,12 +472,12 @@ export async function getLocation(
 
 export async function getLocations(
   client: SupabaseClient<Database>,
-  args?: GenericQueryFilters & { name: string | null }
+  args?: GenericQueryFilters & { search: string | null }
 ) {
   let query = client.from("location").select("*", { count: "exact" });
 
-  if (args?.name) {
-    query = query.ilike("name", `%${args.name}%`);
+  if (args?.search) {
+    query = query.ilike("name", `%${args.search}%`);
   }
 
   if (args) {
@@ -525,16 +519,12 @@ export async function getPartner(
 
 export async function getPartners(
   client: SupabaseClient<Database>,
-  args?: GenericQueryFilters & { name: string | null; ability: string | null }
+  args?: GenericQueryFilters & { search: string | null }
 ) {
   let query = client.from("partners").select("*").eq("active", true);
 
-  if (args?.name) {
-    query = query.ilike("supplierName", `%${args.name}%`);
-  }
-
-  if (args?.ability) {
-    query.eq("abilityId", args.ability);
+  if (args?.search) {
+    query = query.ilike("supplierName", `%${args.search}%`);
   }
 
   if (args) {
@@ -568,9 +558,7 @@ type Person = Employee & {
 export async function getPeople(
   client: SupabaseClient<Database>,
   args: GenericQueryFilters & {
-    name: string | null;
-    type: string | null;
-    active: boolean | null;
+    search: string | null;
   }
 ) {
   const employees = await getEmployees(client, args);
@@ -598,37 +586,41 @@ export async function getPeople(
       attributeCategories.data.reduce<PersonAttributes>((acc, category) => {
         if (!category.userAttribute || !Array.isArray(category.userAttribute))
           return acc;
-        category.userAttribute.forEach((attribute) => {
-          if (
-            attribute.userAttributeValue &&
-            Array.isArray(attribute.userAttributeValue) &&
-            !Array.isArray(attribute.attributeDataType)
-          ) {
-            const userAttributeId = attribute.id;
-            const userAttributeValue = attribute.userAttributeValue.find(
-              (attributeValue) => attributeValue.userId === userId
-            );
-            const value =
-              typeof userAttributeValue?.valueBoolean === "boolean"
-                ? userAttributeValue.valueBoolean
-                : userAttributeValue?.valueDate ||
-                  userAttributeValue?.valueNumeric ||
-                  userAttributeValue?.valueText ||
-                  userAttributeValue?.valueUser;
-
-            if (value && userAttributeValue?.id) {
-              acc[userAttributeId] = {
-                userAttributeValueId: userAttributeValue.id,
+        category.userAttribute.forEach(
+          // @ts-ignore
+          (attribute) => {
+            if (
+              attribute.userAttributeValue &&
+              Array.isArray(attribute.userAttributeValue) &&
+              !Array.isArray(attribute.attributeDataType)
+            ) {
+              const userAttributeId = attribute.id;
+              const userAttributeValue = attribute.userAttributeValue.find(
                 // @ts-ignore
-                dataType: attribute.attributeDataType?.id as DataType,
-                value,
-                user: !Array.isArray(userAttributeValue.user)
-                  ? userAttributeValue.user
-                  : undefined,
-              };
+                (attributeValue) => attributeValue.userId === userId
+              );
+              const value =
+                typeof userAttributeValue?.valueBoolean === "boolean"
+                  ? userAttributeValue.valueBoolean
+                  : userAttributeValue?.valueDate ||
+                    userAttributeValue?.valueNumeric ||
+                    userAttributeValue?.valueText ||
+                    userAttributeValue?.valueUser;
+
+              if (value && userAttributeValue?.id) {
+                acc[userAttributeId] = {
+                  userAttributeValueId: userAttributeValue.id,
+                  // @ts-ignore
+                  dataType: attribute.attributeDataType?.id as DataType,
+                  value,
+                  user: !Array.isArray(userAttributeValue.user)
+                    ? userAttributeValue.user
+                    : undefined,
+                };
+              }
             }
           }
-        });
+        );
         return acc;
       }, {});
 
@@ -650,10 +642,8 @@ export async function getShift(
   shiftId: string
 ) {
   return client
-    .from("shift")
-    .select(
-      `*, employeeShift(user(id, fullName, avatarUrl)), location(name, timezone)`
-    )
+    .from("shifts")
+    .select("*")
     .eq("id", shiftId)
     .eq("active", true)
     .single();
@@ -661,25 +651,17 @@ export async function getShift(
 
 export async function getShifts(
   client: SupabaseClient<Database>,
-  args: GenericQueryFilters & { name: string | null; location: string | null }
+  args: GenericQueryFilters & { search: string | null }
 ) {
   let query = client
-    .from("shift")
-    .select(
-      `*, employeeShift(user(id, fullName, avatarUrl)), location(name, timezone)`,
-      {
-        count: "exact",
-      }
-    )
-    .eq("active", true)
-    .eq("employeeShift.user.active", true);
+    .from("shifts")
+    .select("*", {
+      count: "exact",
+    })
+    .eq("active", true);
 
-  if (args?.name) {
-    query = query.ilike("name", `%${args.name}%`);
-  }
-
-  if (args.location) {
-    query = query.eq("locationId", args.location);
+  if (args?.search) {
+    query = query.ilike("name", `%${args.search}%`);
   }
 
   query = setGenericQueryFilters(query, args, [
@@ -747,7 +729,7 @@ export async function getWorkCellType(
 
 export async function getWorkCellTypes(
   client: SupabaseClient<Database>,
-  args?: { name: string | null } & GenericQueryFilters
+  args?: { search: string | null } & GenericQueryFilters
 ) {
   let query = client
     .from("workCellType")
@@ -757,8 +739,8 @@ export async function getWorkCellTypes(
     .eq("active", true)
     .eq("workCell.active", true);
 
-  if (args?.name) {
-    query = query.ilike("name", `%${args.name}%`);
+  if (args?.search) {
+    query = query.ilike("name", `%${args.search}%`);
   }
 
   if (args) {

@@ -1,7 +1,7 @@
 import { File, toast } from "@carbon/react";
 import { useSubmit } from "@remix-run/react";
 import type { ChangeEvent } from "react";
-import { IoMdAdd } from "react-icons/io";
+import { BsUpload } from "react-icons/bs";
 import { useUser } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import { path } from "~/utils/path";
@@ -61,8 +61,8 @@ const DocumentCreateForm = () => {
   };
 
   return (
-    <File leftIcon={<IoMdAdd />} onChange={uploadFile}>
-      New Document
+    <File leftIcon={<BsUpload />} onChange={uploadFile}>
+      Upload
     </File>
   );
 };

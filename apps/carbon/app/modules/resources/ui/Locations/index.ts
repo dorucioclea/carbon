@@ -1,5 +1,4 @@
-import LocationsTable from "./LocationsTable";
-import LocationsTableFilters from "./LocationsTableFilters";
 import LocationForm from "./LocationForm";
+import LocationsTable from "./LocationsTable";
 
-export { LocationsTable, LocationsTableFilters, LocationForm };
+export { LocationForm, LocationsTable };

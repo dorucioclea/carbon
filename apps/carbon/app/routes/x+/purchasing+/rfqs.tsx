@@ -4,7 +4,6 @@ import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import {
   RequestForQuotesTable,
-  RequestForQuotesTableFilters,
   getRequestsForQuotes,
 } from "~/modules/purchasing";
 import { requirePermissions } from "~/services/auth";
@@ -27,9 +26,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
   const search = searchParams.get("search");
-  const status = searchParams.get("status");
-  const supplierId = searchParams.get("supplierId");
-  const partId = searchParams.get("partId");
 
   const { limit, offset, sorts, filters } =
     getGenericQueryFilters(searchParams);
@@ -37,9 +33,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const [requestForQuotes] = await Promise.all([
     getRequestsForQuotes(client, {
       search,
-      status,
-      partId,
-      supplierId,
       limit,
       offset,
       sorts,
@@ -68,7 +61,6 @@ export default function RequestForQuotesSearchRoute() {
 
   return (
     <VStack spacing={0} className="h-full">
-      <RequestForQuotesTableFilters />
       <RequestForQuotesTable data={requestForQuotes} count={count} />
       <Outlet />
     </VStack>

@@ -4,10 +4,10 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { Table } from "~/components";
+import { New, Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
+import { shippingCarrierType, type ShippingMethod } from "~/modules/inventory";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
-import type { ShippingMethod } from "~/modules/inventory";
 import { path } from "~/utils/path";
 
 type ShippingMethodsTableProps = {
@@ -34,7 +34,15 @@ const ShippingMethodsTable = memo(
           accessorKey: "name",
           header: "Name",
           cell: ({ row }) => (
-            <Hyperlink onClick={() => navigate(row.original.id)}>
+            <Hyperlink
+              onClick={() =>
+                navigate(
+                  `${path.to.shippingMethod(
+                    row.original.id
+                  )}?${params.toString()}`
+                )
+              }
+            >
               {row.original.name}
             </Hyperlink>
           ),
@@ -43,6 +51,15 @@ const ShippingMethodsTable = memo(
           accessorKey: "carrier",
           header: "Carrier",
           cell: (item) => <Enumerable value={item.getValue<string>()} />,
+          meta: {
+            filter: {
+              type: "static",
+              options: shippingCarrierType.map((v) => ({
+                label: v,
+                value: v,
+              })),
+            },
+          },
         },
         {
           accessorKey: "trackingUrl",
@@ -101,6 +118,14 @@ const ShippingMethodsTable = memo(
         data={data}
         columns={columns}
         count={count}
+        primaryAction={
+          permissions.can("create", "inventory") && (
+            <New
+              label="Shipping Method"
+              to={`${path.to.newShippingMethod}?${params.toString()}`}
+            />
+          )
+        }
         renderContextMenu={renderContextMenu}
       />
     );

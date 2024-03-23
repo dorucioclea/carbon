@@ -3,11 +3,7 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import { getAccountsList } from "~/modules/accounting";
-import {
-  ShippingMethodsTable,
-  ShippingMethodsTableFilters,
-  getShippingMethods,
-} from "~/modules/inventory";
+import { ShippingMethodsTable, getShippingMethods } from "~/modules/inventory";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";
@@ -28,15 +24,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
-  const name = searchParams.get("name");
-  const { limit, offset, sorts } = getGenericQueryFilters(searchParams);
+  const search = searchParams.get("search");
+  const { limit, offset, sorts, filters } =
+    getGenericQueryFilters(searchParams);
 
   const [shippingMethods] = await Promise.all([
     getShippingMethods(client, {
-      name,
+      search,
       limit,
       offset,
       sorts,
+      filters,
     }),
     getAccountsList(client),
   ]);
@@ -59,7 +57,6 @@ export default function ShippingMethodsRoute() {
 
   return (
     <VStack spacing={0} className="h-full">
-      <ShippingMethodsTableFilters />
       <ShippingMethodsTable data={shippingMethods ?? []} count={count ?? 0} />
       <Outlet />
     </VStack>

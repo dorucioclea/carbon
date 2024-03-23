@@ -5,7 +5,7 @@ CREATE TYPE "quoteStatus" AS ENUM (
   'Open', 
   'Replied', 
   'Ordered',
-  'Partially Ordered',
+  'Partial',
   'Lost', 
   'Cancelled',
   'Expired'

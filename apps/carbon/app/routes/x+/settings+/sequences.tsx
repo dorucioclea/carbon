@@ -2,11 +2,7 @@ import { VStack } from "@carbon/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import {
-  SequencesTable,
-  SequencesTableFilters,
-  getSequences,
-} from "~/modules/settings";
+import { SequencesTable, getSequences } from "~/modules/settings";
 import { requirePermissions } from "~/services/auth";
 import type { Handle } from "~/utils/handle";
 import { path } from "~/utils/path";
@@ -25,10 +21,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
-  const name = searchParams.get("name");
-  const { limit, offset, sorts } = getGenericQueryFilters(searchParams);
+  const search = searchParams.get("search");
+  const { limit, offset, sorts, filters } =
+    getGenericQueryFilters(searchParams);
 
-  return json(await getSequences(client, { name, limit, offset, sorts }));
+  return json(
+    await getSequences(client, { search, limit, offset, sorts, filters })
+  );
 }
 
 export default function SequencesRoute() {
@@ -36,7 +35,6 @@ export default function SequencesRoute() {
 
   return (
     <VStack spacing={0} className="h-full">
-      <SequencesTableFilters />
       <SequencesTable data={data ?? []} count={count ?? 0} />
       <Outlet />
     </VStack>

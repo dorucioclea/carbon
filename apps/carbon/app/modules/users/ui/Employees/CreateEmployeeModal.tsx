@@ -38,7 +38,7 @@ const CreateEmployeeModal = () => {
     <Modal
       open
       onOpenChange={(open) => {
-        if (!open) navigate(path.to.employeeAccounts);
+        if (!open) navigate(-1);
       }}
     >
       <ModalOverlay />

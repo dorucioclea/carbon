@@ -2,12 +2,16 @@ import type { Database } from "@carbon/database";
 import { StyleSheet, Text, View } from "@react-pdf/renderer";
 
 import type { PDF } from "../types";
-// import { getLineDescription } from "../utils/quote";
-import { Header, Summary, Template } from "./components";
+import { QuoteSummary, Template, QuoteHeader } from "./components";
+import { getExtendedPrice, getUnitCost } from "../utils/quote";
 
 interface QuotePDFProps extends PDF {
   quote: Database["public"]["Views"]["quotes"]["Row"];
   quoteLines: Database["public"]["Tables"]["quoteLine"]["Row"][];
+  quoteLineQuantities:
+    | Database["public"]["Tables"]["quoteLineQuantity"]["Row"][]
+    | null;
+  quoteCustomerDetails: Database["public"]["Views"]["quoteCustomerDetails"]["Row"];
 }
 
 const QuotePDF = ({
@@ -15,6 +19,8 @@ const QuotePDF = ({
   meta,
   quote,
   quoteLines,
+  quoteLineQuantities,
+  quoteCustomerDetails,
   title = "Quote",
 }: QuotePDFProps) => {
   return (
@@ -27,17 +33,18 @@ const QuotePDF = ({
       }}
     >
       <View>
-        <Header title={title} company={company} />
-        <Summary
+        <QuoteHeader
+          title={title}
+          quoteNumber={quote.quoteId ? quote.quoteId : null}
           company={company}
+        />
+        <QuoteSummary
+          company={company}
+          quoteCustomerDetails={quoteCustomerDetails}
           items={[
             {
               label: "Date",
-              value: quote?.quoteDate,
-            },
-            {
-              label: "Quote #",
-              value: quote?.quoteId,
+              value: quote?.quoteDate ? quote.quoteDate : null,
             },
           ]}
         />
@@ -45,12 +52,37 @@ const QuotePDF = ({
           <View style={styles.thead}>
             <Text style={styles.tableCol1}>Description</Text>
             <Text style={styles.tableCol2}>Qty</Text>
-            <Text style={styles.tableCol3}>Price</Text>
-            <Text style={styles.tableCol4}>Total</Text>
+            <Text style={styles.tableCol3}>Time</Text>
+            <Text style={styles.tableCol4}>Cost</Text>
+            <Text style={styles.tableCol5}>Total</Text>
           </View>
           {quoteLines.map((line) => (
-            <View style={styles.tr} key={line.id}>
-              <Text key={line.id}>{line.description}</Text>
+            <View key={line.id} style={styles.tr}>
+              <View style={styles.tableCol1}>
+                <Text style={styles.bold}>{line.description}</Text>
+                <Text style={{ fontSize: 9, opacity: 0.8 }}>{line.partId}</Text>
+              </View>
+              <View style={styles.quantityTable}>
+                {quoteLineQuantities &&
+                  quoteLineQuantities.map((quantity) =>
+                    quantity.quoteLineId === line.id ? (
+                      <View style={styles.quantityRow} key={quantity.id}>
+                        <View style={styles.quantityCol1}>
+                          <Text>{quantity.quantity}</Text>
+                        </View>
+                        <View style={styles.quantityCol2}>
+                          <Text>{quantity.leadTime} d</Text>
+                        </View>
+                        <View style={styles.quantityCol3}>
+                          <Text>{getUnitCost(quantity).toFixed(2)}</Text>
+                        </View>
+                        <View style={styles.quantityCol4}>
+                          <Text>${getExtendedPrice(quantity).toFixed(2)}</Text>
+                        </View>
+                      </View>
+                    ) : null
+                  )}
+              </View>
             </View>
           ))}
         </View>
@@ -153,18 +185,47 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   tableCol1: {
-    width: "50%",
+    width: "40%",
     textAlign: "left",
   },
   tableCol2: {
     width: "15%",
-    textAlign: "right",
+    textAlign: "left",
   },
   tableCol3: {
+    width: "12.5%",
+    textAlign: "left",
+  },
+  tableCol4: {
+    width: "12.5%",
+    textAlign: "left",
+  },
+  tableCol5: {
     width: "15%",
     textAlign: "right",
   },
-  tableCol4: {
+  quantityTable: {
+    width: "60%",
+  },
+  quantityRow: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: "6px 3px 6px 3px",
+  },
+  quantityCol1: {
+    width: "15%",
+    textAlign: "left",
+  },
+  quantityCol2: {
+    width: "12.5%",
+    textAlign: "left",
+  },
+  quantityCol3: {
+    width: "12.5%",
+    textAlign: "left",
+  },
+  quantityCol4: {
     width: "20%",
     textAlign: "right",
   },

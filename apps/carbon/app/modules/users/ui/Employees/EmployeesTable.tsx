@@ -1,4 +1,5 @@
 import {
+  Checkbox,
   Enumerable,
   HStack,
   Hyperlink,
@@ -11,7 +12,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo, useState } from "react";
 import { BsEnvelope, BsFillPenFill, BsShieldLock } from "react-icons/bs";
 import { FaBan } from "react-icons/fa";
-import { Avatar, Table } from "~/components";
+import { Avatar, New, Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
 import type { Employee } from "~/modules/users";
 import {
@@ -19,12 +20,13 @@ import {
   DeactivateUsersModal,
   ResendInviteModal,
 } from "~/modules/users";
+import type { ListItem } from "~/types";
 import { path } from "~/utils/path";
 
 type EmployeesTableProps = {
   data: Employee[];
   count: number;
-  isEditable?: boolean;
+  employeeTypes: ListItem[];
 };
 
 const defaultColumnVisibility = {
@@ -33,7 +35,7 @@ const defaultColumnVisibility = {
 };
 
 const EmployeesTable = memo(
-  ({ data, count, isEditable = false }: EmployeesTableProps) => {
+  ({ data, count, employeeTypes }: EmployeesTableProps) => {
     const navigate = useNavigate();
     const permissions = usePermissions();
     const [params] = useUrlParams();
@@ -43,6 +45,8 @@ const EmployeesTable = memo(
     const bulkEditDrawer = useDisclosure();
     const deactivateEmployeeModal = useDisclosure();
     const resendInviteModal = useDisclosure();
+
+    const canEdit = permissions.can("update", "users");
 
     const rows = useMemo(
       () =>
@@ -108,6 +112,35 @@ const EmployeesTable = memo(
           accessorKey: "employeeType.name",
           header: "Employee Type",
           cell: (item) => <Enumerable value={item.getValue<string>()} />,
+          meta: {
+            filter: {
+              type: "static",
+              options: employeeTypes.map((type) => ({
+                value: type.name,
+                label: <Enumerable value={type.name} />,
+              })),
+            },
+          },
+        },
+        {
+          accessorKey: "user.active",
+          header: "Active",
+          cell: (item) => <Checkbox isChecked={item.getValue<boolean>()} />,
+          meta: {
+            filter: {
+              type: "static",
+              options: [
+                {
+                  value: "true",
+                  label: "Active",
+                },
+                {
+                  value: "false",
+                  label: "Inactive",
+                },
+              ],
+            },
+          },
         },
       ];
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -116,7 +149,7 @@ const EmployeesTable = memo(
     const actions = useMemo(() => {
       return [
         {
-          label: "Bulk Edit Permissions",
+          label: "Edit Permissions",
           icon: <BsShieldLock />,
           disabled: !permissions.can("update", "users"),
           onClick: (selected: typeof rows) => {
@@ -216,14 +249,14 @@ const EmployeesTable = memo(
           columns={columns}
           data={rows}
           defaultColumnVisibility={defaultColumnVisibility}
-          defaultColumnPinning={{
-            left: ["Select", "User"],
-          }}
+          primaryAction={
+            permissions.can("create", "users") && (
+              <New label="Employee" to={`new?${params.toString()}`} />
+            )
+          }
           renderContextMenu={renderContextMenu}
           withColumnOrdering
-          withFilters
-          withPagination
-          withSelectableRows={isEditable}
+          withSelectableRows={canEdit}
         />
         {bulkEditDrawer.isOpen && (
           <BulkEditPermissionsForm

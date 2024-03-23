@@ -1,4 +1,5 @@
 import {
+  Checkbox,
   Enumerable,
   HStack,
   Hyperlink,
@@ -9,26 +10,22 @@ import { useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
-import { Avatar, Table } from "~/components";
+import { Avatar, New, Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
 import type { AttributeCategory, Person } from "~/modules/resources";
 import { DataType } from "~/modules/shared";
+import type { EmployeeType } from "~/modules/users";
 import { path } from "~/utils/path";
 
 type PeopleTableProps = {
   attributeCategories: AttributeCategory[];
   data: Person[];
   count: number;
-  isEditable?: boolean;
+  employeeTypes: Partial<EmployeeType>[];
 };
 
 const PeopleTable = memo(
-  ({
-    attributeCategories,
-    data,
-    count,
-    isEditable = false,
-  }: PeopleTableProps) => {
+  ({ attributeCategories, data, count, employeeTypes }: PeopleTableProps) => {
     const navigate = useNavigate();
     const permissions = usePermissions();
     const [params] = useUrlParams();
@@ -140,6 +137,29 @@ const PeopleTable = memo(
           accessorKey: "employeeType.name",
           header: "Employee Type",
           cell: (item) => <Enumerable value={item.getValue<string>()} />,
+          meta: {
+            filter: {
+              type: "static",
+              options: employeeTypes.map((type) => ({
+                value: type.name!,
+                label: <Enumerable value={type.name!} />,
+              })),
+            },
+          },
+        },
+        {
+          accessorKey: "user.active",
+          header: "Active",
+          cell: (item) => <Checkbox isChecked={item.getValue<boolean>()} />,
+          meta: {
+            filter: {
+              type: "static",
+              options: [
+                { value: "true", label: "Active" },
+                { value: "false", label: "Inactive" },
+              ],
+            },
+          },
         },
       ];
 
@@ -163,7 +183,7 @@ const PeopleTable = memo(
       });
 
       return [...defaultColumns, ...additionalColumns];
-    }, [attributeCategories, navigate, renderGenericAttribute]);
+    }, [attributeCategories, employeeTypes, navigate, renderGenericAttribute]);
 
     const renderContextMenu = useMemo(() => {
       return permissions.can("update", "resources")
@@ -194,10 +214,16 @@ const PeopleTable = memo(
           defaultColumnPinning={{
             left: ["Select", "User"],
           }}
+          primaryAction={
+            permissions.can("create", "users") && (
+              <New
+                label="Employee"
+                to={`${path.to.newEmployee}?${params.toString()}`}
+              />
+            )
+          }
           renderContextMenu={renderContextMenu}
           withColumnOrdering
-          withFilters
-          withPagination
         />
       </>
     );

@@ -43,7 +43,7 @@ const SalesPostingGroupsTable = ({
   const columns = useMemo<ColumnDef<SalesPostingGroup>[]>(() => {
     return [
       {
-        id: "partGroup",
+        id: "partGroupId",
         header: "Part Group",
         cell: ({ row }) => (
           <Enumerable
@@ -53,9 +53,18 @@ const SalesPostingGroupsTable = ({
             }
           />
         ),
+        meta: {
+          filter: {
+            type: "static",
+            options: partGroups.map((group) => ({
+              label: <Enumerable value={group.name} />,
+              value: group.id,
+            })),
+          },
+        },
       },
       {
-        id: "customerType",
+        id: "customerTypeId",
         header: "Customer Type",
         cell: ({ row }) => (
           <Enumerable
@@ -66,6 +75,15 @@ const SalesPostingGroupsTable = ({
             }
           />
         ),
+        meta: {
+          filter: {
+            type: "static",
+            options: customerTypes.map((t) => ({
+              label: <Enumerable value={t.name} />,
+              value: t.id,
+            })),
+          },
+        },
       },
       {
         accessorKey: "receivablesAccount",
@@ -128,6 +146,7 @@ const SalesPostingGroupsTable = ({
       count={count}
       editableComponents={editableComponents}
       withInlineEditing={canEdit}
+      withSearch={false}
     />
   );
 };

@@ -4,7 +4,6 @@ import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import {
   HolidaysTable,
-  HolidaysTableFilters,
   getHolidayYears,
   getHolidays,
 } from "~/modules/resources";
@@ -28,17 +27,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
-  const name = searchParams.get("name");
-  const year = searchParams.get("year");
-  const { limit, offset, sorts } = getGenericQueryFilters(searchParams);
+  const search = searchParams.get("search");
+  const { limit, offset, sorts, filters } =
+    getGenericQueryFilters(searchParams);
 
   const [holidays, years] = await Promise.all([
     getHolidays(client, {
-      name,
-      year: year ? parseInt(year) : null,
+      search,
       limit,
       offset,
       sorts,
+      filters,
     }),
     getHolidayYears(client),
   ]);
@@ -63,8 +62,7 @@ export default function Route() {
 
   return (
     <VStack spacing={0} className="h-full">
-      <HolidaysTableFilters years={years} />
-      <HolidaysTable data={holidays} count={count} />
+      <HolidaysTable data={holidays} count={count} years={years} />
       <Outlet />
     </VStack>
   );

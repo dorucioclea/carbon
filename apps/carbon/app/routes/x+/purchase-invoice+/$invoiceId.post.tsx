@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { PostingQueueType, postingQueue } from "~/queues";
+import { triggerClient } from "~/lib/trigger.server";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { path } from "~/utils/path";
@@ -31,9 +31,12 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  postingQueue.add(`posting invoice ${invoiceId}`, {
-    type: PostingQueueType.PurchaseInvoice,
-    documentId: invoiceId,
+  triggerClient.sendEvent({
+    name: "post.transactions",
+    payload: {
+      type: "purchase-invoice",
+      documentId: invoiceId,
+    },
   });
 
   return redirect(path.to.purchaseInvoices);

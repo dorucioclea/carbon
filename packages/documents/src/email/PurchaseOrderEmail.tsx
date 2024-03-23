@@ -112,7 +112,7 @@ const PurchaseOrderEmail = ({
                     <Column style={informationTableColumn}>
                       <Text style={informationTableLabel}>Payment Terms</Text>
                       <Text style={informationTableValue}>
-                        {purchaseOrder.paymentTermName ?? "--"}
+                        {purchaseOrder.paymentTermName ?? "-"}
                       </Text>
                     </Column>
                   </Row>
@@ -127,7 +127,7 @@ const PurchaseOrderEmail = ({
                     <Column style={informationTableColumn}>
                       <Text style={informationTableLabel}>Requested Date</Text>
                       <Text style={informationTableValue}>
-                        {purchaseOrder.receiptRequestedDate ?? "--"}
+                        {purchaseOrder.receiptRequestedDate ?? "-"}
                       </Text>
                     </Column>
                   </Row>
@@ -218,10 +218,10 @@ const PurchaseOrderEmail = ({
                 <Column style={lineValueWrapper} align="right">
                   <Text style={lineValue}>
                     {line.purchaseOrderLineType === "Comment"
-                      ? "--"
+                      ? "-"
                       : line.unitPrice
                       ? `$${line.unitPrice.toFixed(2)}`
-                      : "--"}
+                      : "-"}
                   </Text>
                 </Column>
               </Row>

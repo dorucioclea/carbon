@@ -12,7 +12,7 @@ import { memo, useCallback, useMemo, useState } from "react";
 import { BiAddToQueue } from "react-icons/bi";
 import { BsFillCheckCircleFill, BsFillPenFill, BsListUl } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { Table } from "~/components";
+import { New, Table } from "~/components";
 import { ConfirmDelete } from "~/components/Modals";
 import { usePermissions, useUrlParams } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
@@ -45,9 +45,9 @@ const EquipmentTypesTable = memo(
     };
 
     const customColumns =
-      useCustomColumns<(typeof data)[number]>("equipmentType");
-    const columns = useMemo<ColumnDef<(typeof data)[number]>[]>(() => {
-      const defaultColumns: ColumnDef<(typeof data)[number]>[] = [
+      useCustomColumns<EquipmentType>("equipmentType");
+    const columns = useMemo<ColumnDef<EquipmentType>[]>(() => {
+      const defaultColumns: ColumnDef<EquipmentType>[] = [
         {
           accessorKey: "name",
           header: "Equipment Type",
@@ -100,9 +100,7 @@ const EquipmentTypesTable = memo(
       return [...defaultColumns, ...customColumns];
     }, [navigate, params, customColumns]);
 
-    const renderContextMenu = useCallback<
-      (row: (typeof data)[number]) => JSX.Element
-    >(
+    const renderContextMenu = useCallback<(row: EquipmentType) => JSX.Element>(
       (row) => (
         <>
           <MenuItem
@@ -146,10 +144,15 @@ const EquipmentTypesTable = memo(
 
     return (
       <>
-        <Table<(typeof data)[number]>
+        <Table<EquipmentType>
           data={data}
           columns={columns}
           count={count ?? 0}
+          primaryAction={
+            permissions.can("update", "resources") && (
+              <New label="Equipment Type" to={`new?${params.toString()}`} />
+            )
+          }
           renderContextMenu={renderContextMenu}
         />
         {selectedType && selectedType.id && (

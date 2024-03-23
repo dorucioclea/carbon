@@ -1,17 +1,18 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
+import type { z } from "zod";
+import type { permissionsUpdateSchema } from "~/jobs/update-permissions.server";
+import { triggerClient } from "~/lib/trigger.server";
 import type { Permission } from "~/modules/users";
 import {
   bulkPermissionsValidator,
   userPermissionsValidator,
 } from "~/modules/users";
-import type { UserPermissionsQueueData } from "~/queues";
-import { userPermissionsQueue } from "~/queues";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { assertIsPost } from "~/utils/http";
-import { path } from "~/utils/path";
+import { getParams, path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -43,21 +44,22 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  const jobs = userIds.map<{ name: string; data: UserPermissionsQueueData }>(
-    (id) => ({
-      name: `permission update for ${id}`,
-      data: {
-        id,
-        permissions,
-        addOnly,
-      },
-    })
-  );
+  const jobs = userIds.map<{
+    name: string;
+    payload: z.infer<typeof permissionsUpdateSchema>;
+  }>((id) => ({
+    name: `update.permissions`,
+    payload: {
+      id,
+      permissions,
+      addOnly,
+    },
+  }));
 
-  await userPermissionsQueue.addBulk(jobs);
+  await triggerClient.sendEvents(jobs);
 
   return redirect(
-    path.to.employeeAccounts,
+    `${path.to.employeeAccounts}?${getParams(request)}`,
     await flash(request, success("Updating user permissions"))
   );
 }

@@ -1,7 +1,4 @@
 import {
-  AvatarGroup,
-  AvatarGroupList,
-  AvatarOverflowIndicator,
   Badge,
   Enumerable,
   Hyperlink,
@@ -13,71 +10,24 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { Avatar, Table } from "~/components";
+import { New, Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
+import type { Shift, ShiftLocation } from "~/modules/resources";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
-import type { Shift } from "~/modules/resources";
 import { path } from "~/utils/path";
 
 type ShiftsTableProps = {
   data: Shift[];
   count: number;
+  locations: Partial<ShiftLocation>[];
 };
 
-const ShiftsTable = memo(({ data, count }: ShiftsTableProps) => {
+const ShiftsTable = memo(({ data, count, locations }: ShiftsTableProps) => {
   const navigate = useNavigate();
   const permissions = usePermissions();
   const [params] = useUrlParams();
 
-  const rows = data.map((row) => ({
-    id: row.id,
-    name: row.name,
-    startTime: row.startTime,
-    endTime: row.endTime,
-    monday: row.monday,
-    tuesday: row.tuesday,
-    wednesday: row.wednesday,
-    thursday: row.thursday,
-    friday: row.friday,
-    saturday: row.saturday,
-    sunday: row.sunday,
-    location: {
-      name: Array.isArray(row.location)
-        ? row.location[0].name
-        : row.location?.name,
-    },
-    // TODO: move this to a view so the code isn't garbage
-    employees: Array.isArray(row.employeeShift)
-      ? row.employeeShift.reduce<{ name: string; avatarUrl: string | null }[]>(
-          (acc, curr) => {
-            if (curr.user) {
-              if (Array.isArray(curr.user)) {
-                curr.user.forEach((user) => {
-                  acc.push({
-                    name: user.fullName ?? "",
-                    avatarUrl: user.avatarUrl,
-                  });
-                });
-              } else {
-                acc.push({
-                  name: curr.user.fullName ?? "",
-                  avatarUrl: curr.user.avatarUrl,
-                });
-              }
-            }
-            return acc;
-          },
-          []
-        )
-      : row.employeeShift?.user && Array.isArray(row.employeeShift?.user)
-      ? row.employeeShift.user.map((user) => ({
-          name: user.fullName ?? "",
-          avatarUrl: user.avatarUrl,
-        }))
-      : [],
-  }));
-
-  const renderDays = useCallback((row: (typeof rows)[number]) => {
+  const renderDays = useCallback((row: Shift) => {
     const days = [
       row.monday && "M",
       row.tuesday && "Tu",
@@ -97,34 +47,15 @@ const ShiftsTable = memo(({ data, count }: ShiftsTableProps) => {
 
   const customColumns = useCustomColumns<Shift>("shift");
 
-  const columns = useMemo<ColumnDef<(typeof rows)[number]>[]>(() => {
-    const defaultColumns: ColumnDef<(typeof rows)[number]>[] = [
+  const columns = useMemo<ColumnDef<Shift>[]>(() => {
+    const defaultColumns: ColumnDef<Shift>[] = [
       {
         accessorKey: "name",
         header: "Shift",
         cell: ({ row }) => (
-          <Hyperlink onClick={() => navigate(row.original.id)}>
+          <Hyperlink onClick={() => navigate(row.original.id!)}>
             {row.original.name}
           </Hyperlink>
-        ),
-      },
-      {
-        header: "Employees",
-        // accessorKey: undefined, // makes the column unsortable
-        cell: ({ row }) => (
-          <AvatarGroup limit={5} size="sm">
-            <AvatarGroupList>
-              {row.original.employees.map((employee, index: number) => (
-                <Avatar
-                  key={index}
-                  name={employee.name ?? undefined}
-                  title={employee.name ?? undefined}
-                  path={employee.avatarUrl}
-                />
-              ))}
-            </AvatarGroupList>
-            <AvatarOverflowIndicator />
-          </AvatarGroup>
         ),
       },
       {
@@ -138,25 +69,36 @@ const ShiftsTable = memo(({ data, count }: ShiftsTableProps) => {
         cell: (item) => item.getValue(),
       },
       {
-        accessorKey: "location.name",
+        accessorKey: "locationName",
         header: "Location",
         cell: (item) => <Enumerable value={item.getValue<string>()} />,
+        meta: {
+          filter: {
+            type: "static",
+            options: locations.map((location) => ({
+              value: location.name!,
+              label: <Enumerable value={location.name!} />,
+            })),
+          },
+        },
       },
       {
+        id: "days",
         header: "Days",
+        // @ts-ignore
         cell: ({ row }) => renderDays(row.original),
       },
     ];
     return [...defaultColumns, ...customColumns];
-  }, [navigate, renderDays, customColumns]);
+  }, [locations, navigate, renderDays, customColumns]);
 
   const renderContextMenu = useCallback(
-    (row: (typeof rows)[number]) => {
+    (row: Shift) => {
       return (
         <>
           <MenuItem
             onClick={() => {
-              navigate(`${path.to.shift(row.id)}?${params.toString()}}`);
+              navigate(`${path.to.shift(row.id!)}?${params.toString()}}`);
             }}
           >
             <MenuIcon icon={<BsFillPenFill />} />
@@ -165,7 +107,7 @@ const ShiftsTable = memo(({ data, count }: ShiftsTableProps) => {
           <MenuItem
             disabled={!permissions.can("delete", "resources")}
             onClick={() => {
-              navigate(`${path.to.deleteShift(row.id)}?${params.toString()}`);
+              navigate(`${path.to.deleteShift(row.id!)}?${params.toString()}`);
             }}
           >
             <MenuIcon icon={<IoMdTrash />} />
@@ -178,10 +120,15 @@ const ShiftsTable = memo(({ data, count }: ShiftsTableProps) => {
   );
 
   return (
-    <Table<(typeof rows)[number]>
-      data={rows}
+    <Table<Shift>
+      data={data}
       count={count}
       columns={columns}
+      primaryAction={
+        permissions.can("create", "resources") && (
+          <New label="Shift" to={`new?${params.toString()}`} />
+        )
+      }
       renderContextMenu={renderContextMenu}
     />
   );

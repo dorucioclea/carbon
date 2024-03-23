@@ -58,7 +58,7 @@ module.exports = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["Inter", ...fontFamily.sans],
+        sans: ["Triangle", ...fontFamily.sans],
         mono: ["Roboto Mono", ...fontFamily.mono],
       },
       keyframes: {

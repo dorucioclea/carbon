@@ -1,5 +1,4 @@
-import ShiftsTable from "./ShiftsTable";
-import ShiftsTableFilters from "./ShiftsTableFilters";
 import ShiftForm from "./ShiftForm";
+import ShiftsTable from "./ShiftsTable";
 
-export { ShiftsTable, ShiftsTableFilters, ShiftForm };
+export { ShiftForm, ShiftsTable };

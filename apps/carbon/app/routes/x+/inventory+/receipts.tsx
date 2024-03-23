@@ -2,11 +2,7 @@ import { VStack } from "@carbon/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import {
-  ReceiptsTable,
-  ReceiptsTableFilters,
-  getReceipts,
-} from "~/modules/inventory";
+import { ReceiptsTable, getReceipts } from "~/modules/inventory";
 import { getLocationsList } from "~/modules/resources";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
@@ -23,31 +19,28 @@ export const handle: Handle = {
 export async function loader({ request }: LoaderFunctionArgs) {
   const { client } = await requirePermissions(request, {
     view: "inventory",
-    role: "employee",
   });
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
   const search = searchParams.get("search");
-  const document = searchParams.get("document");
-  const location = searchParams.get("location");
-  const { limit, offset, sorts } = getGenericQueryFilters(searchParams);
+  const { limit, offset, sorts, filters } =
+    getGenericQueryFilters(searchParams);
 
   const [receipts, locations] = await Promise.all([
     getReceipts(client, {
       search,
-      document,
-      location,
       limit,
       offset,
       sorts,
+      filters,
     }),
     getLocationsList(client),
   ]);
 
   if (receipts.error) {
     return redirect(
-      path.to.inventory,
+      path.to.authenticatedRoot,
       await flash(request, error(null, "Error loading receipts"))
     );
   }
@@ -64,8 +57,7 @@ export default function ReceiptsRoute() {
 
   return (
     <VStack spacing={0} className="h-full">
-      <ReceiptsTableFilters locations={locations ?? []} />
-      <ReceiptsTable data={receipts} count={count ?? 0} />
+      <ReceiptsTable data={receipts} count={count ?? 0} locations={locations} />
       <Outlet />
     </VStack>
   );

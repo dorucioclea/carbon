@@ -30,13 +30,11 @@ export async function getReceipts(
   client: SupabaseClient<Database>,
   args: GenericQueryFilters & {
     search: string | null;
-    document: string | null;
-    location: string | null;
   }
 ) {
   let query = client
-    .from("receipt")
-    .select("*, location(name), supplier(name)", {
+    .from("receipts")
+    .select("*", {
       count: "exact",
     })
     .neq("sourceDocumentId", "");
@@ -45,14 +43,6 @@ export async function getReceipts(
     query = query.or(
       `receiptId.ilike.%${args.search}%,sourceDocumentReadableId.ilike.%${args.search}%`
     );
-  }
-
-  if (args.document) {
-    query = query.eq("sourceDocument", args.document);
-  }
-
-  if (args.location) {
-    query = query.eq("locationId", args.location);
   }
 
   query = setGenericQueryFilters(query, args, [
@@ -89,7 +79,7 @@ export async function getShippingMethod(
 export async function getShippingMethods(
   client: SupabaseClient<Database>,
   args: GenericQueryFilters & {
-    name: string | null;
+    search: string | null;
   }
 ) {
   let query = client
@@ -99,8 +89,10 @@ export async function getShippingMethods(
     })
     .eq("active", true);
 
-  if (args.name) {
-    query = query.ilike("name", `%${args.name}%`);
+  if (args.search) {
+    query = query.or(
+      `name.ilike.%${args.search}%,carrier.ilike.%${args.search}%`
+    );
   }
 
   query = setGenericQueryFilters(query, args, [

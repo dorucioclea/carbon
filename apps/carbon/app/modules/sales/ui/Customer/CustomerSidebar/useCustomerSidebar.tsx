@@ -1,3 +1,4 @@
+import { useParams } from "@remix-run/react";
 import {
   BsBank,
   BsCreditCard,
@@ -7,6 +8,7 @@ import {
 } from "react-icons/bs";
 import { usePermissions } from "~/hooks";
 import type { Role } from "~/types";
+import { path } from "~/utils/path";
 
 type Props = {
   contacts: number;
@@ -15,16 +17,18 @@ type Props = {
 
 export function useCustomerSidebar({ contacts, locations }: Props) {
   const permissions = usePermissions();
+  const { customerId } = useParams();
+  if (!customerId) throw new Error("customerId not found");
   return [
     {
       name: "Details",
-      to: "",
+      to: path.to.customerDetails(customerId),
       icon: BsBank,
       shortcut: "Command+Shift+d",
     },
     {
       name: "Contacts",
-      to: "contacts",
+      to: path.to.customerContacts(customerId),
       role: ["employee"],
       count: contacts,
       icon: BsFillPersonLinesFill,
@@ -32,7 +36,7 @@ export function useCustomerSidebar({ contacts, locations }: Props) {
     },
     {
       name: "Locations",
-      to: "locations",
+      to: path.to.customerLocations(customerId),
       role: ["employee", "customer"],
       count: locations,
       icon: BsFillPinMapFill,
@@ -40,14 +44,14 @@ export function useCustomerSidebar({ contacts, locations }: Props) {
     },
     {
       name: "Payments",
-      to: "payments",
+      to: path.to.customerPayment(customerId),
       role: ["employee"],
       icon: BsCreditCard,
       shortcut: "Command+Shift+p",
     },
     {
       name: "Shipping",
-      to: "shipping",
+      to: path.to.customerShipping(customerId),
       role: ["employee"],
       icon: BsTruck,
       shortcut: "Command+Shift+s",

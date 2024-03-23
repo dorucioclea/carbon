@@ -4,7 +4,6 @@ import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import {
   PurchaseInvoicesTable,
-  PurchaseInvoicesTableFilters,
   getPurchaseInvoices,
 } from "~/modules/invoicing";
 import { requirePermissions } from "~/services/auth";
@@ -27,7 +26,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
   const search = searchParams.get("search");
-  const status = searchParams.get("status");
   const supplierId = searchParams.get("supplierId");
 
   const { limit, offset, sorts, filters } =
@@ -36,7 +34,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const [purchaseInvoices] = await Promise.all([
     getPurchaseInvoices(client, {
       search,
-      status,
       supplierId,
       limit,
       offset,
@@ -66,7 +63,6 @@ export default function PurchaseInvoicesSearchRoute() {
 
   return (
     <VStack spacing={0} className="h-full">
-      <PurchaseInvoicesTableFilters />
       <PurchaseInvoicesTable data={purchaseInvoices} count={count} />
       <Outlet />
     </VStack>

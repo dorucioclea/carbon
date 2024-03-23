@@ -1,10 +1,24 @@
+CREATE TYPE "documentType" AS ENUM (
+  'Archive',
+  'Document',
+  'Presentation',
+  'PDF',
+  'Spreadsheet',
+  'Text',
+  'Image',
+  'Video',
+  'Audio',
+  'Other'
+);
+
 CREATE TABLE "document" (
   "id" TEXT NOT NULL DEFAULT uuid_generate_v4(),
   "path" TEXT NOT NULL,
   "name" TEXT NOT NULL,
   "description" TEXT DEFAULT '',
   "size" INTEGER NOT NULL,
-  "type" TEXT GENERATED ALWAYS AS (split_part("name", '.', -1)) STORED,
+  "extension" TEXT GENERATED ALWAYS AS (split_part("name", '.', -1)) STORED,
+  "type" "documentType" NOT NULL,
   "readGroups" TEXT[],
   "writeGroups" TEXT[],
   "active" BOOLEAN NOT NULL DEFAULT TRUE,
@@ -219,26 +233,19 @@ CREATE OR REPLACE VIEW "documentLabels" AS
 
 CREATE OR REPLACE VIEW "documents" AS 
   SELECT
-    d.id,
-    d.path,
-    d.name,
-    d.description,
-    d.size,
-    d.type,
-    d.active,
-    d."readGroups",
-    d."writeGroups",
-    d."createdBy",
+    d.*,
     u."avatarUrl" AS "createdByAvatar",
     u."fullName" AS "createdByFullName",
-    d."createdAt",
-    d."updatedBy",
     u2."avatarUrl" AS "updatedByAvatar",
     u2."fullName" AS "updatedByFullName",
-    d."updatedAt",
     ARRAY(SELECT dl.label FROM "documentLabel" dl WHERE dl."documentId" = d.id AND dl."userId" = auth.uid()::text) AS labels,
     EXISTS(SELECT 1 FROM "documentFavorite" df WHERE df."documentId" = d.id AND df."userId" = auth.uid()::text) AS favorite,
     (SELECT MAX("createdAt") FROM "documentTransaction" dt WHERE dt."documentId" = d.id) AS "lastActivityAt"
   FROM "document" d
   LEFT JOIN "user" u ON u.id = d."createdBy"
   LEFT JOIN "user" u2 ON u2.id = d."updatedBy";
+
+CREATE OR REPLACE VIEW "documentExtensions" WITH(SECURITY_INVOKER=true) AS
+  SELECT DISTINCT
+    extension
+  FROM "document";

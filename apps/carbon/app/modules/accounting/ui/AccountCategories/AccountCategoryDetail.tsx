@@ -75,7 +75,7 @@ const AccountCategoryDetail = ({
                     <p className="flex-grow">{subcategory.name}</p>
                     <ActionMenu>
                       <DropdownMenuItem asChild>
-                        <Link to={subcategory.id}>
+                        <Link to={`${subcategory.id}?${params.toString()}`}>
                           <DropdownMenuIcon icon={<BsFillPenFill />} />
                           Edit Subcategory
                         </Link>

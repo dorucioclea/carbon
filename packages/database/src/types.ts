@@ -2659,12 +2659,13 @@ export type Database = {
           createdAt: string
           createdBy: string
           description: string | null
+          extension: string | null
           id: string
           name: string
           path: string
           readGroups: string[] | null
           size: number
-          type: string | null
+          type: Database["public"]["Enums"]["documentType"]
           updatedAt: string | null
           updatedBy: string | null
           writeGroups: string[] | null
@@ -2674,12 +2675,13 @@ export type Database = {
           createdAt?: string
           createdBy: string
           description?: string | null
+          extension?: string | null
           id?: string
           name: string
           path: string
           readGroups?: string[] | null
           size: number
-          type?: string | null
+          type: Database["public"]["Enums"]["documentType"]
           updatedAt?: string | null
           updatedBy?: string | null
           writeGroups?: string[] | null
@@ -2689,12 +2691,13 @@ export type Database = {
           createdAt?: string
           createdBy?: string
           description?: string | null
+          extension?: string | null
           id?: string
           name?: string
           path?: string
           readGroups?: string[] | null
           size?: number
-          type?: string | null
+          type?: Database["public"]["Enums"]["documentType"]
           updatedAt?: string | null
           updatedBy?: string | null
           writeGroups?: string[] | null
@@ -3131,6 +3134,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "employeeJob_shiftId_fkey"
+            columns: ["shiftId"]
+            isOneToOne: false
+            referencedRelation: "shifts"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "employeeJob_updatedBy_fkey"
             columns: ["updatedBy"]
             isOneToOne: false
@@ -3203,6 +3213,13 @@ export type Database = {
             columns: ["shiftId"]
             isOneToOne: false
             referencedRelation: "shift"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employeeShift_shiftId_fkey"
+            columns: ["shiftId"]
+            isOneToOne: false
+            referencedRelation: "shifts"
             referencedColumns: ["id"]
           },
         ]
@@ -7864,6 +7881,13 @@ export type Database = {
             foreignKeyName: "quoteAssembly_quoteId_fkey"
             columns: ["quoteId"]
             isOneToOne: false
+            referencedRelation: "quoteCustomerDetails"
+            referencedColumns: ["quoteId"]
+          },
+          {
+            foreignKeyName: "quoteAssembly_quoteId_fkey"
+            columns: ["quoteId"]
+            isOneToOne: false
             referencedRelation: "quotes"
             referencedColumns: ["id"]
           },
@@ -7917,6 +7941,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "quote"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quoteFavorites_quoteId_fkey"
+            columns: ["quoteId"]
+            isOneToOne: false
+            referencedRelation: "quoteCustomerDetails"
+            referencedColumns: ["quoteId"]
           },
           {
             foreignKeyName: "quoteFavorites_quoteId_fkey"
@@ -8046,6 +8077,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "quote"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quoteLine_quoteId_fkey"
+            columns: ["quoteId"]
+            isOneToOne: false
+            referencedRelation: "quoteCustomerDetails"
+            referencedColumns: ["quoteId"]
           },
           {
             foreignKeyName: "quoteLine_quoteId_fkey"
@@ -8302,6 +8340,13 @@ export type Database = {
             foreignKeyName: "quoteMaterial_quoteId_fkey"
             columns: ["quoteId"]
             isOneToOne: false
+            referencedRelation: "quoteCustomerDetails"
+            referencedColumns: ["quoteId"]
+          },
+          {
+            foreignKeyName: "quoteMaterial_quoteId_fkey"
+            columns: ["quoteId"]
+            isOneToOne: false
             referencedRelation: "quotes"
             referencedColumns: ["id"]
           },
@@ -8445,6 +8490,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "quote"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quoteOperation_quoteId_fkey"
+            columns: ["quoteId"]
+            isOneToOne: false
+            referencedRelation: "quoteCustomerDetails"
+            referencedColumns: ["quoteId"]
           },
           {
             foreignKeyName: "quoteOperation_quoteId_fkey"
@@ -8773,6 +8825,13 @@ export type Database = {
             columns: ["receiptId"]
             isOneToOne: false
             referencedRelation: "receipt"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receiptLine_receiptId_fkey"
+            columns: ["receiptId"]
+            isOneToOne: false
+            referencedRelation: "receipts"
             referencedColumns: ["id"]
           },
           {
@@ -12097,6 +12156,12 @@ export type Database = {
         }
         Relationships: []
       }
+      documentExtensions: {
+        Row: {
+          extension: string | null
+        }
+        Relationships: []
+      }
       documentLabels: {
         Row: {
           label: string | null
@@ -12134,6 +12199,7 @@ export type Database = {
           createdByAvatar: string | null
           createdByFullName: string | null
           description: string | null
+          extension: string | null
           favorite: boolean | null
           id: string | null
           labels: string[] | null
@@ -12142,7 +12208,7 @@ export type Database = {
           path: string | null
           readGroups: string[] | null
           size: number | null
-          type: string | null
+          type: Database["public"]["Enums"]["documentType"] | null
           updatedAt: string | null
           updatedBy: string | null
           updatedByAvatar: string | null
@@ -12824,14 +12890,14 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "address_countryCode_fkey"
-            columns: ["supplierCountryCode"]
+            columns: ["customerCountryCode"]
             isOneToOne: false
             referencedRelation: "country"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "address_countryCode_fkey"
-            columns: ["customerCountryCode"]
+            columns: ["supplierCountryCode"]
             isOneToOne: false
             referencedRelation: "country"
             referencedColumns: ["id"]
@@ -12997,6 +13063,27 @@ export type Database = {
         }
         Relationships: []
       }
+      quoteCustomerDetails: {
+        Row: {
+          customerAddressLine1: string | null
+          customerAddressLine2: string | null
+          customerCity: string | null
+          customerCountryCode: number | null
+          customerName: string | null
+          customerPostalCode: string | null
+          customerState: string | null
+          quoteId: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "address_countryCode_fkey"
+            columns: ["customerCountryCode"]
+            isOneToOne: false
+            referencedRelation: "country"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quotes: {
         Row: {
           createdAt: string | null
@@ -13114,6 +13201,133 @@ export type Database = {
           {
             foreignKeyName: "quote_ownerId_fkey"
             columns: ["ownerId"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+        ]
+      }
+      receipts: {
+        Row: {
+          createdAt: string | null
+          createdBy: string | null
+          createdByAvatar: string | null
+          createdByFullName: string | null
+          externalDocumentId: string | null
+          id: string | null
+          invoiced: boolean | null
+          locationId: string | null
+          locationName: string | null
+          postingDate: string | null
+          receiptId: string | null
+          sourceDocument:
+            | Database["public"]["Enums"]["receiptSourceDocument"]
+            | null
+          sourceDocumentId: string | null
+          sourceDocumentReadableId: string | null
+          status: Database["public"]["Enums"]["receiptStatus"] | null
+          supplierId: string | null
+          supplierName: string | null
+          updatedAt: string | null
+          updatedBy: string | null
+          updatedByAvatar: string | null
+          updatedByFullName: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receipt_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receipt_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receipt_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "receipt_locationId_fkey"
+            columns: ["locationId"]
+            isOneToOne: false
+            referencedRelation: "location"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receipt_locationId_fkey"
+            columns: ["locationId"]
+            isOneToOne: false
+            referencedRelation: "partQuantities"
+            referencedColumns: ["locationId"]
+          },
+          {
+            foreignKeyName: "receipt_locationId_fkey"
+            columns: ["locationId"]
+            isOneToOne: false
+            referencedRelation: "purchaseOrders"
+            referencedColumns: ["locationId"]
+          },
+          {
+            foreignKeyName: "receipt_supplierId_fkey"
+            columns: ["supplierId"]
+            isOneToOne: false
+            referencedRelation: "supplier"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receipt_supplierId_fkey"
+            columns: ["supplierId"]
+            isOneToOne: false
+            referencedRelation: "contractors"
+            referencedColumns: ["supplierId"]
+          },
+          {
+            foreignKeyName: "receipt_supplierId_fkey"
+            columns: ["supplierId"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["supplierId"]
+          },
+          {
+            foreignKeyName: "receipt_supplierId_fkey"
+            columns: ["supplierId"]
+            isOneToOne: false
+            referencedRelation: "purchaseOrderSuppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receipt_supplierId_fkey"
+            columns: ["supplierId"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receipt_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receipt_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receipt_updatedBy_fkey"
+            columns: ["updatedBy"]
             isOneToOne: false
             referencedRelation: "userDefaults"
             referencedColumns: ["userId"]
@@ -13284,6 +13498,93 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "partGroup"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      shifts: {
+        Row: {
+          active: boolean | null
+          createdAt: string | null
+          createdBy: string | null
+          endTime: string | null
+          friday: boolean | null
+          id: string | null
+          locationId: string | null
+          locationName: string | null
+          monday: boolean | null
+          name: string | null
+          saturday: boolean | null
+          startTime: string | null
+          sunday: boolean | null
+          thursday: boolean | null
+          tuesday: boolean | null
+          updatedAt: string | null
+          updatedBy: string | null
+          wednesday: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shifts_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "shifts_locationId_fkey"
+            columns: ["locationId"]
+            isOneToOne: false
+            referencedRelation: "location"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_locationId_fkey"
+            columns: ["locationId"]
+            isOneToOne: false
+            referencedRelation: "partQuantities"
+            referencedColumns: ["locationId"]
+          },
+          {
+            foreignKeyName: "shifts_locationId_fkey"
+            columns: ["locationId"]
+            isOneToOne: false
+            referencedRelation: "purchaseOrders"
+            referencedColumns: ["locationId"]
+          },
+          {
+            foreignKeyName: "shifts_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
           },
         ]
       }
@@ -13499,6 +13800,17 @@ export type Database = {
         | "Label"
         | "Unfavorite"
         | "Upload"
+      documentType:
+        | "Archive"
+        | "Document"
+        | "Presentation"
+        | "PDF"
+        | "Spreadsheet"
+        | "Text"
+        | "Image"
+        | "Video"
+        | "Audio"
+        | "Other"
       factor:
         | "Hours/Piece"
         | "Hours/100 Pieces"
@@ -13650,7 +13962,7 @@ export type Database = {
         | "Open"
         | "Replied"
         | "Ordered"
-        | "Partially Ordered"
+        | "Partial"
         | "Lost"
         | "Cancelled"
         | "Expired"

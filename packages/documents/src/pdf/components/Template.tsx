@@ -33,7 +33,7 @@ const Template = ({ title, meta, children }: TemplateProps) => {
   const styles = StyleSheet.create({
     body: {
       fontFamily: "Inter",
-      padding: "20px 60px",
+      padding: "20px 40px",
       color: "#000000",
       backgroundColor: "#FFFFFF",
     },

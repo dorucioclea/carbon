@@ -12,7 +12,7 @@ import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost, notFound } from "~/utils/http";
-import { path } from "~/utils/path";
+import { getParams, path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -28,7 +28,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   if (supplierType.error) {
     return redirect(
-      path.to.supplierTypes,
+      `${path.to.supplierTypes}?${getParams(request)}`,
       await flash(
         request,
         error(supplierType.error, "Failed to get supplier type")
@@ -81,7 +81,7 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   return redirect(
-    path.to.supplierTypes,
+    `${path.to.supplierTypes}?${getParams(request)}`,
     await flash(request, success("Updated supplier type"))
   );
 }

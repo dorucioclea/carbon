@@ -8,6 +8,7 @@ import QuotationLineQuantities from "./QuotationLineQuantities";
 import QuotationMaterialForm from "./QuotationMaterialForm";
 import QuotationMaterialLines from "./QuotationMaterialLines";
 import QuotationOperationForm from "./QuotationOperationForm";
+
 import QuotationStatus from "./QuotationStatus";
 import {
   getLinePriceUpdate,

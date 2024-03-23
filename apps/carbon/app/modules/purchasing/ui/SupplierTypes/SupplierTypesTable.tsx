@@ -4,7 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
 import { BsFillPenFill, BsPeopleFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { Table } from "~/components";
+import { New, Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { SupplierType } from "~/modules/purchasing";
@@ -44,7 +44,7 @@ const SupplierTypesTable = memo(({ data, count }: SupplierTypesTableProps) => {
         <>
           <MenuItem
             onClick={() => {
-              navigate(`${path.to.suppliers}?type=${row.id}`);
+              navigate(`${path.to.suppliers}?filter=type:eq:${row.name}`);
             }}
           >
             <MenuIcon icon={<BsPeopleFill />} />
@@ -81,6 +81,14 @@ const SupplierTypesTable = memo(({ data, count }: SupplierTypesTableProps) => {
       data={data}
       columns={columns}
       count={count}
+      primaryAction={
+        permissions.can("create", "purchasing") && (
+          <New
+            label="Supplier Type"
+            to={`${path.to.newSupplierType}?${params.toString()}`}
+          />
+        )
+      }
       renderContextMenu={renderContextMenu}
     />
   );

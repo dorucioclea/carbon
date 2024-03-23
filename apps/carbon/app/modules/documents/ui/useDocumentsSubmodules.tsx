@@ -22,7 +22,7 @@ const documentsRoutes: Route[] = [
     icon: <BsClock />,
   },
   {
-    name: "Starred",
+    name: "Pinned",
     to: path.to.documents,
     q: "starred",
     icon: <BsPin />,

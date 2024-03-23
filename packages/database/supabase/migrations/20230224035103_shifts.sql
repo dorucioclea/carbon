@@ -19,6 +19,8 @@ CREATE TABLE "location" (
   CONSTRAINT "location_pkey" PRIMARY KEY ("id")
 );
 
+CREATE INDEX "location_name_idx" ON "location" ("name");
+
 ALTER TABLE "location" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Employees can view locations" ON "location"
@@ -198,3 +200,9 @@ CREATE POLICY "Employees with resources_delete can delete employee jobs" ON "emp
     coalesce(get_my_claim('resources_delete')::boolean, false) = true 
     AND (get_my_claim('role'::text)) = '"employee"'::jsonb
   );
+
+  CREATE OR REPLACE VIEW "shifts" WITH(SECURITY_INVOKER=true) AS
+    SELECT
+      s.*, l."name" as "locationName"
+    FROM "shift" s
+    LEFT JOIN "location" l ON s."locationId" = l."id";

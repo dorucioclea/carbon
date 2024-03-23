@@ -1,15 +1,13 @@
-import AbilityChart from "./AbilityChart";
 import AbilitiesTable from "./AbilitiesTable";
-import AbilitiesTableFilters from "./AbilitiesTableFilters";
-import AbilityForm from "./AbilityForm";
+import AbilityChart from "./AbilityChart";
 import AbilityEmployeesTable from "./AbilityEmployeesTable";
+import AbilityForm from "./AbilityForm";
 import EmployeeAbilityForm from "./EmployeeAbilityForm";
 
 export {
-  AbilityChart,
   AbilitiesTable,
-  AbilitiesTableFilters,
-  AbilityForm,
+  AbilityChart,
   AbilityEmployeesTable,
+  AbilityForm,
   EmployeeAbilityForm,
 };

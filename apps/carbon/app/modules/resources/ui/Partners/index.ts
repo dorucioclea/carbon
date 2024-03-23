@@ -1,5 +1,4 @@
-import PartnersTable from "./PartnersTable";
-import PartnersTableFilters from "./PartnersTableFilters";
 import PartnerForm from "./PartnerForm";
+import PartnersTable from "./PartnersTable";
 
-export { PartnersTable, PartnersTableFilters, PartnerForm };
+export { PartnerForm, PartnersTable };

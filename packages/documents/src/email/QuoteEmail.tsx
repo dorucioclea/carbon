@@ -86,7 +86,7 @@ const QuoteEmail = ({
                     <Column style={informationTableColumn}>
                       <Text style={informationTableLabel}>Payment Terms</Text>
                       {/* <Text style={informationTableValue}>
-                        {quote.paymentTermName ?? "--"}
+                        {quote.paymentTermName ?? "-"}
                       </Text> */}
                     </Column>
                   </Row>
@@ -99,7 +99,7 @@ const QuoteEmail = ({
                     <Column style={informationTableColumn}>
                       <Text style={informationTableLabel}>Requested Date</Text>
                       {/* <Text style={informationTableValue}>
-                        {quote.receiptRequestedDate ?? "--"}
+                        {quote.receiptRequestedDate ?? "-"}
                       </Text> */}
                     </Column>
                   </Row>
@@ -199,10 +199,10 @@ const QuoteEmail = ({
                 <Column style={lineValueWrapper} align="right">
                   <Text style={lineValue}>
                     {line.purchaseOrderLineType === "Comment"
-                      ? "--"
+                      ? "-"
                       : line.unitPrice
                       ? `$${line.unitPrice.toFixed(2)}`
-                      : "--"}
+                      : "-"}
                   </Text>
                 </Column>
               </Row>

@@ -1,9 +1,22 @@
 import { z } from "zod";
 
+export const documentTypes = [
+  "Archive",
+  "Document",
+  "Presentation",
+  "PDF",
+  "Spreadsheet",
+  "Text",
+  "Image",
+  "Video",
+  "Audio",
+  "Other",
+] as const;
+
 export const documentValidator = z.object({
   id: z.string().min(1, { message: "Document ID is required" }),
   name: z.string().min(3).max(50),
-  type: z.string().optional(),
+  extension: z.string().optional(),
   description: z.string().optional(),
   labels: z.array(z.string().min(1).max(50)).optional(),
   readGroups: z

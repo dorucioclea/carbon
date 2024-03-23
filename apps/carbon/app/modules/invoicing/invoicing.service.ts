@@ -45,7 +45,6 @@ export async function getPurchaseInvoices(
   client: SupabaseClient<Database>,
   args: GenericQueryFilters & {
     search: string | null;
-    status: string | null;
     supplierId: string | null;
   }
 ) {
@@ -53,14 +52,6 @@ export async function getPurchaseInvoices(
 
   if (args.search) {
     query = query.ilike("invoiceId", `%${args.search}%`);
-  }
-
-  if (args.status) {
-    if (args.status === "closed") {
-      query = query.eq("closed", true);
-    } else {
-      query = query.eq("status", args.status);
-    }
   }
 
   if (args.supplierId) {

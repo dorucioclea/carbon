@@ -1,3 +1,4 @@
+import { useParams } from "@remix-run/react";
 import {
   BsBank,
   BsCreditCard,
@@ -7,6 +8,7 @@ import {
 } from "react-icons/bs";
 import { usePermissions } from "~/hooks";
 import type { Role } from "~/types";
+import { path } from "~/utils/path";
 
 type Props = {
   contacts: number;
@@ -15,16 +17,19 @@ type Props = {
 
 export function useSupplierSidebar({ contacts, locations }: Props) {
   const permissions = usePermissions();
+  const { supplierId } = useParams();
+  if (!supplierId) throw new Error("supplierId not found");
+
   return [
     {
       name: "Details",
-      to: "",
+      to: path.to.supplierDetails(supplierId),
       icon: BsBank,
       shortcut: "Command+Shift+d",
     },
     {
       name: "Contacts",
-      to: "contacts",
+      to: path.to.supplierContacts(supplierId),
       role: ["employee"],
       count: contacts,
       icon: BsFillPersonLinesFill,
@@ -32,7 +37,7 @@ export function useSupplierSidebar({ contacts, locations }: Props) {
     },
     {
       name: "Locations",
-      to: "locations",
+      to: path.to.supplierLocations(supplierId),
       role: ["employee", "supplier"],
       count: locations,
       icon: BsFillPinMapFill,
@@ -40,14 +45,14 @@ export function useSupplierSidebar({ contacts, locations }: Props) {
     },
     {
       name: "Payments",
-      to: "payments",
+      to: path.to.supplierPayment(supplierId),
       role: ["employee"],
       icon: BsCreditCard,
       shortcut: "Command+Shift+p",
     },
     {
       name: "Shipping",
-      to: "shipping",
+      to: path.to.supplierShipping(supplierId),
       role: ["employee"],
       icon: BsTruck,
       shortcut: "Command+Shift+s",

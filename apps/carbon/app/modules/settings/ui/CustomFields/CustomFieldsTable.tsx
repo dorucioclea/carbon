@@ -12,7 +12,7 @@ import { BiAddToQueue } from "react-icons/bi";
 import { BsListUl } from "react-icons/bs";
 import { Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
-import type { CustomFieldsTableType } from "~/modules/settings";
+import { modulesType, type CustomFieldsTableType } from "~/modules/settings";
 import { path } from "~/utils/path";
 
 type CustomFieldsTableProps = {
@@ -40,6 +40,15 @@ const CustomFieldsTable = memo(({ data, count }: CustomFieldsTableProps) => {
         accessorKey: "module",
         header: "Module",
         cell: ({ row }) => <Enumerable value={row.original.module} />,
+        meta: {
+          filter: {
+            type: "static",
+            options: modulesType.map((m) => ({
+              label: <Enumerable value={m} />,
+              value: m,
+            })),
+          },
+        },
       },
       {
         header: "Fields",

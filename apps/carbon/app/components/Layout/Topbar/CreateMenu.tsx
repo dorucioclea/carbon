@@ -1,12 +1,13 @@
 import {
-  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuIcon,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  IconButton,
 } from "@carbon/react";
 import { Link } from "@remix-run/react";
+import { MdAdd } from "react-icons/md";
 import useCreate from "./useCreate";
 
 const CreateMenu = () => {
@@ -17,7 +18,12 @@ const CreateMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button>Create</Button>
+        <IconButton
+          aria-label="Create"
+          icon={<MdAdd />}
+          variant="secondary"
+          className={"!border-dashed border-border"}
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="center" className="w-48">
         {createLinks.map((link) => (

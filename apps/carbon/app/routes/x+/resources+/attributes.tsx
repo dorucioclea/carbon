@@ -4,7 +4,6 @@ import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import {
   AttributeCategoriesTable,
-  AttributeCategoriesTableFilters,
   getAttributeCategories,
   getAttributeDataTypes,
 } from "~/modules/resources";
@@ -28,11 +27,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
-  const name = searchParams.get("name");
-  const { limit, offset, sorts } = getGenericQueryFilters(searchParams);
+  const search = searchParams.get("search");
+  const { limit, offset, sorts, filters } =
+    getGenericQueryFilters(searchParams);
 
   const [categories, dataTypes] = await Promise.all([
-    getAttributeCategories(client, { name, limit, offset, sorts }),
+    getAttributeCategories(client, { search, limit, offset, sorts, filters }),
     getAttributeDataTypes(client),
   ]);
 
@@ -58,7 +58,6 @@ export default function UserAttributesRoute() {
 
   return (
     <VStack spacing={0} className="h-full">
-      <AttributeCategoriesTableFilters />
       <AttributeCategoriesTable data={categories} count={count} />
       <Outlet />
     </VStack>

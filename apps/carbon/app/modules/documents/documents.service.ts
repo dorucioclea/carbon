@@ -6,6 +6,7 @@ import { setGenericQueryFilters } from "~/utils/query";
 import { sanitize } from "~/utils/supabase";
 import type {
   documentLabelsValidator,
+  documentTypes,
   documentValidator,
 } from "./documents.models";
 
@@ -69,8 +70,6 @@ export async function getDocuments(
   client: SupabaseClient<Database>,
   args: GenericQueryFilters & {
     search: string | null;
-    type: string | null;
-    label: string | null;
     favorite?: boolean;
     recent?: boolean;
     createdBy?: string;
@@ -90,48 +89,8 @@ export async function getDocuments(
     );
   }
 
-  if (args?.type && args.type !== "all") {
-    if (args.type === "image") {
-      query = query.or("type.eq.png,type.eq.jpg,type.eq.jpeg,type.eq.gif");
-    }
-
-    if (args.type === "document") {
-      query = query.or(
-        "type.eq.pdf,type.eq.doc,type.eq.docx,type.eq.txt,type.eq.rtf"
-      );
-    }
-
-    if (args.type === "presentation") {
-      query = query.or("type.eq.ppt,type.eq.pptx");
-    }
-
-    if (args.type === "spreadsheet") {
-      query = query.or("type.eq.xls,type.eq.xlsx");
-    }
-
-    if (args.type === "video") {
-      query = query.or(
-        "type.eq.mp4,type.eq.mov,type.eq.avi,type.eq.wmv,type.eq.flv,type.eq.mkv"
-      );
-    }
-
-    if (args.type === "audio") {
-      query = query.or(
-        "type.eq.mp3,type.eq.wav,type.eq.wma,type.eq.aac,type.eq.ogg,type.eq.flac"
-      );
-    }
-  }
-
-  if (args.label) {
-    query = query.contains("labels", [args.label]);
-  }
-
   if (args?.favorite) {
     query = query.eq("favorite", true);
-  }
-
-  if (args.createdBy) {
-    query = query.eq("createdBy", args.createdBy);
   }
 
   if (args.recent) {
@@ -145,11 +104,58 @@ export async function getDocuments(
   return query;
 }
 
+export async function getDocumentExtensions(client: SupabaseClient<Database>) {
+  return client.from("documentExtensions").select("extension");
+}
+
 export async function getDocumentLabels(
   client: SupabaseClient<Database>,
   userId: string
 ) {
   return client.from("documentLabels").select("*").eq("userId", userId);
+}
+
+export function getDocumentType(
+  fileName: string
+): (typeof documentTypes)[number] {
+  const extension = fileName.split(".").pop()?.toLowerCase() ?? "";
+  if (["zip", "rar", "7z", "tar", "gz"].includes(extension)) {
+    return "Archive";
+  }
+
+  if (["pdf"].includes(extension)) {
+    return "PDF";
+  }
+
+  if (["doc", "docx", "txt", "rtf"].includes(extension)) {
+    return "Document";
+  }
+
+  if (["ppt", "pptx"].includes(extension)) {
+    return "Presentation";
+  }
+
+  if (["csv", "xls", "xlsx"].includes(extension)) {
+    return "Spreadsheet";
+  }
+
+  if (["txt"].includes(extension)) {
+    return "Text";
+  }
+
+  if (["png", "jpg", "jpeg", "gif", "avif"].includes(extension)) {
+    return "Image";
+  }
+
+  if (["mp4", "mov", "avi", "wmv", "flv", "mkv"].includes(extension)) {
+    return "Video";
+  }
+
+  if (["mp3", "wav", "wma", "aac", "ogg", "flac"].includes(extension)) {
+    return "Audio";
+  }
+
+  return "Other";
 }
 
 export async function insertDocumentFavorite(
@@ -197,14 +203,22 @@ export async function upsertDocument(
         updatedBy: string;
       })
 ) {
+  const type = getDocumentType(document.name ?? "");
   if ("createdBy" in document) {
-    return client.from("document").insert(document).select("*").single();
+    return client
+      .from("document")
+      .insert({ ...document, type })
+      .select("*")
+      .single();
   }
+
+  const { extension, ...data } = document;
   return client
     .from("document")
     .update(
       sanitize({
-        ...document,
+        ...data,
+        type,
         updatedAt: new Date().toISOString(),
       })
     )

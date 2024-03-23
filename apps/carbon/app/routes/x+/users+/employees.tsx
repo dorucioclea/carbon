@@ -2,10 +2,8 @@ import { VStack } from "@carbon/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import { usePermissions } from "~/hooks";
 import {
   EmployeesTable,
-  EmployeesTableFilters,
   getEmployeeTypes,
   getEmployees,
 } from "~/modules/users";
@@ -29,15 +27,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
-  const name = searchParams.get("name");
-  const type = searchParams.get("type");
-  const active = searchParams.get("active") !== "false";
+  const search = searchParams.get("search");
 
   const { limit, offset, sorts, filters } =
     getGenericQueryFilters(searchParams);
 
   const [employees, employeeTypes] = await Promise.all([
-    getEmployees(client, { name, type, active, limit, offset, sorts, filters }),
+    getEmployees(client, { search, limit, offset, sorts, filters }),
     getEmployeeTypes(client),
   ]);
 
@@ -66,15 +62,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function UsersEmployeesRoute() {
   const { count, employees, employeeTypes } = useLoaderData<typeof loader>();
-  const permissions = usePermissions();
 
   return (
     <VStack spacing={0} className="h-full">
-      <EmployeesTableFilters employeeTypes={employeeTypes} />
       <EmployeesTable
         data={employees}
         count={count}
-        isEditable={permissions.can("update", "users")}
+        employeeTypes={employeeTypes}
       />
       <Outlet />
     </VStack>

@@ -11,7 +11,7 @@ import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
-import { path, requestReferrer } from "~/utils/path";
+import { getParams, path, requestReferrer } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -50,7 +50,8 @@ export async function action({ request }: ActionFunctionArgs) {
     return modal
       ? json(insertCustomerStatus)
       : redirect(
-          requestReferrer(request) ?? path.to.customerStatuses,
+          requestReferrer(request) ??
+            `${path.to.customerStatuses}?${getParams(request)}`,
           await flash(
             request,
             error(
@@ -64,7 +65,7 @@ export async function action({ request }: ActionFunctionArgs) {
   return modal
     ? json(insertCustomerStatus, { status: 201 })
     : redirect(
-        path.to.customerStatuses,
+        `${path.to.customerStatuses}?${getParams(request)}`,
         await flash(request, success("Customer status created"))
       );
 }

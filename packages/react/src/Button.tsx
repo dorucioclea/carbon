@@ -24,6 +24,7 @@ const buttonVariants = cva(
         link: "text-foreground hover:text-foreground underline-offset-4 hover:underline",
       },
       size: {
+        sm: "h-6 rounded-sm text-xs",
         md: "h-8 rounded-md text-sm",
         lg: "h-11 rounded-lg text-base",
       },
@@ -46,12 +47,22 @@ const buttonVariants = cva(
       {
         size: "md",
         isIcon: true,
+        class: "w-6 p-1",
+      },
+      {
+        size: "md",
+        isIcon: true,
         class: "w-8 p-2",
       },
       {
         size: "lg",
         isIcon: true,
         class: "w-11 p-2",
+      },
+      {
+        size: "sm",
+        isIcon: false,
+        class: "px-2",
       },
       {
         size: "md",

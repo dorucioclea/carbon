@@ -2,11 +2,7 @@ import { VStack } from "@carbon/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import {
-  EquipmentTypesTable,
-  EquipmentTypesTableFilters,
-  getEquipmentTypes,
-} from "~/modules/resources";
+import { EquipmentTypesTable, getEquipmentTypes } from "~/modules/resources";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";
@@ -27,14 +23,16 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
-  const name = searchParams.get("name");
-  const { limit, offset, sorts } = getGenericQueryFilters(searchParams);
+  const search = searchParams.get("search");
+  const { limit, offset, sorts, filters } =
+    getGenericQueryFilters(searchParams);
 
   const equipmentTypes = await getEquipmentTypes(client, {
-    name,
+    search,
     limit,
     offset,
     sorts,
+    filters,
   });
 
   if (equipmentTypes.error) {
@@ -58,7 +56,6 @@ export default function UserAttributesRoute() {
 
   return (
     <VStack spacing={0} className="h-full">
-      <EquipmentTypesTableFilters />
       <EquipmentTypesTable data={equipmentTypes} count={count} />
       <Outlet />
     </VStack>

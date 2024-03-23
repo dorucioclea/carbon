@@ -1,7 +1,5 @@
-import { AiOutlineFieldTime, AiOutlinePartition } from "react-icons/ai";
-import { BiListCheck, BiMessage } from "react-icons/bi";
+import { AiOutlinePartition } from "react-icons/ai";
 import {
-  BsCalendar2Week,
   BsCartDash,
   BsCartPlus,
   BsCreditCard,
@@ -23,43 +21,43 @@ export function useModules() {
     {
       permission: "parts",
       name: "Parts",
-      to: path.to.parts,
+      to: path.to.partsSearch,
       icon: AiOutlinePartition,
     },
-    {
-      permission: "jobs",
-      name: "Jobs",
-      to: path.to.jobs,
-      icon: BiListCheck,
-    },
+    // {
+    //   permission: "jobs",
+    //   name: "Jobs",
+    //   to: path.to.jobs,
+    //   icon: BiListCheck,
+    // },
     {
       permission: "inventory",
       name: "Inventory",
-      to: path.to.inventory,
+      to: path.to.receipts,
       icon: HiOutlineCube,
     },
-    {
-      permission: "scheduling",
-      name: "Scheduling",
-      to: path.to.scheduling,
-      icon: BsCalendar2Week,
-    },
-    {
-      permission: "timecards",
-      name: "Timecards",
-      to: path.to.timecards,
-      icon: AiOutlineFieldTime,
-    },
+    // {
+    //   permission: "scheduling",
+    //   name: "Scheduling",
+    //   to: path.to.scheduling,
+    //   icon: BsCalendar2Week,
+    // },
+    // {
+    //   permission: "timecards",
+    //   name: "Timecards",
+    //   to: path.to.timecards,
+    //   icon: AiOutlineFieldTime,
+    // },
     {
       permission: "sales",
       name: "Sales",
-      to: path.to.sales,
+      to: path.to.quotes,
       icon: BsCartPlus,
     },
     {
       permission: "purchasing",
       name: "Purchasing",
-      to: path.to.purchasing,
+      to: path.to.purchaseOrders,
       icon: BsCartDash,
     },
     {
@@ -68,45 +66,45 @@ export function useModules() {
       to: path.to.documents,
       icon: HiOutlineDocumentDuplicate,
     },
-    {
-      permission: "messages",
-      name: "Messaging",
-      to: path.to.messaging,
-      icon: BiMessage,
-    },
+    // {
+    //   permission: "messages",
+    //   name: "Messaging",
+    //   to: path.to.messaging,
+    //   icon: BiMessage,
+    // },
     {
       permission: "accounting",
       name: "Accounting",
-      to: path.to.accounting,
+      to: path.to.chartOfAccounts,
       icon: TbPigMoney,
     },
     {
       permission: "invoicing",
       name: "Invoicing",
-      to: path.to.invoicing,
+      to: path.to.purchaseInvoices,
       icon: BsCreditCard,
     },
     {
       permission: "resources",
       name: "Resources",
-      to: path.to.resources,
+      to: path.to.people,
       icon: BsPeopleFill,
     },
     {
       permission: "users",
       name: "Users",
-      to: path.to.users,
+      to: path.to.employeeAccounts,
       icon: BsShieldLock,
     },
     {
       permission: "settings",
       name: "Settings",
-      to: path.to.settings,
+      to: path.to.company,
       icon: LuSettings2,
     },
     {
       name: "My Account",
-      to: path.to.account,
+      to: path.to.profile,
       icon: CgProfile,
     },
   ];

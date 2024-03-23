@@ -2,11 +2,7 @@ import { VStack } from "@carbon/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import {
-  LocationsTable,
-  LocationsTableFilters,
-  getLocations,
-} from "~/modules/resources";
+import { LocationsTable, getLocations } from "~/modules/resources";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";
@@ -27,10 +23,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
-  const name = searchParams.get("name");
-  const { limit, offset, sorts } = getGenericQueryFilters(searchParams);
+  const search = searchParams.get("search");
+  const { limit, offset, sorts, filters } =
+    getGenericQueryFilters(searchParams);
 
-  const locations = await getLocations(client, { name, limit, offset, sorts });
+  const locations = await getLocations(client, {
+    search,
+    limit,
+    offset,
+    sorts,
+    filters,
+  });
 
   if (locations.error) {
     return redirect(
@@ -50,7 +53,6 @@ export default function LocationsRoute() {
 
   return (
     <VStack spacing={0} className="h-full">
-      <LocationsTableFilters />
       <LocationsTable data={locations} count={count} />
       <Outlet />
     </VStack>

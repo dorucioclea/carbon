@@ -16,9 +16,6 @@
       "dependsOn": ["^build"],
       "outputs": ["api/index.js", "api/build/**", "public/build/**"]
     },
-    "@carbon/documents#build": {
-      "dependsOn": ["^build"]
-    },
     "test": {
       "outputs": ["coverage/**"],
       "dependsOn": []

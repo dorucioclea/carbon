@@ -6,7 +6,7 @@ import { deleteCurrency, getCurrency } from "~/modules/accounting";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { notFound } from "~/utils/http";
-import { path } from "~/utils/path";
+import { getParams, path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -35,7 +35,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { currencyId } = params;
   if (!currencyId) {
     return redirect(
-      path.to.currencies,
+      `${path.to.currencies}?${getParams(request)}`,
       await flash(request, error(params, "Failed to get an currency id"))
     );
   }
@@ -43,13 +43,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { error: deleteTypeError } = await deleteCurrency(client, currencyId);
   if (deleteTypeError) {
     return redirect(
-      path.to.currencies,
+      `${path.to.currencies}?${getParams(request)}`,
       await flash(request, error(deleteTypeError, "Failed to delete currency"))
     );
   }
 
   return redirect(
-    path.to.currencies,
+    `${path.to.currencies}?${getParams(request)}`,
     await flash(request, success("Successfully deleted currency"))
   );
 }

@@ -4,7 +4,6 @@ import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import {
   AccountCategoriesTable,
-  AccountCategoriesTableFilters,
   getAccountCategories,
 } from "~/modules/accounting";
 import { requirePermissions } from "~/services/auth";
@@ -27,19 +26,18 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
-  const name = searchParams.get("name");
-  const incomeBalance = searchParams.get("incomeBalance");
-  const accountClass = searchParams.get("accountClass");
-  const { limit, offset, sorts } = getGenericQueryFilters(searchParams);
+  const search = searchParams.get("search");
+  const { limit, offset, sorts, filters } =
+    getGenericQueryFilters(searchParams);
 
   const [categories] = await Promise.all([
     getAccountCategories(client, {
-      name,
-      class: accountClass,
-      incomeBalance,
+      search,
+
       limit,
       offset,
       sorts,
+      filters,
     }),
   ]);
 
@@ -64,7 +62,6 @@ export default function GlAccountCategoriesRoute() {
 
   return (
     <VStack spacing={0} className="h-full">
-      <AccountCategoriesTableFilters />
       <AccountCategoriesTable data={categories} count={count} />
       <Outlet />
     </VStack>

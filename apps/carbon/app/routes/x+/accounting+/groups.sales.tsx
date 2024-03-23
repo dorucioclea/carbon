@@ -5,7 +5,6 @@ import { Outlet, useLoaderData } from "@remix-run/react";
 import { useRouteData } from "~/hooks";
 import type { AccountListItem } from "~/modules/accounting";
 import {
-  SalesPostingGroupsFilters,
   SalesPostingGroupsTable,
   getSalesPostingGroups,
 } from "~/modules/accounting";
@@ -30,17 +29,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
-  const partGroup = searchParams.get("partGroup");
-  const customerType = searchParams.get("customerType");
-  const { limit, offset, sorts } = getGenericQueryFilters(searchParams);
+  const { limit, offset, sorts, filters } =
+    getGenericQueryFilters(searchParams);
 
   const [salesGroups, partGroups, customerTypes] = await Promise.all([
     getSalesPostingGroups(client, {
-      partGroup,
-      customerType,
       limit,
       offset,
       sorts,
+      filters,
     }),
     getPartGroupsList(client),
     getCustomerTypesList(client),
@@ -74,10 +71,6 @@ export default function SalesPostingGroupsRoute() {
 
   return (
     <VStack spacing={0} className="h-full">
-      <SalesPostingGroupsFilters
-        partGroups={partGroups}
-        customerTypes={customerTypes}
-      />
       <SalesPostingGroupsTable
         data={data}
         count={count}

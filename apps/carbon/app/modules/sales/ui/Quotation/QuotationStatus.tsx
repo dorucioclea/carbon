@@ -13,7 +13,7 @@ const QuotationStatus = ({ status }: QuotationStatusProps) => {
     case "Replied":
       return <Status color="blue">{status}</Status>;
     case "Ordered":
-    case "Partially Ordered":
+    case "Partial":
       return <Status color="green">{status}</Status>;
     case "Lost":
     case "Cancelled":

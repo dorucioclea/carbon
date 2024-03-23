@@ -1,4 +1,5 @@
 import {
+  Checkbox,
   Enumerable,
   HStack,
   MenuIcon,
@@ -9,16 +10,18 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo, useState } from "react";
 import { BsEnvelope } from "react-icons/bs";
 import { FaBan } from "react-icons/fa";
-import { Avatar, Table } from "~/components";
-import { usePermissions } from "~/hooks";
+import { Avatar, New, Table } from "~/components";
+import { usePermissions, useUrlParams } from "~/hooks";
 import type { Customer } from "~/modules/users";
 import { DeactivateUsersModal, ResendInviteModal } from "~/modules/users";
+import { useCustomers } from "~/stores";
+import type { ListItem } from "~/types";
 import { path } from "~/utils/path";
 
 type CustomerAccountsTableProps = {
   data: Customer[];
   count: number;
-  isEditable?: boolean;
+  customerTypes: ListItem[];
 };
 
 const defaultColumnVisibility = {
@@ -27,13 +30,16 @@ const defaultColumnVisibility = {
 };
 
 const CustomerAccountsTable = memo(
-  ({ data, count, isEditable = false }: CustomerAccountsTableProps) => {
+  ({ data, count, customerTypes }: CustomerAccountsTableProps) => {
     const permissions = usePermissions();
-
+    const [params] = useUrlParams();
     const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
 
     const deactivateCustomerModal = useDisclosure();
     const resendInviteModal = useDisclosure();
+    const [customers] = useCustomers();
+
+    const canEdit = permissions.can("update", "users");
 
     const rows = useMemo(
       () =>
@@ -96,16 +102,55 @@ const CustomerAccountsTable = memo(
           accessorKey: "customer.name",
           header: "Customer",
           cell: (item) => item.getValue(),
+          meta: {
+            filter: {
+              type: "static",
+              options: customers.map(({ name }) => ({
+                value: name,
+                label: name,
+              })),
+            },
+          },
         },
         {
+          accessorKey: "customer.customerTypeId",
           header: "Customer Type",
           cell: ({ row }) => (
             // @ts-ignore
             <Enumerable value={row.original.customer?.customerType?.name} />
           ),
+          meta: {
+            filter: {
+              type: "static",
+              options: customerTypes.map((type) => ({
+                value: type.id,
+                label: <Enumerable value={type.name} />,
+              })),
+            },
+          },
+        },
+        {
+          accessorKey: "user.active",
+          header: "Active",
+          cell: (item) => <Checkbox isChecked={item.getValue<boolean>()} />,
+          meta: {
+            filter: {
+              type: "static",
+              options: [
+                {
+                  value: "true",
+                  label: "Active",
+                },
+                {
+                  value: "false",
+                  label: "Inactive",
+                },
+              ],
+            },
+          },
         },
       ];
-    }, []);
+    }, [customerTypes, customers]);
 
     const actions = useMemo(() => {
       return [
@@ -187,11 +232,14 @@ const CustomerAccountsTable = memo(
           columns={columns}
           data={rows}
           defaultColumnVisibility={defaultColumnVisibility}
+          primaryAction={
+            permissions.can("create", "users") && (
+              <New label="Customer" to={`new?${params.toString()}`} />
+            )
+          }
           renderContextMenu={renderContextMenu}
           withColumnOrdering
-          withFilters
-          withPagination
-          withSelectableRows={isEditable}
+          withSelectableRows={canEdit}
         />
 
         {deactivateCustomerModal.isOpen && (

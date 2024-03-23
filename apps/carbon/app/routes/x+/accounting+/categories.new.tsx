@@ -12,7 +12,7 @@ import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
-import { path } from "~/utils/path";
+import { getParams, path } from "~/utils/path";
 import { error } from "~/utils/result";
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -40,7 +40,7 @@ export async function action({ request }: ActionFunctionArgs) {
   });
   if (createAccountCategory.error) {
     return redirect(
-      path.to.accountingCategories,
+      `${path.to.accountingCategories}?${getParams(request)}`,
       await flash(
         request,
         error(
@@ -51,7 +51,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(path.to.accountingCategories);
+  return redirect(`${path.to.accountingCategories}?${getParams(request)}`);
 }
 
 export default function NewAccountCategoryRoute() {

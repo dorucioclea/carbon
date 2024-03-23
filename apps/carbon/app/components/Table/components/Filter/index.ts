@@ -1,3 +1,4 @@
+import ActiveFilters from "./ActiveFilters";
 import Filter from "./Filter";
 
-export default Filter;
+export { ActiveFilters, Filter };

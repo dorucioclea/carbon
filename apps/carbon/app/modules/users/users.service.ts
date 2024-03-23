@@ -21,27 +21,18 @@ export async function deleteGroup(
 export async function getCustomers(
   client: SupabaseClient<Database>,
   args: GenericQueryFilters & {
-    name: string | null;
-    type: string | null;
-    active: boolean | null;
+    search: string | null;
   }
 ) {
+  // TODO: this breaks on customerType filters -- convert to view
   let query = client.from("customerAccount").select(
     `user!inner(id, fullName, firstName, lastName, email, avatarUrl, active), 
       customer!inner(name, customerType!left(name))`,
     { count: "exact" }
   );
 
-  if (args.name) {
-    query = query.ilike("user.fullName", `%${args.name}%`);
-  }
-
-  if (args.type) {
-    query = query.eq("customer.customerTypeId", args.type);
-  }
-
-  if (args.active !== null) {
-    query = query.eq("user.active", args.active);
+  if (args.search) {
+    query = query.ilike("user.fullName", `%${args.search}%`);
   }
 
   query = setGenericQueryFilters(query, args, [
@@ -64,9 +55,7 @@ export async function getEmployee(
 export async function getEmployees(
   client: SupabaseClient<Database>,
   args: GenericQueryFilters & {
-    name: string | null;
-    type: string | null;
-    active: boolean | null;
+    search: string | null;
   }
 ) {
   let query = client
@@ -76,16 +65,8 @@ export async function getEmployees(
       { count: "exact" }
     );
 
-  if (args.name) {
-    query = query.ilike("user.fullName", `%${args.name}%`);
-  }
-
-  if (args.type) {
-    query = query.eq("employeeTypeId", args.type);
-  }
-
-  if (args.active !== null) {
-    query = query.eq("user.active", args.active);
+  if (args.search) {
+    query = query.ilike("user.fullName", `%${args.search}%`);
   }
 
   query = setGenericQueryFilters(query, args, [
@@ -107,12 +88,12 @@ export async function getEmployeeType(
 
 export async function getEmployeeTypes(
   client: SupabaseClient<Database>,
-  args?: GenericQueryFilters & { name: string | null }
+  args?: GenericQueryFilters & { search: string | null }
 ) {
   let query = client.from("employeeType").select("*", { count: "exact" });
 
-  if (args?.name) {
-    query = query.ilike("name", `%${args.name}%`);
+  if (args?.search) {
+    query = query.ilike("name", `%${args.search}%`);
   }
 
   if (args) {
@@ -148,13 +129,13 @@ export async function getGroupMembers(
 export async function getGroups(
   client: SupabaseClient<Database>,
   args?: GenericQueryFilters & {
-    name: string | null;
+    search: string | null;
     uid: string | null;
   }
 ) {
   let query = client.rpc("groups_query", {
     _uid: args?.uid ?? "",
-    _name: args?.name ?? "",
+    _name: args?.search ?? "",
   });
 
   if (args) query = setGenericQueryFilters(query, args);
@@ -175,27 +156,18 @@ export async function getPermissionsByEmployeeType(
 export async function getSuppliers(
   client: SupabaseClient<Database>,
   args: GenericQueryFilters & {
-    name: string | null;
-    type: string | null;
-    active: boolean | null;
+    search: string | null;
   }
 ) {
+  // TODO: this breaks on supplierType filters -- convert to view
   let query = client.from("supplierAccount").select(
     `user!inner(id, fullName, firstName, lastName, email, avatarUrl, active), 
       supplier!inner(name, supplierType!left(name))`,
     { count: "exact" }
   );
 
-  if (args.name) {
-    query = query.ilike("user.fullName", `%${args.name}%`);
-  }
-
-  if (args.type) {
-    query = query.eq("supplier.supplierTypeId", args.type);
-  }
-
-  if (args.active !== null) {
-    query = query.eq("user.active", args.active);
+  if (args.search) {
+    query = query.ilike("user.fullName", `%${args.search}%`);
   }
 
   query = setGenericQueryFilters(query, args, [

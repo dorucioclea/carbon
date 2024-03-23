@@ -4,7 +4,6 @@ import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import {
   CustomersTable,
-  CustomersTableFilters,
   getCustomerStatuses,
   getCustomerTypes,
   getCustomers,
@@ -28,15 +27,19 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
-  const name = searchParams.get("name");
-  const type = searchParams.get("type");
-  const status = searchParams.get("status");
+  const search = searchParams.get("search");
 
   const { limit, offset, sorts, filters } =
     getGenericQueryFilters(searchParams);
 
   const [customers, customerTypes, customerStatuses] = await Promise.all([
-    getCustomers(client, { name, type, status, limit, offset, sorts, filters }),
+    getCustomers(client, {
+      search,
+      limit,
+      offset,
+      sorts,
+      filters,
+    }),
     getCustomerTypes(client),
     getCustomerStatuses(client),
   ]);
@@ -62,11 +65,12 @@ export default function SalesCustomersRoute() {
 
   return (
     <VStack spacing={0} className="h-full">
-      <CustomersTableFilters
+      <CustomersTable
+        data={customers}
+        count={count}
         customerTypes={customerTypes}
         customerStatuses={customerStatuses}
       />
-      <CustomersTable data={customers} count={count} />
       <Outlet />
     </VStack>
   );

@@ -2,6 +2,22 @@ import { z } from "zod";
 import { zfd } from "zod-form-data";
 import { DataType } from "~/modules/shared";
 
+export const modulesType = [
+  "Accounting",
+  // "Documents",
+  "Invoicing",
+  "Inventory",
+  "Jobs",
+  // "Messaging",
+  "Parts",
+  "Purchasing",
+  "Resources",
+  "Sales",
+  // "Scheduling",
+  // "Timecards",
+  "Users",
+] as const;
+
 const company = {
   name: z.string().min(1, { message: "Name is required" }),
   taxId: zfd.text(z.string().optional()),

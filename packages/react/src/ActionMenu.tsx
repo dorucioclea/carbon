@@ -19,7 +19,7 @@ const ActionMenu = ({ children, ...props }: ActionMenuProps) => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <IconButton
-            aria-label="Open"
+            aria-label="Action Menu"
             variant="secondary"
             icon={<BsThreeDotsVertical />}
             {...props}

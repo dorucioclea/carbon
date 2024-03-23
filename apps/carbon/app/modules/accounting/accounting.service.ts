@@ -164,25 +164,15 @@ export async function getAccountsList(
 export async function getAccountCategories(
   client: SupabaseClient<Database>,
   args: GenericQueryFilters & {
-    name: string | null;
-    class: string | null;
-    incomeBalance: string | null;
+    search: string | null;
   }
 ) {
   let query = client.from("accountCategories").select("*", {
     count: "exact",
   });
 
-  if (args.name) {
-    query = query.ilike("category", `%${args.name}%`);
-  }
-
-  if (args.class) {
-    query = query.eq("class", args.class);
-  }
-
-  if (args.incomeBalance) {
-    query = query.eq("incomeBalance", args.incomeBalance);
+  if (args.search) {
+    query = query.ilike("category", `%${args.search}%`);
   }
 
   query = setGenericQueryFilters(query, args, [
@@ -216,7 +206,7 @@ export async function getAccountCategory(
 export async function getAccountSubcategories(
   client: SupabaseClient<Database>,
   args: GenericQueryFilters & {
-    name: string | null;
+    search: string | null;
   }
 ) {
   let query = client
@@ -226,8 +216,8 @@ export async function getAccountSubcategories(
     })
     .eq("active", true);
 
-  if (args.name) {
-    query = query.ilike("name", `%${args.name}%`);
+  if (args.search) {
+    query = query.ilike("name", `%${args.search}%`);
   }
 
   query = setGenericQueryFilters(query, args, [
@@ -389,7 +379,7 @@ export async function getCurrency(
 export async function getCurrencies(
   client: SupabaseClient<Database>,
   args: GenericQueryFilters & {
-    name: string | null;
+    search: string | null;
   }
 ) {
   let query = client
@@ -399,8 +389,8 @@ export async function getCurrencies(
     })
     .eq("active", true);
 
-  if (args.name) {
-    query = query.ilike("name", `%${args.name}%`);
+  if (args.search) {
+    query = query.ilike("name", `%${args.search}%`);
   }
 
   query = setGenericQueryFilters(query, args, [
@@ -462,22 +452,11 @@ export async function getInventoryPostingGroup(
 
 export async function getInventoryPostingGroups(
   client: SupabaseClient<Database>,
-  args: GenericQueryFilters & {
-    partGroup: string | null;
-    location: string | null;
-  }
+  args: GenericQueryFilters
 ) {
   let query = client.from("postingGroupInventory").select("*", {
     count: "exact",
   });
-
-  if (args.partGroup) {
-    query = query.eq("partGroupId", args.partGroup);
-  }
-
-  if (args.location) {
-    query = query.eq("locationId", args.location);
-  }
 
   query = setGenericQueryFilters(query, args, [
     { column: "partGroupId", ascending: false },
@@ -499,7 +478,7 @@ export async function getPaymentTerm(
 export async function getPaymentTerms(
   client: SupabaseClient<Database>,
   args: GenericQueryFilters & {
-    name: string | null;
+    search: string | null;
   }
 ) {
   let query = client
@@ -509,8 +488,8 @@ export async function getPaymentTerms(
     })
     .eq("active", true);
 
-  if (args.name) {
-    query = query.ilike("name", `%${args.name}%`);
+  if (args.search) {
+    query = query.ilike("name", `%${args.search}%`);
   }
 
   query = setGenericQueryFilters(query, args, [
@@ -553,22 +532,11 @@ export async function getPurchasingPostingGroup(
 
 export async function getPurchasingPostingGroups(
   client: SupabaseClient<Database>,
-  args: GenericQueryFilters & {
-    partGroup: string | null;
-    supplierType: string | null;
-  }
+  args: GenericQueryFilters
 ) {
   let query = client.from("postingGroupPurchasing").select("*", {
     count: "exact",
   });
-
-  if (args.partGroup) {
-    query = query.eq("partGroupId", args.partGroup);
-  }
-
-  if (args.supplierType) {
-    query = query.eq("supplierTypeId", args.supplierType);
-  }
 
   query = setGenericQueryFilters(query, args, [
     { column: "partGroupId", ascending: false },
@@ -602,22 +570,11 @@ export async function getPurchasingSalesGroup(
 
 export async function getSalesPostingGroups(
   client: SupabaseClient<Database>,
-  args: GenericQueryFilters & {
-    partGroup: string | null;
-    customerType: string | null;
-  }
+  args: GenericQueryFilters
 ) {
   let query = client.from("postingGroupSales").select("*", {
     count: "exact",
   });
-
-  if (args.partGroup) {
-    query = query.eq("partGroupId", args.partGroup);
-  }
-
-  if (args.customerType) {
-    query = query.eq("customerTypeId", args.customerType);
-  }
 
   query = setGenericQueryFilters(query, args, [
     { column: "partGroupId", ascending: false },

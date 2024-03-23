@@ -10,7 +10,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { useCallback, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { Avatar, Table } from "~/components";
+import { Avatar, New, Table } from "~/components";
 import { usePermissions } from "~/hooks";
 import type { AbilityEmployees } from "~/modules/resources";
 import { AbilityEmployeeStatus } from "~/modules/resources";
@@ -151,8 +151,10 @@ const AbilityEmployeesTable = ({
       data={rows}
       count={rows.length}
       columns={columns}
+      primaryAction={<New to="employee/new" label="Employee" />}
       renderContextMenu={renderContextMenu}
       withPagination={false}
+      withSearch={false}
     />
   );
 };

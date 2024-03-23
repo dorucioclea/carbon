@@ -1,5 +1,4 @@
-import DepartmentsTable from "./DepartmentsTable";
-import DepartmentsTableFilters from "./DepartmentsTableFilters";
 import DepartmentForm from "./DepartmentForm";
+import DepartmentsTable from "./DepartmentsTable";
 
-export { DepartmentsTable, DepartmentsTableFilters, DepartmentForm };
+export { DepartmentForm, DepartmentsTable };

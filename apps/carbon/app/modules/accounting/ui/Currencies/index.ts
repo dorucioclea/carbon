@@ -1,5 +1,4 @@
-import CurrencyForm from "./CurrencyForm";
 import CurrenciesTable from "./CurrenciesTable";
-import CurrenciesTableFilters from "./CurrenciesTableFilters";
+import CurrencyForm from "./CurrencyForm";
 
-export { CurrencyForm, CurrenciesTable, CurrenciesTableFilters };
+export { CurrenciesTable, CurrencyForm };

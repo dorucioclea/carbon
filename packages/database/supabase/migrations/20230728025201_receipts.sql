@@ -141,6 +141,22 @@ CREATE POLICY "Employees with inventory_delete can delete receipt lines" ON "rec
     AND (get_my_claim('role'::text)) = '"employee"'::jsonb
   );
 
-
-
-
+CREATE OR REPLACE VIEW "receipts" WITH(SECURITY_INVOKER=true) AS
+  SELECT 
+    r.*,
+    cb."fullName" as "createdByFullName",
+    cb."avatarUrl" as "createdByAvatar",
+    ub."fullName" as "updatedByFullName",
+    ub."avatarUrl" as "updatedByAvatar",
+    l."name" as "locationName",
+    s."name" as "supplierName"
+  FROM "receipt" r
+  LEFT JOIN "user" cb
+    ON cb.id = r."createdBy"
+  LEFT JOIN "user" ub
+    ON ub.id = r."updatedBy"
+  LEFT JOIN "location" l
+    ON l.id = r."locationId"
+  LEFT JOIN "supplier" s
+    ON s.id = r."supplierId";
+  

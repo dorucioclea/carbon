@@ -2,10 +2,8 @@ import { VStack } from "@carbon/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import { usePermissions } from "~/hooks";
 import {
   PeopleTable,
-  PeopleTableFilters,
   getAttributeCategories,
   getPeople,
 } from "~/modules/resources";
@@ -30,9 +28,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
-  const name = searchParams.get("name");
-  const type = searchParams.get("type");
-  const active = searchParams.get("active") !== "false";
+  const search = searchParams.get("name");
 
   const { limit, offset, sorts, filters } =
     getGenericQueryFilters(searchParams);
@@ -40,7 +36,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const [attributeCategories, employeeTypes, people] = await Promise.all([
     getAttributeCategories(client),
     getEmployeeTypes(client),
-    getPeople(client, { name, type, active, limit, offset, sorts, filters }),
+    getPeople(client, { search, limit, offset, sorts, filters }),
   ]);
   if (attributeCategories.error) {
     return redirect(
@@ -69,7 +65,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   return json({
     attributeCategories: attributeCategories.data,
-    employeeTypes: employeeTypes.data,
+    employeeTypes: employeeTypes.data ?? [],
     people: people.data,
     count: people.count,
   });
@@ -78,16 +74,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function ResourcesPeopleRoute() {
   const { attributeCategories, count, employeeTypes, people } =
     useLoaderData<typeof loader>();
-  const permissions = usePermissions();
 
   return (
     <VStack spacing={0} className="h-full">
-      <PeopleTableFilters employeeTypes={employeeTypes ?? []} />
       <PeopleTable
         attributeCategories={attributeCategories}
         data={people ?? []}
         count={count ?? 0}
-        isEditable={permissions.can("update", "resources")}
+        employeeTypes={employeeTypes}
       />
       <Outlet />
     </VStack>

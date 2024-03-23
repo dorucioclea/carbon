@@ -1,14 +1,7 @@
 import {
-  HStack,
   Heading,
-  IconButton,
-  Input,
-  Kbd,
   Menubar,
   MenubarItem,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
   VStack,
   useDisclosure,
   useKeyboardShortcuts,
@@ -16,14 +9,8 @@ import {
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import type { ShouldRevalidateFunction } from "@remix-run/react";
-import {
-  Outlet,
-  useLoaderData,
-  useNavigate,
-  useParams,
-} from "@remix-run/react";
+import { Outlet, useLoaderData, useParams } from "@remix-run/react";
 import { useEffect, useRef } from "react";
-import { IoMdAdd } from "react-icons/io";
 import { CollapsibleSidebar } from "~/components/Layout";
 import { useSupabase } from "~/lib/supabase";
 import { getLocationsList } from "~/modules/resources";
@@ -154,7 +141,6 @@ export default function QuotationRoute() {
     supabase,
   ]);
 
-  const navigate = useNavigate();
   const { id } = useParams();
   if (!id) throw new Error("id not found");
 
@@ -175,27 +161,7 @@ export default function QuotationRoute() {
           </Heading>
           {quote.quote && <QuotationStatus status={quote.quote?.status} />}
         </VStack>
-        <VStack className="border-b border-border p-2" spacing={0}>
-          <HStack className="w-full justify-between">
-            <Input className="flex-1" placeholder="Search" size="sm" />
-            <Tooltip>
-              <TooltipTrigger>
-                <IconButton
-                  aria-label="Add Quote Line"
-                  icon={<IoMdAdd />}
-                  ref={buttonRef}
-                  onClick={() => navigate(path.to.newQuoteLine(id))}
-                />
-              </TooltipTrigger>
-              <TooltipContent>
-                Add Quote Line <Kbd>l</Kbd>
-              </TooltipContent>
-            </Tooltip>
-          </HStack>
-        </VStack>
-        <VStack className="h-[calc(100vh-183px)] p-2 w-full">
-          <QuotationExplorer />
-        </VStack>
+        <QuotationExplorer />
       </CollapsibleSidebar>
       <VStack className="p-2">
         <Menubar>
@@ -211,7 +177,6 @@ export default function QuotationRoute() {
             Release
           </MenubarItem>
         </Menubar>
-
         <Outlet />
       </VStack>
       {releaseDisclosure.isOpen && (

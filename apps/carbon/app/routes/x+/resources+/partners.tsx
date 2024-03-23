@@ -4,7 +4,6 @@ import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import {
   PartnersTable,
-  PartnersTableFilters,
   getAbilitiesList,
   getPartners,
 } from "~/modules/resources";
@@ -28,17 +27,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
-  const name = searchParams.get("name");
-  const ability = searchParams.get("ability");
-  const { limit, offset, sorts } = getGenericQueryFilters(searchParams);
+  const search = searchParams.get("search");
+  const { limit, offset, sorts, filters } =
+    getGenericQueryFilters(searchParams);
 
   const [partners, abilities] = await Promise.all([
     getPartners(client, {
-      name,
+      search,
       limit,
       offset,
       sorts,
-      ability,
+      filters,
     }),
     getAbilitiesList(client),
   ]);
@@ -62,8 +61,7 @@ export default function Route() {
 
   return (
     <VStack spacing={0} className="h-full">
-      <PartnersTableFilters abilities={abilities} />
-      <PartnersTable data={partners} count={count} />
+      <PartnersTable data={partners} count={count} abilities={abilities} />
       <Outlet />
     </VStack>
   );

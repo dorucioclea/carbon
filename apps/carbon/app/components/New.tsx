@@ -1,6 +1,7 @@
 import {
   Button,
   HStack,
+  Kbd,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -30,11 +31,14 @@ const New = ({ label, to }: NewProps) => {
       <Tooltip>
         <TooltipTrigger>
           <Button asChild leftIcon={<IoMdAdd />} ref={buttonRef}>
-            <Link to={to}>New {label}</Link>
+            <Link to={to}>New</Link>
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-          <HStack>N</HStack>
+          <HStack>
+            <span>New {label}</span>
+            <Kbd>N</Kbd>
+          </HStack>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

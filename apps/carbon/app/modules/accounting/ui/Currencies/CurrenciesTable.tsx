@@ -4,7 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { Table } from "~/components";
+import { New, Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Currency } from "~/modules/accounting";
@@ -21,8 +21,8 @@ const CurrenciesTable = memo(({ data, count }: CurrenciesTableProps) => {
   const permissions = usePermissions();
   const customColumns = useCustomColumns<Currency>("currency");
 
-  const columns = useMemo<ColumnDef<(typeof data)[number]>[]>(() => {
-    const defaultColumns: ColumnDef<(typeof data)[number]>[] = [
+  const columns = useMemo<ColumnDef<Currency>[]>(() => {
+    const defaultColumns: ColumnDef<Currency>[] = [
       {
         accessorKey: "name",
         header: "Name",
@@ -49,16 +49,14 @@ const CurrenciesTable = memo(({ data, count }: CurrenciesTableProps) => {
       {
         accessorKey: "isBaseCurrency",
         header: "Default Currency",
-        cell: ({ row }) => (
-          <Checkbox isChecked={row.original.isBaseCurrency} disabled />
-        ),
+        cell: ({ row }) => <Checkbox isChecked={row.original.isBaseCurrency} />,
       },
     ];
     return [...defaultColumns, ...customColumns];
   }, [navigate, customColumns]);
 
   const renderContextMenu = useCallback(
-    (row: (typeof data)[number]) => {
+    (row: Currency) => {
       return (
         <>
           <MenuItem
@@ -88,10 +86,15 @@ const CurrenciesTable = memo(({ data, count }: CurrenciesTableProps) => {
   );
 
   return (
-    <Table<(typeof data)[number]>
+    <Table<Currency>
       data={data}
       columns={columns}
       count={count}
+      primaryAction={
+        permissions.can("create", "accounting") && (
+          <New label="Currency" to={`new?${params.toString()}`} />
+        )
+      }
       renderContextMenu={renderContextMenu}
     />
   );

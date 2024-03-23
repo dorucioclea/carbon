@@ -4,7 +4,6 @@ import { json } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import {
   SupplierStatusesTable,
-  SupplierStatusesTableFilters,
   getSupplierStatuses,
 } from "~/modules/purchasing";
 import { requirePermissions } from "~/services/auth";
@@ -25,11 +24,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
-  const name = searchParams.get("name");
-  const { limit, offset, sorts } = getGenericQueryFilters(searchParams);
+  const search = searchParams.get("search");
+  const { limit, offset, sorts, filters } =
+    getGenericQueryFilters(searchParams);
 
   return json(
-    await getSupplierStatuses(client, { name, limit, offset, sorts })
+    await getSupplierStatuses(client, { search, limit, offset, sorts, filters })
   );
 }
 
@@ -38,7 +38,6 @@ export default function SupplierStatusesRoute() {
 
   return (
     <VStack spacing={0} className="h-full">
-      <SupplierStatusesTableFilters />
       <SupplierStatusesTable data={data ?? []} count={count ?? 0} />
       <Outlet />
     </VStack>
