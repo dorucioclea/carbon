@@ -1,14 +1,15 @@
 INSERT INTO "partGroup"(
-    name, 
-    description, 
-    active, 
+    name,
+    description,
+    active,
     "createdBy"
-) VALUES 
-('Engine Components', 'Parts related to engine assemblies', true, '24df39db-d58f-465d-b740-0935a8faaac5'),
-('Suspension Parts', 'Components for vehicle suspension systems', true, '24df39db-d58f-465d-b740-0935a8faaac5'),
-('Electrical Systems', 'Parts for vehicle electrical systems, including lighting and batteries', true, '24df39db-d58f-465d-b740-0935a8faaac5'),
-('Braking Systems', 'Components related to vehicle braking systems', true, '24df39db-d58f-465d-b740-0935a8faaac5'),
-('Fuel Systems', 'Parts for fuel storage and delivery in vehicles', true, '24df39db-d58f-465d-b740-0935a8faaac5');
+) VALUES
+('Engine Components', 'Parts related to engine assemblies', true, (SELECT id FROM "user" WHERE email = 'admin@carbon.us.org')
+),
+('Suspension Parts', 'Components for vehicle suspension systems', true, (SELECT id FROM "user" WHERE email = 'admin@carbon.us.org')),
+('Electrical Systems', 'Parts for vehicle electrical systems, including lighting and batteries', true, (SELECT id FROM "user" WHERE email = 'admin@carbon.us.org')),
+('Braking Systems', 'Components related to vehicle braking systems', true, (SELECT id FROM "user" WHERE email = 'admin@carbon.us.org')),
+('Fuel Systems', 'Parts for fuel storage and delivery in vehicles', true, (SELECT id FROM "user" WHERE email = 'admin@carbon.us.org'));
 
 INSERT INTO part (
     id,
@@ -24,34 +25,34 @@ INSERT INTO part (
     approved,
     "createdBy",
     "createdAt"
-) VALUES 
+) VALUES
 (
-    '000000001', 
-    'Carbon Fiber Chassis', 
-    'Carbon fiber chassis component for high-performance vehicles', 
-    false, 
+    '000000001',
+    'Carbon Fiber Chassis',
+    'Carbon fiber chassis component for high-performance vehicles',
+    false,
     'Buy',
-    (SELECT id FROM "partGroup" WHERE name = 'Engine Components'), -- Fetching partGroupId by part group name
+    (SELECT id FROM "partGroup" WHERE name = 'Engine Components'),
     'Inventory',
-    'MPN12345', 
-    'PCS', -- Assuming PCS is a valid code in "unitOfMeasure"
-    true, 
-    false, 
-    '24df39db-d58f-465d-b740-0935a8faaac5', -- Replace with an actual user ID from "user" table
+    'MPN12345',
+    'PCS',
+    true,
+    false,
+    (SELECT id FROM "user" WHERE email = 'admin@carbon.us.org'),
     NOW()
 ),
 (
-    '000000002', 
-    'Hydraulic Pump', 
-    'High-pressure hydraulic pump for industrial applications.', 
-    false, 
+    '000000002',
+    'Hydraulic Pump',
+    'High-pressure hydraulic pump for industrial applications.',
+    false,
     'Buy',
-    (SELECT id FROM "partGroup" WHERE name = 'Engine Components'), -- Fetching partGroupId by part group name
+    (SELECT id FROM "partGroup" WHERE name = 'Engine Components'),
     'Inventory',
-    'MPN12345', 
-    'PCS', -- Assuming PCS is a valid code in "unitOfMeasure"
-    true, 
-    false, 
-    '24df39db-d58f-465d-b740-0935a8faaac5', -- Replace with an actual user ID from "user" table
+    'MPN12345',
+    'PCS',
+    true,
+    false,
+    (SELECT id FROM "user" WHERE email = 'admin@carbon.us.org'),
     NOW()
 );
