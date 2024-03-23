@@ -2,7 +2,7 @@ import type { Json } from "@carbon/database";
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataType } from "~/modules/shared";
 import { useCustomFieldsSchema } from "./useCustomFieldsSchema";
-import { Enumerable } from "@carbon/react";
+import { Checkbox, Enumerable } from "@carbon/react";
 
 export function useCustomColumns<T extends { customFields: Json }>(
   table: string
@@ -20,11 +20,13 @@ export function useCustomColumns<T extends { customFields: Json }>(
         switch (field.dataTypeId) {
           case DataType.Boolean:
             return isObject(item.row.original.customFields) &&
-              field.id in item.row.original.customFields
-              ? item.row.original?.customFields[field.id] === "on"
-                ? "Yes"
-                : "No"
-              : null;
+              field.id in item.row.original.customFields ? (
+              <Checkbox
+                isChecked={item.row.original?.customFields[field.id] === "on"}
+              />
+            ) : (
+              <Checkbox isChecked={false} />
+            );
           case DataType.Date:
             return isObject(item.row.original.customFields) &&
               field.id in item.row.original.customFields
