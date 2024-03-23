@@ -2,6 +2,7 @@ import type { Json } from "@carbon/database";
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataType } from "~/modules/shared";
 import { useCustomFieldsSchema } from "./useCustomFieldsSchema";
+import { Enumerable } from "@carbon/react";
 
 export function useCustomColumns<T extends { customFields: Json }>(
   table: string
@@ -31,9 +32,9 @@ export function useCustomColumns<T extends { customFields: Json }>(
               : null;
           case DataType.List:
             return isObject(item.row.original.customFields) &&
-              field.id in item.row.original.customFields
-              ? item.row.original?.customFields[field.id]
-              : null;
+              field.id in item.row.original.customFields ? (
+              <Enumerable value={item.getValue<string>()} />
+            ) : null;
           case DataType.Numeric:
             return isObject(item.row.original.customFields) &&
               field.id in item.row.original.customFields
