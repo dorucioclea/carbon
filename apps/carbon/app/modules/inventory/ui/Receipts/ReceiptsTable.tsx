@@ -2,7 +2,6 @@ import {
   Checkbox,
   Enumerable,
   HStack,
-  Hyperlink,
   MenuIcon,
   MenuItem,
 } from "@carbon/react";
@@ -12,7 +11,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { Avatar, New, Table } from "~/components";
+import { Avatar, Hyperlink, New, Table } from "~/components";
 import { usePermissions, useRealtime, useUrlParams } from "~/hooks";
 import type { Receipt } from "~/modules/inventory";
 import {
@@ -48,9 +47,7 @@ const ReceiptsTable = memo(({ data, count, locations }: ReceiptsTableProps) => {
         accessorKey: "receiptId",
         header: "Receipt ID",
         cell: ({ row }) => (
-          <Hyperlink onClick={() => navigate(row.original.id!)}>
-            {row.original.receiptId}
-          </Hyperlink>
+          <Hyperlink to={row.original.id!}>{row.original.receiptId}</Hyperlink>
         ),
       },
       {
@@ -76,11 +73,9 @@ const ReceiptsTable = memo(({ data, count, locations }: ReceiptsTableProps) => {
             case "Purchase Order":
               return (
                 <Hyperlink
-                  onClick={() =>
-                    navigate(
-                      path.to.purchaseOrder(row.original.sourceDocumentId!)
-                    )
-                  }
+                  to={path.to.purchaseOrderDetails(
+                    row.original.sourceDocumentId!
+                  )}
                 >
                   {row.original.sourceDocumentReadableId}
                 </Hyperlink>
@@ -88,11 +83,7 @@ const ReceiptsTable = memo(({ data, count, locations }: ReceiptsTableProps) => {
             case "Purchase Invoice":
               return (
                 <Hyperlink
-                  onClick={() =>
-                    navigate(
-                      path.to.purchaseInvoice(row.original.sourceDocumentId!)
-                    )
-                  }
+                  to={path.to.purchaseInvoice(row.original.sourceDocumentId!)}
                 >
                   {row.original.sourceDocumentReadableId}
                 </Hyperlink>
@@ -205,7 +196,8 @@ const ReceiptsTable = memo(({ data, count, locations }: ReceiptsTableProps) => {
     ];
 
     return [...result,...customColumns];
-  }, [locations, navigate, suppliers, customColumns]);
+  }, [locations, suppliers, customColumns]);
+
 
   const renderContextMenu = useCallback(
     (row: Receipt) => {

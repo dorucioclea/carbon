@@ -1,15 +1,9 @@
-import {
-  Button,
-  Enumerable,
-  Hyperlink,
-  MenuIcon,
-  MenuItem,
-} from "@carbon/react";
+import { Button, Enumerable, MenuIcon, MenuItem } from "@carbon/react";
 import { useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
-import { New, Table } from "~/components";
+import { Hyperlink, New, Table } from "~/components";
 import { usePermissions } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type {
@@ -38,9 +32,7 @@ const SuppliersTable = memo(
           accessorKey: "name",
           header: "Name",
           cell: ({ row }) => (
-            <Hyperlink
-              onClick={() => navigate(path.to.supplier(row.original.id!))}
-            >
+            <Hyperlink to={path.to.supplierDetails(row.original.id!)}>
               {row.original.name}
             </Hyperlink>
           ),

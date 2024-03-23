@@ -31,6 +31,7 @@ const UnitOfMeasuresTable = memo(
             <Enumerable
               onClick={() => navigate(row.original.id)}
               value={row.original.name}
+              className="cursor-pointer"
             />
           ),
         },

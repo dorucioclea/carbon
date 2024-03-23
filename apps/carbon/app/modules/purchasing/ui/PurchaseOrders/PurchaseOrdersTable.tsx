@@ -2,7 +2,6 @@ import {
   Checkbox,
   Enumerable,
   HStack,
-  Hyperlink,
   MenuIcon,
   MenuItem,
   useDisclosure,
@@ -13,7 +12,7 @@ import { memo, useMemo, useState } from "react";
 import { BsFillPenFill, BsPin, BsPinFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
 import { MdCallReceived } from "react-icons/md";
-import { Avatar, New, Table } from "~/components";
+import { Avatar, Hyperlink, New, Table } from "~/components";
 import { ConfirmDelete } from "~/components/Modals";
 import { usePermissions } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
@@ -103,7 +102,7 @@ const PurchaseOrdersTable = memo(
                 </fetcher.Form>
               )}
 
-              <Hyperlink onClick={() => edit(row.original)}>
+              <Hyperlink to={path.to.purchaseOrderDetails(row.original.id!)}>
                 {row.original.purchaseOrderId}
               </Hyperlink>
             </HStack>
@@ -222,8 +221,9 @@ const PurchaseOrdersTable = memo(
           cell: (item) => item.getValue(),
         },
       ];
+
       return [...defaultColumns, ...customColumns];
-    }, [edit, fetcher, suppliers, customColumns]);
+    }, [fetcher, suppliers, customColumns]);
 
     const renderContextMenu = useMemo(() => {
       // eslint-disable-next-line react/display-name

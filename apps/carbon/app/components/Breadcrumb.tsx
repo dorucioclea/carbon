@@ -66,7 +66,7 @@ const BreadcrumbLink = forwardRef<
           {children}
         </span>
       ) : (
-        <Link ref={ref} {...props}>
+        <Link ref={ref} {...props} prefetch="intent">
           {children}
         </Link>
       )}

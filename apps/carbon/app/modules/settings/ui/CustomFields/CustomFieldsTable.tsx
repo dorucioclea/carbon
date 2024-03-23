@@ -1,16 +1,10 @@
-import {
-  Button,
-  Enumerable,
-  Hyperlink,
-  MenuIcon,
-  MenuItem,
-} from "@carbon/react";
+import { Button, Enumerable, MenuIcon, MenuItem } from "@carbon/react";
 import { Link, useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
 import { BiAddToQueue } from "react-icons/bi";
 import { BsListUl } from "react-icons/bs";
-import { Table } from "~/components";
+import { Hyperlink, Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
 import { modulesType, type CustomFieldsTableType } from "~/modules/settings";
 import { path } from "~/utils/path";
@@ -31,9 +25,7 @@ const CustomFieldsTable = memo(({ data, count }: CustomFieldsTableProps) => {
         accessorKey: "name",
         header: "Table",
         cell: ({ row }) => (
-          <Hyperlink onClick={() => navigate(row.original.id!)}>
-            {row.original.name}
-          </Hyperlink>
+          <Hyperlink to={row.original.id!}>{row.original.name}</Hyperlink>
         ),
       },
       {
@@ -68,7 +60,7 @@ const CustomFieldsTable = memo(({ data, count }: CustomFieldsTableProps) => {
         ),
       },
     ];
-  }, [navigate, params]);
+  }, [params]);
 
   const renderContextMenu = useCallback(
     (row: (typeof data)[number]) => {

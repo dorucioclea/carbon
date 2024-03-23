@@ -9,7 +9,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   HStack,
-  Hyperlink,
   IconButton,
   Table,
   Tbody,
@@ -21,7 +20,8 @@ import {
 import { convertKbToString } from "@carbon/utils";
 import { Outlet } from "@remix-run/react";
 import { MdMoreVert } from "react-icons/md";
-import { DocumentIcon } from "~/modules/documents";
+import { Hyperlink } from "~/components";
+import { DocumentIcon, getDocumentType } from "~/modules/documents";
 import type { QuotationAttachment } from "~/modules/sales";
 import QuotationDocumentForm from "./QuotationDocumentForm";
 import { useQuotationDocuments } from "./useQuotationDocuments";
@@ -70,7 +70,7 @@ const QuotationDocuments = ({
                   <Tr key={attachment.id}>
                     <Td>
                       <HStack>
-                        <DocumentIcon fileName={attachment.name} />
+                        <DocumentIcon type={getDocumentType(attachment.name)} />
                         <Hyperlink onClick={() => download(attachment)}>
                           {attachment.name}
                         </Hyperlink>

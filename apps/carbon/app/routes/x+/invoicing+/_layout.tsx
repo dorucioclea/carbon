@@ -7,7 +7,7 @@ import { path } from "~/utils/path";
 
 export const handle: Handle = {
   breadcrumb: "Invoicing",
-  to: path.to.invoicing,
+  to: path.to.purchaseInvoices,
   module: "invoicing",
 };
 

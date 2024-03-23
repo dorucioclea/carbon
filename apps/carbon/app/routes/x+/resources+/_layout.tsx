@@ -12,7 +12,7 @@ export const meta: MetaFunction = () => {
 
 export const handle: Handle = {
   breadcrumb: "Resources",
-  to: path.to.resources,
+  to: path.to.people,
   module: "resources",
 };
 

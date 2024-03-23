@@ -11,7 +11,7 @@ CREATE OR REPLACE VIEW "employeeSummary" WITH(SECURITY_INVOKER=true) AS
   FROM "employee" e
   INNER JOIN "user" u
     ON u.id = e.id
-  INNER JOIN "employeeJob" ej
+  LEFT JOIN "employeeJob" ej
     ON e.id = ej.id
   LEFT OUTER JOIN "location" l
     ON l.id = ej."locationId"

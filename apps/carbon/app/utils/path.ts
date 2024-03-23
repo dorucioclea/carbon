@@ -463,6 +463,7 @@ export const path = {
     scheduling: `${x}/scheduling`,
     service: (id: string) => generatePath(`${x}/service/${id}`),
     services: `${x}/parts/services`,
+    serviceDetails: (id: string) => `${x}/service/${id}/details`,
     serviceRoot: `${x}/service`,
     serviceSupplier: (serviceId: string, id: string) =>
       generatePath(`${x}/service/${serviceId}/suppliers/${id}`),

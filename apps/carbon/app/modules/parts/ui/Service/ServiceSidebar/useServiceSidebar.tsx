@@ -9,7 +9,7 @@ export function useServiceSidebar(type: ServiceType) {
   return [
     {
       name: "Details",
-      to: "",
+      to: "details",
       icon: BsBank,
     },
     {

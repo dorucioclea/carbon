@@ -1,10 +1,10 @@
-import { Enumerable, Hyperlink, MenuIcon, MenuItem } from "@carbon/react";
+import { Enumerable, MenuIcon, MenuItem } from "@carbon/react";
 import { useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { New, Table } from "~/components";
+import { Hyperlink, New, Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
 import { shippingCarrierType, type ShippingMethod } from "~/modules/inventory";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
@@ -35,13 +35,9 @@ const ShippingMethodsTable = memo(
           header: "Name",
           cell: ({ row }) => (
             <Hyperlink
-              onClick={() =>
-                navigate(
-                  `${path.to.shippingMethod(
-                    row.original.id
-                  )}?${params.toString()}`
-                )
-              }
+              to={`${path.to.shippingMethod(
+                row.original.id
+              )}?${params.toString()}`}
             >
               {row.original.name}
             </Hyperlink>

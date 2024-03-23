@@ -1,10 +1,10 @@
-import { Checkbox, Hyperlink, MenuIcon, MenuItem } from "@carbon/react";
+import { Checkbox, MenuIcon, MenuItem } from "@carbon/react";
 import { useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { New, Table } from "~/components";
+import { Hyperlink, New, Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Currency } from "~/modules/accounting";
@@ -27,7 +27,7 @@ const CurrenciesTable = memo(({ data, count }: CurrenciesTableProps) => {
         accessorKey: "name",
         header: "Name",
         cell: ({ row }) => (
-          <Hyperlink onClick={() => navigate(row.original.id)}>
+          <Hyperlink to={row.original.id as string}>
             {row.original.name}
           </Hyperlink>
         ),
@@ -53,7 +53,9 @@ const CurrenciesTable = memo(({ data, count }: CurrenciesTableProps) => {
       },
     ];
     return [...defaultColumns, ...customColumns];
-  }, [navigate, customColumns]);
+  }, [customColumns ]);
+
+
 
   const renderContextMenu = useCallback(
     (row: Currency) => {

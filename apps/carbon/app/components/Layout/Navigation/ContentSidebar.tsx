@@ -27,7 +27,10 @@ const ContentSidebar = ({ links }: { links: Route[] }) => {
                   variant={isActive ? "primary" : "ghost"}
                   className="w-full justify-start"
                 >
-                  <Link to={route.to + (route.q ? `?q=${route.q}` : "")}>
+                  <Link
+                    to={route.to + (route.q ? `?q=${route.q}` : "")}
+                    prefetch="intent"
+                  >
                     {route.name}
                   </Link>
                 </Button>

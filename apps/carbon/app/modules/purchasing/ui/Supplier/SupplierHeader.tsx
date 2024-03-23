@@ -72,10 +72,7 @@ const SupplierHeader = () => {
             </CardAttribute>
             <CardAttribute>
               <CardAttributeLabel>Payment Terms</CardAttributeLabel>
-              <CardAttributeValue>
-                {/* // TODO: defaultPaymentTermId */}
-                --
-              </CardAttributeValue>
+              <CardAttributeValue>-</CardAttributeValue>
             </CardAttribute>
           </CardAttributes>
         </CardContent>

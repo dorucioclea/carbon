@@ -4,6 +4,7 @@ import { BreadcrumbItem, BreadcrumbLink, Breadcrumbs } from "./Breadcrumb";
 import Combobox from "./Combobox";
 import Contact from "./Contact";
 import CreatableCombobox from "./CreateableCombobox";
+import Hyperlink from "./Hyperlink";
 import MultiSelect from "./MultiSelect";
 import New from "./New";
 import Select from "./Select";
@@ -18,6 +19,7 @@ export {
   Combobox,
   Contact,
   CreatableCombobox,
+  Hyperlink,
   MultiSelect,
   New,
   Select,

@@ -1,9 +1,9 @@
-import { Enumerable, Hyperlink, MenuIcon, MenuItem } from "@carbon/react";
+import { Enumerable, MenuIcon, MenuItem } from "@carbon/react";
 import { useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
-import { New, Table } from "~/components";
+import { Hyperlink, New, Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
 import { serviceType, type Service } from "~/modules/parts";
@@ -29,9 +29,7 @@ const ServicesTable = memo(
           accessorKey: "id",
           header: "Service ID",
           cell: ({ row }) => (
-            <Hyperlink
-              onClick={() => navigate(path.to.service(row.original.id!))}
-            >
+            <Hyperlink to={path.to.serviceDetails(row.original.id!)}>
               {row.original.id}
             </Hyperlink>
           ),

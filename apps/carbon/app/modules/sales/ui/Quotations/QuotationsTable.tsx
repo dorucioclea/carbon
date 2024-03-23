@@ -1,7 +1,6 @@
 import {
   Enumerable,
   HStack,
-  Hyperlink,
   MenuIcon,
   MenuItem,
   useDisclosure,
@@ -11,7 +10,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo, useState } from "react";
 import { BsFillPenFill, BsPin, BsPinFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { Avatar, New, Table } from "~/components";
+import { Avatar, Hyperlink, New, Table } from "~/components";
 import { ConfirmDelete } from "~/components/Modals";
 import { usePermissions } from "~/hooks";
 import type { Quotation } from "~/modules/sales";
@@ -95,9 +94,7 @@ const QuotationsTable = memo(({ data, count }: QuotationsTableProps) => {
                 </button>
               </fetcher.Form>
             )}
-            <Hyperlink
-              onClick={() => navigate(path.to.quote(row.original.id!))}
-            >
+            <Hyperlink to={path.to.quoteDetails(row.original.id!)}>
               {row.original.quoteId}
             </Hyperlink>
           </HStack>
@@ -226,8 +223,9 @@ const QuotationsTable = memo(({ data, count }: QuotationsTableProps) => {
         cell: (item) => item.getValue(),
       },
     ];
+
     return [...defaultColumns, ...customColumns];
-  }, [customers, fetcher, navigate, parts, customColumns]);
+  }, [customers, fetcher, parts, customColumns]);
 
   const renderContextMenu = useMemo(() => {
     // eslint-disable-next-line react/display-name

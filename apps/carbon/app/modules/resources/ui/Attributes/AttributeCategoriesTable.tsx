@@ -1,7 +1,6 @@
 import {
   Badge,
   Button,
-  Hyperlink,
   MenuIcon,
   MenuItem,
   useDisclosure,
@@ -12,7 +11,7 @@ import { memo, useCallback, useMemo, useState } from "react";
 import { BiAddToQueue } from "react-icons/bi";
 import { BsFillPenFill, BsListUl } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { New, Table } from "~/components";
+import { Hyperlink, New, Table } from "~/components";
 import { ConfirmDelete } from "~/components/Modals";
 import { usePermissions, useUrlParams } from "~/hooks";
 import type { AttributeCategory } from "~/modules/resources";
@@ -49,9 +48,7 @@ const AttributeCategoriesTable = memo(
           accessorKey: "name",
           header: "Category",
           cell: ({ row }) => (
-            <Hyperlink onClick={() => navigate(row.original.id)}>
-              {row.original.name}
-            </Hyperlink>
+            <Hyperlink to={row.original.id}>{row.original.name}</Hyperlink>
           ),
         },
         {

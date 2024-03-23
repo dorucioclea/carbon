@@ -2,7 +2,6 @@ import {
   Checkbox,
   Enumerable,
   HStack,
-  Hyperlink,
   MenuIcon,
   MenuItem,
 } from "@carbon/react";
@@ -10,7 +9,7 @@ import { useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
-import { Avatar, New, Table } from "~/components";
+import { Avatar, Hyperlink, New, Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
 import type { AttributeCategory, Person } from "~/modules/resources";
 import { DataType } from "~/modules/shared";
@@ -107,11 +106,7 @@ const PeopleTable = memo(
                 path={row.original.user?.avatarUrl!}
               />
 
-              <Hyperlink
-                onClick={() => {
-                  navigate(path.to.person(row?.original.user?.id!));
-                }}
-              >
+              <Hyperlink to={path.to.personDetails(row?.original.user?.id!)}>
                 {row.original.user?.fullName}
               </Hyperlink>
             </HStack>
@@ -183,7 +178,7 @@ const PeopleTable = memo(
       });
 
       return [...defaultColumns, ...additionalColumns];
-    }, [attributeCategories, employeeTypes, navigate, renderGenericAttribute]);
+    }, [attributeCategories, employeeTypes, renderGenericAttribute]);
 
     const renderContextMenu = useMemo(() => {
       return permissions.can("update", "resources")
@@ -192,7 +187,9 @@ const PeopleTable = memo(
               <MenuItem
                 onClick={() =>
                   navigate(
-                    `${path.to.person(row.user?.id!)}?${params.toString()}`
+                    `${path.to.personDetails(
+                      row.user?.id!
+                    )}?${params.toString()}`
                   )
                 }
               >

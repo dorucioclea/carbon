@@ -2,7 +2,6 @@ import {
   Checkbox,
   Enumerable,
   HStack,
-  Hyperlink,
   MenuIcon,
   MenuItem,
   useDisclosure,
@@ -12,7 +11,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo, useState } from "react";
 import { BsEnvelope, BsFillPenFill, BsShieldLock } from "react-icons/bs";
 import { FaBan } from "react-icons/fa";
-import { Avatar, New, Table } from "~/components";
+import { Avatar, Hyperlink, New, Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
 import type { Employee } from "~/modules/users";
 import {
@@ -79,13 +78,9 @@ const EmployeesTable = memo(
               />
 
               <Hyperlink
-                onClick={() =>
-                  navigate(
-                    `${path.to.employeeAccount(
-                      row.original.user?.id!
-                    )}?${params.toString()}`
-                  )
-                }
+                to={`${path.to.employeeAccount(
+                  row.original.user?.id!
+                )}?${params.toString()}`}
               >
                 {`${row.original.user?.firstName} ${row.original.user?.lastName}`}
               </Hyperlink>

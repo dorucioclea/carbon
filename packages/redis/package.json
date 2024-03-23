@@ -25,8 +25,6 @@
   "scripts": {
     "build": "tsup",
     "clean": "rimraf .turbo node_modules dist",
-    "db:kill": "docker-compose down",
-    "db:start": "docker-compose up -d",
     "dev": "tsup --watch",
     "lint": "TIMING=1 eslint \"src/**/*.ts*\""
   },

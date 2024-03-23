@@ -1,9 +1,9 @@
-import { Hyperlink, MenuIcon, MenuItem } from "@carbon/react";
+import { MenuIcon, MenuItem } from "@carbon/react";
 import { useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
-import { Table } from "~/components";
+import { Hyperlink, Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
 import type { Sequence } from "~/modules/settings";
 import { path } from "~/utils/path";
@@ -24,9 +24,7 @@ const SequencesTable = memo(({ data, count }: SequencesTableProps) => {
         accessorKey: "name",
         header: "Name",
         cell: ({ row }) => (
-          <Hyperlink onClick={() => navigate(row.original.table)}>
-            {row.original.name}
-          </Hyperlink>
+          <Hyperlink to={row.original.table}>{row.original.name}</Hyperlink>
         ),
       },
       {
@@ -55,7 +53,7 @@ const SequencesTable = memo(({ data, count }: SequencesTableProps) => {
         cell: (item) => item.getValue(),
       },
     ];
-  }, [navigate]);
+  }, []);
 
   const renderContextMenu = useCallback(
     (row: (typeof data)[number]) => {

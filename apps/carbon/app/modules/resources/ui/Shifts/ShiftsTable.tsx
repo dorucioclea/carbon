@@ -1,16 +1,10 @@
-import {
-  Badge,
-  Enumerable,
-  Hyperlink,
-  MenuIcon,
-  MenuItem,
-} from "@carbon/react";
+import { Badge, Enumerable, MenuIcon, MenuItem } from "@carbon/react";
 import { useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { New, Table } from "~/components";
+import { Hyperlink, New, Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
 import type { Shift, ShiftLocation } from "~/modules/resources";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
@@ -53,9 +47,7 @@ const ShiftsTable = memo(({ data, count, locations }: ShiftsTableProps) => {
         accessorKey: "name",
         header: "Shift",
         cell: ({ row }) => (
-          <Hyperlink onClick={() => navigate(row.original.id!)}>
-            {row.original.name}
-          </Hyperlink>
+          <Hyperlink to={row.original.id!}>{row.original.name}</Hyperlink>
         ),
       },
       {
@@ -89,8 +81,9 @@ const ShiftsTable = memo(({ data, count, locations }: ShiftsTableProps) => {
         cell: ({ row }) => renderDays(row.original),
       },
     ];
+
     return [...defaultColumns, ...customColumns];
-  }, [locations, navigate, renderDays, customColumns]);
+  }, [locations, renderDays, customColumns]);
 
   const renderContextMenu = useCallback(
     (row: Shift) => {

@@ -1,18 +1,17 @@
 import {
   Button,
   Enumerable,
-  Hyperlink,
   MenuIcon,
   MenuItem,
   useDisclosure,
 } from "@carbon/react";
-import { useNavigate } from "@remix-run/react";
+import { Link, useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo, useState } from "react";
 import { BiAddToQueue } from "react-icons/bi";
 import { BsFillPenFill, BsListUl } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { New, Table } from "~/components";
+import { Hyperlink, New, Table } from "~/components";
 import { ConfirmDelete } from "~/components/Modals";
 import { usePermissions, useUrlParams } from "~/hooks";
 import {
@@ -56,7 +55,7 @@ const AccountCategoriesTable = memo(
           accessorKey: "category",
           header: "Category",
           cell: ({ row }) => (
-            <Hyperlink onClick={() => navigate(row.original.id as string)}>
+            <Hyperlink to={row.original.id as string}>
               {row.original.category}
             </Hyperlink>
           ),
@@ -95,23 +94,23 @@ const AccountCategoriesTable = memo(
         {
           header: "Subcategories",
           cell: ({ row }) => (
-            <Button
-              variant="secondary"
-              onClick={() => {
-                navigate(
-                  `${path.to.accountingCategoryList(
-                    row.original.id!
-                  )}?${params?.toString()}`
-                );
-              }}
-            >
-              {row.original.subCategoriesCount ?? 0} Subcategories
+            <Button variant="secondary" asChild>
+              <Link
+                to={`${path.to.accountingCategoryList(
+                  row.original.id!
+                )}?${params?.toString()}`}
+                prefetch="intent"
+              >
+                {row.original.subCategoriesCount ?? 0} Subcategories
+              </Link>
             </Button>
           ),
         },
       ];
+
       return [...defaultColumns, ...customColumns];
-    }, [navigate, params, customColumns]);
+    }, [params, customColumns]);
+
 
     const renderContextMenu = useCallback(
       (row: (typeof data)[number]) => {

@@ -31,7 +31,9 @@ const New = ({ label, to }: NewProps) => {
       <Tooltip>
         <TooltipTrigger>
           <Button asChild leftIcon={<IoMdAdd />} ref={buttonRef}>
-            <Link to={to}>New</Link>
+            <Link to={to} prefetch="intent">
+              New
+            </Link>
           </Button>
         </TooltipTrigger>
         <TooltipContent>

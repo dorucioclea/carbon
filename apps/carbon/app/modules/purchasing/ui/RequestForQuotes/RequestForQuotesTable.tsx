@@ -1,16 +1,10 @@
-import {
-  HStack,
-  Hyperlink,
-  MenuIcon,
-  MenuItem,
-  useDisclosure,
-} from "@carbon/react";
+import { HStack, MenuIcon, MenuItem, useDisclosure } from "@carbon/react";
 import { useFetcher, useFetchers, useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo, useState } from "react";
 import { BsFillPenFill, BsPin, BsPinFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { Avatar, Table } from "~/components";
+import { Avatar, Hyperlink, Table } from "~/components";
 import { ConfirmDelete } from "~/components/Modals";
 import { usePermissions } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
@@ -97,11 +91,7 @@ const RequestForQuotesTable = memo(
                   </button>
                 </fetcher.Form>
               )}
-              <Hyperlink
-                onClick={() =>
-                  navigate(path.to.requestForQuote(row.original.id!))
-                }
-              >
+              <Hyperlink to={path.to.requestForQuote(row.original.id!)}>
                 {row.original.requestForQuoteId}
               </Hyperlink>
             </HStack>
@@ -214,7 +204,8 @@ const RequestForQuotesTable = memo(
         },
       ];
       return [...defaultColumns, ...customColumns];
-    }, [fetcher, navigate, parts, suppliers, customColumns]);
+    }, [fetcher, parts, suppliers, customColumns]);
+
 
     const defaultColumnVisibility = {
       partIds: false,

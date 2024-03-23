@@ -1,16 +1,11 @@
-import {
-  HStack,
-  Hyperlink,
-  MenuIcon,
-  MenuItem,
-  useDisclosure,
-} from "@carbon/react";
+import { HStack, MenuIcon, MenuItem, useDisclosure } from "@carbon/react";
+import { formatDate } from "@carbon/utils";
 import { useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo, useState } from "react";
 import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { Avatar, New, Table } from "~/components";
+import { Avatar, Hyperlink, New, Table } from "~/components";
 import { ConfirmDelete } from "~/components/Modals";
 import { usePermissions, useRealtime } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
@@ -50,13 +45,7 @@ const PurchaseInvoicesTable = memo(
           accessorKey: "invoiceId",
           header: "Invoice Number",
           cell: ({ row }) => (
-            <Hyperlink
-              onClick={
-                row.original?.id !== null
-                  ? () => navigate(path.to.purchaseInvoice(row.original.id!))
-                  : undefined
-              }
-            >
+            <Hyperlink to={path.to.purchaseInvoiceDetails(row.original.id!)}>
               {row.original?.invoiceId}
             </Hyperlink>
           ),
@@ -119,7 +108,7 @@ const PurchaseInvoicesTable = memo(
         {
           accessorKey: "createdAt",
           header: "Created At",
-          cell: (item) => item.getValue(),
+          cell: (item) => formatDate(item.getValue<string>()),
         },
         {
           accessorKey: "updatedByFullName",
@@ -136,11 +125,12 @@ const PurchaseInvoicesTable = memo(
         {
           accessorKey: "updatedAt",
           header: "Updated At",
-          cell: (item) => item.getValue(),
+          cell: (item) => formatDate(item.getValue<string>()),
         },
       ];
+
       return [...defaultColumns, ...customColumns];
-    }, [navigate, customColumns, suppliers]);
+    }, [customColumns, suppliers]);
 
 
     const renderContextMenu = useMemo(() => {

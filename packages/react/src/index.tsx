@@ -106,7 +106,7 @@ import { HStack } from "./HStack";
 import { HTML } from "./HTML";
 import { Heading } from "./Heading";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./HoverCard";
-import { Hyperlink } from "./Hyperlink";
+
 import { IconButton } from "./IconButton";
 import type { InputProps } from "./Input";
 import {
@@ -325,7 +325,6 @@ export {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-  Hyperlink,
   IconButton,
   Input,
   InputGroup,
