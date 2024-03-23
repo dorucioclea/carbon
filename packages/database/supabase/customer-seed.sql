@@ -1,7 +1,9 @@
-INSERT INTO "customerType" (name, protected, "createdBy") VALUES
-('Retail', false, '24df39db-d58f-465d-b740-0935a8faaac5'),
-('Wholesale', false, '24df39db-d58f-465d-b740-0935a8faaac5'),
-('Enterprise', false, '24df39db-d58f-465d-b740-0935a8faaac5');
+WITH UserData AS (
+    SELECT id FROM "user" WHERE email = 'admin@carbon.us.org'
+) INSERT INTO "customerType" (name, protected, "createdBy") VALUES
+('Retail', false, (SELECT id FROM UserData)),
+('Wholesale', false, (SELECT id FROM UserData)),
+('Enterprise', false, (SELECT id FROM UserData));
 
 INSERT INTO customer (
     name,
@@ -21,7 +23,6 @@ INSERT INTO customer (
     (SELECT id FROM "customerType" WHERE name = 'Wholesale'),
     NOW()
 ),
--- New entries below
 (
     'Crestone LLC',
     '555666777',

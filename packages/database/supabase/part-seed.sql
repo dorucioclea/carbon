@@ -1,16 +1,30 @@
-INSERT INTO "partGroup"(
+WITH UserData AS (
+    SELECT id FROM "user" WHERE email = 'admin@carbon.us.org'
+) INSERT INTO "partGroup"(
     name,
     description,
     active,
     "createdBy"
 ) VALUES
-('Engine Components', 'Parts related to engine assemblies', true, (SELECT id FROM "user" WHERE email = 'admin@carbon.us.org')
+('Engine Components', 'Parts related to engine assemblies', true, 
+  (SELECT id FROM UserData)
 ),
-('Suspension Parts', 'Components for vehicle suspension systems', true, (SELECT id FROM "user" WHERE email = 'admin@carbon.us.org')),
-('Electrical Systems', 'Parts for vehicle electrical systems, including lighting and batteries', true, (SELECT id FROM "user" WHERE email = 'admin@carbon.us.org')),
-('Braking Systems', 'Components related to vehicle braking systems', true, (SELECT id FROM "user" WHERE email = 'admin@carbon.us.org')),
-('Fuel Systems', 'Parts for fuel storage and delivery in vehicles', true, (SELECT id FROM "user" WHERE email = 'admin@carbon.us.org'));
+('Suspension Parts', 'Components for vehicle suspension systems', true, 
+  (SELECT id FROM UserData)
+),
+('Electrical Systems', 'Parts for vehicle electrical systems, including lighting and batteries', true,
+  (SELECT id FROM UserData)
+),
+('Braking Systems', 'Components related to vehicle braking systems', true,
+  (SELECT id FROM UserData)
+),
+('Fuel Systems', 'Parts for fuel storage and delivery in vehicles', true, 
+  (SELECT id FROM UserData)
+);
 
+WITH UserData AS (
+    SELECT id FROM "user" WHERE email = 'admin@carbon.us.org'
+) 
 INSERT INTO part (
     id,
     name,
@@ -38,7 +52,7 @@ INSERT INTO part (
     'PCS',
     true,
     false,
-    (SELECT id FROM "user" WHERE email = 'admin@carbon.us.org'),
+      (SELECT id FROM UserData),
     NOW()
 ),
 (
@@ -53,6 +67,7 @@ INSERT INTO part (
     'PCS',
     true,
     false,
-    (SELECT id FROM "user" WHERE email = 'admin@carbon.us.org'),
+    (SELECT id FROM UserData),
     NOW()
 );
+
