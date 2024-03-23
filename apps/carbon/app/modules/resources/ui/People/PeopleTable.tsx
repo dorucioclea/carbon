@@ -11,7 +11,6 @@ import { memo, useCallback, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
 import { Avatar, Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
-import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { AttributeCategory, Person } from "~/modules/resources";
 import { DataType } from "~/modules/shared";
 import { path } from "~/utils/path";
@@ -99,7 +98,6 @@ const PeopleTable = memo(
       [data]
     );
 
-    const customColumns = useCustomColumns("people");
     const columns = useMemo<ColumnDef<(typeof rows)[number]>[]>(() => {
       const defaultColumns: ColumnDef<(typeof rows)[number]>[] = [
         {
@@ -164,8 +162,8 @@ const PeopleTable = memo(
         }
       });
 
-      return [...defaultColumns, ...additionalColumns, ...customColumns];
-    }, [attributeCategories, navigate, renderGenericAttribute, customColumns]);
+      return [...defaultColumns, ...additionalColumns];
+    }, [attributeCategories, navigate, renderGenericAttribute]);
 
     const renderContextMenu = useMemo(() => {
       return permissions.can("update", "resources")

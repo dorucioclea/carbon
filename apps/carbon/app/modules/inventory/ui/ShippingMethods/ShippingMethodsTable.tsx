@@ -25,7 +25,8 @@ const ShippingMethodsTable = memo(
 
     const rows = useMemo(() => data, [data]);
 
-    const customColumns = useCustomColumns("shippingMethod");
+    const customColumns =
+      useCustomColumns<(typeof data)[number]>("shippingMethod");
 
     const columns = useMemo<ColumnDef<(typeof data)[number]>[]>(() => {
       let result: ColumnDef<(typeof rows)[number]>[] = [
@@ -49,7 +50,7 @@ const ShippingMethodsTable = memo(
           cell: (item) => item.getValue(),
         },
       ];
-      result = [...result, customColumns];
+      result = [...result, ...customColumns];
 
       return hasAccounting
         ? result.concat([

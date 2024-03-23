@@ -29,7 +29,6 @@ import { VscOpenPreview } from "react-icons/vsc";
 import { Avatar, Table } from "~/components";
 import { Confirm, ConfirmDelete } from "~/components/Modals";
 import { useUrlParams } from "~/hooks";
-import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Document, DocumentLabel } from "~/modules/documents";
 import { DocumentIcon } from "~/modules/documents";
 import { path } from "~/utils/path";
@@ -143,9 +142,8 @@ const DocumentsTable = memo(({ data, count, labels }: DocumentsTableProps) => {
     [favorite, filter]
   );
 
-  const customColumns = useCustomColumns("document");
   const columns = useMemo<ColumnDef<Document>[]>(() => {
-    const defaultColumns = [
+    return [
       {
         accessorKey: "name",
         header: "Name",
@@ -291,7 +289,6 @@ const DocumentsTable = memo(({ data, count, labels }: DocumentsTableProps) => {
         cell: (item) => item.getValue(),
       },
     ];
-    return [...defaultColumns, ...customColumns];
   }, [
     download,
     isImage,
@@ -302,7 +299,6 @@ const DocumentsTable = memo(({ data, count, labels }: DocumentsTableProps) => {
     onLabel,
     revalidator,
     setLabel,
-    customColumns,
   ]);
 
   const actions = useMemo(() => {

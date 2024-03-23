@@ -3,7 +3,6 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { Table } from "~/components";
 import { EditableList } from "~/components/Editable";
-import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type {
   AccountListItem,
   PurchasingPostingGroup,
@@ -44,10 +43,8 @@ const PurchasingPostingGroupsTable = ({
     }));
   }, [incomeStatementAccounts]);
 
-  const customColumns = useCustomColumns("purchasingPostingGroup");
-
   const columns = useMemo<ColumnDef<PurchasingPostingGroup>[]>(() => {
-    const defaultColumns = [
+    return [
       {
         id: "partGroup",
         header: "Part Group",
@@ -104,8 +101,7 @@ const PurchasingPostingGroupsTable = ({
         cell: (item) => item.getValue(),
       },
     ];
-    return [...defaultColumns, ...customColumns];
-  }, [supplierTypes, partGroups, customColumns]);
+  }, [supplierTypes, partGroups]);
 
   const editableComponents = useMemo(
     () => ({

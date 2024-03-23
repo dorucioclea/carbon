@@ -13,7 +13,6 @@ import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
 import { Avatar, Table } from "~/components";
 import { usePermissions } from "~/hooks";
-import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Abilities, AbilityDatum } from "~/modules/resources";
 import { path } from "~/utils/path";
 import AbilityChart from "./AbilityChart";
@@ -63,9 +62,8 @@ const AbilitiesTable = memo(({ data, count }: AbilitiesTableProps) => {
       : [],
   }));
 
-  const customColumns = useCustomColumns("ability");
   const columns = useMemo<ColumnDef<(typeof rows)[number]>[]>(() => {
-    const defaultColumns = [
+    return [
       {
         accessorKey: "name",
         header: "Ability",
@@ -114,8 +112,7 @@ const AbilitiesTable = memo(({ data, count }: AbilitiesTableProps) => {
         ),
       },
     ];
-    return [...defaultColumns, ...customColumns];
-  }, [navigate, customColumns]);
+  }, [navigate]);
 
   const renderContextMenu = useCallback(
     (row: (typeof rows)[number]) => {

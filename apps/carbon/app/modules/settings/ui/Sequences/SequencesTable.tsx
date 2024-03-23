@@ -5,7 +5,6 @@ import { memo, useCallback, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
 import { Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
-import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Sequence } from "~/modules/settings";
 import { path } from "~/utils/path";
 
@@ -19,9 +18,8 @@ const SequencesTable = memo(({ data, count }: SequencesTableProps) => {
   const navigate = useNavigate();
   const permissions = usePermissions();
 
-  const customColumns = useCustomColumns("sequence");
   const columns = useMemo<ColumnDef<(typeof data)[number]>[]>(() => {
-    const defaultColumns = [
+    return [
       {
         accessorKey: "name",
         header: "Name",
@@ -57,8 +55,7 @@ const SequencesTable = memo(({ data, count }: SequencesTableProps) => {
         cell: (item) => item.getValue(),
       },
     ];
-    return [...defaultColumns, ...customColumns];
-  }, [navigate, customColumns]);
+  }, [navigate]);
 
   const renderContextMenu = useCallback(
     (row: (typeof data)[number]) => {
