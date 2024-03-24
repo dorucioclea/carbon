@@ -59,5 +59,8 @@
     "packages/*",
     "shared",
     "www"
-  ]
+  ],
+  "dependencies": {
+    "posthog-js": "^1.116.5"
+  }
 }

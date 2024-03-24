@@ -4,6 +4,7 @@ import {
   validationError,
   validator,
 } from "@carbon/remix-validated-form";
+import posthog from "posthog-js";
 import type {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -72,6 +73,10 @@ export default function LoginRoute() {
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get("redirectTo") ?? undefined;
 
+  const handleClick = () => {
+    posthog.capture("sign_in_clicked");
+  };
+
   return (
     <>
       <img
@@ -102,7 +107,7 @@ export default function LoginRoute() {
             <Input name="email" label="Email" />
             <Password name="password" label="Password" type="password" />
             <Hidden name="redirectTo" value={redirectTo} type="hidden" />
-            <Submit size="lg" className="w-full">
+            <Submit size="lg" className="w-full" onClick={handleClick}>
               Sign In
             </Submit>
             <Button variant="link" asChild className="w-full">
