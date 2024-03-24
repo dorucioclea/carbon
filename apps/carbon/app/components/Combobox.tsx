@@ -72,9 +72,9 @@ const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
             </CommandTrigger>
           </PopoverTrigger>
           <PopoverContent className="min-w-[200px] w-[--radix-popover-trigger-width] p-0">
-            <ScrollArea>
-              <Command>
-                <CommandInput placeholder="Search..." className="h-9" />
+            <Command>
+              <CommandInput placeholder="Search..." className="h-9" />
+              <ScrollArea className="overflow-auto h-96">
                 <CommandEmpty>No option found.</CommandEmpty>
                 <CommandGroup>
                   {options.map((option) => (
@@ -109,8 +109,8 @@ const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
                     </CommandItem>
                   ))}
                 </CommandGroup>
-              </Command>
-            </ScrollArea>
+              </ScrollArea>
+            </Command>
           </PopoverContent>
         </Popover>
         {isClearable && !isReadOnly && value && (
