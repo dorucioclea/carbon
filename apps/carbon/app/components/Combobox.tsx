@@ -10,6 +10,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  ScrollArea,
   cn,
 } from "@carbon/react";
 import type { ComponentPropsWithoutRef } from "react";
@@ -71,43 +72,45 @@ const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
             </CommandTrigger>
           </PopoverTrigger>
           <PopoverContent className="min-w-[200px] w-[--radix-popover-trigger-width] p-0">
-            <Command>
-              <CommandInput placeholder="Search..." className="h-9" />
-              <CommandEmpty>No option found.</CommandEmpty>
-              <CommandGroup>
-                {options.map((option) => (
-                  <CommandItem
-                    value={
-                      typeof option.label === "string"
-                        ? option.label + option.helper
-                        : undefined
-                    }
-                    key={option.value}
-                    onSelect={() => {
-                      onChange?.(option.value);
-                      setOpen(false);
-                    }}
-                  >
-                    {option.helper ? (
-                      <div className="flex flex-col">
-                        <p>{option.label}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {option.helper}
-                        </p>
-                      </div>
-                    ) : (
-                      option.label
-                    )}
-                    <RxCheck
-                      className={cn(
-                        "ml-auto h-4 w-4",
-                        option.value === value ? "opacity-100" : "opacity-0"
+            <ScrollArea>
+              <Command>
+                <CommandInput placeholder="Search..." className="h-9" />
+                <CommandEmpty>No option found.</CommandEmpty>
+                <CommandGroup>
+                  {options.map((option) => (
+                    <CommandItem
+                      value={
+                        typeof option.label === "string"
+                          ? option.label + option.helper
+                          : undefined
+                      }
+                      key={option.value}
+                      onSelect={() => {
+                        onChange?.(option.value);
+                        setOpen(false);
+                      }}
+                    >
+                      {option.helper ? (
+                        <div className="flex flex-col">
+                          <p>{option.label}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {option.helper}
+                          </p>
+                        </div>
+                      ) : (
+                        option.label
                       )}
-                    />
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </Command>
+                      <RxCheck
+                        className={cn(
+                          "ml-auto h-4 w-4",
+                          option.value === value ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </Command>
+            </ScrollArea>
           </PopoverContent>
         </Popover>
         {isClearable && !isReadOnly && value && (
