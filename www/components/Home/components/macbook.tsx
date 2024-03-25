@@ -36,6 +36,7 @@ import {
   FormMessage,
 } from "../../ui/form";
 import { Input } from "../../ui/input";
+import { supabase } from "../../../utils/supabase";
 
 const MacbookScroll = ({
   showGradient,
@@ -46,7 +47,7 @@ const MacbookScroll = ({
   badge?: React.ReactNode;
 }) => {
   const formSchema = z.object({
-    email: z.string().email().min(5),
+    email: z.string().email(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -57,15 +58,12 @@ const MacbookScroll = ({
   });
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await fetch("api/submitEmail", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
+      const { error } = await supabase
+        .from("leads")
+        .insert([{ email: values.email }]);
+      if (error) {
+        throw error;
       }
-      // const data = await response.json();
     } catch (error) {
       console.error("Failed to submit email:", error);
     }
@@ -105,7 +103,7 @@ const MacbookScroll = ({
       ref={ref}
       className="min-h-[200vh] flex flex-col items-center py-0 md:py-[12rem] justify-start flex-shrink-0 [perspective:800px] transform md:scale-100  scale-[0.75] sm:scale-[0.9] text-center"
     >
-      <h1 className="max-w-5xl mx-auto text-7xl font-extrabold tracking-tighter leading-tighter sm:text-7xl lg:text-6xl xl:text-7xl">
+      <h1 className="max-w-7xl mx-auto text-7xl font-extrabold tracking-tighter leading-tighter sm:text-7xl lg:text-6xl xl:text-7xl">
         <span
           className="
           bg-gradient-to-b
