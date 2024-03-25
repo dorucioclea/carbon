@@ -1,304 +1,76 @@
+@tailwind base;
+@tailwind components;
 @tailwind utilities;
 
-:root {
-  --radius: 12px;
-}
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
 
-code {
-  @apply text-sm;
-}
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
 
-:root {
-  --nextra-primary-hue: 230deg;
-}
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
 
-.dark {
-  --nextra-primary-hue: 161deg;
-}
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
 
-body {
-  background: linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 1) 300px
-    ),
-    fixed 0 0 / 20px 20px radial-gradient(#d1d1d1 1px, transparent 0),
-    fixed 10px 10px / 20px 20px radial-gradient(#d1d1d1 1px, transparent 0);
-}
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
 
-.dark .invert-on-dark {
-  filter: invert(1) brightness(1.8);
-}
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
 
-#__next .nextra-body > main h1 {
-  margin-top: 0;
-}
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
 
-.dark body article pre {
-  background-color: transparent;
-  border: 1px solid rgba(224, 243, 255, 0.1);
-  border-radius: 5px;
-}
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
 
-.light body article pre {
-  background-color: transparent;
-  border: 1px solid #e5e7eb;
-  border-radius: 5px;
-}
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
 
-.light body {
-  --shiki-color-text: #111;
-  --shiki-token-constant: var(--shiki-color-text);
-  --shiki-token-comment: #999;
-  --shiki-token-keyword: #ff0078;
-  --shiki-token-function: #2a0093;
-  --shiki-token-string-expression: #028265;
-  --shiki-token-punctuation: var(--shiki-color-text);
-  --shiki-token-string: #797afa;
-}
+    --radius: 0.5rem;
+  }
 
-.dark body {
-  --shiki-color-text: #eaeaea;
-  --shiki-token-constant: var(--shiki-color-text);
-  --shiki-token-comment: #666;
-  --shiki-token-keyword: #ff0078;
-  --shiki-token-function: #12ff00;
-  --shiki-token-string-expression: #50e3c2;
-  --shiki-token-punctuation: var(--shiki-color-text);
-  --shiki-token-string: #797afa;
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
 
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, #111 300px),
-    fixed 0 0 / 20px 20px radial-gradient(#313131 1px, transparent 0),
-    fixed 10px 10px / 20px 20px radial-gradient(#313131 1px, transparent 0);
-}
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
 
-code[data-language="sh"] {
-  --shiki-token-string: var(--shiki-color-text);
-}
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
 
-#__next article.nextra-body h1 {
-  font-size: 2em;
-}
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
 
-#__next article.nextra-body h2 {
-  font-size: 1.5em;
-}
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
 
-#__next article.nextra-body h3 {
-  font-size: 1.25em;
-}
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
 
-#__next article.nextra-body h4 {
-  font-size: 1em;
-}
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
 
-#__next article.nextra-body h5 {
-  font-size: 0.875em;
-}
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
 
-#__next article.nextra-body h5 {
-  font-size: 0.85em;
-}
-
-.light .nx-text-primary-600 {
-  --tw-text-opacity: 1;
-  color: hsl(
-    var(--nextra-primary-hue) var(--nextra-primary-saturation) 35% /
-      var(--tw-text-opacity)
-  );
-}
-
-.nextra-nav-container {
-  position: fixed;
-}
-
-.nextra-nav-container + div {
-  min-height: 100vh;
-}
-
-section > section {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-}
-
-article {
-  padding-top: 70px;
-}
-
-aside {
-  padding-top: 15px;
-}
-
-/* Credit: https://cmdk.paco.me/ */
-
-.background {
-  width: 100vw;
-  min-height: 100vh;
-  position: fixed;
-  top: 0;
-  display: flex;
-  justify-content: center;
-  padding: 120px 24px 160px 24px;
-  pointer-events: none;
-}
-
-.background:before {
-  background: radial-gradient(circle, rgba(2, 0, 36, 0) 0, #fafafa 100%);
-  position: absolute;
-  content: "";
-  z-index: 2;
-  width: 100%;
-  height: 100%;
-  top: 0;
-}
-
-.dark .background:before {
-  background: radial-gradient(circle, rgba(2, 0, 36, 0) 0, #161616 100%);
-  position: absolute;
-  content: "";
-  z-index: 2;
-  width: 100%;
-  height: 100%;
-  top: 0;
-}
-
-.background:after {
-  content: "";
-  background-image: url("/grid.svg");
-  z-index: 1;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  opacity: 0.4;
-  filter: invert(1);
-}
-
-.dark .background:after {
-  filter: invert(0);
-}
-
-.gradient {
-  height: fit-content;
-  z-index: 3;
-  width: 100%;
-  max-width: 640px;
-  background-image: radial-gradient(
-      at 27% 37%,
-      hsla(215, 98%, 61%, 1) 0px,
-      transparent 0%
-    ),
-    radial-gradient(at 97% 21%, hsla(125, 60%, 72%, 1) 0px, transparent 55%),
-    radial-gradient(at 52% 99%, hsla(354, 40%, 61%, 1) 0px, transparent 55%),
-    radial-gradient(at 10% 29%, hsla(256, 50%, 67%, 1) 0px, transparent 55%),
-    radial-gradient(at 97% 96%, hsla(38, 40%, 74%, 1) 0px, transparent 55%),
-    radial-gradient(at 33% 50%, hsla(222, 60%, 73%, 1) 0px, transparent 55%),
-    radial-gradient(at 79% 53%, hsla(343, 20%, 79%, 1) 0px, transparent 55%);
-  position: absolute;
-  content: "";
-  width: 100%;
-  height: 100%;
-  filter: blur(100px) saturate(150%);
-  top: 80px;
-  opacity: 0.15;
-}
-
-@media screen and (max-width: 640px) {
-  .content {
-    display: none;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
   }
 }
 
-/* Glow specific styles */
-
-.round {
-  border-radius: var(--radius);
-}
-
-.dark [data-glow] {
-  --border-size: calc(var(--border, 2) * 1px);
-  --spotlight-size: calc(var(--size, 150) * 1px);
-  --hue: calc(var(--base) + (var(--xp, 0) * var(--spread, 0)));
-  background-image: radial-gradient(
-    var(--spotlight-size) var(--spotlight-size) at calc(var(--x, 0) * 1px)
-      calc(var(--y, 0) * 1px),
-    hsl(
-      var(--hue, 210) calc(var(--saturation, 100) * 1%)
-        calc(var(--lightness, 70) * 1%) / var(--bg-spot-opacity, 0.1)
-    ),
-    transparent
-  );
-  background-color: var(--backdrop, transparent);
-  background-size: calc(100% + (2 * var(--border-size)))
-    calc(100% + (2 * var(--border-size)));
-  background-position: 50% 50%;
-  background-attachment: fixed;
-  border: var(--border-size) solid var(--backup-border);
-  position: relative;
-}
-
-.dark [data-glow]::before,
-.dark [data-glow]::after {
-  pointer-events: none;
-  content: "";
-  position: absolute;
-  inset: calc(var(--border-size) * -1);
-  border: var(--border-size) solid transparent;
-  border-radius: var(--radius);
-  background-attachment: fixed;
-  background-size: calc(100% + (2 * var(--border-size)))
-    calc(100% + (2 * var(--border-size)));
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
-  mask: linear-gradient(transparent, transparent), linear-gradient(white, white);
-  mask-clip: padding-box, border-box;
-  mask-composite: intersect;
-}
-
-/* This is the emphasis light */
-.dark [data-glow]::before {
-  background-image: radial-gradient(
-    calc(var(--spotlight-size) * 0.75) calc(var(--spotlight-size) * 0.75) at
-      calc(var(--x, 0) * 1px) calc(var(--y, 0) * 1px),
-    hsl(
-      var(--hue, 210) calc(var(--saturation, 100) * 1%)
-        calc(var(--lightness, 50) * 1%) / var(--border-spot-opacity, 1)
-    ),
-    transparent 100%
-  );
-  z-index: 2;
-  filter: brightness(2);
-}
-/* This is the spotlight */
-.dark [data-glow]::after {
-  background-image: radial-gradient(
-    calc(var(--spotlight-size) * 0.5) calc(var(--spotlight-size) * 0.5) at
-      calc(var(--x, 0) * 1px) calc(var(--y, 0) * 1px),
-    hsl(0 100% 100% / var(--border-light-opacity, 1)),
-    transparent 100%
-  );
-  z-index: 2;
-}
-
-.dark [data-glow] [data-glow] {
-  position: absolute;
-  inset: 0;
-  will-change: filter;
-}
-
-.dark [data-glow] > [data-glow] {
-  border-radius: calc(var(--radius) * 1px);
-  border-width: calc(var(--border-size) * 20);
-  filter: blur(calc(var(--border-size) * 10));
-  background: none;
-  pointer-events: none;
-}
-
-.dark [data-glow] > [data-glow]::before {
-  inset: -10px;
-  border-width: 10px;
-}
-
-.dark [data-glow] [data-glow] {
-  border: none;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

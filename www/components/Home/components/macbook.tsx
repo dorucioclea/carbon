@@ -24,6 +24,8 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { cn } from "../../../utils/cn";
+import { Button } from "../../ui/button";
+import { Input } from "../../ui/input";
 
 const MacbookScroll = ({
   showGradient,
@@ -65,7 +67,7 @@ const MacbookScroll = ({
   return (
     <div
       ref={ref}
-      className="min-h-[200vh]  flex flex-col items-center py-0 md:py-[12rem] justify-start flex-shrink-0 [perspective:800px] transform md:scale-100  scale-[0.75] sm:scale-[0.9] text-center"
+      className="min-h-[200vh] flex flex-col items-center py-0 md:py-[12rem] justify-start flex-shrink-0 [perspective:800px] transform md:scale-100  scale-[0.75] sm:scale-[0.9] text-center"
     >
       <motion.h1
         style={{
@@ -74,17 +76,24 @@ const MacbookScroll = ({
         }}
         className="max-w-5xl mx-auto text-7xl font-extrabold tracking-tighter leading-tighter sm:text-7xl lg:text-6xl xl:text-7xl"
       >
-        <span className="dark:bg-clip-text dark:text-transparent dark:bg-gradient-to-b dark:from-white  dark:to-zinc-400">
-          ERP for
-        </span>{" "}
-        <span className="bg-gradient-to-r bg-clip-text text-transparent dark:bg-gradient-to-b dark:from-[#3ECF8E] dark:via-[#3ECF8E] dark:to-[#3ecfb2] from-black via-orange-600 to-amber-500 ">
-          the builders
+        <span
+          className="
+          bg-gradient-to-t
+        from-gray-600 to-black bg-clip-text text-transparent
+        dark:bg-clip-text dark:text-transparent dark:bg-gradient-to-b dark:from-white  dark:to-zinc-400"
+        >
+          ERP for the builders.
         </span>
       </motion.h1>
-      <p className="mt-6 nx-text-xl font-medium leading-tight text-black/60 dark:text-white/60 sm:nx-text-2xl md:nx-text-3xl lg:nx-text-4xl mb-20">
-        Carbon is an open-source starting point for manufacturing
-      </p>
-      {/* Lid */}
+      <div className="max-w-xl flex flex-col gap-6 items-center mt-6 mb-20">
+        <p className="nx-text-2xl font-medium leading-tight text-black/80 dark:text-white/80 sm:nx-text-2xl md:nx-text-3xl lg:nx-text-4xl">
+          Carbon is an open-source ERP to meet your exact manufacturing needs.
+        </p>
+        <div className="flex w-full max-w-sm items-center space-x-2">
+          <Input type="email" placeholder="Email" />
+          <Button type="submit">Get in touch</Button>
+        </div>
+      </div>
       <Lid
         scaleX={scaleX}
         scaleY={scaleY}
