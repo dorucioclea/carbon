@@ -1,3 +1,4 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   IconBrightnessDown,
   IconBrightnessUp,
@@ -23,8 +24,17 @@ import type { MotionValue } from "framer-motion";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { cn } from "../../../utils/cn";
 import { Button } from "../../ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "../../ui/form";
 import { Input } from "../../ui/input";
 
 const MacbookScroll = ({
@@ -35,6 +45,31 @@ const MacbookScroll = ({
   title?: string | React.ReactNode;
   badge?: React.ReactNode;
 }) => {
+  const formSchema = z.object({
+    email: z.string().email().min(5),
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const response = await fetch("api/submitEmail", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      // const data = await response.json();
+    } catch (error) {
+      console.error("Failed to submit email:", error);
+    }
+  }
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -61,38 +96,54 @@ const MacbookScroll = ({
   );
   const translate = useTransform(scrollYProgress, [0, 1], [0, 1500]);
   const rotate = useTransform(scrollYProgress, [0.1, 0.12, 0.3], [-28, -28, 0]);
-  const textTransform = useTransform(scrollYProgress, [0, 0.3], [0, 100]);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.1 }}
       ref={ref}
       className="min-h-[200vh] flex flex-col items-center py-0 md:py-[12rem] justify-start flex-shrink-0 [perspective:800px] transform md:scale-100  scale-[0.75] sm:scale-[0.9] text-center"
     >
-      <motion.h1
-        style={{
-          translateY: textTransform,
-          opacity: textOpacity,
-        }}
-        className="max-w-5xl mx-auto text-7xl font-extrabold tracking-tighter leading-tighter sm:text-7xl lg:text-6xl xl:text-7xl"
-      >
+      <h1 className="max-w-5xl mx-auto text-7xl font-extrabold tracking-tighter leading-tighter sm:text-7xl lg:text-6xl xl:text-7xl">
         <span
           className="
-          bg-gradient-to-t
+          bg-gradient-to-b
         from-gray-600 to-black bg-clip-text text-transparent
         dark:bg-clip-text dark:text-transparent dark:bg-gradient-to-b dark:from-white  dark:to-zinc-400"
         >
           ERP for the builders.
         </span>
-      </motion.h1>
-      <div className="max-w-xl flex flex-col gap-6 items-center mt-6 mb-20">
-        <p className="nx-text-2xl font-medium leading-tight text-black/80 dark:text-white/80 sm:nx-text-2xl md:nx-text-3xl lg:nx-text-4xl">
+      </h1>
+      <div className="flex flex-col gap-6 items-center mt-6 mb-20">
+        <p className="max-w-xl nx-text-2xl font-medium leading-tight text-black/80 dark:text-white/80 sm:nx-text-2xl md:nx-text-3xl lg:nx-text-4xl">
           Carbon is an open-source ERP to meet your exact manufacturing needs.
         </p>
-        <div className="flex w-full max-w-sm items-center space-x-2">
-          <Input type="email" placeholder="Email" />
-          <Button type="submit">Get in touch</Button>
-        </div>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex w-full max-w-sm items-start space-x-2"
+          >
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      className="w-60"
+                      type="email"
+                      placeholder="Email"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit">Get early access</Button>
+          </form>
+        </Form>
       </div>
       <Lid
         scaleX={scaleX}
@@ -123,7 +174,7 @@ const MacbookScroll = ({
           <div className="h-40 w-full absolute bottom-0 inset-x-0 bg-gradient-to-t dark:from-black from-white via-white dark:via-black to-transparent z-50"></div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

@@ -2,6 +2,8 @@
   "name": "www",
   "version": "0.0.1",
   "dependencies": {
+    "@hookform/resolvers": "^3.3.4",
+    "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-slot": "^1.0.2",
     "@tabler/icons-react": "2.47.0",
     "class-variance-authority": "^0.7.0",
@@ -14,9 +16,11 @@
     "nextra-theme-docs": "^2.5.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.51.1",
     "react-icons": "^4.12.0",
     "tailwind-merge": "^2.2.1",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@carbon/tsconfig": "*",
