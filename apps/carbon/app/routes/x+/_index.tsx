@@ -27,7 +27,9 @@ export default function AppIndexRoute() {
             className="flex flex-col gap-6 items-center justify-center py-8 bg-gradient-to-bl from-card to-background rounded-lg shadow text-center group ring-2 ring-transparent hover:ring-white/10 cursor-pointer"
           >
             <module.icon className="text-3xl" />
-            <p className="text-sm">{module.name}</p>
+            <span className="text-sm py-1 px-4 border border-border rounded-full group-hover:bg-accent">
+              {module.name}
+            </span>
           </Link>
         ))}
       </div>
