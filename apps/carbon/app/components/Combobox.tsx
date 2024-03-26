@@ -74,7 +74,7 @@ const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
           <PopoverContent className="min-w-[200px] w-[--radix-popover-trigger-width] p-0">
             <Command>
               <CommandInput placeholder="Search..." className="h-9" />
-              <ScrollArea className="overflow-auto h-96">
+              <ScrollArea className="overflow-auto max-h-96">
                 <CommandEmpty>No option found.</CommandEmpty>
                 <CommandGroup>
                   {options.map((option) => (
