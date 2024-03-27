@@ -130,7 +130,7 @@ const Filter = forwardRef<HTMLButtonElement, FilterProps>(
             </Button>
           ) : (
             <Button
-              rightIcon={<BsFilter />}
+              leftIcon={<BsFilter />}
               role="combobox"
               ref={ref}
               variant="secondary"

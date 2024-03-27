@@ -935,7 +935,11 @@ export async function upsertSupplierStatus(
       })
 ) {
   if ("createdBy" in supplierStatus) {
-    return client.from("supplierStatus").insert([supplierStatus]);
+    return client
+      .from("supplierStatus")
+      .insert([supplierStatus])
+      .select("id")
+      .single();
   } else {
     return client
       .from("supplierStatus")
