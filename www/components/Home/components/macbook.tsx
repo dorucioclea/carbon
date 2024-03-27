@@ -27,6 +27,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { cn } from "../../../utils/cn";
+import { supabase } from "../../../utils/supabase";
 import { Button } from "../../ui/button";
 import {
   Form,
@@ -58,17 +59,16 @@ const MacbookScroll = ({
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await fetch("api/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
+      const response = await supabase
+        .from("leads")
+        .insert({ email: values.email });
 
-      if (!response.ok) {
+      if (response.error) {
         form.setError("email", {
           type: "manual",
-          message: "Failed to submit email",
+          message: "Failed to insert email",
         });
+        console.error(response.error.message);
       } else {
         form.reset();
         form.clearErrors();
