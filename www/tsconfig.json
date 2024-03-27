@@ -2,9 +2,11 @@
   "exclude": ["node_modules"],
   "extends": "@carbon/tsconfig/nextjs.json",
   "compilerOptions": {
-    "rootDir": "pages",
     "outDir": "dist",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./src/*"]
+    }
   },
   "include": ["next-env.d.ts", "pages"]
 }

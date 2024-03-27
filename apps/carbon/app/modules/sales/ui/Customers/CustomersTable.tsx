@@ -67,7 +67,7 @@ const CustomersTable = memo(
         },
         {
           id: "accountManagerId",
-          header: "Updated By",
+          header: "Account Manager",
           cell: ({ row }) => (
             <EmployeeAvatar employeeId={row.original.accountManagerId} />
           ),

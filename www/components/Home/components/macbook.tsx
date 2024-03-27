@@ -36,7 +36,6 @@ import {
   FormMessage,
 } from "../../ui/form";
 import { Input } from "../../ui/input";
-import { supabase } from "../../../utils/supabase";
 
 const MacbookScroll = ({
   showGradient,
@@ -56,14 +55,26 @@ const MacbookScroll = ({
       email: "",
     },
   });
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const { error } = await supabase
-        .from("leads")
-        .insert([{ email: values.email }]);
-      if (error) {
-        throw error;
+      const response = await fetch("api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) {
+        form.setError("email", {
+          type: "manual",
+          message: "Failed to submit email",
+        });
+      } else {
+        form.reset();
+        form.clearErrors();
       }
+
+      // const data = await response.json();
     } catch (error) {
       console.error("Failed to submit email:", error);
     }
@@ -103,19 +114,17 @@ const MacbookScroll = ({
       ref={ref}
       className="min-h-[200vh] flex flex-col items-center py-0 md:py-[12rem] justify-start flex-shrink-0 [perspective:800px] transform md:scale-100  scale-[0.75] sm:scale-[0.9] text-center"
     >
-      <h1 className="max-w-7xl mx-auto text-7xl font-extrabold tracking-tighter leading-tighter sm:text-7xl lg:text-6xl xl:text-7xl">
-        <span
-          className="
-          bg-gradient-to-b
-        from-gray-600 to-black bg-clip-text text-transparent
-        dark:bg-clip-text dark:text-transparent dark:bg-gradient-to-b dark:from-white  dark:to-zinc-400"
-        >
-          ERP for the builders.
+      <h1 className="max-w-5xl mx-auto text-7xl font-extrabold tracking-tighter leading-tighter sm:text-7xl lg:text-6xl xl:text-7xl">
+        <span className="dark:bg-clip-text dark:text-transparent dark:bg-gradient-to-b dark:from-white  dark:to-zinc-400">
+          ERP for
+        </span>{" "}
+        <span className="bg-gradient-to-r bg-clip-text text-transparent dark:bg-gradient-to-b dark:from-[#3ECF8E] dark:via-[#3ECF8E] dark:to-[#3ecfb2] from-black to-black">
+          the builders
         </span>
       </h1>
       <div className="flex flex-col gap-6 items-center mt-6 mb-20">
-        <p className="max-w-xl nx-text-2xl font-medium leading-tight text-black/80 dark:text-white/80 sm:nx-text-2xl md:nx-text-3xl lg:nx-text-4xl">
-          Carbon is an open-source ERP to meet your exact manufacturing needs.
+        <p className="max-w-lg nx-text-2xl font-medium leading-tight text-black/80 dark:text-white/80 sm:nx-text-2xl md:nx-text-3xl lg:nx-text-4xl">
+          Carbon is an open-source ERP to meet your exact manufacturing needs
         </p>
         <Form {...form}>
           <form

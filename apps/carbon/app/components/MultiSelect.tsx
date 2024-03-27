@@ -62,9 +62,10 @@ const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
             aria-controls={id}
             aria-expanded={open}
             role="combobox"
+            variant="secondary"
             className={cn(
               multiSelectTriggerVariants({ size, hasSelections }),
-              "px-2",
+              "bg-transparent px-2",
               className
             )}
             onClick={() => setOpen(!open)}
@@ -100,7 +101,7 @@ const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
                   ))}
                 </div>
               ) : (
-                <span className="text-muted-foreground text-sm">
+                <span className="text-muted-foreground">
                   {placeholder ?? "Select"}
                 </span>
               )}
