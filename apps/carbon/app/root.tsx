@@ -1,5 +1,5 @@
 // root.tsx
-import { Heading } from "@carbon/react";
+import { Heading, toast } from "@carbon/react";
 import { validator } from "@carbon/remix-validated-form";
 import type {
   ActionFunctionArgs,
@@ -19,7 +19,7 @@ import {
   useRouteError,
 } from "@remix-run/react";
 import { Analytics } from "@vercel/analytics/react";
-import React from "react";
+import React, { useEffect } from "react";
 import { getBrowserEnv } from "~/config/env";
 import { getMode, setMode } from "~/services/mode.server";
 import Background from "~/styles/background.css";
@@ -27,6 +27,7 @@ import NProgress from "~/styles/nprogress.css";
 import Tailwind from "~/styles/tailwind.css";
 import { error } from "~/utils/result";
 import { useMode } from "./hooks/useMode";
+import { getSessionFlash } from "./services/session.server";
 import { modeValidator } from "./types/validators";
 
 export function links() {
@@ -34,6 +35,7 @@ export function links() {
     { rel: "stylesheet", href: Tailwind },
     { rel: "stylesheet", href: Background },
     { rel: "stylesheet", href: NProgress },
+    { rel: "stylesheet", href: "/assets/theme.css" },
   ];
 }
 
@@ -58,15 +60,24 @@ export async function loader({ request }: LoaderFunctionArgs) {
     SUPABASE_API_URL,
     SUPABASE_ANON_PUBLIC,
   } = getBrowserEnv();
-  return json({
-    env: {
-      POSTHOG_API_HOST,
-      POSTHOG_PROJECT_PUBLIC_KEY,
-      SUPABASE_API_URL,
-      SUPABASE_ANON_PUBLIC,
+
+  const sessionFlash = await getSessionFlash(request);
+
+  return json(
+    {
+      env: {
+        POSTHOG_API_HOST,
+        POSTHOG_PROJECT_PUBLIC_KEY,
+        SUPABASE_API_URL,
+        SUPABASE_ANON_PUBLIC,
+      },
+      mode: getMode(request),
+      result: sessionFlash?.result,
     },
-    mode: getMode(request),
-  });
+    {
+      headers: sessionFlash?.headers,
+    }
+  );
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -118,6 +129,16 @@ function Document({
 export default function App() {
   const loaderData = useLoaderData<typeof loader>();
   const env = loaderData?.env ?? {};
+  const result = loaderData?.result;
+
+  /* Toast Messages */
+  useEffect(() => {
+    if (result?.success === true) {
+      toast.success(result.message);
+    } else if (result?.message) {
+      toast.error(result.message);
+    }
+  }, [result]);
 
   const mode = useMode();
 

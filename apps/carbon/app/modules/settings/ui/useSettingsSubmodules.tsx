@@ -1,4 +1,3 @@
-import { BsPaletteFill } from "react-icons/bs";
 import { CgSync } from "react-icons/cg";
 import { GoNumber } from "react-icons/go";
 import { MdOutlineDashboardCustomize } from "react-icons/md";
@@ -39,12 +38,6 @@ const settingsRoutes: AuthenticatedRouteGroup[] = [
         to: path.to.sequences,
         role: "employee",
         icon: <GoNumber />,
-      },
-      {
-        name: "Theme",
-        to: path.to.theme,
-        role: "employee",
-        icon: <BsPaletteFill />,
       },
     ],
   },

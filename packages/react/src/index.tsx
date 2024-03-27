@@ -9,7 +9,7 @@ import {
 } from "./Avatar";
 import { Badge, BadgeCloseButton } from "./Badge";
 import type { ButtonProps } from "./Button";
-import { Button } from "./Button";
+import { Button, buttonVariants } from "./Button";
 import {
   Card,
   CardAction,
@@ -428,6 +428,7 @@ export {
   TooltipTrigger,
   Tr,
   VStack,
+  buttonVariants,
   cn,
   getValidChildren,
   multiSelectTriggerVariants,

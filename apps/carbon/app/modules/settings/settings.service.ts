@@ -6,11 +6,7 @@ import type { GenericQueryFilters } from "~/utils/query";
 import { setGenericQueryFilters } from "~/utils/query";
 import { interpolateSequenceDate } from "~/utils/string";
 import { sanitize } from "~/utils/supabase";
-import type {
-  companyValidator,
-  sequenceValidator,
-  themeValidator,
-} from "./settings.models";
+import type { companyValidator, sequenceValidator } from "./settings.models";
 
 export async function getCompany(client: SupabaseClient<Database>) {
   const company = await client.from("company").select("*").single();
@@ -170,10 +166,6 @@ export async function getSequencesList(
   return client.from("sequence").select("id").eq("table", table).order("table");
 }
 
-export async function getTheme(client: SupabaseClient<Database>) {
-  return client.from("theme").select("*").single();
-}
-
 export async function insertCompany(
   client: SupabaseClient<Database>,
   company: z.infer<typeof companyValidator>
@@ -245,11 +237,4 @@ export async function updateSequence(
   }
 ) {
   return client.from("sequence").update(sanitize(sequence)).eq("table", table);
-}
-
-export async function updateTheme(
-  client: SupabaseClient<Database>,
-  theme: z.infer<typeof themeValidator> & { updatedBy: string }
-) {
-  return client.from("theme").update(theme).eq("id", true);
 }

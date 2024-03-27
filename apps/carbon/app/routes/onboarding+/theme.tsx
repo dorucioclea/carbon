@@ -24,14 +24,11 @@ import { RxCheck } from "react-icons/rx";
 import { Hidden, Submit } from "~/components/Form";
 import { useOnboarding } from "~/hooks";
 import { useMode } from "~/hooks/useMode";
-import type { Theme as ThemeValue } from "~/modules/settings";
-import { getTheme, themeValidator, updateTheme } from "~/modules/settings";
-import { requirePermissions } from "~/services/auth";
-import { flash } from "~/services/session.server";
+import { themeValidator, type Theme as ThemeValue } from "~/modules/settings";
+import { getTheme, setTheme } from "~/services/theme.server";
 import type { Handle } from "~/utils/handle";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
-import { error } from "~/utils/result";
 
 export const handle: Handle = {
   breadcrumb: "Theme",
@@ -39,22 +36,15 @@ export const handle: Handle = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
-    view: "settings",
-  });
-
-  const theme = await getTheme(client);
+  const theme = getTheme(request);
 
   return json({
-    theme: theme.data?.theme ?? "Carbon",
+    theme: theme ?? "zinc",
   });
 }
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client, userId } = await requirePermissions(request, {
-    update: "settings",
-  });
   const formData = await request.formData();
 
   const validation = await validator(themeValidator).validate(formData);
@@ -66,17 +56,9 @@ export async function action({ request }: ActionFunctionArgs) {
   const { next, theme } = validation.data;
   if (!next) throw new Error("Fatal: next is required");
 
-  const update = await updateTheme(client, {
-    theme,
-    updatedBy: userId,
+  return redirect(next, {
+    headers: { "Set-Cookie": setTheme(theme) },
   });
-  if (update.error)
-    return json(
-      {},
-      await flash(request, error(update.error, "Failed to update theme"))
-    );
-
-  return redirect(next);
 }
 
 export default function OnboardingTheme() {
