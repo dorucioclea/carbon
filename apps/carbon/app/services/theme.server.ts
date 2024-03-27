@@ -10,7 +10,7 @@ const themes = [
   "blue",
   "yellow",
   "orange",
-  "purple",
+  "violet",
 ] as const;
 type Theme = (typeof themes)[number];
 

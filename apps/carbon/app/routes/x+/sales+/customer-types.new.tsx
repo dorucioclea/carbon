@@ -57,7 +57,7 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   return modal
-    ? json(insertCustomerType, { status: 201 })
+    ? json(insertCustomerType)
     : redirect(
         `${path.to.customerTypes}?${getParams(request)}`,
         await flash(request, success("Customer type created"))

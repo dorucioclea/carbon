@@ -1,4 +1,3 @@
-import { VStack } from "@carbon/react";
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
@@ -47,10 +46,5 @@ export default function Theme() {
     theme,
   };
 
-  return (
-    <VStack spacing={0} className="p-4 h-full">
-      {/* @ts-ignore */}
-      <ThemeForm theme={initialValues} />
-    </VStack>
-  );
+  return <ThemeForm theme={initialValues} />;
 }

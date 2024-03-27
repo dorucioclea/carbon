@@ -698,7 +698,7 @@ export async function upsertCustomerStatus(
       })
 ) {
   if ("createdBy" in customerStatus) {
-    return client.from("customerStatus").insert([customerStatus]);
+    return client.from("customerStatus").insert([customerStatus]).select("id");
   } else {
     return client
       .from("customerStatus")
@@ -721,7 +721,7 @@ export async function upsertCustomerType(
       })
 ) {
   if ("createdBy" in customerType) {
-    return client.from("customerType").insert([customerType]);
+    return client.from("customerType").insert([customerType]).select("id");
   } else {
     return client
       .from("customerType")

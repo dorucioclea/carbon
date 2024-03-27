@@ -48,9 +48,7 @@ export async function action({ request }: ActionFunctionArgs) {
         );
   }
 
-  return modal
-    ? json(createWorkCellType, { status: 201 })
-    : redirect(path.to.workCells);
+  return modal ? json(createWorkCellType) : redirect(path.to.workCells);
 }
 
 export default function NewWorkCellTypeRoute() {
