@@ -8,10 +8,12 @@ import {
   ModalCardProvider,
   ModalCardTitle,
   cn,
+  toast,
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
-import { useState } from "react";
+import type { PostgrestResponse } from "@supabase/supabase-js";
+import { useEffect, useState } from "react";
 import type { z } from "zod";
 import {
   Boolean,
@@ -86,7 +88,19 @@ const useNextPartIdShortcut = () => {
 };
 
 const PartForm = ({ initialValues, type = "card", onClose }: PartFormProps) => {
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<PostgrestResponse<{ id: string }>>();
+
+  useEffect(() => {
+    if (type !== "modal") return;
+
+    if (fetcher.state === "idle" && fetcher.data?.data) {
+      onClose?.();
+      toast.success(`Created part`);
+    } else if (fetcher.state === "idle" && fetcher.data?.error) {
+      toast.error(`Failed to create part: ${fetcher.data.error.message}`);
+    }
+  }, [fetcher.data, fetcher.state, onClose, type]);
+
   const { partId, onPartIdChange, loading } = useNextPartIdShortcut();
   const permissions = usePermissions();
   const isEditing = !!initialValues.id;
@@ -112,7 +126,6 @@ const PartForm = ({ initialValues, type = "card", onClose }: PartFormProps) => {
             method="post"
             validator={partValidator}
             defaultValues={initialValues}
-            onSubmit={onClose}
             fetcher={fetcher}
           >
             <ModalCardHeader>

@@ -511,6 +511,14 @@ const QuotationExplorer = () => {
   };
 
   const newButtonRef = useRef<HTMLButtonElement>(null);
+  useKeyboardShortcuts({
+    l: () => {
+      if (newButtonRef.current) {
+        newButtonRef.current.click();
+      }
+    },
+  });
+
   const navigate = useNavigate();
   const { id } = useParams();
   if (!id) throw new Error("id not found");
