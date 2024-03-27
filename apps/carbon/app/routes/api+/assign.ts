@@ -12,8 +12,11 @@ export async function action({ request }: ActionFunctionArgs) {
   const assignee = formData.get("assignee") as string;
   const table = formData.get("table") as string;
 
+  console.log({ id, assignee, table });
+
   if (table && id) {
     const result = await assign(client, { table, id, assignee });
+    console.log({ result });
     if (result.error) {
       return json(
         { success: false },

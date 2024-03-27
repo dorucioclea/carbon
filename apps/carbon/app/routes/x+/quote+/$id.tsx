@@ -48,6 +48,7 @@ export const handle: Handle = {
   to: path.to.quotes,
 };
 
+// TODO: remove this
 export const shouldRevalidate: ShouldRevalidateFunction = ({
   currentUrl,
   currentParams,
@@ -177,25 +178,22 @@ export default function QuotationRoute() {
 
   return (
     <div className="grid grid-cols-[auto_1fr] w-full">
-      <CollapsibleSidebar width={260}>
-        <VStack className="border-b border-border p-2" spacing={1}>
-          <Heading size="h3" noOfLines={1}>
-            {quote.quote?.quoteId}
-          </Heading>
-        </VStack>
-        <VStack className="border-b border-border p-2 text-sm">
+      <CollapsibleSidebar width={280}>
+        <VStack className="border-b border-border px-4 py-2" spacing={1}>
           <HStack className="justify-between w-full">
-            <span className="text-xs text-muted-foreground">Status</span>
+            <Heading size="h4" noOfLines={1}>
+              {quote.quote?.quoteId}
+            </Heading>
             {quote.quote && <QuotationStatus status={quote.quote?.status} />}
           </HStack>
         </VStack>
-        <VStack className="border-b border-border p-2 text-sm">
+        <VStack className="border-b border-border px-4 py-2 text-sm">
           <HStack className="justify-between w-full">
             <span className="text-xs text-muted-foreground">Customer</span>
             <CustomerAvatar customerId={customer.id} />
           </HStack>
         </VStack>
-        <VStack className="border-b border-border p-2 text-sm">
+        <VStack className="border-b border-border px-4 py-2 text-sm">
           <HStack className="justify-between w-full">
             <span className="text-xs text-muted-foreground">Assignee</span>
             {assignee && <EmployeeAvatar employeeId={assignee} />}
@@ -204,7 +202,7 @@ export default function QuotationRoute() {
         <QuotationExplorer />
       </CollapsibleSidebar>
 
-      <VStack className="p-2">
+      <VStack className="px-4 py-2">
         <Menubar>
           <Assign id={id} table="quote" value={assignee ?? undefined} />
           <MenubarItem asChild>

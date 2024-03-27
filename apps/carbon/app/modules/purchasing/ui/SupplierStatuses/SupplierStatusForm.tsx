@@ -59,11 +59,6 @@ const SupplierStatusForm = ({
             defaultValues={initialValues}
             fetcher={fetcher}
             className="flex flex-col h-full"
-            onSubmit={() => {
-              if (type === "modal") {
-                onClose();
-              }
-            }}
           >
             <ModalDrawerHeader>
               <ModalDrawerTitle>

@@ -33,7 +33,7 @@ const Breadcrumbs = () => {
     .filter(Boolean);
 
   return (
-    <HStack className="items-center h-full" spacing={0}>
+    <HStack className="items-center h-full -ml-2" spacing={0}>
       <BreadcrumbsBase className="line-clamp-1">
         {breadcrumbs.map((breadcrumb, i) => (
           <BreadcrumbItem key={i}>
