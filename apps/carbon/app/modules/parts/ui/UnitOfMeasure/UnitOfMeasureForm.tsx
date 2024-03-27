@@ -40,7 +40,7 @@ const UnitOfMeasureForm = ({
   useEffect(() => {
     if (type !== "modal") return;
 
-    if (fetcher.state === "idle" && fetcher.data?.data) {
+    if (fetcher.state === "loading" && fetcher.data?.data) {
       onClose?.();
       toast.success(`Created unit of measure`);
     } else if (fetcher.state === "idle" && fetcher.data?.error) {

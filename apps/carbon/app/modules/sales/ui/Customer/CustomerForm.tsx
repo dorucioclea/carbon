@@ -9,9 +9,12 @@ import {
   ModalCardProvider,
   ModalCardTitle,
   cn,
+  toast,
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
+import type { PostgrestResponse } from "@supabase/supabase-js";
+import { useEffect } from "react";
 import type { z } from "zod";
 import {
   CustomFormFields,
@@ -23,6 +26,7 @@ import {
   Submit,
 } from "~/components/Form";
 import { usePermissions } from "~/hooks";
+import type { Customer } from "~/modules/sales";
 import { customerValidator } from "~/modules/sales";
 import { path } from "~/utils/path";
 
@@ -38,7 +42,19 @@ const CustomerForm = ({
   onClose,
 }: CustomerFormProps) => {
   const permissions = usePermissions();
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<PostgrestResponse<Customer>>();
+
+  useEffect(() => {
+    if (type !== "modal") return;
+
+    if (fetcher.state === "loading" && fetcher.data?.data) {
+      onClose?.();
+      // @ts-ignore
+      toast.success(`Created customer: ${fetcher.data.data.name}`);
+    } else if (fetcher.state === "idle" && fetcher.data?.error) {
+      toast.error(`Failed to create customer: ${fetcher.data.error.message}`);
+    }
+  }, [fetcher.data, fetcher.state, onClose, type]);
 
   const isEditing = initialValues.id !== undefined;
   const isDisabled = isEditing
@@ -54,7 +70,6 @@ const CustomerForm = ({
             action={isEditing ? undefined : path.to.newCustomer}
             validator={customerValidator}
             defaultValues={initialValues}
-            onSubmit={onClose}
             fetcher={fetcher}
           >
             <ModalCardHeader>
