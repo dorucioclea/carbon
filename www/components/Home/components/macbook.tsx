@@ -46,6 +46,7 @@ const MacbookScroll = ({
   title?: string | React.ReactNode;
   badge?: React.ReactNode;
 }) => {
+  const [showForm, setShowForm] = useState(true);
   const formSchema = z.object({
     email: z.string().email(),
   });
@@ -72,6 +73,7 @@ const MacbookScroll = ({
       } else {
         form.reset();
         form.clearErrors();
+        setShowForm(false);
       }
 
       // const data = await response.json();
@@ -126,31 +128,33 @@ const MacbookScroll = ({
         <p className="max-w-lg nx-text-2xl font-medium leading-tight text-black/80 dark:text-white/80 sm:nx-text-2xl md:nx-text-3xl lg:nx-text-4xl">
           Carbon is an open-source ERP to meet your exact manufacturing needs
         </p>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="flex w-full max-w-sm items-start space-x-2"
-          >
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      className="w-60"
-                      type="email"
-                      placeholder="Email"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit">Get early access</Button>
-          </form>
-        </Form>
+        {showForm && (
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex w-full max-w-sm items-start space-x-2"
+            >
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        className="w-60"
+                        type="email"
+                        placeholder="Email"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit">Get early access</Button>
+            </form>
+          </Form>
+        )}
       </div>
       <Lid
         scaleX={scaleX}
