@@ -1,7 +1,8 @@
-import { Heading } from "@carbon/react";
+import { Heading, cn } from "@carbon/react";
 import { formatDate } from "@carbon/utils";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import { Link } from "@remix-run/react";
+import type { ComponentProps } from "react";
 import { useModules } from "~/components/Layout/Navigation/useModules";
 import { useUser } from "~/hooks";
 import type { Authenticated, NavItem } from "~/types";
@@ -12,13 +13,13 @@ export default function AppIndexRoute() {
   return (
     <div className="p-8 w-full">
       <Heading size="h3">Hello, {user.firstName}</Heading>
-      <p className="text-muted-foreground text-base font-light">
+      <Subheading>
         {formatDate(today(getLocalTimeZone()).toString(), {
           dateStyle: "full",
         })}
-      </p>
+      </Subheading>
       <Hr />
-      <p className="text-muted-foreground text-base font-light mb-8">Modules</p>
+      <Subheading className="mb-8">Modules</Subheading>
       <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
         {modules.map((module) => (
           <ModuleCard key={module.name} module={module} />
@@ -30,6 +31,12 @@ export default function AppIndexRoute() {
 
 const Hr = () => (
   <hr className="h-px my-8 bg-black/10 border-0 dark:bg-white/10" />
+);
+
+const Subheading = ({ children, className }: ComponentProps<"p">) => (
+  <p className={cn("text-muted-foreground text-base font-light", className)}>
+    {children}
+  </p>
 );
 
 const ModuleCard = ({ module }: { module: Authenticated<NavItem> }) => (
