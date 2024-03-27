@@ -958,7 +958,11 @@ export async function upsertSupplierType(
       })
 ) {
   if ("createdBy" in supplierType) {
-    return client.from("supplierType").insert([supplierType]);
+    return client
+      .from("supplierType")
+      .insert([supplierType])
+      .select("id")
+      .single();
   } else {
     return client
       .from("supplierType")
