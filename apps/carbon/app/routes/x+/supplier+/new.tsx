@@ -55,9 +55,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const supplierId = createSupplier.data?.id;
 
-  return modal
-    ? json(createSupplier, { status: 201 })
-    : redirect(path.to.supplier(supplierId));
+  return modal ? json(createSupplier) : redirect(path.to.supplier(supplierId));
 }
 
 export default function SuppliersNewRoute() {

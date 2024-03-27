@@ -29,7 +29,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function PurchaseInvoiceRoute() {
   return (
-    <VStack spacing={4} className="h-full p-4">
+    <VStack spacing={4} className="h-full p-2">
       <Outlet />
     </VStack>
   );

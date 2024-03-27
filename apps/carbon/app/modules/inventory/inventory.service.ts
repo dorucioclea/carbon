@@ -1,4 +1,5 @@
 import type { Database, Json } from "@carbon/database";
+import { getLocalTimeZone, today } from "@internationalized/date";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { z } from "zod";
 import type { GenericQueryFilters } from "~/utils/query";
@@ -137,7 +138,10 @@ export async function upsertReceipt(
   }
   return client
     .from("receipt")
-    .update(sanitize(receipt))
+    .update({
+      ...sanitize(receipt),
+      updatedAt: today(getLocalTimeZone()).toString(),
+    })
     .eq("id", receipt.id)
     .select("id")
     .single();

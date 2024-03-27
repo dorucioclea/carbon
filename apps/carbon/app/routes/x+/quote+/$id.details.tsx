@@ -73,7 +73,6 @@ export default function QuotationBasicRoute() {
     quoteId: quoteData?.quotation?.quoteId ?? "",
     name: quoteData?.quotation?.name ?? "",
     customerId: quoteData?.quotation?.customerId ?? "",
-    ownerId: quoteData?.quotation.ownerId ?? "",
     customerContactId: quoteData?.quotation?.customerContactId ?? "",
     customerLocationId: quoteData?.quotation?.customerLocationId ?? "",
     customerReference: quoteData?.quotation?.customerReference ?? "",

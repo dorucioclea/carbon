@@ -9,7 +9,7 @@ import {
 } from "./Avatar";
 import { Badge, BadgeCloseButton } from "./Badge";
 import type { ButtonProps } from "./Button";
-import { Button } from "./Button";
+import { Button, buttonVariants } from "./Button";
 import {
   Card,
   CardAction,
@@ -190,6 +190,7 @@ import {
 } from "./Popover";
 import { Progress } from "./Progress";
 import { RadioGroup, RadioGroupItem } from "./Radio";
+import { ScrollArea, ScrollBar } from "./ScrollArea";
 import {
   Select,
   SelectContent,
@@ -392,6 +393,8 @@ export {
   Progress,
   RadioGroup,
   RadioGroupItem,
+  ScrollArea,
+  ScrollBar,
   Select,
   SelectContent,
   SelectGroup,
@@ -425,6 +428,7 @@ export {
   TooltipTrigger,
   Tr,
   VStack,
+  buttonVariants,
   cn,
   getValidChildren,
   multiSelectTriggerVariants,

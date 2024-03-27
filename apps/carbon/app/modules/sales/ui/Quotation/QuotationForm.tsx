@@ -17,7 +17,6 @@ import {
   CustomerContact,
   CustomerLocation,
   DatePicker,
-  Employee,
   Hidden,
   Input,
   Location,
@@ -77,12 +76,9 @@ const QuotationForm = ({ initialValues }: QuotationFormProps) => {
                 name="name"
                 label="Name"
                 helperText={
-                  isEditing
-                    ? undefined
-                    : "The name of the RFQ or a reference number"
+                  isEditing ? undefined : "The name of the RFQ or a description"
                 }
               />
-              <Employee name="ownerId" label="Quoter" />
 
               <Location name="locationId" label="Location" />
               <CustomerLocation

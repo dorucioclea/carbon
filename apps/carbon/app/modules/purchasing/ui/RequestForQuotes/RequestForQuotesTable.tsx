@@ -1,10 +1,11 @@
 import { HStack, MenuIcon, MenuItem, useDisclosure } from "@carbon/react";
+import { formatDate } from "@carbon/utils";
 import { useFetcher, useFetchers, useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo, useState } from "react";
 import { BsFillPenFill, BsPin, BsPinFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { Avatar, Hyperlink, Table } from "~/components";
+import { EmployeeAvatar, Hyperlink, New, Table } from "~/components";
 import { ConfirmDelete } from "~/components/Modals";
 import { usePermissions } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
@@ -12,7 +13,7 @@ import {
   requestForQuoteStatusType,
   type RequestForQuote,
 } from "~/modules/purchasing";
-import { useParts, useSuppliers } from "~/stores";
+import { useParts, usePeople, useSuppliers } from "~/stores";
 import { favoriteSchema } from "~/types/validators";
 import { path } from "~/utils/path";
 import { RequestForQuoteStatus } from "../RequestForQuote";
@@ -30,8 +31,9 @@ const RequestForQuotesTable = memo(
     const fetcher = useFetcher();
     const optimisticFavorite = useOptimisticFavorite();
 
-    const [suppliers] = useSuppliers();
     const [parts] = useParts();
+    const [people] = usePeople();
+    const [suppliers] = useSuppliers();
 
     const rows = useMemo<RequestForQuote[]>(
       () =>
@@ -126,6 +128,22 @@ const RequestForQuotesTable = memo(
           },
         },
         {
+          id: "assignee",
+          header: "Assignee",
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.assignee} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
+          },
+        },
+        {
           accessorKey: "receiptDate",
           header: "Receipt Date",
           cell: (item) => item.getValue(),
@@ -152,7 +170,7 @@ const RequestForQuotesTable = memo(
           },
         },
         {
-          accessorKey: "partIds",
+          id: "partIds",
           header: "Parts",
           cell: ({ row }) => row.original.partIds?.length ?? 0,
           meta: {
@@ -169,45 +187,56 @@ const RequestForQuotesTable = memo(
           },
         },
         {
-          accessorKey: "createdByFullName",
+          id: "createdBy",
           header: "Created By",
-          cell: ({ row }) => {
-            return (
-              <HStack>
-                <Avatar size="sm" path={row.original.createdByAvatar} />
-                <p>{row.original.createdByFullName}</p>
-              </HStack>
-            );
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.createdBy} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
           },
         },
         {
           accessorKey: "createdAt",
           header: "Created At",
-          cell: (item) => item.getValue(),
+          cell: (item) => formatDate(item.getValue<string>()),
         },
         {
-          accessorKey: "updatedByFullName",
+          id: "updatedBy",
           header: "Updated By",
-          cell: ({ row }) => {
-            return row.original.updatedByFullName ? (
-              <HStack>
-                <Avatar size="sm" path={row.original.updatedByAvatar ?? null} />
-                <p>{row.original.updatedByFullName}</p>
-              </HStack>
-            ) : null;
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.updatedBy} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
           },
         },
         {
           accessorKey: "updatedAt",
-          header: "Updated At",
-          cell: (item) => item.getValue(),
+          header: "Created At",
+          cell: (item) => formatDate(item.getValue<string>()),
         },
       ];
       return [...defaultColumns, ...customColumns];
-    }, [fetcher, parts, suppliers, customColumns]);
-
+    }, [people, suppliers, parts, customColumns, fetcher]);
 
     const defaultColumnVisibility = {
+      createdAt: false,
+      createdBy: false,
+      updatedAt: false,
+      updatedBy: false,
       partIds: false,
       supplierIds: false,
     };
@@ -240,7 +269,15 @@ const RequestForQuotesTable = memo(
           count={count}
           columns={columns}
           data={rows}
+          defaultColumnPinning={{
+            left: ["requestForQuoteId"],
+          }}
           defaultColumnVisibility={defaultColumnVisibility}
+          primaryAction={
+            permissions.can("create", "purchasing") && (
+              <New label="Request for Quote" to={path.to.newRequestForQuote} />
+            )
+          }
           renderContextMenu={renderContextMenu}
           withColumnOrdering
         />

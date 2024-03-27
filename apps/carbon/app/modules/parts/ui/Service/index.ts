@@ -1,12 +1,12 @@
 import ServiceForm from "./ServiceForm";
-import ServicePreview from "./ServicePreview";
+import ServiceHeader from "./ServiceHeader";
 import ServiceSidebar from "./ServiceSidebar";
 import ServiceSupplierForm from "./ServiceSupplierForm";
 import ServiceSuppliers from "./ServiceSuppliers";
 
 export {
   ServiceForm,
-  ServicePreview,
+  ServiceHeader,
   ServiceSidebar,
   ServiceSupplierForm,
   ServiceSuppliers,

@@ -16,8 +16,7 @@ interface DataTablePaginationProps<TData> {
 export function DataTablePagination<TData>({
   table,
 }: DataTablePaginationProps<TData>) {
-  const pageSizes = [15, 25, 50, 100];
-  const pageSizeLabel = "results per page";
+  const pageSizes = [100, 500, 1000];
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -30,8 +29,8 @@ export function DataTablePagination<TData>({
     >
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost">
-            {table.getState().pagination.pageSize} {pageSizeLabel}
+          <Button variant="secondary">
+            {table.getState().pagination.pageSize} rows
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-48">
@@ -42,7 +41,7 @@ export function DataTablePagination<TData>({
                 table.setPageSize(Number(size));
               }}
             >
-              {size} {pageSizeLabel}
+              {size}
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>

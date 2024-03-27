@@ -3,6 +3,22 @@ import { redis } from "@carbon/redis";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { CustomFieldsTableType } from "../settings";
 
+export async function assign(
+  client: SupabaseClient<Database>,
+  args: {
+    id: string;
+    table: string;
+    assignee: string;
+  }
+) {
+  const { id, table, assignee } = args;
+
+  return client
+    .from(table)
+    .update({ assignee: assignee ? assignee : null })
+    .eq("id", id);
+}
+
 export async function getCustomFieldsCacheKey(args?: {
   module?: string;
   table?: string;

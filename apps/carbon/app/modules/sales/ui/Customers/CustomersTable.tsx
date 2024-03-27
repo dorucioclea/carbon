@@ -1,12 +1,14 @@
 import { Enumerable, MenuIcon, MenuItem } from "@carbon/react";
+import { formatDate } from "@carbon/utils";
 import { useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
-import { Hyperlink, New, Table } from "~/components";
+import { EmployeeAvatar, Hyperlink, New, Table } from "~/components";
 import { usePermissions } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Customer, CustomerStatus, CustomerType } from "~/modules/sales";
+import { usePeople } from "~/stores";
 import { path } from "~/utils/path";
 
 type CustomersTableProps = {
@@ -20,6 +22,7 @@ const CustomersTable = memo(
   ({ data, count, customerStatuses, customerTypes }: CustomersTableProps) => {
     const navigate = useNavigate();
     const permissions = usePermissions();
+    const [people] = usePeople();
 
     const customColumns = useCustomColumns<Customer>("customer");
     const columns = useMemo<ColumnDef<Customer>[]>(() => {
@@ -33,6 +36,7 @@ const CustomersTable = memo(
             </Hyperlink>
           ),
         },
+
         {
           accessorKey: "type",
           header: "Customer Type",
@@ -61,25 +65,84 @@ const CustomersTable = memo(
             },
           },
         },
-        // {
-        //   id: "orders",
-        //   header: "Orders",
-        //   cell: ({ row }) => (
-        //
-        //       <Button
-        //         variant="secondary"
-        //         onClick={() =>
-        //           navigate(`${path.to.salesOrders}?customerId=${row.original.id}`)
-        //         }
-        //       >
-        //         {row.original.orderCount ?? 0} Orders
-        //       </Button>
-        //   ),
-        // },
+        {
+          id: "accountManagerId",
+          header: "Updated By",
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.accountManagerId} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
+          },
+        },
+        {
+          id: "assignee",
+          header: "Assignee",
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.assignee} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
+          },
+        },
+        {
+          id: "createdBy",
+          header: "Created By",
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.createdBy} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
+          },
+        },
+        {
+          accessorKey: "createdAt",
+          header: "Created At",
+          cell: (item) => formatDate(item.getValue<string>()),
+        },
+        {
+          id: "updatedBy",
+          header: "Updated By",
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.updatedBy} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
+          },
+        },
+        {
+          accessorKey: "updatedAt",
+          header: "Created At",
+          cell: (item) => formatDate(item.getValue<string>()),
+        },
       ];
 
       return [...defaultColumns, ...customColumns];
-    }, [customerStatuses, customerTypes, customColumns]);
+    }, [customerTypes, customerStatuses, people, customColumns]);
 
     const renderContextMenu = useMemo(
       // eslint-disable-next-line react/display-name
@@ -99,12 +162,22 @@ const CustomersTable = memo(
           count={count}
           columns={columns}
           data={data}
+          defaultColumnPinning={{
+            left: ["name"],
+          }}
+          defaultColumnVisibility={{
+            createdBy: false,
+            createdAt: false,
+            updatedBy: false,
+            updatedAt: false,
+          }}
           primaryAction={
             permissions.can("create", "sales") && (
               <New label="Customer" to={path.to.newCustomer} />
             )
           }
           renderContextMenu={renderContextMenu}
+          withColumnOrdering
         />
       </>
     );

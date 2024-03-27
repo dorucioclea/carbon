@@ -4,7 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { Hyperlink, New, Table } from "~/components";
+import { Hyperlink, New, SupplierAvatar, Table } from "~/components";
 import { usePermissions, useUrlParams } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Ability, Contractor } from "~/modules/resources";
@@ -22,6 +22,7 @@ const ContractorsTable = memo(
     const navigate = useNavigate();
     const permissions = usePermissions();
     const [params] = useUrlParams();
+
     const [suppliers] = useSuppliers();
 
     const customColumns = useCustomColumns<Contractor>("contractor");
@@ -48,21 +49,16 @@ const ContractorsTable = memo(
           ),
         },
         {
-          accessorKey: "supplierName",
+          id: "supplierId",
           header: "Supplier",
           cell: ({ row }) => (
-            <HStack>
-              <Avatar size="sm" name={row.original.supplierName ?? ""} />
-              <Hyperlink to={path.to.supplier(row.original.supplierId!)}>
-                {row.original.supplierName}
-              </Hyperlink>
-            </HStack>
+            <SupplierAvatar supplierId={row.original.supplierId} />
           ),
           meta: {
             filter: {
               type: "static",
               options: suppliers.map((supplier) => ({
-                value: supplier.name,
+                value: supplier.id,
                 label: supplier.name,
               })),
             },
@@ -70,7 +66,7 @@ const ContractorsTable = memo(
         },
 
         {
-          accessorKey: "abilityIds",
+          id: "abilityIds",
           header: "Abilities",
           cell: ({ row }) => {
             if (!row.original.abilityIds) {
@@ -110,7 +106,7 @@ const ContractorsTable = memo(
       ];
 
       return [...defaultColumns, ...customColumns];
-    }, [abilities, params, suppliers, customColumns]);
+    }, [suppliers, abilities, customColumns, params]);
 
     const renderContextMenu = useCallback(
       (row: Contractor) => {

@@ -1,11 +1,17 @@
-import { HStack, MenuIcon, MenuItem, useDisclosure } from "@carbon/react";
+import { Enumerable, MenuIcon, MenuItem, useDisclosure } from "@carbon/react";
 import { formatDate } from "@carbon/utils";
 import { useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo, useState } from "react";
 import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { Avatar, Hyperlink, New, Table } from "~/components";
+import {
+  EmployeeAvatar,
+  Hyperlink,
+  New,
+  SupplierAvatar,
+  Table,
+} from "~/components";
 import { ConfirmDelete } from "~/components/Modals";
 import { usePermissions, useRealtime } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
@@ -14,7 +20,7 @@ import {
   PurchaseInvoicingStatus,
   purchaseInvoiceStatusType,
 } from "~/modules/invoicing";
-import { useSuppliers } from "~/stores";
+import { usePeople, useSuppliers } from "~/stores";
 import { path } from "~/utils/path";
 
 type PurchaseInvoicesTableProps = {
@@ -29,6 +35,8 @@ const PurchaseInvoicesTable = memo(
       `id=in.(${data.map((d) => d.id).join(",")})`
     );
 
+    console.log({ data });
+
     const permissions = usePermissions();
     const navigate = useNavigate();
 
@@ -36,6 +44,7 @@ const PurchaseInvoicesTable = memo(
       useState<PurchaseInvoice | null>(null);
     const closePurchaseInvoiceModal = useDisclosure();
 
+    const [people] = usePeople();
     const [suppliers] = useSuppliers();
     const customColumns = useCustomColumns<PurchaseInvoice>("purchaseInvoice");
 
@@ -51,22 +60,40 @@ const PurchaseInvoicesTable = memo(
           ),
         },
         {
-          accessorKey: "supplierName",
+          id: "supplierId",
           header: "Supplier",
-          cell: (item) => item.getValue(),
+          cell: ({ row }) => (
+            <SupplierAvatar supplierId={row.original.supplierId} />
+          ),
           meta: {
             filter: {
               type: "static",
               options: suppliers?.map((supplier) => ({
-                value: supplier.name,
+                value: supplier.id,
                 label: supplier.name,
               })),
             },
           },
         },
         {
-          accessorKey: "dateDue",
-          header: "Due Date",
+          id: "invoiceSupplierId",
+          header: "Invoice Supplier",
+          cell: ({ row }) => (
+            <SupplierAvatar supplierId={row.original.invoiceSupplierId} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: suppliers?.map((supplier) => ({
+                value: supplier.id,
+                label: supplier.name,
+              })),
+            },
+          },
+        },
+        {
+          accessorKey: "supplierReference",
+          header: "Supplier Ref.",
           cell: (item) => item.getValue(),
         },
         {
@@ -89,20 +116,55 @@ const PurchaseInvoicesTable = memo(
           },
         },
         {
-          accessorKey: "dateIssued",
-          header: "Issued Date",
-          cell: (item) => item.getValue(),
+          id: "assignee",
+          header: "Assignee",
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.assignee} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
+          },
         },
         {
-          accessorKey: "createdByFullName",
+          accessorKey: "dateIssued",
+          header: "Issued Date",
+          cell: (item) => formatDate(item.getValue<string>()),
+        },
+        {
+          accessorKey: "dateDue",
+          header: "Due Date",
+          cell: (item) => formatDate(item.getValue<string>()),
+        },
+        {
+          accessorKey: "datePaid",
+          header: "Paid Date",
+          cell: (item) => formatDate(item.getValue<string>()),
+        },
+        {
+          accessorKey: "paymentTermName",
+          header: "Payment Method",
+          cell: (item) => <Enumerable value={item.getValue<string>()} />,
+        },
+        {
+          id: "createdBy",
           header: "Created By",
-          cell: ({ row }) => {
-            return (
-              <HStack>
-                <Avatar size="sm" path={row.original.createdByAvatar} />
-                <span>{row.original.createdByFullName}</span>
-              </HStack>
-            );
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.createdBy} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
           },
         },
         {
@@ -111,27 +173,30 @@ const PurchaseInvoicesTable = memo(
           cell: (item) => formatDate(item.getValue<string>()),
         },
         {
-          accessorKey: "updatedByFullName",
+          id: "updatedBy",
           header: "Updated By",
-          cell: ({ row }) => {
-            return row.original.updatedByFullName ? (
-              <HStack>
-                <Avatar size="sm" path={row.original.updatedByAvatar ?? null} />
-                <span>{row.original.updatedByFullName}</span>
-              </HStack>
-            ) : null;
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.updatedBy} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
           },
         },
         {
           accessorKey: "updatedAt",
-          header: "Updated At",
+          header: "Created At",
           cell: (item) => formatDate(item.getValue<string>()),
         },
       ];
 
       return [...defaultColumns, ...customColumns];
-    }, [customColumns, suppliers]);
-
+    }, [customColumns, people, suppliers]);
 
     const renderContextMenu = useMemo(() => {
       // eslint-disable-next-line react/display-name
@@ -168,6 +233,16 @@ const PurchaseInvoicesTable = memo(
           data={data}
           defaultColumnPinning={{
             left: ["invoiceId"],
+          }}
+          defaultColumnVisibility={{
+            invoiceSupplierId: false,
+            paymentTermName: false,
+            dateIssued: false,
+            datePaid: false,
+            createdAt: false,
+            createdBy: false,
+            updatedAt: false,
+            updatedBy: false,
           }}
           primaryAction={
             permissions.can("create", "invoicing") && (

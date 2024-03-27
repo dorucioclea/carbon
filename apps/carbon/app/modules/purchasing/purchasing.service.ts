@@ -614,7 +614,10 @@ export async function upsertSupplier(
   }
   return client
     .from("supplier")
-    .update(sanitize(supplier))
+    .update({
+      ...sanitize(supplier),
+      updatedAt: today(getLocalTimeZone()).toString(),
+    })
     .eq("id", supplier.id)
     .select("id")
     .single();
@@ -910,7 +913,10 @@ export async function upsertRequestForQuote(
   } else {
     return client
       .from("requestForQuote")
-      .update(sanitize(requestForQuote))
+      .update({
+        ...sanitize(requestForQuote),
+        updatedAt: today(getLocalTimeZone()).toString(),
+      })
       .eq("id", requestForQuote.id);
   }
 }
@@ -929,7 +935,11 @@ export async function upsertSupplierStatus(
       })
 ) {
   if ("createdBy" in supplierStatus) {
-    return client.from("supplierStatus").insert([supplierStatus]);
+    return client
+      .from("supplierStatus")
+      .insert([supplierStatus])
+      .select("id")
+      .single();
   } else {
     return client
       .from("supplierStatus")
@@ -952,7 +962,11 @@ export async function upsertSupplierType(
       })
 ) {
   if ("createdBy" in supplierType) {
-    return client.from("supplierType").insert([supplierType]);
+    return client
+      .from("supplierType")
+      .insert([supplierType])
+      .select("id")
+      .single();
   } else {
     return client
       .from("supplierType")

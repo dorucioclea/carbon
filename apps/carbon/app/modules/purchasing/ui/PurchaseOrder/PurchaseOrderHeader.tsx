@@ -9,17 +9,21 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  Enumerable,
   HStack,
   Menubar,
   MenubarItem,
   VStack,
   useDisclosure,
 } from "@carbon/react";
+import { formatDate } from "@carbon/utils";
 import { useParams } from "@remix-run/react";
 import { useMemo } from "react";
+import { Assign, EmployeeAvatar, useOptimisticAssignment } from "~/components";
 import { usePermissions, useRouteData } from "~/hooks";
 import type { PurchaseOrder } from "~/modules/purchasing";
 import { PurchasingStatus, usePurchaseOrderTotals } from "~/modules/purchasing";
+import { useSuppliers } from "~/stores";
 import { path } from "~/utils/path";
 import { usePurchaseOrder } from "../PurchaseOrders/usePurchaseOrder";
 import PurchaseOrderReleaseModal from "./PurchaseOrderReleaseModal";
@@ -50,11 +54,30 @@ const PurchaseOrderHeader = () => {
   const { receive, invoice } = usePurchaseOrder();
   const releaseDisclosure = useDisclosure();
 
+  const optimisticAssignment = useOptimisticAssignment({
+    id: orderId,
+    table: "purchaseOrder",
+  });
+  const assignee =
+    optimisticAssignment !== undefined
+      ? optimisticAssignment
+      : routeData?.purchaseOrder?.assignee;
+
+  const [suppliers] = useSuppliers();
+  const supplier = suppliers.find(
+    (s) => s.id === routeData.purchaseOrder?.supplierId
+  );
+
   return (
     <>
       <VStack>
         {permissions.is("employee") && (
           <Menubar>
+            <Assign
+              id={orderId}
+              table="purchaseOrder"
+              value={assignee ?? undefined}
+            />
             <MenubarItem asChild>
               <a
                 target="_blank"
@@ -101,7 +124,7 @@ const PurchaseOrderHeader = () => {
             <CardHeader>
               <CardTitle>{routeData?.purchaseOrder?.purchaseOrderId}</CardTitle>
               <CardDescription>
-                {routeData?.purchaseOrder?.supplierName}
+                {supplier ? supplier.name : "-"}
               </CardDescription>
             </CardHeader>
             <CardAction>
@@ -117,34 +140,44 @@ const PurchaseOrderHeader = () => {
           <CardContent>
             <CardAttributes>
               <CardAttribute>
-                <CardAttributeLabel>Total</CardAttributeLabel>
+                <CardAttributeLabel>Assignee</CardAttributeLabel>
                 <CardAttributeValue>
-                  {formatter.format(purchaseOrderTotals?.total ?? 0)}
+                  {assignee ? (
+                    <EmployeeAvatar employeeId={assignee ?? null} />
+                  ) : (
+                    "-"
+                  )}
                 </CardAttributeValue>
               </CardAttribute>
+
               <CardAttribute>
                 <CardAttributeLabel>Order Date</CardAttributeLabel>
                 <CardAttributeValue>
-                  {routeData?.purchaseOrder?.orderDate}
+                  {formatDate(routeData?.purchaseOrder?.orderDate)}
                 </CardAttributeValue>
               </CardAttribute>
 
               <CardAttribute>
                 <CardAttributeLabel>Promised Date</CardAttributeLabel>
                 <CardAttributeValue>
-                  {routeData?.purchaseOrder?.receiptPromisedDate}
+                  {formatDate(routeData?.purchaseOrder?.receiptPromisedDate)}
                 </CardAttributeValue>
               </CardAttribute>
               <CardAttribute>
                 <CardAttributeLabel>Type</CardAttributeLabel>
                 <CardAttributeValue>
-                  {routeData?.purchaseOrder?.type}
+                  <Enumerable value={routeData?.purchaseOrder?.type} />
                 </CardAttributeValue>
               </CardAttribute>
-
               <CardAttribute>
                 <CardAttributeLabel>Status</CardAttributeLabel>
                 <PurchasingStatus status={routeData?.purchaseOrder?.status} />
+              </CardAttribute>
+              <CardAttribute>
+                <CardAttributeLabel>Total</CardAttributeLabel>
+                <CardAttributeValue>
+                  {formatter.format(purchaseOrderTotals?.total ?? 0)}
+                </CardAttributeValue>
               </CardAttribute>
             </CardAttributes>
           </CardContent>

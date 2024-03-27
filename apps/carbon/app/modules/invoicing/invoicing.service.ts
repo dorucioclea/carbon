@@ -1,4 +1,5 @@
 import type { Database, Json } from "@carbon/database";
+import { getLocalTimeZone, today } from "@internationalized/date";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { z } from "zod";
 import { getSupplierPayment } from "~/modules/purchasing";
@@ -104,7 +105,10 @@ export async function upsertPurchaseInvoice(
   if ("id" in purchaseInvoice) {
     return client
       .from("purchaseInvoice")
-      .update(sanitize(purchaseInvoice))
+      .update({
+        ...sanitize(purchaseInvoice),
+        updatedAt: today(getLocalTimeZone()).toString(),
+      })
       .eq("id", purchaseInvoice.id)
       .select("id, invoiceId");
   }

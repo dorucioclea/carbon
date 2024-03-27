@@ -288,13 +288,13 @@ export async function getContractors(
 
   if (args?.search) {
     query = query.or(
-      `supplierName.ilike.%${args.search}%,firstName.ilike.%${args.search}%,lastName.ilike.%${args.search}%`
+      `firstName.ilike.%${args.search}%,lastName.ilike.%${args.search}%`
     );
   }
 
   if (args) {
     query = setGenericQueryFilters(query, args, [
-      { column: "supplierName", ascending: true },
+      { column: "lastName", ascending: true },
     ]);
   }
 

@@ -16,7 +16,7 @@ import { useRouteData } from "~/hooks";
 import type { EmployeeSummary } from "~/modules/resources";
 import { path } from "~/utils/path";
 
-const PartPreview = () => {
+const PersonHeader = () => {
   const { personId } = useParams();
   if (!personId) throw new Error("personId not found");
 
@@ -69,4 +69,4 @@ const PartPreview = () => {
   );
 };
 
-export default PartPreview;
+export default PersonHeader;

@@ -16,7 +16,7 @@ export const handle: Handle = {
 
 export default function RequestForQuoteRoute() {
   return (
-    <VStack spacing={4} className="h-full p-4">
+    <VStack spacing={4} className="h-full p-2">
       <Outlet />
     </VStack>
   );

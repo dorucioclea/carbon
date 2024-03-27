@@ -64,7 +64,7 @@ export default function CustomerEditRoute() {
   if (!routeData?.customer) return null;
 
   const initialValues = {
-    id: routeData?.customer?.id ?? undefined,
+    ...routeData.customer,
     name: routeData?.customer?.name ?? "",
     customerTypeId: routeData?.customer?.customerTypeId ?? undefined,
     customerStatusId: routeData?.customer?.customerStatusId ?? undefined,

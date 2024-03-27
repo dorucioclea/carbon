@@ -50,13 +50,13 @@ export async function action({ request }: ActionFunctionArgs) {
     return validationError(validation.error);
   }
 
-  const { id, hoursPerWeek, abilities } = validation.data;
+  const { id, supplierId, ...data } = validation.data;
   if (!id) throw notFound("Contractor ID was not found");
 
   const updateContractor = await upsertContractor(client, {
     id,
-    hoursPerWeek,
-    abilities: abilities ?? [],
+    ...data,
+    abilities: data.abilities ?? [],
     customFields: setCustomFields(formData),
     updatedBy: userId,
   });
@@ -66,14 +66,14 @@ export async function action({ request }: ActionFunctionArgs) {
       path.to.contractors,
       await flash(
         request,
-        error(updateContractor.error, "Failed to create contractor.")
+        error(updateContractor.error, "Failed to create contractor")
       )
     );
   }
 
   return redirect(
     path.to.contractors,
-    await flash(request, success("Contractor updated."))
+    await flash(request, success("Contractor updated"))
   );
 }
 

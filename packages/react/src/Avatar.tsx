@@ -29,7 +29,7 @@ export const avatarVariants = cva(
         lg: "h-16 w-16 text-2xl",
         md: "h-12 w-12 text-base",
         sm: "h-8 w-8 text-xs",
-        xs: "h-6 w-6 text-sm",
+        xs: "h-6 w-6 text-xxs",
       },
       isGroup: {
         true: "ring-2 ring-background",

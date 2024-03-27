@@ -3,7 +3,6 @@ import {
   Drawer,
   DrawerBody,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
@@ -15,6 +14,7 @@ import {
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { Outlet } from "@remix-run/react";
 import type { z } from "zod";
+import { Assign, useOptimisticAssignment } from "~/components";
 import {
   ComboboxControlled,
   CustomFormFields,
@@ -31,7 +31,6 @@ import type {
   receiptStatusType,
 } from "~/modules/inventory";
 import {
-  ReceiptStatus,
   receiptSourceDocumentType,
   receiptValidator,
 } from "~/modules/inventory";
@@ -41,6 +40,7 @@ import { path } from "~/utils/path";
 import useReceiptForm from "./useReceiptForm";
 
 type ReceiptFormProps = {
+  assignee: string | null;
   initialValues: z.infer<typeof receiptValidator>;
   status: (typeof receiptStatusType)[number];
   notes: Note[];
@@ -50,6 +50,7 @@ type ReceiptFormProps = {
 const formId = "receipt-form";
 
 const ReceiptForm = ({
+  assignee,
   initialValues,
   status,
   notes,
@@ -79,6 +80,13 @@ const ReceiptForm = ({
 
   const isPosted = status === "Posted";
 
+  const optimisticAssignment = useOptimisticAssignment({
+    id: initialValues.id,
+    table: "receipt",
+  });
+  const optimisticAssignee =
+    optimisticAssignment !== undefined ? optimisticAssignment : assignee;
+
   return (
     <>
       <Drawer
@@ -90,13 +98,15 @@ const ReceiptForm = ({
         <DrawerContent size="full">
           <DrawerHeader>
             <DrawerTitle>{initialValues.receiptId}</DrawerTitle>
-            <DrawerDescription>
-              <ReceiptStatus status={status} />
-            </DrawerDescription>
           </DrawerHeader>
           <DrawerBody>
             <VStack spacing={4}>
               <Menubar className="mb-2 mt--2">
+                <Assign
+                  id={initialValues.id}
+                  table="receipt"
+                  value={optimisticAssignee ?? undefined}
+                />
                 <MenubarItem isDisabled={!canPost || isPosted} onClick={onPost}>
                   Post
                 </MenubarItem>

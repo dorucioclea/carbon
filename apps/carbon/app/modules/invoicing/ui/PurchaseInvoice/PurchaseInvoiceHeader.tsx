@@ -13,8 +13,10 @@ import {
   VStack,
   useDisclosure,
 } from "@carbon/react";
+import { formatDate } from "@carbon/utils";
 import { useParams } from "@remix-run/react";
 import { useMemo, useState } from "react";
+import { Assign, EmployeeAvatar, useOptimisticAssignment } from "~/components";
 import { usePermissions, useRouteData } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import type { PurchaseInvoice } from "~/modules/invoicing";
@@ -22,6 +24,7 @@ import {
   PurchaseInvoicingStatus,
   usePurchaseInvoiceTotals,
 } from "~/modules/invoicing";
+import { useSuppliers } from "~/stores";
 import { path } from "~/utils/path";
 import PurchaseInvoicePostModal from "./PurchaseInvoicePostModal";
 
@@ -73,11 +76,30 @@ const PurchaseInvoiceHeader = () => {
     postingModal.onOpen();
   };
 
+  const optimisticAssignment = useOptimisticAssignment({
+    id: invoiceId,
+    table: "purchaseInvoice",
+  });
+  const assignee =
+    optimisticAssignment !== undefined
+      ? optimisticAssignment
+      : routeData?.purchaseInvoice?.assignee;
+
+  const [suppliers] = useSuppliers();
+  const supplier = suppliers.find(
+    (s) => s.id === routeData.purchaseInvoice?.supplierId
+  );
+
   return (
     <>
       <VStack>
         {permissions.is("employee") && (
           <Menubar>
+            <Assign
+              id={invoiceId}
+              table="purchaseInvoice"
+              value={assignee ?? undefined}
+            />
             <MenubarItem
               isDisabled={!permissions.can("update", "invoicing") || isPosted}
               onClick={showPostModal}
@@ -90,27 +112,52 @@ const PurchaseInvoiceHeader = () => {
         <Card>
           <CardHeader>
             <CardTitle>{purchaseInvoice.invoiceId}</CardTitle>
-            <CardDescription>{purchaseInvoice.supplierName}</CardDescription>
+            <CardDescription>{supplier ? supplier.name : "-"}</CardDescription>
           </CardHeader>
 
           <CardContent>
             <CardAttributes>
               <CardAttribute>
-                <CardAttributeLabel>Total</CardAttributeLabel>
+                <CardAttributeLabel>Assignee</CardAttributeLabel>
                 <CardAttributeValue>
-                  {formatter.format(purchaseInvoiceTotals?.total ?? 0)}
+                  {assignee ? (
+                    <EmployeeAvatar employeeId={assignee ?? null} />
+                  ) : (
+                    "-"
+                  )}
                 </CardAttributeValue>
               </CardAttribute>
+
+              <CardAttribute>
+                <CardAttributeLabel>Date Due</CardAttributeLabel>
+                <CardAttributeValue>
+                  {formatDate(purchaseInvoice.dateDue)}
+                </CardAttributeValue>
+              </CardAttribute>
+
               <CardAttribute>
                 <CardAttributeLabel>Date Issued</CardAttributeLabel>
                 <CardAttributeValue>
-                  {purchaseInvoice.dateIssued}
+                  {formatDate(purchaseInvoice.dateIssued)}
+                </CardAttributeValue>
+              </CardAttribute>
+
+              <CardAttribute>
+                <CardAttributeLabel>Date Paid</CardAttributeLabel>
+                <CardAttributeValue>
+                  {formatDate(purchaseInvoice.datePaid)}
                 </CardAttributeValue>
               </CardAttribute>
 
               <CardAttribute>
                 <CardAttributeLabel>Status</CardAttributeLabel>
                 <PurchaseInvoicingStatus status={purchaseInvoice.status} />
+              </CardAttribute>
+              <CardAttribute>
+                <CardAttributeLabel>Total</CardAttributeLabel>
+                <CardAttributeValue>
+                  {formatter.format(purchaseInvoiceTotals?.total ?? 0)}
+                </CardAttributeValue>
               </CardAttribute>
             </CardAttributes>
           </CardContent>

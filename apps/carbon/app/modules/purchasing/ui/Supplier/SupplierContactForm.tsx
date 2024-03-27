@@ -8,9 +8,12 @@ import {
   DrawerTitle,
   HStack,
   VStack,
+  toast,
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
+import type { PostgrestResponse } from "@supabase/supabase-js";
+import { useEffect } from "react";
 import type { z } from "zod";
 import {
   CustomFormFields,
@@ -40,7 +43,20 @@ const SupplierContactForm = ({
   type = "drawer",
   onClose,
 }: SupplierContactFormProps) => {
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<PostgrestResponse<{ id: string }>>();
+
+  useEffect(() => {
+    if (type !== "modal") return;
+
+    if (fetcher.state === "loading" && fetcher.data?.data) {
+      onClose?.();
+      toast.success(`Created supplier contact`);
+    } else if (fetcher.state === "idle" && fetcher.data?.error) {
+      toast.error(
+        `Failed to create supplier contact: ${fetcher.data.error.message}`
+      );
+    }
+  }, [fetcher.data, fetcher.state, onClose, type]);
 
   const permissions = usePermissions();
   const isEditing = !!initialValues?.id;
@@ -67,11 +83,6 @@ const SupplierContactForm = ({
           defaultValues={initialValues}
           fetcher={fetcher}
           className="flex flex-col h-full"
-          onSubmit={() => {
-            if (type === "modal") {
-              onClose?.();
-            }
-          }}
         >
           <DrawerHeader>
             <DrawerTitle>{isEditing ? "Edit" : "New"} Contact</DrawerTitle>

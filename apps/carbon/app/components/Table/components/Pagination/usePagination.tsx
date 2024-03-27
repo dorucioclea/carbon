@@ -9,7 +9,7 @@ export function usePagination(
   setRowSelections: Dispatch<SetStateAction<RowSelectionState>>
 ) {
   const [params, setParams] = useUrlParams();
-  const pageSize = parseNumberFromUrlParam(params, "limit", 15);
+  const pageSize = parseNumberFromUrlParam(params, "limit", 100);
   const offset = parseNumberFromUrlParam(params, "offset", 0);
 
   const pageIndex = Math.floor(offset / pageSize) + 1;

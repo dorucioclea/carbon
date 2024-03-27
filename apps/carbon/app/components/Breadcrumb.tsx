@@ -46,7 +46,7 @@ const BreadcrumbItem = forwardRef<
     {...props}
   >
     {!isFirstChild && (
-      <LuChevronRight className="text-muted-foreground h-3 w-3" />
+      <LuChevronRight className="text-muted-foreground h-4 w-4" />
     )}
     {children}
   </li>

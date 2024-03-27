@@ -8,10 +8,13 @@ import {
   DrawerTitle,
   HStack,
   VStack,
+  toast,
 } from "@carbon/react";
 
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
+import type { PostgrestResponse } from "@supabase/supabase-js";
+import { useEffect } from "react";
 import type { z } from "zod";
 import { CustomFormFields, Hidden, Input, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
@@ -33,7 +36,20 @@ const SupplierLocationForm = ({
   type = "drawer",
   onClose,
 }: SupplierLocationFormProps) => {
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<PostgrestResponse<{ id: string }>>();
+
+  useEffect(() => {
+    if (type !== "modal") return;
+
+    if (fetcher.state === "loading" && fetcher.data?.data) {
+      onClose?.();
+      toast.success(`Created supplier location`);
+    } else if (fetcher.state === "idle" && fetcher.data?.error) {
+      toast.error(
+        `Failed to create supplier location: ${fetcher.data.error.message}`
+      );
+    }
+  }, [fetcher.data, fetcher.state, onClose, type]);
 
   const permissions = usePermissions();
   const isEditing = !!initialValues?.id;
@@ -59,11 +75,6 @@ const SupplierLocationForm = ({
           }
           defaultValues={initialValues}
           fetcher={fetcher}
-          onSubmit={() => {
-            if (type === "modal") {
-              onClose?.();
-            }
-          }}
           className="flex flex-col h-full"
         >
           <DrawerHeader>

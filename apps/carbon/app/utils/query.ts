@@ -23,7 +23,7 @@ export interface GenericQueryFilters {
 export function getGenericQueryFilters(
   params: URLSearchParams
 ): GenericQueryFilters {
-  const limit = parseNumberFromUrlParam(params, "limit", 15);
+  const limit = parseNumberFromUrlParam(params, "limit", 100);
   const offset = parseNumberFromUrlParam(params, "offset", 0);
 
   const sortParams = params.getAll("sort");

@@ -593,7 +593,10 @@ export async function upsertCustomer(
   }
   return client
     .from("customer")
-    .update(sanitize(customer))
+    .update({
+      ...sanitize(customer),
+      updatedAt: today(getLocalTimeZone()).toString(),
+    })
     .eq("id", customer.id)
     .select("id")
     .single();
@@ -695,7 +698,7 @@ export async function upsertCustomerStatus(
       })
 ) {
   if ("createdBy" in customerStatus) {
-    return client.from("customerStatus").insert([customerStatus]);
+    return client.from("customerStatus").insert([customerStatus]).select("id");
   } else {
     return client
       .from("customerStatus")
@@ -718,7 +721,7 @@ export async function upsertCustomerType(
       })
 ) {
   if ("createdBy" in customerType) {
-    return client.from("customerType").insert([customerType]);
+    return client.from("customerType").insert([customerType]).select("id");
   } else {
     return client
       .from("customerType")
@@ -765,7 +768,13 @@ export async function upsertQuote(
   if ("createdBy" in quote) {
     return client.from("quote").insert([quote]).select("id, quoteId");
   } else {
-    return client.from("quote").update(sanitize(quote)).eq("id", quote.id);
+    return client
+      .from("quote")
+      .update({
+        ...sanitize(quote),
+        updatedAt: today(getLocalTimeZone()).toString(),
+      })
+      .eq("id", quote.id);
   }
 }
 

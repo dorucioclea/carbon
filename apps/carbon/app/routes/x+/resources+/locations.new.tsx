@@ -51,7 +51,7 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   return modal
-    ? json(createLocation, { status: 201 })
+    ? json(createLocation)
     : redirect(
         path.to.locations,
         await flash(request, success("Location created"))

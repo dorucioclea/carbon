@@ -14,6 +14,7 @@ export const path = {
       accountingCategories: `${api}/accounting/categories`,
       accountingSubcategories: (id: string) =>
         generatePath(`${api}/accounting/subcategories?accountCategoryId=${id}`),
+      assign: `${api}/assign`,
       currencies: `${api}/accounting/currencies`,
       customerContacts: (id: string) =>
         generatePath(`${api}/sales/customer-contacts?customerId=${id}`),
@@ -503,7 +504,7 @@ export const path = {
     supplierTypes: `${x}/purchasing/supplier-types`,
     tableSequence: (id: string) =>
       generatePath(`${x}/settings/sequences/${id}`),
-    theme: `${x}/settings/theme`,
+    theme: `${x}/account/theme`,
     timecards: `${x}/timecards`,
     uom: (id: string) => generatePath(`${x}/parts/uom/${id}`),
     uoms: `${x}/parts/uom`,

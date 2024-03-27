@@ -1,28 +1,31 @@
-import { Enumerable, MenuIcon, MenuItem } from "@carbon/react";
+import { Checkbox, Enumerable, MenuIcon, MenuItem } from "@carbon/react";
+import { formatDate } from "@carbon/utils";
 import { useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
-import { Hyperlink, New, Table } from "~/components";
-import { usePermissions, useUrlParams } from "~/hooks";
+import { EmployeeAvatar, Hyperlink, New, Table } from "~/components";
+import { usePermissions } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
-import { serviceType, type Service } from "~/modules/parts";
+import type { Service } from "~/modules/parts";
+import { serviceType } from "~/modules/parts";
+import { usePeople } from "~/stores";
 import type { ListItem } from "~/types";
 import { path } from "~/utils/path";
 
 type ServicesTableProps = {
   data: Service[];
-  count: number;
   partGroups: ListItem[];
+  count: number;
 };
 
 const ServicesTable = memo(
   ({ data, count, partGroups }: ServicesTableProps) => {
     const navigate = useNavigate();
-    const [params] = useUrlParams();
     const permissions = usePermissions();
+    const customColumns = useCustomColumns<Service>("part");
+    const [people] = usePeople();
 
-    const customColumns = useCustomColumns<Service>("service");
     const columns = useMemo<ColumnDef<Service>[]>(() => {
       const defaultColumns: ColumnDef<Service>[] = [
         {
@@ -46,7 +49,7 @@ const ServicesTable = memo(
         },
         {
           accessorKey: "serviceType",
-          header: "Type",
+          header: "Service Type",
           cell: (item) => <Enumerable value={item.getValue<string>()} />,
           meta: {
             filter: {
@@ -59,9 +62,8 @@ const ServicesTable = memo(
           },
         },
         {
-          // @ts-ignore
           accessorKey: "partGroup",
-          header: "Part Group",
+          header: "Service Group",
           cell: (item) => <Enumerable value={item.getValue<string>()} />,
           meta: {
             filter: {
@@ -73,15 +75,102 @@ const ServicesTable = memo(
             },
           },
         },
+        {
+          accessorKey: "active",
+          header: "Active",
+          cell: (item) => <Checkbox isChecked={item.getValue<boolean>()} />,
+          meta: {
+            filter: {
+              type: "static",
+              options: [
+                { value: "true", label: "Active" },
+                { value: "false", label: "Inactive" },
+              ],
+            },
+            pluralHeader: "Active Statuses",
+          },
+        },
+        {
+          accessorKey: "blocked",
+          header: "Blocked",
+          cell: (item) => <Checkbox isChecked={item.getValue<boolean>()} />,
+          meta: {
+            filter: {
+              type: "static",
+              options: [
+                { value: "true", label: "Blocked" },
+                { value: "false", label: "Not Blocked" },
+              ],
+            },
+            pluralHeader: "Blocked Statuses",
+          },
+        },
+        {
+          id: "assignee",
+          header: "Assignee",
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.assignee} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
+          },
+        },
+        {
+          id: "createdBy",
+          header: "Created By",
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.createdBy} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
+          },
+        },
+        {
+          accessorKey: "createdAt",
+          header: "Created At",
+          cell: (item) => formatDate(item.getValue<string>()),
+        },
+        {
+          id: "updatedBy",
+          header: "Updated By",
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.updatedBy} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
+          },
+        },
+        {
+          accessorKey: "updatedAt",
+          header: "Created At",
+          cell: (item) => formatDate(item.getValue<string>()),
+        },
       ];
       return [...defaultColumns, ...customColumns];
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [params, customColumns]);
+    }, [customColumns, partGroups, people]);
 
     const renderContextMenu = useMemo(() => {
       // eslint-disable-next-line react/display-name
       return (row: Service) => (
-        <MenuItem onClick={() => navigate(path.to.service(row.id!))}>
+        <MenuItem onClick={() => navigate(path.to.part(row.id!))}>
           <MenuIcon icon={<BsFillPenFill />} />
           Edit Service
         </MenuItem>
@@ -94,18 +183,31 @@ const ServicesTable = memo(
           count={count}
           columns={columns}
           data={data}
+          defaultColumnPinning={{
+            left: ["id"],
+          }}
+          defaultColumnVisibility={{
+            description: false,
+            active: false,
+            blocked: false,
+            createdBy: false,
+            createdAt: false,
+            updatedBy: false,
+            updatedAt: false,
+          }}
           primaryAction={
             permissions.can("create", "parts") && (
               <New label="Service" to={path.to.newService} />
             )
           }
           renderContextMenu={renderContextMenu}
+          withColumnOrdering
         />
       </>
     );
   }
 );
 
-ServicesTable.displayName = "ServicesTable";
+ServicesTable.displayName = "ServiceTable";
 
 export default ServicesTable;

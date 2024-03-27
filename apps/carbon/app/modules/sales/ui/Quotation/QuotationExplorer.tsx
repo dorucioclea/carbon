@@ -433,26 +433,28 @@ const QuotationExplorer = () => {
     return result;
   }, [tree]);
 
-  const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({
-    [params.id]: true,
-  });
+  const [collapsedNodes, setCollapsedNodes] = useState<Record<string, boolean>>(
+    {}
+  );
+
+  console.log({ collapsedNodes });
 
   const openNode = (id: string) => {
-    const result = { [id]: true };
+    const collapsed = { [id]: false };
     let currentId = id;
     while (nodeParentById[currentId]) {
-      result[nodeParentById[currentId]] = true;
+      collapsed[nodeParentById[currentId]] = false;
       currentId = nodeParentById[currentId];
     }
 
-    setExpandedNodes((prev) => ({
+    setCollapsedNodes((prev) => ({
       ...prev,
-      ...result,
+      ...collapsed,
     }));
   };
 
   const toggleNode = (id: string) => {
-    setExpandedNodes((prev) => ({
+    setCollapsedNodes((prev) => ({
       ...prev,
       [id]: !prev[id],
     }));
@@ -473,14 +475,15 @@ const QuotationExplorer = () => {
             }}
           >
             <IconButton
-              aria-label={expandedNodes[node.id] ? "Collapse" : "Expand"}
+              aria-label={collapsedNodes[node.id] ? "Expand" : "Collapse"}
               onClick={() => toggleNode(node.id)}
               isDisabled={!node.children}
               icon={<RxChevronDown />}
               style={{
                 transition: "transform .25s ease",
                 transform:
-                  expandedNodes[node.id] ||
+                  collapsedNodes[node.id] === undefined ||
+                  collapsedNodes[node.id] === false ||
                   !node.children ||
                   node.children?.length === 0
                     ? undefined
@@ -500,7 +503,7 @@ const QuotationExplorer = () => {
             />
           </HStack>
           {node.children &&
-            expandedNodes[node.id] &&
+            !collapsedNodes[node.id] &&
             renderBillOfMaterial(node.children, level + 1)}
         </div>
       );
@@ -508,6 +511,14 @@ const QuotationExplorer = () => {
   };
 
   const newButtonRef = useRef<HTMLButtonElement>(null);
+  useKeyboardShortcuts({
+    l: () => {
+      if (newButtonRef.current) {
+        newButtonRef.current.click();
+      }
+    },
+  });
+
   const navigate = useNavigate();
   const { id } = useParams();
   if (!id) throw new Error("id not found");
@@ -532,7 +543,7 @@ const QuotationExplorer = () => {
           </Tooltip>
         </HStack>
       </VStack>
-      <VStack className="h-[calc(100vh-183px)] p-2 w-full">
+      <VStack className="min-h-[calc(100vh-210px)] p-2 w-full">
         <div className="w-full h-full overflow-auto" role="tree">
           {renderBillOfMaterial(tree)}
         </div>

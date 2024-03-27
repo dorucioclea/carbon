@@ -1,9 +1,10 @@
 import { Button, Enumerable, MenuIcon, MenuItem } from "@carbon/react";
-import { useNavigate } from "@remix-run/react";
+import { formatDate } from "@carbon/utils";
+import { Link, useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
-import { Hyperlink, New, Table } from "~/components";
+import { EmployeeAvatar, Hyperlink, New, Table } from "~/components";
 import { usePermissions } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type {
@@ -11,6 +12,7 @@ import type {
   SupplierStatus,
   SupplierType,
 } from "~/modules/purchasing";
+import { usePeople } from "~/stores";
 import { path } from "~/utils/path";
 
 type SuppliersTableProps = {
@@ -24,6 +26,7 @@ const SuppliersTable = memo(
   ({ data, count, supplierStatuses, supplierTypes }: SuppliersTableProps) => {
     const navigate = useNavigate();
     const permissions = usePermissions();
+    const [people] = usePeople();
 
     const customColumns = useCustomColumns<Supplier>("supplier");
     const columns = useMemo<ColumnDef<Supplier>[]>(() => {
@@ -37,6 +40,7 @@ const SuppliersTable = memo(
             </Hyperlink>
           ),
         },
+
         {
           accessorKey: "type",
           header: "Supplier Type",
@@ -66,18 +70,47 @@ const SuppliersTable = memo(
           },
         },
         {
+          id: "accountManagerId",
+          header: "Account Manager",
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.accountManagerId} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
+          },
+        },
+        {
+          id: "assignee",
+          header: "Assignee",
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.assignee} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
+          },
+        },
+        {
           id: "orders",
           header: "Orders",
           cell: ({ row }) => (
-            <Button
-              variant="secondary"
-              onClick={() =>
-                navigate(
-                  `${path.to.purchaseOrders}?filter=supplierName:eq:${row.original.name}`
-                )
-              }
-            >
-              {row.original.orderCount ?? 0} Orders
+            <Button variant="secondary" asChild>
+              <Link
+                to={`${path.to.purchaseOrders}?filter=supplierName:eq:${row.original.name}`}
+              >
+                {row.original.orderCount ?? 0} Orders
+              </Link>
             </Button>
           ),
         },
@@ -85,19 +118,59 @@ const SuppliersTable = memo(
           id: "parts",
           header: "Parts",
           cell: ({ row }) => (
-            <Button
-              variant="secondary"
-              onClick={() =>
-                navigate(`${path.to.partsSearch}?supplierId=${row.original.id}`)
-              }
-            >
-              {row.original.partCount ?? 0} Parts
+            <Button variant="secondary" asChild>
+              <Link to={`${path.to.partsSearch}?supplierId=${row.original.id}`}>
+                {row.original.partCount ?? 0} Parts
+              </Link>
             </Button>
           ),
         },
+        {
+          id: "createdBy",
+          header: "Created By",
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.createdBy} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
+          },
+        },
+        {
+          accessorKey: "createdAt",
+          header: "Created At",
+          cell: (item) => formatDate(item.getValue<string>()),
+        },
+        {
+          id: "updatedBy",
+          header: "Updated By",
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.updatedBy} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
+          },
+        },
+        {
+          accessorKey: "updatedAt",
+          header: "Created At",
+          cell: (item) => formatDate(item.getValue<string>()),
+        },
       ];
+
       return [...defaultColumns, ...customColumns];
-    }, [navigate, supplierStatuses, supplierTypes, customColumns]);
+    }, [people, supplierTypes, supplierStatuses, customColumns]);
 
     const renderContextMenu = useMemo(
       // eslint-disable-next-line react/display-name
@@ -117,12 +190,22 @@ const SuppliersTable = memo(
           count={count}
           columns={columns}
           data={data}
+          defaultColumnPinning={{
+            left: ["name"],
+          }}
+          defaultColumnVisibility={{
+            createdBy: false,
+            createdAt: false,
+            updatedBy: false,
+            updatedAt: false,
+          }}
           primaryAction={
             permissions.can("create", "purchasing") && (
               <New label="Supplier" to={path.to.newSupplier} />
             )
           }
           renderContextMenu={renderContextMenu}
+          withColumnOrdering
         />
       </>
     );

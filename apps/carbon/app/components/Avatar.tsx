@@ -12,7 +12,6 @@ const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(
   ({ name, path, bucket = "avatars", ...props }, ref) => {
     const imagePath = path ? getStoragePath(bucket, path) : undefined;
 
-    // @ts-ignore
     return <AvatarBase src={imagePath} name={name} ref={ref} {...props} />;
   }
 );

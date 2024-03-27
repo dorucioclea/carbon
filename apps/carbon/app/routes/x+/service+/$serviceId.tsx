@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
-import { ServicePreview, ServiceSidebar, getService } from "~/modules/parts";
+import { ServiceHeader, ServiceSidebar, getService } from "~/modules/parts";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";
@@ -38,7 +38,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 export default function ServiceRoute() {
   return (
     <>
-      <ServicePreview />
+      <ServiceHeader />
       <div className="grid grid-cols-1 md:grid-cols-[1fr_4fr] h-full w-full gap-4">
         <ServiceSidebar />
         <Outlet />

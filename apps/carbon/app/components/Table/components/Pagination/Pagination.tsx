@@ -36,8 +36,7 @@ export type PaginationProps = {
 const Pagination = (props: PaginationProps) => {
   const { pageSize, setPageSize } = props;
 
-  const pageSizes = [15, 25, 50, 100];
-  const pageSizeLabel = "results per page";
+  const pageSizes = [100, 500, 1000];
   if (!pageSizes.includes(pageSize)) {
     pageSizes.push(pageSize);
     pageSizes.sort();
@@ -50,9 +49,7 @@ const Pagination = (props: PaginationProps) => {
     >
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost">
-            {pageSize} {pageSizeLabel}
-          </Button>
+          <Button variant="secondary">{pageSize} rows</Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-48">
           <DropdownMenuLabel>Results per page</DropdownMenuLabel>
@@ -66,7 +63,7 @@ const Pagination = (props: PaginationProps) => {
                   setPageSize(size);
                 }}
               >
-                {size} {pageSizeLabel}
+                {size}
               </DropdownMenuRadioItem>
             ))}
           </DropdownMenuRadioGroup>

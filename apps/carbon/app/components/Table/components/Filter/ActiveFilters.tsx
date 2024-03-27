@@ -65,6 +65,13 @@ const ActiveFilter = ({ filter, operator, value }: ActiveFilterProps) => {
   const [options, setOptions] = useState(
     filter.filter.type === "static" ? filter.filter.options : []
   );
+
+  useEffect(() => {
+    if (filter.filter.type === "static") {
+      setOptions(filter.filter.options);
+    }
+  }, [filter.filter]);
+
   useEffect(() => {
     if (!open) {
       setInput("");

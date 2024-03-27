@@ -6,13 +6,20 @@ import {
   MenuItem,
   useDisclosure,
 } from "@carbon/react";
+import { formatDate } from "@carbon/utils";
 import { useFetcher, useFetchers } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo, useState } from "react";
 import { BsFillPenFill, BsPin, BsPinFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
 import { MdCallReceived } from "react-icons/md";
-import { Avatar, Hyperlink, New, Table } from "~/components";
+import {
+  EmployeeAvatar,
+  Hyperlink,
+  New,
+  SupplierAvatar,
+  Table,
+} from "~/components";
 import { ConfirmDelete } from "~/components/Modals";
 import { usePermissions } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
@@ -21,7 +28,7 @@ import {
   PurchasingStatus,
   purchaseOrderStatusType,
 } from "~/modules/purchasing";
-import { useSuppliers } from "~/stores";
+import { usePeople, useSuppliers } from "~/stores";
 import { favoriteSchema } from "~/types/validators";
 import { path } from "~/utils/path";
 import { usePurchaseOrder } from "./usePurchaseOrder";
@@ -39,6 +46,8 @@ const PurchaseOrdersTable = memo(
       useState<PurchaseOrder | null>(null);
 
     const deletePurchaseOrderModal = useDisclosure();
+
+    const [people] = usePeople();
     const [suppliers] = useSuppliers();
 
     const fetcher = useFetcher();
@@ -109,14 +118,16 @@ const PurchaseOrdersTable = memo(
           ),
         },
         {
-          accessorKey: "supplierName",
+          id: "supplierId",
           header: "Supplier",
-          cell: (item) => item.getValue(),
+          cell: ({ row }) => {
+            return <SupplierAvatar supplierId={row.original.supplierId} />;
+          },
           meta: {
             filter: {
               type: "static",
               options: suppliers?.map((supplier) => ({
-                value: supplier.name,
+                value: supplier.id,
                 label: supplier.name,
               })),
             },
@@ -149,6 +160,22 @@ const PurchaseOrdersTable = memo(
               })),
             },
             pluralHeader: "Statuses",
+          },
+        },
+        {
+          id: "assignee",
+          header: "Assignee",
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.assignee} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
           },
         },
         {
@@ -187,43 +214,51 @@ const PurchaseOrdersTable = memo(
           },
         },
         {
-          accessorKey: "createdByFullName",
+          id: "createdBy",
           header: "Created By",
-          cell: ({ row }) => {
-            return (
-              <HStack>
-                <Avatar size="sm" path={row.original.createdByAvatar} />
-                <p>{row.original.createdByFullName}</p>
-              </HStack>
-            );
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.createdBy} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
           },
         },
         {
           accessorKey: "createdAt",
           header: "Created At",
-          cell: (item) => item.getValue(),
+          cell: (item) => formatDate(item.getValue<string>()),
         },
         {
-          accessorKey: "updatedByFullName",
+          id: "updatedBy",
           header: "Updated By",
-          cell: ({ row }) => {
-            return row.original.updatedByFullName ? (
-              <HStack>
-                <Avatar size="sm" path={row.original.updatedByAvatar ?? null} />
-                <p>{row.original.updatedByFullName}</p>
-              </HStack>
-            ) : null;
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.updatedBy} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
           },
         },
         {
           accessorKey: "updatedAt",
-          header: "Updated At",
-          cell: (item) => item.getValue(),
+          header: "Created At",
+          cell: (item) => formatDate(item.getValue<string>()),
         },
       ];
 
       return [...defaultColumns, ...customColumns];
-    }, [fetcher, suppliers, customColumns]);
+    }, [suppliers, people, customColumns, fetcher]);
 
     const renderContextMenu = useMemo(() => {
       // eslint-disable-next-line react/display-name
@@ -272,6 +307,17 @@ const PurchaseOrdersTable = memo(
           data={rows}
           defaultColumnPinning={{
             left: ["purchaseOrderId"],
+          }}
+          defaultColumnVisibility={{
+            receiptPromisedDate: false,
+            shippingMethodName: false,
+            shippingTermName: false,
+            paymentTermName: false,
+            dropShipment: false,
+            createdBy: false,
+            createdAt: false,
+            updatedBy: false,
+            updatedAt: false,
           }}
           primaryAction={
             permissions.can("create", "purchasing") && (

@@ -40,7 +40,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   ]);
   if (attributeCategories.error) {
     return redirect(
-      path.to.resources,
+      path.to.authenticatedRoot,
       await flash(
         request,
         error(attributeCategories.error, "Error loading attribute categories")
@@ -49,7 +49,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
   if (employeeTypes.error) {
     return redirect(
-      path.to.resources,
+      path.to.authenticatedRoot,
       await flash(
         request,
         error(employeeTypes.error, "Error loading employee types")
@@ -58,7 +58,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
   if (people.error) {
     return redirect(
-      path.to.resources,
+      path.to.authenticatedRoot,
       await flash(request, error(people.error, "Error loading people"))
     );
   }

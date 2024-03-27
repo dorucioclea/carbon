@@ -66,7 +66,6 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function QuotationNewRoute() {
   const user = useUser();
   const initialValues = {
-    ownerId: user.id,
     locationId: user.defaults.locationId,
     description: "",
     status: "Draft" as "Draft",

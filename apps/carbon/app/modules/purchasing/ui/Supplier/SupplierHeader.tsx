@@ -8,11 +8,15 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  Enumerable,
   HStack,
+  Menubar,
   VStack,
 } from "@carbon/react";
+
 import { useParams } from "@remix-run/react";
-import { useRouteData } from "~/hooks";
+import { Assign, EmployeeAvatar, useOptimisticAssignment } from "~/components";
+import { usePermissions, useRouteData } from "~/hooks";
 import type {
   SupplierDetail,
   SupplierStatus,
@@ -22,7 +26,9 @@ import type { ListItem } from "~/types";
 import { path } from "~/utils/path";
 
 const SupplierHeader = () => {
+  const permissions = usePermissions();
   const { supplierId } = useParams();
+
   if (!supplierId) throw new Error("Could not find supplierId");
   const routeData = useRouteData<{ supplier: SupplierDetail }>(
     path.to.supplier(supplierId)
@@ -34,19 +40,41 @@ const SupplierHeader = () => {
     paymentTerms: ListItem[];
   }>(path.to.supplierRoot);
 
+  const supplierStatus = sharedSupplierData?.supplierStatuses?.find(
+    (status) => status.id === routeData?.supplier?.supplierStatusId
+  )?.name;
+
+  const supplierType = sharedSupplierData?.supplierTypes?.find(
+    (type) => type.id === routeData?.supplier?.supplierTypeId
+  )?.name;
+
+  const optimisticAssignment = useOptimisticAssignment({
+    id: supplierId,
+    table: "supplier",
+  });
+  const assignee =
+    optimisticAssignment !== undefined
+      ? optimisticAssignment
+      : routeData?.supplier?.assignee;
+
   return (
     <VStack>
+      {permissions.is("employee") && (
+        <Menubar>
+          <Assign
+            id={supplierId}
+            table="supplier"
+            value={routeData?.supplier?.assignee ?? ""}
+          />
+        </Menubar>
+      )}
       <Card>
         <HStack className="justify-between items-start">
           <CardHeader>
             <CardTitle>{routeData?.supplier?.name}</CardTitle>
           </CardHeader>
           <CardAction>
-            {/* <Button
-              variant="secondary"
-              onClick={() => alert("TODO")}
-              leftIcon={<FaHistory />}
-            >
+            {/* <Button onClick={() => alert("TODO")} leftIcon={<FaHistory />}>
               Supplier Details
             </Button> */}
           </CardAction>
@@ -54,25 +82,38 @@ const SupplierHeader = () => {
         <CardContent>
           <CardAttributes>
             <CardAttribute>
+              <CardAttributeLabel>Account Manager</CardAttributeLabel>
+              <CardAttributeValue>
+                {routeData?.supplier?.accountManagerId ? (
+                  <EmployeeAvatar
+                    employeeId={routeData?.supplier?.accountManagerId ?? null}
+                  />
+                ) : (
+                  "-"
+                )}
+              </CardAttributeValue>
+            </CardAttribute>
+            <CardAttribute>
+              <CardAttributeLabel>Assignee</CardAttributeLabel>
+              <CardAttributeValue>
+                {assignee ? (
+                  <EmployeeAvatar employeeId={assignee ?? null} />
+                ) : (
+                  "-"
+                )}
+              </CardAttributeValue>
+            </CardAttribute>
+            <CardAttribute>
               <CardAttributeLabel>Type</CardAttributeLabel>
               <CardAttributeValue>
-                {sharedSupplierData?.supplierTypes?.find(
-                  (type) => type.id === routeData?.supplier?.supplierTypeId
-                )?.name ?? "-"}
+                {supplierType ? <Enumerable value={supplierType!} /> : "-"}
               </CardAttributeValue>
             </CardAttribute>
             <CardAttribute>
               <CardAttributeLabel>Status</CardAttributeLabel>
               <CardAttributeValue>
-                {sharedSupplierData?.supplierStatuses?.find(
-                  (status) =>
-                    status.id === routeData?.supplier?.supplierStatusId
-                )?.name ?? "-"}
+                {supplierStatus ? <Enumerable value={supplierStatus!} /> : "-"}
               </CardAttributeValue>
-            </CardAttribute>
-            <CardAttribute>
-              <CardAttributeLabel>Payment Terms</CardAttributeLabel>
-              <CardAttributeValue>-</CardAttributeValue>
             </CardAttribute>
           </CardAttributes>
         </CardContent>

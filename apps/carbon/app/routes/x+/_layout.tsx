@@ -1,4 +1,4 @@
-import { Toaster, VStack, toast } from "@carbon/react";
+import { Toaster, VStack } from "@carbon/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData, useNavigation } from "@remix-run/react";
@@ -17,14 +17,18 @@ import {
 } from "~/modules/users/users.server";
 import {
   destroyAuthSession,
-  getSessionFlash,
   requireAuthSession,
 } from "~/services/session.server";
 import { path } from "~/utils/path";
 
-export function links() {
-  return [{ rel: "stylesheet", href: "/assets/theme.css" }];
-}
+import type { ShouldRevalidateFunction } from "@remix-run/react";
+
+export const shouldRevalidate: ShouldRevalidateFunction = ({
+  defaultShouldRevalidate,
+}) => {
+  // TODO: some more sophisticated logic here
+  return false;
+};
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const { accessToken, expiresAt, expiresIn, userId } =
@@ -34,25 +38,16 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const client = getSupabase(accessToken);
 
   // parallelize the requests
-  const [
-    sessionFlash,
-    company,
-    customFields,
-    integrations,
-    user,
-    claims,
-    groups,
-    defaults,
-  ] = await Promise.all([
-    getSessionFlash(request),
-    getCompany(client),
-    getCustomFieldsSchemas(client, {}),
-    getIntegrations(client),
-    getUser(client, userId),
-    getUserClaims(request),
-    getUserGroups(client, userId),
-    getUserDefaults(client, userId),
-  ]);
+  const [company, customFields, integrations, user, claims, groups, defaults] =
+    await Promise.all([
+      getCompany(client),
+      getCustomFieldsSchemas(client, {}),
+      getIntegrations(client),
+      getUser(client, userId),
+      getUserClaims(request),
+      getUserGroups(client, userId),
+      getUserDefaults(client, userId),
+    ]);
 
   if (!claims || user.error || !user.data || !groups.data) {
     await destroyAuthSession(request);
@@ -63,41 +58,26 @@ export async function loader({ request }: LoaderFunctionArgs) {
     return redirect(path.to.onboarding.root);
   }
 
-  return json(
-    {
-      session: {
-        accessToken,
-        expiresIn,
-        expiresAt,
-      },
-      company: company.data,
-      customFields: customFields.data ?? [],
-      integrations: integrations.data ?? [],
-      user: user.data,
-      groups: groups.data,
-      defaults: defaults.data,
-      permissions: claims?.permissions,
-      role: claims?.role,
-      result: sessionFlash?.result,
+  return json({
+    session: {
+      accessToken,
+      expiresIn,
+      expiresAt,
     },
-    {
-      headers: sessionFlash?.headers,
-    }
-  );
+    company: company.data,
+    customFields: customFields.data ?? [],
+    integrations: integrations.data ?? [],
+    user: user.data,
+    groups: groups.data,
+    defaults: defaults.data,
+    permissions: claims?.permissions,
+    role: claims?.role,
+  });
 }
 
 export default function AuthenticatedRoute() {
-  const { session, result } = useLoaderData<typeof loader>();
+  const { session } = useLoaderData<typeof loader>();
   const transition = useNavigation();
-
-  /* Toast Messages */
-  useEffect(() => {
-    if (result?.success === true) {
-      toast.success(result.message);
-    } else if (result?.message) {
-      toast.error(result.message);
-    }
-  }, [result]);
 
   /* NProgress */
   useEffect(() => {

@@ -86,6 +86,7 @@ export const contractorValidator = z.object({
   abilities: z
     .array(z.string().min(20, { message: "Invalid ability" }))
     .optional(),
+  assignee: zfd.text(z.string().optional()),
 });
 
 export const departmentValidator = z.object({

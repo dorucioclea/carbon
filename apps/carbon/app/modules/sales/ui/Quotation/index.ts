@@ -2,7 +2,6 @@ import QuotationAssemblyForm from "./QuotationAssemblyForm";
 import QuotationDocuments from "./QuotationDocuments";
 import QuotationExplorer from "./QuotationExplorer";
 import QuotationForm from "./QuotationForm";
-import QuotationHeader from "./QuotationHeader";
 import QuotationLineForm from "./QuotationLineForm";
 import QuotationLineQuantities from "./QuotationLineQuantities";
 import QuotationMaterialForm from "./QuotationMaterialForm";
@@ -21,7 +20,6 @@ export {
   QuotationDocuments,
   QuotationExplorer,
   QuotationForm,
-  QuotationHeader,
   QuotationLineForm,
   QuotationLineQuantities,
   QuotationMaterialForm,

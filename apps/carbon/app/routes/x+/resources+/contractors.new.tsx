@@ -42,14 +42,14 @@ export async function action({ request }: ActionFunctionArgs) {
       path.to.contractors,
       await flash(
         request,
-        error(createContractor.error, "Failed to create contractor.")
+        error(createContractor.error, "Failed to create contractor")
       )
     );
   }
 
   return redirect(
     path.to.contractors,
-    await flash(request, success("Contractor created."))
+    await flash(request, success("Contractor created"))
   );
 }
 

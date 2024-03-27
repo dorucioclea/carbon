@@ -1,4 +1,5 @@
 import type { Database, Json } from "@carbon/database";
+import { getLocalTimeZone, today } from "@internationalized/date";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { z } from "zod";
 import type { GenericQueryFilters } from "~/utils/query";
@@ -362,7 +363,13 @@ export async function upsertPart(
   if ("createdBy" in part) {
     return client.from("part").insert(part).select("*").single();
   }
-  return client.from("part").update(sanitize(part)).eq("id", part.id);
+  return client
+    .from("part")
+    .update({
+      ...sanitize(part),
+      updatedAt: today(getLocalTimeZone()).toString(),
+    })
+    .eq("id", part.id);
 }
 
 export async function upsertPartCost(
@@ -533,7 +540,13 @@ export async function upsertService(
   if ("createdBy" in service) {
     return client.from("service").insert(service).select("*").single();
   }
-  return client.from("service").update(sanitize(service)).eq("id", service.id);
+  return client
+    .from("service")
+    .update({
+      ...sanitize(service),
+      updatedAt: today(getLocalTimeZone()).toString(),
+    })
+    .eq("id", service.id);
 }
 
 export async function upsertServiceSupplier(

@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
-import { PartPreview, PartSidebar, getPartSummary } from "~/modules/parts";
+import { PartHeader, PartSidebar, getPartSummary } from "~/modules/parts";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { path } from "~/utils/path";
@@ -35,7 +35,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 export default function PartRoute() {
   return (
     <>
-      <PartPreview />
+      <PartHeader />
       <div className="grid grid-cols-1 md:grid-cols-[1fr_4fr] h-full w-full gap-4">
         <PartSidebar />
         <Outlet />

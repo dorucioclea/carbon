@@ -12,10 +12,10 @@ export function getMode(request: Request): Mode | null {
   return null;
 }
 
-export function setMode(Mode: Mode | "system") {
-  if (Mode === "system") {
+export function setMode(mode: Mode | "system") {
+  if (mode === "system") {
     return cookie.serialize(cookieName, "", { path: "/", maxAge: -1 });
   } else {
-    return cookie.serialize(cookieName, Mode, { path: "/", maxAge: 31536000 });
+    return cookie.serialize(cookieName, mode, { path: "/", maxAge: 31536000 });
   }
 }

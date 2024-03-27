@@ -9,9 +9,12 @@ import {
   ModalDrawerProvider,
   ModalDrawerTitle,
   VStack,
+  toast,
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
+import type { PostgrestResponse } from "@supabase/supabase-js";
+import { useEffect } from "react";
 import type { z } from "zod";
 import {
   Ability,
@@ -40,7 +43,18 @@ const EquipmentTypeForm = ({
   onClose,
 }: EquipmentTypeFormProps) => {
   const permissions = usePermissions();
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<PostgrestResponse<{ id: string }>>();
+
+  useEffect(() => {
+    if (type !== "modal") return;
+
+    if (fetcher.state === "loading" && fetcher.data?.data) {
+      onClose?.();
+      toast.success(`Created location`);
+    } else if (fetcher.state === "idle" && fetcher.data?.error) {
+      toast.error(`Failed to create location: ${fetcher.data.error.message}`);
+    }
+  }, [fetcher.data, fetcher.state, onClose, type]);
 
   const isEditing = initialValues.id !== undefined;
   const isDisabled = isEditing
@@ -67,11 +81,6 @@ const EquipmentTypeForm = ({
             defaultValues={initialValues}
             fetcher={fetcher}
             className="flex flex-col h-full"
-            onSubmit={() => {
-              if (type === "modal") {
-                onClose();
-              }
-            }}
           >
             <ModalDrawerHeader>
               <ModalDrawerTitle>

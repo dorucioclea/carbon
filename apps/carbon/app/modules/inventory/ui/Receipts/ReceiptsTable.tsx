@@ -1,27 +1,27 @@
-import {
-  Checkbox,
-  Enumerable,
-  HStack,
-  MenuIcon,
-  MenuItem,
-} from "@carbon/react";
+import { Checkbox, Enumerable, MenuIcon, MenuItem } from "@carbon/react";
 import { formatDate } from "@carbon/utils";
 import { useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
 import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { Avatar, Hyperlink, New, Table } from "~/components";
+import {
+  EmployeeAvatar,
+  Hyperlink,
+  New,
+  SupplierAvatar,
+  Table,
+} from "~/components";
 import { usePermissions, useRealtime, useUrlParams } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Receipt } from "~/modules/inventory";
 import {
   ReceiptStatus,
   receiptSourceDocumentType,
   receiptStatusType,
 } from "~/modules/inventory";
-import { useSuppliers } from "~/stores";
+import { usePeople, useSuppliers } from "~/stores";
 import type { ListItem } from "~/types";
-import { useCustomColumns } from "~/hooks/useCustomColumns";
 import { path } from "~/utils/path";
 
 type ReceiptsTableProps = {
@@ -38,6 +38,7 @@ const ReceiptsTable = memo(({ data, count, locations }: ReceiptsTableProps) => {
   const permissions = usePermissions();
 
   const rows = useMemo(() => data, [data]);
+  const [people] = usePeople();
   const [suppliers] = useSuppliers();
   const customColumns = useCustomColumns<Receipt>("receipt");
 
@@ -107,20 +108,7 @@ const ReceiptsTable = memo(({ data, count, locations }: ReceiptsTableProps) => {
           },
         },
       },
-      {
-        accessorKey: "supplierName",
-        header: "Supplier",
-        cell: (item) => item.getValue() ?? null,
-        meta: {
-          filter: {
-            type: "static",
-            options: suppliers.map(({ name }) => ({
-              value: name,
-              label: name,
-            })),
-          },
-        },
-      },
+
       {
         accessorKey: "status",
         header: "Status",
@@ -140,9 +128,41 @@ const ReceiptsTable = memo(({ data, count, locations }: ReceiptsTableProps) => {
         },
       },
       {
+        id: "assignee",
+        header: "Assignee",
+        cell: ({ row }) => (
+          <EmployeeAvatar employeeId={row.original.assignee} />
+        ),
+        meta: {
+          filter: {
+            type: "static",
+            options: people.map((employee) => ({
+              value: employee.id,
+              label: employee.name,
+            })),
+          },
+        },
+      },
+      {
         accessorKey: "postingDate",
         header: "Posting Date",
         cell: (item) => formatDate(item.getValue<string>()),
+      },
+      {
+        id: "supplierId",
+        header: "Supplier",
+        cell: ({ row }) => {
+          return <SupplierAvatar supplierId={row.original.supplierId} />;
+        },
+        meta: {
+          filter: {
+            type: "static",
+            options: suppliers?.map((supplier) => ({
+              value: supplier.id,
+              label: supplier.name,
+            })),
+          },
+        },
       },
       {
         accessorKey: "invoiced",
@@ -160,15 +180,24 @@ const ReceiptsTable = memo(({ data, count, locations }: ReceiptsTableProps) => {
         },
       },
       {
-        accessorKey: "createdByFullName",
+        accessorKey: "externalDocumentId",
+        header: "External Ref.",
+        cell: (item) => item.getValue(),
+      },
+      {
+        id: "createdBy",
         header: "Created By",
-        cell: ({ row }) => {
-          return (
-            <HStack>
-              <Avatar size="sm" path={row.original.createdByAvatar} />
-              <p>{row.original.createdByFullName}</p>
-            </HStack>
-          );
+        cell: ({ row }) => (
+          <EmployeeAvatar employeeId={row.original.createdBy} />
+        ),
+        meta: {
+          filter: {
+            type: "static",
+            options: people.map((employee) => ({
+              value: employee.id,
+              label: employee.name,
+            })),
+          },
         },
       },
       {
@@ -177,27 +206,30 @@ const ReceiptsTable = memo(({ data, count, locations }: ReceiptsTableProps) => {
         cell: (item) => formatDate(item.getValue<string>()),
       },
       {
-        accessorKey: "updatedByFullName",
+        id: "updatedBy",
         header: "Updated By",
-        cell: ({ row }) => {
-          return row.original.updatedByFullName ? (
-            <HStack>
-              <Avatar size="sm" path={row.original.updatedByAvatar ?? null} />
-              <p>{row.original.updatedByFullName}</p>
-            </HStack>
-          ) : null;
+        cell: ({ row }) => (
+          <EmployeeAvatar employeeId={row.original.updatedBy} />
+        ),
+        meta: {
+          filter: {
+            type: "static",
+            options: people.map((employee) => ({
+              value: employee.id,
+              label: employee.name,
+            })),
+          },
         },
       },
       {
         accessorKey: "updatedAt",
-        header: "Updated At",
+        header: "Created At",
         cell: (item) => formatDate(item.getValue<string>()),
       },
     ];
 
-    return [...result,...customColumns];
-  }, [locations, suppliers, customColumns]);
-
+    return [...result, ...customColumns];
+  }, [locations, suppliers, people, customColumns]);
 
   const renderContextMenu = useCallback(
     (row: Receipt) => {
@@ -240,6 +272,12 @@ const ReceiptsTable = memo(({ data, count, locations }: ReceiptsTableProps) => {
       count={count}
       defaultColumnPinning={{
         left: ["receiptId"],
+      }}
+      defaultColumnVisibility={{
+        createdAt: false,
+        createdBy: false,
+        updatedAt: false,
+        updatedBy: false,
       }}
       primaryAction={
         permissions.can("create", "inventory") && (

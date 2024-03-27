@@ -1,4 +1,4 @@
-import { BsKeyFill, BsShieldLock } from "react-icons/bs";
+import { BsKeyFill, BsPaletteFill, BsShieldLock } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
 import type { Route } from "~/types";
 import { path } from "~/utils/path";
@@ -18,6 +18,11 @@ const accountRoutes: Route[] = [
     name: "Password",
     to: path.to.accountPassword,
     icon: <BsKeyFill />,
+  },
+  {
+    name: "Theme",
+    to: path.to.theme,
+    icon: <BsPaletteFill />,
   },
 ];
 

@@ -5,18 +5,25 @@ import {
   MenuItem,
   useDisclosure,
 } from "@carbon/react";
+import { formatDate } from "@carbon/utils";
 import { useFetcher, useFetchers, useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo, useState } from "react";
 import { BsFillPenFill, BsPin, BsPinFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-import { Avatar, Hyperlink, New, Table } from "~/components";
+import {
+  CustomerAvatar,
+  EmployeeAvatar,
+  Hyperlink,
+  New,
+  Table,
+} from "~/components";
 import { ConfirmDelete } from "~/components/Modals";
 import { usePermissions } from "~/hooks";
+import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { Quotation } from "~/modules/sales";
 import { quoteStatusType } from "~/modules/sales";
-import { useCustomers, useParts } from "~/stores";
-import { useCustomColumns } from "~/hooks/useCustomColumns";
+import { useCustomers, useParts, usePeople } from "~/stores";
 import { favoriteSchema } from "~/types/validators";
 import { path } from "~/utils/path";
 import { QuotationStatus } from "../Quotation";
@@ -37,6 +44,7 @@ const QuotationsTable = memo(({ data, count }: QuotationsTableProps) => {
 
   const [customers] = useCustomers();
   const [parts] = useParts();
+  const [people] = usePeople();
 
   const fetcher = useFetcher();
   const optimisticFavorite = useOptimisticFavorite();
@@ -101,14 +109,16 @@ const QuotationsTable = memo(({ data, count }: QuotationsTableProps) => {
         ),
       },
       {
-        accessorKey: "customerName",
+        id: "customerId",
         header: "Customer",
-        cell: (item) => item.getValue(),
+        cell: ({ row }) => (
+          <CustomerAvatar customerId={row.original.customerId} />
+        ),
         meta: {
           filter: {
             type: "static",
             options: customers?.map((customer) => ({
-              value: customer.name,
+              value: customer.id,
               label: customer.name,
             })),
           },
@@ -125,7 +135,7 @@ const QuotationsTable = memo(({ data, count }: QuotationsTableProps) => {
         },
       },
       {
-        accessorKey: "partIds",
+        id: "partIds",
         header: "Parts",
         cell: (item) => item.getValue<string[]>()?.length ?? 0,
         meta: {
@@ -153,6 +163,22 @@ const QuotationsTable = memo(({ data, count }: QuotationsTableProps) => {
             options: quoteStatusType.map((status) => ({
               value: status,
               label: <QuotationStatus status={status} />,
+            })),
+          },
+        },
+      },
+      {
+        id: "assignee",
+        header: "Assignee",
+        cell: ({ row }) => (
+          <EmployeeAvatar employeeId={row.original.assignee} />
+        ),
+        meta: {
+          filter: {
+            type: "static",
+            options: people.map((employee) => ({
+              value: employee.id,
+              label: employee.name,
             })),
           },
         },
@@ -189,43 +215,51 @@ const QuotationsTable = memo(({ data, count }: QuotationsTableProps) => {
         cell: (item) => item.getValue(),
       },
       {
-        accessorKey: "createdByFullName",
+        id: "createdBy",
         header: "Created By",
-        cell: ({ row }) => {
-          return (
-            <HStack>
-              <Avatar size="sm" path={row.original.createdByAvatar} />
-              <p>{row.original.createdByFullName}</p>
-            </HStack>
-          );
+        cell: ({ row }) => (
+          <EmployeeAvatar employeeId={row.original.createdBy} />
+        ),
+        meta: {
+          filter: {
+            type: "static",
+            options: people.map((employee) => ({
+              value: employee.id,
+              label: employee.name,
+            })),
+          },
         },
       },
       {
         accessorKey: "createdAt",
         header: "Created At",
-        cell: (item) => item.getValue(),
+        cell: (item) => formatDate(item.getValue<string>()),
       },
       {
-        accessorKey: "updatedByFullName",
+        id: "updatedBy",
         header: "Updated By",
-        cell: ({ row }) => {
-          return row.original.updatedByFullName ? (
-            <HStack>
-              <Avatar size="sm" path={row.original.updatedByAvatar ?? null} />
-              <p>{row.original.updatedByFullName}</p>
-            </HStack>
-          ) : null;
+        cell: ({ row }) => (
+          <EmployeeAvatar employeeId={row.original.updatedBy} />
+        ),
+        meta: {
+          filter: {
+            type: "static",
+            options: people.map((employee) => ({
+              value: employee.id,
+              label: employee.name,
+            })),
+          },
         },
       },
       {
         accessorKey: "updatedAt",
-        header: "Updated At",
-        cell: (item) => item.getValue(),
+        header: "Created At",
+        cell: (item) => formatDate(item.getValue<string>()),
       },
     ];
 
     return [...defaultColumns, ...customColumns];
-  }, [customers, fetcher, parts, customColumns]);
+  }, [customers, parts, people, customColumns, fetcher]);
 
   const renderContextMenu = useMemo(() => {
     // eslint-disable-next-line react/display-name
@@ -257,6 +291,12 @@ const QuotationsTable = memo(({ data, count }: QuotationsTableProps) => {
         data={rows}
         defaultColumnPinning={{
           left: ["quoteId"],
+        }}
+        defaultColumnVisibility={{
+          createdAt: false,
+          createdBy: false,
+          updatedAt: false,
+          updatedBy: false,
         }}
         primaryAction={
           permissions.can("create", "sales") && (
