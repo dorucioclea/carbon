@@ -1,6 +1,5 @@
 import {
   HStack,
-  Heading,
   Menubar,
   MenubarItem,
   VStack,
@@ -179,24 +178,17 @@ export default function QuotationRoute() {
   return (
     <div className="grid grid-cols-[auto_1fr] w-full">
       <CollapsibleSidebar width={280}>
-        <VStack className="border-b border-border px-4 py-2" spacing={1}>
+        <VStack className="border-b border-border px-4 py-4" spacing={1}>
           <HStack className="justify-between w-full">
-            <Heading size="h4" noOfLines={1}>
-              {quote.quote?.quoteId}
-            </Heading>
-            {quote.quote && <QuotationStatus status={quote.quote?.status} />}
-          </HStack>
-        </VStack>
-        <VStack className="border-b border-border px-4 py-2 text-sm">
-          <HStack className="justify-between w-full">
-            <span className="text-xs text-muted-foreground">Customer</span>
             <CustomerAvatar customerId={customer.id} />
+            {quote.quote?.quoteId}
           </HStack>
         </VStack>
         <VStack className="border-b border-border px-4 py-2 text-sm">
           <HStack className="justify-between w-full">
-            <span className="text-xs text-muted-foreground">Assignee</span>
+            {/* <span className="text-xs text-muted-foreground">Assignee</span> */}
             {assignee && <EmployeeAvatar employeeId={assignee} />}
+            <Assign id={id} table="quote" value={assignee ?? undefined} />
           </HStack>
         </VStack>
         <QuotationExplorer />
@@ -204,18 +196,13 @@ export default function QuotationRoute() {
 
       <VStack className="px-4 py-2">
         <Menubar>
-          <Assign id={id} table="quote" value={assignee ?? undefined} />
+          {quote.quote && <QuotationStatus status={quote.quote?.status} />}
           <MenubarItem asChild>
             <a target="_blank" href={path.to.file.quote(id)} rel="noreferrer">
               Preview
             </a>
           </MenubarItem>
-          <MenubarItem
-            onClick={releaseDisclosure.onOpen}
-            // isDisabled={isReleased}
-          >
-            Release
-          </MenubarItem>
+          <MenubarItem onClick={releaseDisclosure.onOpen}>Release</MenubarItem>
         </Menubar>
         <Outlet />
       </VStack>

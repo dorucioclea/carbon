@@ -28,12 +28,23 @@ export type ComboboxProps = Omit<
   value?: string;
   isReadOnly?: boolean;
   placeholder?: string;
+  buttonText?: string;
   onChange?: (selected: string) => void;
 };
 
 const Assign = forwardRef<HTMLButtonElement, ComboboxProps>(
   (
-    { id, table, size, value, isReadOnly, placeholder, onChange, ...props },
+    {
+      id,
+      table,
+      size,
+      value,
+      isReadOnly,
+      placeholder,
+      buttonText,
+      onChange,
+      ...props
+    },
     ref
   ) => {
     const [open, setOpen] = useState(false);
@@ -80,7 +91,7 @@ const Assign = forwardRef<HTMLButtonElement, ComboboxProps>(
             onClick={() => setOpen(true)}
             {...props}
           >
-            Assign
+            {buttonText ?? "Assign"}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="min-w-[200px] w-[--radix-popover-trigger-width] p-0">
