@@ -7,6 +7,7 @@ import {
   CommandItem,
   Enumerable,
   HStack,
+  Heading,
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
@@ -15,6 +16,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  VStack,
   cn,
   useDisclosure,
 } from "@carbon/react";
@@ -440,19 +442,33 @@ const DocumentsTable = memo(
 
     return (
       <>
-        <Table<Document>
-          actions={actions}
-          count={count}
-          columns={columns}
-          data={rows}
-          defaultColumnVisibility={defaultColumnVisibility}
-          primaryAction={
-            permissions.can("create", "documents") && <DocumentCreateForm />
-          }
-          withColumnOrdering
-          // withSelectableRows
-          renderContextMenu={renderContextMenu}
-        />
+        {count === 0 ? (
+          <HStack className="w-full h-screen flex items-start justify-center">
+            <VStack className="border w-96 mt-20">
+              <div className="w-full flex flex-col gap-4 items-center justify-center py-8 bg-gradient-to-bl from-card to-background rounded-lg text-center group ring-2 ring-transparent hover:ring-white/10">
+                <Heading size="h2">No Files Yet</Heading>
+                <p className="text-muted-foreground text-base font-light">
+                  Start by uploading your first file
+                </p>
+                <DocumentCreateForm />
+              </div>
+            </VStack>
+          </HStack>
+        ) : (
+          <Table<Document>
+            actions={actions}
+            count={count}
+            columns={columns}
+            data={rows}
+            defaultColumnVisibility={defaultColumnVisibility}
+            primaryAction={
+              permissions.can("create", "documents") && <DocumentCreateForm />
+            }
+            withColumnOrdering
+            // withSelectableRows
+            renderContextMenu={renderContextMenu}
+          />
+        )}
 
         {selectedDocument &&
           selectedDocument.id &&

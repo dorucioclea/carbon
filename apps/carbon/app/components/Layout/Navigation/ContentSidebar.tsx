@@ -24,7 +24,7 @@ const ContentSidebar = ({ links }: { links: Route[] }) => {
                   key={route.name}
                   asChild
                   leftIcon={route.icon}
-                  variant={isActive ? "primary" : "ghost"}
+                  variant={isActive ? "sidebarActive" : "sidebarInactive"}
                   className="w-full justify-start"
                 >
                   <Link

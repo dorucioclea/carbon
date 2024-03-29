@@ -109,6 +109,14 @@ export async function deleteSupplierType(
   return client.from("supplierType").delete().eq("id", supplierTypeId);
 }
 
+export async function getAllInternalPOs(client: SupabaseClient<Database>) {
+  return client.storage.from("purchasing-internal").list();
+}
+
+export async function getAllExternalPOs(client: SupabaseClient<Database>) {
+  return client.storage.from("purchasing-external").list();
+}
+
 export async function getExternalDocuments(
   client: SupabaseClient<Database>,
   purchaseOrderId: string
