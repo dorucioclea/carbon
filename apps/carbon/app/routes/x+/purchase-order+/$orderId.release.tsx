@@ -3,6 +3,7 @@ import { validationError, validator } from "@carbon/remix-validated-form";
 import { renderAsync } from "@react-email/components";
 import { redirect, type ActionFunctionArgs } from "@remix-run/node";
 import { triggerClient } from "~/lib/trigger.server";
+import { upsertDocument } from "~/modules/documents";
 import {
   getPurchaseOrder,
   getPurchaseOrderLines,
@@ -75,10 +76,28 @@ export async function action(args: ActionFunctionArgs) {
         contentType: "application/pdf",
       });
 
+    const createDocument = await upsertDocument(client, {
+      path: `${bucketName}/${fileName}`,
+      name: fileName,
+      size: file.byteLength,
+      createdBy: userId,
+      readGroups: [userId],
+      writeGroups: [userId],
+    });
+
     if (fileUpload.error) {
       return redirect(
         path.to.purchaseOrder(orderId),
         await flash(request, error(fileUpload.error, "Failed to upload file"))
+      );
+    }
+    if (createDocument.error) {
+      return redirect(
+        path.to.purchaseOrder(orderId),
+        await flash(
+          request,
+          error(createDocument.error, "Failed to create document")
+        )
       );
     }
   } catch (err) {
