@@ -3,6 +3,7 @@ import { validationError, validator } from "@carbon/remix-validated-form";
 import { renderAsync } from "@react-email/components";
 import { redirect, type ActionFunctionArgs } from "@remix-run/node";
 import { triggerClient } from "~/lib/trigger.server";
+import { upsertDocument } from "~/modules/documents";
 import {
   getCustomer,
   getCustomerContact,
@@ -33,7 +34,6 @@ export async function action(args: ActionFunctionArgs) {
   if (!id) throw new Error("Could not find id");
 
   let file: ArrayBuffer;
-  let bucketName = id;
   let fileName: string;
 
   const release = await releaseQuote(client, id, userId);
@@ -62,17 +62,43 @@ export async function action(args: ActionFunctionArgs) {
       .toISOString()
       .slice(0, -5)}.pdf`;
 
-    const fileUpload = await client.storage
-      .from("quote-internal")
-      .upload(`${bucketName}/${fileName}`, file, {
+    const documentFilePath = `quote/internal/${id}/${fileName}`;
+    console.log(documentFilePath);
+
+    const documentFileUpload = await client.storage
+      .from("private")
+      .upload(documentFilePath, file, {
         cacheControl: `${12 * 60 * 60}`,
         contentType: "application/pdf",
+        upsert: true,
       });
 
-    if (fileUpload.error) {
+    if (documentFileUpload.error) {
       throw redirect(
         path.to.quote(id),
-        await flash(request, error(fileUpload.error, "Failed to upload file"))
+        await flash(
+          request,
+          error(documentFileUpload.error, "Failed to upload file")
+        )
+      );
+    }
+
+    const createDocument = await upsertDocument(client, {
+      path: documentFilePath,
+      name: fileName,
+      size: Math.round(file.byteLength / 1024),
+      createdBy: userId,
+      readGroups: [userId],
+      writeGroups: [userId],
+    });
+
+    if (createDocument.error) {
+      return redirect(
+        path.to.quote(id),
+        await flash(
+          request,
+          error(createDocument.error, "Failed to create document")
+        )
       );
     }
   } catch (err) {

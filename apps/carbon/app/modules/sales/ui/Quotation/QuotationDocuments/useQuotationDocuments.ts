@@ -6,16 +6,11 @@ import { useSupabase } from "~/lib/supabase";
 import type { QuotationAttachment } from "~/modules/sales/types";
 
 type Props = {
-  attachments: QuotationAttachment[];
   isExternal: boolean;
   id: string;
 };
 
-export const useQuotationDocuments = ({
-  attachments,
-  isExternal,
-  id,
-}: Props) => {
+export const useQuotationDocuments = ({ isExternal, id }: Props) => {
   const fetcher = useFetcher();
   const permissions = usePermissions();
   const { supabase } = useSupabase();
@@ -27,11 +22,20 @@ export const useQuotationDocuments = ({
     [fetcher]
   );
 
+  const getPath = useCallback(
+    (attachment: QuotationAttachment) => {
+      return `quote/${isExternal ? "external" : "internal"}/${id}/${
+        attachment.name
+      }`;
+    },
+    [isExternal, id]
+  );
+
   const deleteAttachment = useCallback(
     async (attachment: QuotationAttachment) => {
       const result = await supabase?.storage
-        .from(isExternal ? "quote-external" : "quote-internal")
-        .remove([`${id}/${attachment.name}`]);
+        .from("private")
+        .remove([getPath(attachment)]);
 
       if (!result || result.error) {
         toast.error(result?.error?.message || "Error deleting file");
@@ -41,14 +45,14 @@ export const useQuotationDocuments = ({
       toast.success("File deleted successfully");
       refresh();
     },
-    [supabase, id, isExternal, refresh]
+    [supabase?.storage, getPath, refresh]
   );
 
   const download = useCallback(
     async (attachment: QuotationAttachment) => {
       const result = await supabase?.storage
-        .from(isExternal ? "quote-external" : "quote-internal")
-        .download(`${id}/${attachment.name}`);
+        .from("private")
+        .download(getPath(attachment));
 
       if (!result || result.error) {
         toast.error(result?.error?.message || "Error downloading file");
@@ -67,34 +71,13 @@ export const useQuotationDocuments = ({
         document.body.removeChild(a);
       }, 0);
     },
-    [supabase, id, isExternal]
-  );
-
-  const isImage = useCallback((fileType: string) => {
-    return ["png", "jpg", "jpeg", "gif", "svg", "avif"].includes(fileType);
-  }, []);
-
-  const makePreview = useCallback(
-    async (attachment: QuotationAttachment) => {
-      const result = await supabase?.storage
-        .from(isExternal ? "quote-external" : "quote-internal")
-        .download(`${id}/${attachment.name}`);
-
-      if (!result || result.error) {
-        toast.error(result?.error?.message || "Error previewing file");
-        return null;
-      }
-
-      return window.URL.createObjectURL(result.data);
-    },
-    [isExternal, id, supabase?.storage]
+    [supabase?.storage, getPath]
   );
 
   return {
     canDelete,
     deleteAttachment,
     download,
-    isImage,
-    makePreview,
+    getPath,
   };
 };

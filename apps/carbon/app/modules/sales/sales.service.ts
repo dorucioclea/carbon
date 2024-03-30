@@ -328,14 +328,14 @@ export async function getQuoteExternalDocuments(
   client: SupabaseClient<Database>,
   quoteId: string
 ) {
-  return client.storage.from("quote-external").list(quoteId);
+  return client.storage.from("private").list(`quote/external/${quoteId}`);
 }
 
 export async function getQuoteInternalDocuments(
   client: SupabaseClient<Database>,
   quoteId: string
 ) {
-  return client.storage.from("quote-internal").list(quoteId);
+  return client.storage.from("private").list(`quote/internal/${quoteId}`);
 }
 
 export async function getQuoteLine(

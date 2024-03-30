@@ -6,7 +6,6 @@ import { useSupabase } from "~/lib/supabase";
 import type { PurchaseOrderAttachment } from "~/modules/purchasing/types";
 
 type Props = {
-  attachments: PurchaseOrderAttachment[];
   isExternal: boolean;
   orderId: string;
 };
@@ -34,19 +33,19 @@ export const usePurchaseOrderDocuments = ({ isExternal, orderId }: Props) => {
 
   const deleteAttachment = useCallback(
     async (attachment: PurchaseOrderAttachment) => {
-      const result = await supabase?.storage
+      const fileDelete = await supabase?.storage
         .from("private")
         .remove([getPath(attachment)]);
 
-      if (!result || result.error) {
-        toast.error(result?.error?.message || "Error deleting file");
+      if (!fileDelete || fileDelete.error) {
+        toast.error(fileDelete?.error?.message || "Error deleting file");
         return;
       }
 
       toast.success("File deleted successfully");
       refresh();
     },
-    [supabase?.storage, getPath, refresh]
+    [supabase, getPath, refresh]
   );
 
   const download = useCallback(
@@ -75,46 +74,10 @@ export const usePurchaseOrderDocuments = ({ isExternal, orderId }: Props) => {
     [supabase?.storage, getPath]
   );
 
-  // const getAvatarPath = useCallback(
-  //   (userId: string) => {
-  //     return usersMap[userId]?.avatarUrl;
-  //   },
-  //   [usersMap]
-  // );
-
-  // const getFullName = useCallback(
-  //   (userId: string) => {
-  //     return usersMap[userId]?.fullName;
-  //   },
-  //   [usersMap]
-  // );
-
-  const isImage = useCallback((fileType: string) => {
-    return ["png", "jpg", "jpeg", "gif", "svg", "avif"].includes(fileType);
-  }, []);
-
-  const makePreview = useCallback(
-    async (attachment: PurchaseOrderAttachment) => {
-      const result = await supabase?.storage
-        .from("private")
-        .download(getPath(attachment));
-
-      if (!result || result.error) {
-        toast.error(result?.error?.message || "Error previewing file");
-        return null;
-      }
-
-      return window.URL.createObjectURL(result.data);
-    },
-    [getPath, supabase?.storage]
-  );
-
   return {
     canDelete,
     deleteAttachment,
     download,
     getPath,
-    isImage,
-    makePreview,
   };
 };

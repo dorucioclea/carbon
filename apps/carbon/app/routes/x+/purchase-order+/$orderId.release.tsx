@@ -68,7 +68,7 @@ export async function action(args: ActionFunctionArgs) {
       .toISOString()
       .slice(0, -5)}.pdf`;
 
-    const documentFilePath = `private/purchasing/external/${orderId}/${fileName}`;
+    const documentFilePath = `purchasing/external/${orderId}/${fileName}`;
 
     const documentFileUpload = await client.storage
       .from("private")
@@ -78,6 +78,16 @@ export async function action(args: ActionFunctionArgs) {
         upsert: true,
       });
 
+    if (documentFileUpload.error) {
+      throw redirect(
+        path.to.purchaseOrder(orderId),
+        await flash(
+          request,
+          error(documentFileUpload.error, "Failed to upload file")
+        )
+      );
+    }
+
     const createDocument = await upsertDocument(client, {
       path: documentFilePath,
       name: fileName,
@@ -86,16 +96,6 @@ export async function action(args: ActionFunctionArgs) {
       readGroups: [userId],
       writeGroups: [userId],
     });
-
-    if (documentFileUpload.error) {
-      return redirect(
-        path.to.purchaseOrder(orderId),
-        await flash(
-          request,
-          error(documentFileUpload.error, "Failed to upload file")
-        )
-      );
-    }
 
     if (createDocument.error) {
       return redirect(

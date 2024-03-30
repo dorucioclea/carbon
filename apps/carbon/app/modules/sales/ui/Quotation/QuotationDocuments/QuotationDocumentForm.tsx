@@ -1,8 +1,9 @@
 import { File, toast } from "@carbon/react";
-import { useFetcher } from "@remix-run/react";
+import { useSubmit } from "@remix-run/react";
 import type { ChangeEvent } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { useSupabase } from "~/lib/supabase";
+import { path } from "~/utils/path";
 
 type QuotationDocumentFormProps = {
   id: string;
@@ -13,16 +14,18 @@ const QuotationDocumentForm = ({
   id,
   isExternal,
 }: QuotationDocumentFormProps) => {
-  const fetcher = useFetcher();
+  const submit = useSubmit();
   const { supabase } = useSupabase();
 
   const uploadFile = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && supabase) {
       const file = e.target.files[0];
-      const fileName = `${id}/${file.name}`;
+      const fileName = `quote/${isExternal ? "external" : "internal"}/${id}/${
+        file.name
+      }`;
 
       const fileUpload = await supabase.storage
-        .from(`quote-${isExternal ? "external" : "internal"}`)
+        .from("private")
         .upload(fileName, file, {
           cacheControl: `${12 * 60 * 60}`,
         });
@@ -33,10 +36,32 @@ const QuotationDocumentForm = ({
 
       if (fileUpload.data?.path) {
         toast.success("File uploaded");
-        // refetch the loaders
-        fetcher.submit(null, { method: "post" });
+        submitFileData({
+          path: fileUpload.data.path,
+          name: file.name,
+          size: file.size,
+        });
       }
     }
+  };
+
+  const submitFileData = ({
+    path: filePath,
+    name,
+    size,
+  }: {
+    path: string;
+    name: string;
+    size: number;
+  }) => {
+    const formData = new FormData();
+    formData.append("path", filePath);
+    formData.append("name", name);
+    formData.append("size", Math.round(size / 1024).toString());
+    submit(formData, {
+      method: "post",
+      action: path.to.newDocument,
+    });
   };
 
   return (

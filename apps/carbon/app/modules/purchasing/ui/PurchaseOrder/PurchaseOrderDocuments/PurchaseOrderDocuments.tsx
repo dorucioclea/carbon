@@ -39,7 +39,6 @@ const PurchaseOrderDocuments = ({
 }: PurchaseOrderDocumentsProps) => {
   const { canDelete, download, deleteAttachment, getPath } =
     usePurchaseOrderDocuments({
-      attachments,
       isExternal,
       orderId,
     });
