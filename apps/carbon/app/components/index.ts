@@ -6,6 +6,7 @@ import Combobox from "./Combobox";
 import Contact from "./Contact";
 import CreatableCombobox from "./CreateableCombobox";
 import CustomerAvatar from "./CustomerAvatar";
+import DocumentPreview from "./DocumentPreview";
 import EmployeeAvatar from "./EmployeeAvatar";
 import Hyperlink from "./Hyperlink";
 import MultiSelect from "./MultiSelect";
@@ -25,6 +26,7 @@ export {
   Contact,
   CreatableCombobox,
   CustomerAvatar,
+  DocumentPreview,
   EmployeeAvatar,
   Hyperlink,
   MultiSelect,

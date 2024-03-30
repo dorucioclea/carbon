@@ -20,7 +20,7 @@ import {
 import { convertKbToString } from "@carbon/utils";
 import { Outlet } from "@remix-run/react";
 import { MdMoreVert } from "react-icons/md";
-import { Hyperlink } from "~/components";
+import { DocumentPreview, Hyperlink } from "~/components";
 import { DocumentIcon, getDocumentType } from "~/modules/documents";
 import type { PurchaseOrderAttachment } from "~/modules/purchasing";
 import PurchaseOrderDocumentForm from "./PurchaseOrderDocumentForm";
@@ -37,11 +37,12 @@ const PurchaseOrderDocuments = ({
   isExternal,
   orderId,
 }: PurchaseOrderDocumentsProps) => {
-  const { canDelete, download, deleteAttachment } = usePurchaseOrderDocuments({
-    attachments,
-    isExternal,
-    orderId,
-  });
+  const { canDelete, download, deleteAttachment, getPath } =
+    usePurchaseOrderDocuments({
+      attachments,
+      isExternal,
+      orderId,
+    });
 
   return (
     <>
@@ -71,49 +72,63 @@ const PurchaseOrderDocuments = ({
             </Thead>
             <Tbody>
               {attachments.length ? (
-                attachments.map((attachment) => (
-                  <Tr key={attachment.id}>
-                    <Td>
-                      <HStack>
-                        <DocumentIcon type={getDocumentType(attachment.name)} />
-                        <Hyperlink onClick={() => download(attachment)}>
-                          {attachment.name}
-                        </Hyperlink>
-                      </HStack>
-                    </Td>
-                    <Td>
-                      {convertKbToString(
-                        Math.floor((attachment.metadata?.size ?? 0) / 1024)
-                      )}
-                    </Td>
-                    <Td>
-                      <div className="flex justify-end w-full">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <IconButton
-                              aria-label="More"
-                              icon={<MdMoreVert />}
-                              variant="secondary"
-                            />
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent>
-                            <DropdownMenuItem
-                              onClick={() => download(attachment)}
-                            >
-                              Download
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              disabled={!canDelete}
-                              onClick={() => deleteAttachment(attachment)}
-                            >
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </Td>
-                  </Tr>
-                ))
+                attachments.map((attachment) => {
+                  const type = getDocumentType(attachment.name);
+                  return (
+                    <Tr key={attachment.id}>
+                      <Td>
+                        <HStack>
+                          <DocumentIcon type={type} />
+                          <Hyperlink onClick={() => download(attachment)}>
+                            {["PDF", "Image"].includes(type) ? (
+                              <DocumentPreview
+                                bucket="private"
+                                pathToFile={getPath(attachment)}
+                                // @ts-ignore
+                                type={type}
+                              >
+                                {attachment.name}
+                              </DocumentPreview>
+                            ) : (
+                              attachment.name
+                            )}
+                          </Hyperlink>
+                        </HStack>
+                      </Td>
+                      <Td>
+                        {convertKbToString(
+                          Math.floor((attachment.metadata?.size ?? 0) / 1024)
+                        )}
+                      </Td>
+                      <Td>
+                        <div className="flex justify-end w-full">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <IconButton
+                                aria-label="More"
+                                icon={<MdMoreVert />}
+                                variant="secondary"
+                              />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                              <DropdownMenuItem
+                                onClick={() => download(attachment)}
+                              >
+                                Download
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                disabled={!canDelete}
+                                onClick={() => deleteAttachment(attachment)}
+                              >
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </Td>
+                    </Tr>
+                  );
+                })
               ) : (
                 <Tr>
                   <Td

@@ -173,7 +173,7 @@ export function ErrorBoundary() {
             alt="Carbon Logo"
             className="block max-w-[60px]"
           />
-          <Heading size="h2">Something went wrong</Heading>
+          <Heading size="h1">Something went wrong</Heading>
           <p className="text-foreground">{message}</p>
           <Button onClick={() => (window.location.href = "/")}>
             Back Home

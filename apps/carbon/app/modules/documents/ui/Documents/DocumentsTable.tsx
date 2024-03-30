@@ -8,9 +8,6 @@ import {
   Enumerable,
   HStack,
   Heading,
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
   MenuIcon,
   MenuItem,
   Popover,
@@ -28,7 +25,12 @@ import { BsFillPenFill, BsPin, BsPinFill } from "react-icons/bs";
 import { IoMdAdd, IoMdTrash } from "react-icons/io";
 import { RxCheck } from "react-icons/rx";
 import { VscOpenPreview } from "react-icons/vsc";
-import { EmployeeAvatar, Hyperlink, Table } from "~/components";
+import {
+  DocumentPreview,
+  EmployeeAvatar,
+  Hyperlink,
+  Table,
+} from "~/components";
 import { Confirm, ConfirmDelete } from "~/components/Modals";
 import { useFilters } from "~/components/Table/components/Filter/useFilters";
 import { usePermissions, useUrlParams } from "~/hooks";
@@ -174,35 +176,13 @@ const DocumentsTable = memo(
               <Hyperlink onClick={() => download(row.original)}>
                 {row.original.type &&
                 ["Image", "PDF"].includes(row.original.type) ? (
-                  <HoverCard>
-                    <HoverCardTrigger>{row.original.name}</HoverCardTrigger>
-                    {row.original.type === "PDF" ? (
-                      <HoverCardContent className="w-[425px] h-[550px] overflow-hidden p-0">
-                        <iframe
-                          seamless
-                          title={row.original.path!}
-                          width="425"
-                          height="550"
-                          src={path.to.file.previewFile(
-                            `private/${row.original.path}`
-                          )}
-                        />
-                      </HoverCardContent>
-                    ) : (
-                      <HoverCardContent className="w-[400px] h-[400px] overflow-hidden p-0">
-                        <iframe
-                          seamless
-                          title={row.original.path!}
-                          width="400"
-                          height="400"
-                          src={path.to.file.previewImage(
-                            "private",
-                            row.original.path!
-                          )}
-                        />
-                      </HoverCardContent>
-                    )}
-                  </HoverCard>
+                  <DocumentPreview
+                    bucket="private"
+                    pathToFile={row.original.path!}
+                    type={row.original.type}
+                  >
+                    {row.original.name}
+                  </DocumentPreview>
                 ) : (
                   <>{row.original.name}</>
                 )}
