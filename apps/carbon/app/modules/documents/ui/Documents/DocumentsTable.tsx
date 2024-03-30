@@ -307,7 +307,7 @@ const DocumentsTable = memo(
             return (
               <HStack>
                 <Avatar
-                  size="sm"
+                  size="xs"
                   path={row.original.createdByAvatar ?? undefined}
                 />
                 <span>{row.original.createdByFullName}</span>
