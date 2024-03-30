@@ -56,7 +56,7 @@ const TableHeader = <T extends object>({
 
   return (
     <>
-      <HStack className="px-4 py-2 justify-between bg-card w-full">
+      <HStack className="px-4 py-2 justify-between bg-card border-b border-border w-full">
         <HStack>
           {withSearch && (
             <DebouncedInput param="search" size="sm" placeholder="Search" />

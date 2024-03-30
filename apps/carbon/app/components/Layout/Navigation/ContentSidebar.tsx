@@ -16,13 +16,13 @@ const ContentSidebar = ({ links }: { links: Route[] }) => {
           <VStack spacing={1} className="p-2">
             {links.map((route) => {
               const isActive =
-                route.to === location.pathname && route.q === filter;
+                location.pathname.includes(route.to) && route.q === filter;
               return (
                 <Button
                   key={route.name}
                   asChild
                   leftIcon={route.icon}
-                  variant={isActive ? "sidebarActive" : "sidebarInactive"}
+                  variant={isActive ? "active" : "ghost"}
                   className="w-full justify-start"
                 >
                   <Link

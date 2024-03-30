@@ -39,14 +39,14 @@ const DetailSidebar = ({ links }: DetailSidebarProps) => {
   return (
     <VStack className="overflow-y-auto h-full" spacing={1}>
       {links.map((route) => {
-        const isActive = route.to === location.pathname;
+        const isActive = location.pathname.includes(route.to);
 
         return (
           <Tooltip key={route.name}>
             <TooltipTrigger className="w-full">
               <Button
                 asChild
-                variant={isActive ? "primary" : "ghost"}
+                variant={isActive ? "active" : "ghost"}
                 className="w-full justify-start"
               >
                 <Link to={route.to} prefetch="intent">

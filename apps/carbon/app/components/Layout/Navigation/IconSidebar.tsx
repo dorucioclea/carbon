@@ -103,8 +103,8 @@ const NavigationIconLink = forwardRef<
       "hover:bg-secondary active:",
       `${
         isActive
-          ? "!bg-primary/10 !text-foreground shadow-sm hover:text-primary-foreground font-semibold"
-          : "hover:text-foreground font-light"
+          ? "dark:bg-primary/10 bg-primary/20 text-primary shadow-sm hover:text-primary hover:bg-primary/20 "
+          : "hover:text-foreground"
       }`,
       "group/item",
     ];

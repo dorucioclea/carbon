@@ -444,8 +444,8 @@ const DocumentsTable = memo(
       <>
         {count === 0 ? (
           <HStack className="w-full h-screen flex items-start justify-center">
-            <VStack className="border w-96 mt-20">
-              <div className="w-full flex flex-col gap-4 items-center justify-center py-8 bg-gradient-to-bl from-card to-background rounded-lg text-center group ring-2 ring-transparent hover:ring-white/10">
+            <VStack className="border rounded-md shadow-md w-96 mt-20">
+              <div className="w-full flex flex-col gap-4 items-center justify-center py-8 bg-gradient-to-bl from-card to-background rounded-lg text-center group ring-4 ring-transparent hover:ring-white/10">
                 <Heading size="h2">No Files Yet</Heading>
                 <p className="text-muted-foreground text-base font-light">
                   Start by uploading your first file

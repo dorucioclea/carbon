@@ -21,13 +21,13 @@ const GroupedContentSidebar = ({ groups }: { groups: RouteGroup[] }) => {
                 {group.name}
               </h4>
               {group.routes.map((route) => {
-                const isActive = route.to === location.pathname;
+                const isActive = location.pathname.includes(route.to);
                 return (
                   <Button
                     key={route.name}
                     asChild
                     leftIcon={route.icon}
-                    variant={isActive ? "primary" : "ghost"}
+                    variant={isActive ? "active" : "ghost"}
                     className="w-full justify-start"
                   >
                     <Link
