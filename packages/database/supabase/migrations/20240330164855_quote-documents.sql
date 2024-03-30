@@ -141,13 +141,3 @@ CREATE POLICY "Users with sales_delete can delete documents that start with quot
 
 -- TODO: policies for suppliers
 
-DROP VIEW "documents";
-CREATE OR REPLACE VIEW "documents" WITH(SECURITY_INVOKER=true) AS 
-  SELECT
-    d.*,  
-    ARRAY(SELECT dl.label FROM "documentLabel" dl WHERE dl."documentId" = d.id AND dl."userId" = auth.uid()::text) AS labels,
-    EXISTS(SELECT 1 FROM "documentFavorite" df WHERE df."documentId" = d.id AND df."userId" = auth.uid()::text) AS favorite,
-    (SELECT MAX("createdAt") FROM "documentTransaction" dt WHERE dt."documentId" = d.id) AS "lastActivityAt"
-  FROM "document" d
-  LEFT JOIN "user" u ON u.id = d."createdBy"
-  LEFT JOIN "user" u2 ON u2.id = d."updatedBy";

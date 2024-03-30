@@ -1,6 +1,6 @@
 import type { Database } from "@carbon/database";
 import type {
-  getExternalDocuments,
+  getPurchaseOrderExternalDocuments,
   getPurchaseOrderLines,
   getPurchaseOrders,
   getRequestsForQuotes,
@@ -14,7 +14,7 @@ import type {
 
 // TODO: we should just use the FileObject type from supabase
 export type PurchaseOrderAttachment = NonNullable<
-  Awaited<ReturnType<typeof getExternalDocuments>>["data"]
+  Awaited<ReturnType<typeof getPurchaseOrderExternalDocuments>>["data"]
 >[number];
 
 export type PurchaseOrder = NonNullable<

@@ -13,6 +13,8 @@ export const documentTypes = [
   "Other",
 ] as const;
 
+export const documentSourceTypes = ["Purchase Order", "Quote"] as const;
+
 export const documentValidator = z.object({
   id: z.string().min(1, { message: "Document ID is required" }),
   name: z.string().min(3).max(50),

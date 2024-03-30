@@ -6,6 +6,7 @@ import { setGenericQueryFilters } from "~/utils/query";
 import { sanitize } from "~/utils/supabase";
 import type {
   documentLabelsValidator,
+  documentSourceTypes,
   documentTypes,
   documentValidator,
 } from "./documents.models";
@@ -190,6 +191,11 @@ export async function restoreDocument(
     .eq("id", id);
 }
 
+type SourceDocumentData = {
+  sourceDocument?: (typeof documentSourceTypes)[number];
+  sourceDocumentId?: string;
+};
+
 export async function upsertDocument(
   client: SupabaseClient<Database>,
   document:
@@ -197,7 +203,7 @@ export async function upsertDocument(
         path: string;
         size: number;
         createdBy: string;
-      })
+      } & SourceDocumentData)
     | (Omit<z.infer<typeof documentValidator>, "id"> & {
         id: string;
         updatedBy: string;

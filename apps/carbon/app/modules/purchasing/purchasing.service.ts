@@ -109,7 +109,7 @@ export async function deleteSupplierType(
   return client.from("supplierType").delete().eq("id", supplierTypeId);
 }
 
-export async function getExternalDocuments(
+export async function getPurchaseOrderExternalDocuments(
   client: SupabaseClient<Database>,
   purchaseOrderId: string
 ) {
@@ -118,7 +118,7 @@ export async function getExternalDocuments(
     .list(`purchasing/external/${purchaseOrderId}`);
 }
 
-export async function getInternalDocuments(
+export async function getPurchaseOrderInternalDocuments(
   client: SupabaseClient<Database>,
   purchaseOrderId: string
 ) {

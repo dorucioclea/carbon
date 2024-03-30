@@ -18,11 +18,12 @@ import {
   useDisclosure,
 } from "@carbon/react";
 import { convertKbToString, filterEmpty, formatDate } from "@carbon/utils";
-import { useRevalidator } from "@remix-run/react";
+import { Link, useRevalidator } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { BsFillPenFill, BsPin, BsPinFill } from "react-icons/bs";
 import { IoMdAdd, IoMdTrash } from "react-icons/io";
+import { LuExternalLink } from "react-icons/lu";
 import { RxCheck } from "react-icons/rx";
 import { VscOpenPreview } from "react-icons/vsc";
 import {
@@ -35,7 +36,11 @@ import { Confirm, ConfirmDelete } from "~/components/Modals";
 import { useFilters } from "~/components/Table/components/Filter/useFilters";
 import { usePermissions, useUrlParams } from "~/hooks";
 import type { Document, DocumentLabel } from "~/modules/documents";
-import { DocumentIcon, documentTypes } from "~/modules/documents";
+import {
+  DocumentIcon,
+  documentSourceTypes,
+  documentTypes,
+} from "~/modules/documents";
 import { usePeople } from "~/stores";
 import { path } from "~/utils/path";
 import DocumentCreateForm from "./DocumentCreateForm";
@@ -173,12 +178,16 @@ const DocumentsTable = memo(
                 />
               )}
               <DocumentIcon type={row.original.type!} />
-              <Hyperlink onClick={() => download(row.original)}>
+              <Hyperlink
+                onClick={() => download(row.original)}
+                className="max-w-[260px] truncate"
+              >
                 {row.original.type &&
                 ["Image", "PDF"].includes(row.original.type) ? (
                   <DocumentPreview
                     bucket="private"
                     pathToFile={row.original.path!}
+                    // @ts-ignore
                     type={row.original.type}
                   >
                     {row.original.name}
@@ -189,6 +198,37 @@ const DocumentsTable = memo(
               </Hyperlink>
             </HStack>
           ),
+        },
+        {
+          accessorKey: "sourceDocument",
+          header: "Source Document",
+          cell: ({ row }) =>
+            row.original.sourceDocument &&
+            row.original.sourceDocumentId && (
+              <HStack className="group" spacing={1}>
+                <Enumerable value={row.original.sourceDocument} />{" "}
+                <Link
+                  className="group-hover:opacity-100 opacity-0 transition-opacity duration-200 w-4 h-4 text-foreground"
+                  to={getDocumentLocation(
+                    row.original
+                      .sourceDocument as (typeof documentSourceTypes)[number],
+                    row.original.sourceDocumentId
+                  )}
+                  prefetch="intent"
+                >
+                  <LuExternalLink />
+                </Link>
+              </HStack>
+            ),
+          meta: {
+            filter: {
+              type: "static",
+              options: documentSourceTypes?.map((type) => ({
+                value: type,
+                label: <Enumerable value={type} />,
+              })),
+            },
+          },
         },
         {
           id: "labels",
@@ -566,3 +606,17 @@ const CreatableCommand = ({
 DocumentsTable.displayName = "DocumentsTable";
 
 export default DocumentsTable;
+
+function getDocumentLocation(
+  sourceDocument: (typeof documentSourceTypes)[number],
+  sourceDocumentId: string
+) {
+  switch (sourceDocument) {
+    case "Purchase Order":
+      return path.to.purchaseOrder(sourceDocumentId);
+    case "Quote":
+      return path.to.quote(sourceDocumentId);
+    default:
+      return "#";
+  }
+}

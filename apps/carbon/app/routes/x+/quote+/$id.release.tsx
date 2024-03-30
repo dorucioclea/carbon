@@ -86,6 +86,8 @@ export async function action(args: ActionFunctionArgs) {
       path: documentFilePath,
       name: fileName,
       size: Math.round(file.byteLength / 1024),
+      sourceDocument: "Quote",
+      sourceDocumentId: id,
       createdBy: userId,
       readGroups: [userId],
       writeGroups: [userId],

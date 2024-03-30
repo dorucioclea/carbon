@@ -5,9 +5,9 @@ import { useEffect } from "react";
 import {
   PurchaseOrderHeader,
   PurchaseOrderSidebar,
-  getExternalDocuments,
-  getInternalDocuments,
   getPurchaseOrder,
+  getPurchaseOrderExternalDocuments,
+  getPurchaseOrderInternalDocuments,
   getPurchaseOrderLines,
   usePurchaseOrderTotals,
 } from "~/modules/purchasing";
@@ -40,8 +40,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   ] = await Promise.all([
     getPurchaseOrder(client, orderId),
     getPurchaseOrderLines(client, orderId),
-    getExternalDocuments(client, orderId),
-    getInternalDocuments(client, orderId),
+    getPurchaseOrderExternalDocuments(client, orderId),
+    getPurchaseOrderInternalDocuments(client, orderId),
     getLocationsList(client),
   ]);
 

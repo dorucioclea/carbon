@@ -2913,6 +2913,10 @@ export type Database = {
           path: string
           readGroups: string[] | null
           size: number
+          sourceDocument:
+            | Database["public"]["Enums"]["documentSourceType"]
+            | null
+          sourceDocumentId: string | null
           type: Database["public"]["Enums"]["documentType"]
           updatedAt: string | null
           updatedBy: string | null
@@ -2929,6 +2933,10 @@ export type Database = {
           path: string
           readGroups?: string[] | null
           size: number
+          sourceDocument?:
+            | Database["public"]["Enums"]["documentSourceType"]
+            | null
+          sourceDocumentId?: string | null
           type: Database["public"]["Enums"]["documentType"]
           updatedAt?: string | null
           updatedBy?: string | null
@@ -2945,6 +2953,10 @@ export type Database = {
           path?: string
           readGroups?: string[] | null
           size?: number
+          sourceDocument?:
+            | Database["public"]["Enums"]["documentSourceType"]
+            | null
+          sourceDocumentId?: string | null
           type?: Database["public"]["Enums"]["documentType"]
           updatedAt?: string | null
           updatedBy?: string | null
@@ -13747,6 +13759,10 @@ export type Database = {
           path: string | null
           readGroups: string[] | null
           size: number | null
+          sourceDocument:
+            | Database["public"]["Enums"]["documentSourceType"]
+            | null
+          sourceDocumentId: string | null
           type: Database["public"]["Enums"]["documentType"] | null
           updatedAt: string | null
           updatedBy: string | null
@@ -16078,6 +16094,20 @@ export type Database = {
         | "Indirect Cost"
         | "Variance"
         | "Total"
+      documentSourceType:
+        | "Job"
+        | "Part"
+        | "Purchase Order"
+        | "Purchase Invoice"
+        | "Purchase Return Order"
+        | "Quote"
+        | "Receipt"
+        | "Request for Quote"
+        | "Sales Order"
+        | "Sales Invoice"
+        | "Sales Return Order"
+        | "Service"
+        | "Shipment"
       documentTransactionType:
         | "Download"
         | "Edit"

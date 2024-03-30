@@ -92,6 +92,8 @@ export async function action(args: ActionFunctionArgs) {
       path: documentFilePath,
       name: fileName,
       size: Math.round(file.byteLength / 1024),
+      sourceDocument: "Purchase Order",
+      sourceDocumentId: orderId,
       createdBy: userId,
       readGroups: [userId],
       writeGroups: [userId],

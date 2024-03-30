@@ -58,6 +58,9 @@ const PurchaseOrderDocumentForm = ({
     formData.append("path", filePath);
     formData.append("name", name);
     formData.append("size", Math.round(size / 1024).toString());
+    formData.append("sourceDocument", "Purchase Order");
+    formData.append("sourceDocumentId", orderId);
+
     submit(formData, {
       method: "post",
       action: path.to.newDocument,
