@@ -113,14 +113,18 @@ export async function getExternalDocuments(
   client: SupabaseClient<Database>,
   purchaseOrderId: string
 ) {
-  return client.storage.from("purchasing-external").list(purchaseOrderId);
+  return client.storage
+    .from("private")
+    .list(`purchasing/external/${purchaseOrderId}`);
 }
 
 export async function getInternalDocuments(
   client: SupabaseClient<Database>,
   purchaseOrderId: string
 ) {
-  return client.storage.from("purchasing-internal").list(purchaseOrderId);
+  return client.storage
+    .from("private")
+    .list(`purchasing/internal/${purchaseOrderId}`);
 }
 
 export async function getPurchaseOrder(

@@ -30,6 +30,7 @@ import { RxCheck } from "react-icons/rx";
 import { VscOpenPreview } from "react-icons/vsc";
 import { EmployeeAvatar, Hyperlink, Table } from "~/components";
 import { Confirm, ConfirmDelete } from "~/components/Modals";
+import { useFilters } from "~/components/Table/components/Filter/useFilters";
 import { usePermissions, useUrlParams } from "~/hooks";
 import type { Document, DocumentLabel } from "~/modules/documents";
 import { DocumentIcon, documentTypes } from "~/modules/documents";
@@ -70,6 +71,7 @@ const DocumentsTable = memo(
       setLabel,
     } = useDocument();
 
+    const { hasFilters } = useFilters();
     const [people] = usePeople();
     const deleteDocumentModal = useDisclosure();
 
@@ -98,7 +100,7 @@ const DocumentsTable = memo(
           const index = prev.findIndex((item) => item.id === row.id);
           const updated = [...prev];
           const labelIndex = updated[index].labels?.findIndex(
-            (item) => item === label
+            (item: string) => item === label
           );
           if (labelIndex) {
             updated[index].labels?.splice(labelIndex, 1);
@@ -213,7 +215,7 @@ const DocumentsTable = memo(
           header: "Labels",
           cell: ({ row }) => (
             <HStack spacing={1}>
-              {row.original.labels?.map((label) => (
+              {row.original.labels?.map((label: string) => (
                 <Badge
                   key={label}
                   variant="secondary"
@@ -449,7 +451,7 @@ const DocumentsTable = memo(
 
     return (
       <>
-        {count === 0 ? (
+        {count === 0 && !hasFilters ? (
           <HStack className="w-full h-screen flex items-start justify-center">
             <VStack className="border rounded-md shadow-md w-96 mt-20">
               <div className="w-full flex flex-col gap-4 items-center justify-center py-8 bg-gradient-to-bl from-card to-background rounded-lg text-center group ring-4 ring-transparent hover:ring-white/10">

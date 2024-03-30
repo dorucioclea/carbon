@@ -30,8 +30,12 @@ export const usePurchaseOrderDocuments = ({
   const deleteAttachment = useCallback(
     async (attachment: PurchaseOrderAttachment) => {
       const result = await supabase?.storage
-        .from(isExternal ? "purchasing-external" : "purchasing-internal")
-        .remove([`${orderId}/${attachment.name}`]);
+        .from("private")
+        .remove([
+          `purchasing/${isExternal ? "external" : "internal"}/${orderId}/${
+            attachment.name
+          }`,
+        ]);
 
       if (!result || result.error) {
         toast.error(result?.error?.message || "Error deleting file");
@@ -47,8 +51,12 @@ export const usePurchaseOrderDocuments = ({
   const download = useCallback(
     async (attachment: PurchaseOrderAttachment) => {
       const result = await supabase?.storage
-        .from(isExternal ? "purchasing-external" : "purchasing-internal")
-        .download(`${orderId}/${attachment.name}`);
+        .from("private")
+        .download(
+          `purchasing/${isExternal ? "external" : "internal"}/${orderId}/${
+            attachment.name
+          }`
+        );
 
       if (!result || result.error) {
         toast.error(result?.error?.message || "Error downloading file");
@@ -91,8 +99,12 @@ export const usePurchaseOrderDocuments = ({
   const makePreview = useCallback(
     async (attachment: PurchaseOrderAttachment) => {
       const result = await supabase?.storage
-        .from(isExternal ? "purchasing-external" : "purchasing-internal")
-        .download(`${orderId}/${attachment.name}`);
+        .from("private")
+        .download(
+          `purchasing/${isExternal ? "external" : "internal"}/${orderId}/${
+            attachment.name
+          }`
+        );
 
       if (!result || result.error) {
         toast.error(result?.error?.message || "Error previewing file");

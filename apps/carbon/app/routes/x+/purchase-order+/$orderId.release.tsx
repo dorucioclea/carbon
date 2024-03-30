@@ -34,7 +34,6 @@ export async function action(args: ActionFunctionArgs) {
   if (!orderId) throw new Error("Could not find orderId");
 
   let file: ArrayBuffer;
-  let bucketName = orderId;
   let fileName: string;
 
   const release = await releasePurchaseOrder(client, orderId, userId);
@@ -69,14 +68,8 @@ export async function action(args: ActionFunctionArgs) {
       .toISOString()
       .slice(0, -5)}.pdf`;
 
-    const documentFilePath = `${userId}/${fileName}`;
+    const documentFilePath = `private/purchasing/external/${orderId}/${fileName}`;
 
-    const fileUpload = await client.storage
-      .from("purchasing-external")
-      .upload(`${bucketName}/${fileName}`, file, {
-        cacheControl: `${12 * 60 * 60}`,
-        contentType: "application/pdf",
-      });
     const documentFileUpload = await client.storage
       .from("private")
       .upload(documentFilePath, file, {
@@ -104,12 +97,6 @@ export async function action(args: ActionFunctionArgs) {
       );
     }
 
-    if (fileUpload.error) {
-      throw redirect(
-        path.to.purchaseOrder(orderId),
-        await flash(request, error(fileUpload.error, "Failed to upload file"))
-      );
-    }
     if (createDocument.error) {
       return redirect(
         path.to.purchaseOrder(orderId),

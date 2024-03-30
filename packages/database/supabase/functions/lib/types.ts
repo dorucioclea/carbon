@@ -13737,8 +13737,6 @@ export type Database = {
           active: boolean | null
           createdAt: string | null
           createdBy: string | null
-          createdByAvatar: string | null
-          createdByFullName: string | null
           description: string | null
           extension: string | null
           favorite: boolean | null
@@ -13752,8 +13750,6 @@ export type Database = {
           type: Database["public"]["Enums"]["documentType"] | null
           updatedAt: string | null
           updatedBy: string | null
-          updatedByAvatar: string | null
-          updatedByFullName: string | null
           writeGroups: string[] | null
         }
         Relationships: [
