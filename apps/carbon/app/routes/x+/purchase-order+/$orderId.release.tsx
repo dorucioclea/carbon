@@ -69,21 +69,40 @@ export async function action(args: ActionFunctionArgs) {
       .toISOString()
       .slice(0, -5)}.pdf`;
 
+    const documentFilePath = `${userId}/${fileName}`;
+
     const fileUpload = await client.storage
       .from("purchasing-external")
       .upload(`${bucketName}/${fileName}`, file, {
         cacheControl: `${12 * 60 * 60}`,
         contentType: "application/pdf",
       });
+    const documentFileUpload = await client.storage
+      .from("private")
+      .upload(documentFilePath, file, {
+        cacheControl: `${12 * 60 * 60}`,
+        contentType: "application/pdf",
+        upsert: true,
+      });
 
     const createDocument = await upsertDocument(client, {
-      path: `${bucketName}/${fileName}`,
+      path: documentFilePath,
       name: fileName,
-      size: file.byteLength,
+      size: Math.round(file.byteLength / 1024),
       createdBy: userId,
       readGroups: [userId],
       writeGroups: [userId],
     });
+
+    if (documentFileUpload.error) {
+      return redirect(
+        path.to.purchaseOrder(orderId),
+        await flash(
+          request,
+          error(documentFileUpload.error, "Failed to upload file")
+        )
+      );
+    }
 
     if (fileUpload.error) {
       return redirect(
