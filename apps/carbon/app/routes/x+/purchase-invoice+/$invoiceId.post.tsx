@@ -22,7 +22,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     .eq("id", invoiceId);
 
   if (setPendingState.error) {
-    return redirect(
+    throw redirect(
       path.to.purchaseInvoices,
       await flash(
         request,
@@ -39,5 +39,5 @@ export async function action({ request, params }: ActionFunctionArgs) {
     },
   });
 
-  return redirect(path.to.purchaseInvoices);
+  throw redirect(path.to.purchaseInvoices);
 }

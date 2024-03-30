@@ -1,9 +1,6 @@
-import type { Database } from "@carbon/database";
 import { useStore as useValue } from "@nanostores/react";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import { atom, computed, task } from "nanostores";
+import { atom, computed } from "nanostores";
 import { useNanoStore } from "~/hooks";
-import logger from "~/lib/logger";
 import type {
   Quotation,
   QuotationAssembly,
@@ -13,7 +10,6 @@ import type {
 } from "~/modules/sales";
 
 type QuoteStore = {
-  client?: SupabaseClient<Database>;
   quote?: Quotation;
   lines: QuotationLine[];
   assemblies: QuotationAssembly[];
@@ -32,15 +28,12 @@ export type LinePriceEffects = {
 };
 
 const $quotationStore = atom<QuoteStore>({
-  client: undefined,
   quote: undefined,
   lines: [],
   assemblies: [],
   operations: [],
   materials: [],
 });
-
-const defaultLinePriceEffectsResult = {} as Record<string, LinePriceEffects>;
 
 const $quotationLinePriceEffects = computed($quotationStore, (store) => {
   const assembliesByLineId = store.assemblies?.reduce<
@@ -226,52 +219,10 @@ const $quotationLinePriceEffects = computed($quotationStore, (store) => {
     }, {});
 
   return {
-    client: store.client,
     quoteId: store.quote?.id ?? "",
     effects: linePriceEffects,
   };
 });
-
-const $quotationLinePriceEffectsUpdate = computed(
-  $quotationLinePriceEffects,
-  (store) =>
-    task(async () => {
-      if (!store.quoteId || !store.client) return defaultLinePriceEffectsResult;
-
-      const quoteLineQuantities = await store.client
-        .from("quoteLineQuantity")
-        .select("*")
-        .eq("quoteId", store.quoteId);
-
-      if (quoteLineQuantities.error) {
-        logger.error(quoteLineQuantities.error);
-        return defaultLinePriceEffectsResult;
-      }
-
-      if (!quoteLineQuantities.data || !quoteLineQuantities.data.length) {
-        return defaultLinePriceEffectsResult;
-      }
-
-      for await (const lineQuantity of quoteLineQuantities.data) {
-        const quantity = lineQuantity.quantity ?? 0;
-        const effects = store.effects[lineQuantity.quoteLineId];
-
-        // skip updates for parts that aren't make
-        if (!effects) continue;
-
-        const update = getLinePriceUpdate(quantity, effects);
-
-        const { error } = await store.client
-          .from("quoteLineQuantity")
-          .update(update)
-          .eq("id", lineQuantity.id);
-
-        if (error) {
-          logger.error(error);
-        }
-      }
-    })
-);
 
 export function getLinePriceUpdate(
   quantity: number,
@@ -306,6 +257,7 @@ export function getLinePriceUpdate(
     materialCost,
     laborCost,
     overheadCost,
+    outsideCost: 0,
     setupHours,
     productionHours,
   };
@@ -314,5 +266,3 @@ export function getLinePriceUpdate(
 export const useQuotation = () => useNanoStore<QuoteStore>($quotationStore);
 export const useQuotationLinePriceEffects = () =>
   useValue($quotationLinePriceEffects);
-export const useQuotationLinePriceEffectsUpdate = () =>
-  useValue($quotationLinePriceEffectsUpdate);

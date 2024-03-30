@@ -39,13 +39,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getSupplierTypes(client),
   ]);
   if (suppliers.error) {
-    return redirect(
+    throw redirect(
       path.to.users,
       await flash(request, error(suppliers.error, "Error loading suppliers"))
     );
   }
   if (supplierTypes.error) {
-    return redirect(
+    throw redirect(
       path.to.users,
       await flash(
         request,

@@ -81,7 +81,7 @@ export async function action({ request }: ActionFunctionArgs) {
     throw new Error("Fatal: failed to update account");
   }
 
-  return redirect(next);
+  throw redirect(next);
 }
 
 export default function OnboardingUser() {

@@ -18,7 +18,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const currency = await getCurrency(client, currencyId);
   if (currency.error) {
-    return redirect(
+    throw redirect(
       path.to.currencies,
       await flash(request, error(currency.error, "Failed to get currency"))
     );
@@ -34,7 +34,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { currencyId } = params;
   if (!currencyId) {
-    return redirect(
+    throw redirect(
       `${path.to.currencies}?${getParams(request)}`,
       await flash(request, error(params, "Failed to get an currency id"))
     );
@@ -42,13 +42,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { error: deleteTypeError } = await deleteCurrency(client, currencyId);
   if (deleteTypeError) {
-    return redirect(
+    throw redirect(
       `${path.to.currencies}?${getParams(request)}`,
       await flash(request, error(deleteTypeError, "Failed to delete currency"))
     );
   }
 
-  return redirect(
+  throw redirect(
     `${path.to.currencies}?${getParams(request)}`,
     await flash(request, success("Successfully deleted currency"))
   );

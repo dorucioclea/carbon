@@ -65,7 +65,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     `${path.to.shippingMethods}?${getParams(request)}`,
     await flash(request, success("Shipping method created"))
   );

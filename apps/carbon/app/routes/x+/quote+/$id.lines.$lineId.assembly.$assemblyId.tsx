@@ -26,7 +26,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const assembly = await getQuoteAssembly(client, assemblyId);
   if (assembly.error) {
-    return redirect(
+    throw redirect(
       path.to.quote(id),
       await flash(
         request,
@@ -81,7 +81,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(path.to.quoteAssembly(quoteId, quoteLineId, assemblyId));
+  throw redirect(path.to.quoteAssembly(quoteId, quoteLineId, assemblyId));
 }
 
 export default function QuoteAssembly() {

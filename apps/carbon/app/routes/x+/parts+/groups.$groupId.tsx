@@ -64,7 +64,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     `${path.to.partGroups}?${getParams(request)}`,
     await flash(request, success("Updated part group"))
   );

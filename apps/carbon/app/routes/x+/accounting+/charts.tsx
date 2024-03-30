@@ -36,7 +36,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   });
 
   if (chartOfAccounts.error) {
-    return redirect(
+    throw redirect(
       path.to.accounting,
       await flash(
         request,

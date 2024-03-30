@@ -18,7 +18,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const [partSummary] = await Promise.all([getPartSummary(client, partId)]);
 
   if (partSummary.error) {
-    return redirect(
+    throw redirect(
       path.to.parts,
       await flash(
         request,

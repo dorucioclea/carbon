@@ -31,7 +31,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const [defaultAccounts] = await Promise.all([getDefaultAccounts(client)]);
 
   if (defaultAccounts.error || !defaultAccounts.data) {
-    return redirect(
+    throw redirect(
       path.to.accounting,
       await flash(
         request,
@@ -73,7 +73,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.accountingDefaults,
     await flash(request, success("Updated default accounts"))
   );

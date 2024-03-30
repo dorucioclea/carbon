@@ -19,7 +19,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const account = await getAccount(client, personId);
   if (account.error) {
-    return redirect(
+    throw redirect(
       path.to.people,
       await flash(request, error(account.error, "Failed to load account"))
     );

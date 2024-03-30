@@ -35,7 +35,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const customField = await getCustomField(client, id);
   if (customField.error) {
-    return redirect(
+    throw redirect(
       path.to.customFieldList(tableId),
       await flash(
         request,
@@ -79,7 +79,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(`${path.to.customFieldList(tableId)}?${getParams(request)}`);
+  throw redirect(`${path.to.customFieldList(tableId)}?${getParams(request)}`);
 }
 
 export default function UpdateCustomFieldRoute() {

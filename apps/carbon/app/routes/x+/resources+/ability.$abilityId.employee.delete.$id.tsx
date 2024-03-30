@@ -21,7 +21,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const removeEmployeeAbility = await deleteEmployeeAbility(client, id);
   if (removeEmployeeAbility.error) {
-    return redirect(
+    throw redirect(
       path.to.ability(abilityId),
       await flash(
         request,
@@ -30,7 +30,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.ability(abilityId),
     await flash(request, success("Successfully deleted employee ability"))
   );

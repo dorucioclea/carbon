@@ -23,7 +23,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const equipment = await getEquipment(client, equipmentId);
   if (equipment.error) {
-    return redirect(
+    throw redirect(
       path.to.equipmentTypeList(typeId),
       await flash(request, error(equipment.error, "Failed to fetch equipment"))
     );

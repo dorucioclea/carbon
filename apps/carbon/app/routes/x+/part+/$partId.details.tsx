@@ -35,13 +35,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
     updatedBy: userId,
   });
   if (updatePart.error) {
-    return redirect(
+    throw redirect(
       path.to.part(partId),
       await flash(request, error(updatePart.error, "Failed to update part"))
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.part(partId),
     await flash(request, success("Updated part"))
   );

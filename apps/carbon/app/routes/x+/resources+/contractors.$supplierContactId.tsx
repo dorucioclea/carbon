@@ -26,7 +26,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const contractor = await getContractor(client, supplierContactId);
 
   if (contractor.error) {
-    return redirect(
+    throw redirect(
       path.to.contractors,
       await flash(request, error(contractor.error, "Failed to get contractor"))
     );
@@ -62,7 +62,7 @@ export async function action({ request }: ActionFunctionArgs) {
   });
 
   if (updateContractor.error) {
-    return redirect(
+    throw redirect(
       path.to.contractors,
       await flash(
         request,
@@ -71,7 +71,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.contractors,
     await flash(request, success("Contractor updated"))
   );

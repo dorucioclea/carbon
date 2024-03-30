@@ -31,7 +31,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const nextSequence = await getNextSequence(client, "requestForQuote", userId);
   if (nextSequence.error) {
-    return redirect(
+    throw redirect(
       path.to.newRequestForQuote,
       await flash(
         request,
@@ -50,7 +50,7 @@ export async function action({ request }: ActionFunctionArgs) {
   if (createRequestForQuote.error || !createRequestForQuote.data?.[0]) {
     // TODO: this should be done as a transaction
     await rollbackNextSequence(client, "requestForQuote", userId);
-    return redirect(
+    throw redirect(
       path.to.requestForQuotes,
       await flash(
         request,
@@ -61,7 +61,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const order = createRequestForQuote.data?.[0];
 
-  return redirect(path.to.requestForQuote(order.id!));
+  throw redirect(path.to.requestForQuote(order.id!));
 }
 
 export default function RequestForQuoteNewRoute() {

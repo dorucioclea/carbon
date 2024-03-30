@@ -35,8 +35,6 @@ const PurchaseInvoicesTable = memo(
       `id=in.(${data.map((d) => d.id).join(",")})`
     );
 
-    console.log({ data });
-
     const permissions = usePermissions();
     const navigate = useNavigate();
 

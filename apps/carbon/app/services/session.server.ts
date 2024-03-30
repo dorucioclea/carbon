@@ -1,11 +1,6 @@
 import { createCookieSessionStorage, redirect } from "@remix-run/node";
 
-import {
-  getCurrentPath,
-  isGet,
-  makeRedirectToFromHere,
-  safeRedirect,
-} from "~/utils/http";
+import { getCurrentPath, isGet, makeRedirectToFromHere } from "~/utils/http";
 
 import {
   NODE_ENV,
@@ -47,25 +42,6 @@ const sessionStorage = createCookieSessionStorage({
   },
 });
 
-export async function createAuthSession({
-  request,
-  authSession,
-  redirectTo,
-}: {
-  request: Request;
-  authSession: AuthSession;
-  redirectTo: string;
-}) {
-  return redirect(safeRedirect(redirectTo), {
-    headers: {
-      "Set-Cookie": await commitAuthSession(request, {
-        authSession,
-        flashErrorMessage: null,
-      }),
-    },
-  });
-}
-
 export async function commitAuthSession(
   request: Request,
   {
@@ -92,7 +68,7 @@ export async function commitAuthSession(
 export async function destroyAuthSession(request: Request) {
   const session = await getSession(request);
 
-  return redirect(path.to.login, {
+  throw redirect(path.to.login, {
     headers: {
       "Set-Cookie": await sessionStorage.destroySession(session),
     },

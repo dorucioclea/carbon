@@ -29,7 +29,7 @@ export async function action({ request }: ActionFunctionArgs) {
     createdBy: userId,
   });
   if (createDocument.error) {
-    return redirect(
+    throw redirect(
       path.to.documents,
       await flash(
         request,
@@ -38,7 +38,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.documents,
     await flash(request, success(`Successfully uploaded ${name}`))
   );

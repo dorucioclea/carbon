@@ -17,7 +17,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const contacts = await getSupplierContacts(client, supplierId);
   if (contacts.error) {
-    return redirect(
+    throw redirect(
       path.to.supplier(supplierId),
       await flash(
         request,

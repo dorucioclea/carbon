@@ -26,7 +26,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const contact = await getSupplierContact(client, supplierContactId);
   if (contact.error) {
-    return redirect(
+    throw redirect(
       path.to.supplierContacts(supplierId),
       await flash(
         request,
@@ -74,7 +74,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   });
 
   if (update.error) {
-    return redirect(
+    throw redirect(
       path.to.supplierContacts(supplierId),
       await flash(
         request,
@@ -83,7 +83,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.supplierContacts(supplierId),
     await flash(request, success("Supplier contact updated"))
   );

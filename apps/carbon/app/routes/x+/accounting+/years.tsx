@@ -28,7 +28,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const settings = await getFiscalYearSettings(client);
   if (settings.error) {
-    return redirect(
+    throw redirect(
       path.to.accounting,
       await flash(
         request,
@@ -59,7 +59,7 @@ export async function action({ request }: ActionFunctionArgs) {
     updatedBy: userId,
   });
   if (update.error) {
-    return redirect(
+    throw redirect(
       path.to.fiscalYears,
       await flash(
         request,
@@ -68,7 +68,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.fiscalYears,
     await flash(request, success("Successfully updated fiscal year settings"))
   );

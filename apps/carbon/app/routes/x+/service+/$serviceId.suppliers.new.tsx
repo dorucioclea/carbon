@@ -41,7 +41,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   });
 
   if (createServiceSupplier.error) {
-    return redirect(
+    throw redirect(
       path.to.serviceSuppliers(serviceId),
       await flash(
         request,
@@ -50,7 +50,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(path.to.serviceSuppliers(serviceId));
+  throw redirect(path.to.serviceSuppliers(serviceId));
 }
 
 export default function NewServiceSupplierRoute() {

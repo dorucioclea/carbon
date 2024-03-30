@@ -26,7 +26,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const holiday = await getHoliday(client, holidayId);
 
   if (holiday.error) {
-    return redirect(
+    throw redirect(
       path.to.holidays,
       await flash(request, error(holiday.error, "Failed to get holiday"))
     );
@@ -61,7 +61,7 @@ export async function action({ request }: ActionFunctionArgs) {
   });
 
   if (updateHoliday.error) {
-    return redirect(
+    throw redirect(
       path.to.holidays,
       await flash(
         request,
@@ -70,7 +70,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.holidays,
     await flash(request, success("Holiday updated."))
   );

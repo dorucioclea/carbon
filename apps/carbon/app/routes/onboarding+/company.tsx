@@ -119,7 +119,7 @@ export async function action({ request }: ActionFunctionArgs) {
     });
   }
 
-  return redirect(next);
+  throw redirect(next);
 }
 
 export default function OnboardingCompany() {

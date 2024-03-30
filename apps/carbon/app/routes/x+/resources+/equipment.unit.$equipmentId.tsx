@@ -24,7 +24,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { equipmentId } = params;
   if (!equipmentId) {
-    return redirect(
+    throw redirect(
       path.to.equipment,
       await flash(
         request,
@@ -48,7 +48,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
       )
     );
 
-  return redirect(
+  throw redirect(
     path.to.equipmentTypeList(validation.data.equipmentTypeId),
     await flash(request, success("Successfully updated equipment"))
   );

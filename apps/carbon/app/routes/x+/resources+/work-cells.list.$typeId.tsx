@@ -20,7 +20,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const workCellType = await getWorkCellType(client, typeId);
   if (workCellType.error) {
-    return redirect(
+    throw redirect(
       path.to.workCells,
       await flash(
         request,

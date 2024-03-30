@@ -44,7 +44,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getLocationsList(client),
   ]);
   if (inventoryGroups.error) {
-    return redirect(
+    throw redirect(
       path.to.accounting,
       await flash(
         request,

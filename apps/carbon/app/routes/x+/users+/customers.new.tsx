@@ -36,13 +36,13 @@ export async function action({ request }: ActionFunctionArgs) {
   });
 
   if (customerRedirect) {
-    return redirect(
+    throw redirect(
       path.to.customerContacts(customerRedirect),
       await flash(request, result)
     );
   }
 
-  return redirect(path.to.customerAccounts, await flash(request, result));
+  throw redirect(path.to.customerAccounts, await flash(request, result));
 }
 
 export default function () {

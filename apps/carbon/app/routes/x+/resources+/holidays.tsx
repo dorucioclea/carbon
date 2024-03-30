@@ -43,7 +43,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   ]);
 
   if (holidays.error) {
-    return redirect(
+    throw redirect(
       path.to.resources,
       await flash(request, error(holidays.error, "Failed to load holidays"))
     );

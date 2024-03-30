@@ -36,13 +36,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
   });
 
   if (updatePart.error) {
-    return redirect(
+    throw redirect(
       path.to.service(serviceId),
       await flash(request, error(updatePart.error, "Failed to update part"))
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.service(serviceId),
     await flash(request, success("Updated part"))
   );

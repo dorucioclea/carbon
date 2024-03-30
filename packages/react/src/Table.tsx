@@ -22,7 +22,7 @@ const Thead = forwardRef<
 >(({ className, ...props }, ref) => (
   <thead
     ref={ref}
-    className={cn("[&_tr]:border-b border-border", className)}
+    className={cn("bg-card [&_tr]:border-b border-border", className)}
     {...props}
   />
 ));
@@ -42,7 +42,7 @@ const Tfoot = forwardRef<
 >(({ className, ...props }, ref) => (
   <tfoot
     ref={ref}
-    className={cn("bg-muted font-medium text-foreground", className)}
+    className={cn("font-medium text-foreground", className)}
     {...props}
   />
 ));
@@ -53,7 +53,7 @@ const Tr = forwardRef<HTMLTableRowElement, HTMLAttributes<HTMLTableRowElement>>(
     <tr
       ref={ref}
       className={cn(
-        "border-b border-border transition-colors data-[state=selected]:bg-muted",
+        "bg-card border-b border-border transition-colors data-[state=selected]:bg-muted",
         className
       )}
       {...props}
@@ -69,7 +69,7 @@ const Th = forwardRef<
   <th
     ref={ref}
     className={cn(
-      "bg-card h-11 px-6 text-left align-middle uppercase font-bold tracking-tight text-muted-foreground [&:has([role=checkbox])]:pr-0",
+      "h-11 px-6 text-left align-middle uppercase font-bold tracking-tight text-muted-foreground [&:has([role=checkbox])]:pr-0",
       className
     )}
     {...props}

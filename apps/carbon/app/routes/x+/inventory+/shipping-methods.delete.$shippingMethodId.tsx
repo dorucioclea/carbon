@@ -18,7 +18,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const shippingMethod = await getShippingMethod(client, shippingMethodId);
   if (shippingMethod.error) {
-    return redirect(
+    throw redirect(
       path.to.shippingMethods,
       await flash(
         request,
@@ -37,7 +37,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { shippingMethodId } = params;
   if (!shippingMethodId) {
-    return redirect(
+    throw redirect(
       path.to.shippingMethods,
       await flash(request, error(params, "Failed to get an shipping method id"))
     );
@@ -48,7 +48,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     shippingMethodId
   );
   if (deleteTypeError) {
-    return redirect(
+    throw redirect(
       path.to.shippingMethods,
       await flash(
         request,
@@ -57,7 +57,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     `${path.to.shippingMethods}?${getParams(request)}`,
     await flash(request, success("Successfully deleted shipping method"))
   );

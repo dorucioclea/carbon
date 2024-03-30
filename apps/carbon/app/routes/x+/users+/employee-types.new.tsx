@@ -24,7 +24,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const features = await getFeatures(client);
   if (features.error || features.data === null) {
-    return redirect(
+    throw redirect(
       path.to.employeeTypes,
       await flash(request, error(features.error, "Failed to get features"))
     );
@@ -106,7 +106,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.employeeTypes,
     await flash(request, success("Employee type created"))
   );

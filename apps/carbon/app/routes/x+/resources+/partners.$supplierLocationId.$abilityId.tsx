@@ -27,7 +27,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const partner = await getPartner(client, supplierLocationId, abilityId);
 
   if (partner.error) {
-    return redirect(
+    throw redirect(
       path.to.partners,
       await flash(request, error(partner.error, "Failed to get partner"))
     );
@@ -60,7 +60,7 @@ export async function action({ request }: ActionFunctionArgs) {
   });
 
   if (updatePartner.error) {
-    return redirect(
+    throw redirect(
       path.to.partners,
       await flash(
         request,
@@ -69,7 +69,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.partners,
     await flash(request, success("Partner updated."))
   );

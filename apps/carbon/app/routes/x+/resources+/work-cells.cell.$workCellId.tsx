@@ -24,7 +24,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { workCellId } = params;
   if (!workCellId) {
-    return redirect(
+    throw redirect(
       path.to.workCells,
       await flash(
         request,
@@ -50,7 +50,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
       )
     );
 
-  return redirect(
+  throw redirect(
     path.to.workCellTypeList(validation.data.workCellTypeId),
     await flash(request, success("Successfully updated workCell"))
   );

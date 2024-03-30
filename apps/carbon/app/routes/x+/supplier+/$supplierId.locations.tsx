@@ -17,7 +17,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const locations = await getSupplierLocations(client, supplierId);
   if (locations.error) {
-    return redirect(
+    throw redirect(
       path.to.supplier(supplierId),
       await flash(
         request,

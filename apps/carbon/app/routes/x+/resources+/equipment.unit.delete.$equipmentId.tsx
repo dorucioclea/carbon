@@ -18,7 +18,7 @@ export async function loader({ request, params }: ActionFunctionArgs) {
 
   const equipment = await getEquipment(client, equipmentId);
   if (equipment.error) {
-    return redirect(
+    throw redirect(
       path.to.equipment,
       await flash(request, error(equipment.error, "Failed to get equipment"))
     );
@@ -39,7 +39,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const deactivateEquipment = await deleteEquipment(client, equipmentId);
   if (deactivateEquipment.error) {
-    return redirect(
+    throw redirect(
       path.to.equipment,
       await flash(
         request,
@@ -48,7 +48,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.equipment,
     await flash(request, success("Successfully deleted equipment"))
   );

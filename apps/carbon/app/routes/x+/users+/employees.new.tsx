@@ -30,7 +30,7 @@ export async function action({ request }: ActionFunctionArgs) {
     employeeType,
   });
 
-  return redirect(path.to.employeeAccounts, await flash(request, result));
+  throw redirect(path.to.employeeAccounts, await flash(request, result));
 }
 
 export default function () {

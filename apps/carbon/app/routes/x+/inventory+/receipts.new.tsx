@@ -27,7 +27,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getUserDefaults(client, userId),
   ]);
   if (nextSequence.error) {
-    return redirect(
+    throw redirect(
       request.headers.get("Referer") ?? path.to.receipts,
       await flash(
         request,
@@ -66,7 +66,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   });
   if (insertReceipt.error) {
     await rollbackNextSequence(client, "receipt", userId);
-    return redirect(
+    throw redirect(
       request.headers.get("Referer") ?? path.to.receipts,
       await flash(
         request,
@@ -75,5 +75,5 @@ export async function loader({ request }: LoaderFunctionArgs) {
     );
   }
 
-  return redirect(path.to.receipt(insertReceipt.data.id));
+  throw redirect(path.to.receipt(insertReceipt.data.id));
 }

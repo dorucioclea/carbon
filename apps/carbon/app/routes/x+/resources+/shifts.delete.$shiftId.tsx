@@ -20,7 +20,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const shift = await getShift(client, shiftId);
   if (shift.error) {
-    return redirect(
+    throw redirect(
       path.to.shifts,
       await flash(request, error(shift.error, "Failed to get shift"))
     );
@@ -38,7 +38,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { shiftId } = params;
   if (!shiftId) {
-    return redirect(
+    throw redirect(
       path.to.shifts,
       await flash(request, error(params, "Failed to get shift id"))
     );
@@ -46,13 +46,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { error: deleteShiftError } = await deleteShift(client, shiftId);
   if (deleteShiftError) {
-    return redirect(
+    throw redirect(
       path.to.shifts,
       await flash(request, error(deleteShiftError, "Failed to delete shift"))
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.shifts,
     await flash(request, success("Successfully deleted shift"))
   );

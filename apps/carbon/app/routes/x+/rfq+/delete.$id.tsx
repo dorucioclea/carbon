@@ -19,7 +19,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const remove = await deleteRequestForQuote(client, id);
 
   if (remove.error) {
-    return redirect(
+    throw redirect(
       path.to.requestForQuotes,
       await flash(
         request,
@@ -28,5 +28,5 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(path.to.requestForQuotes);
+  throw redirect(path.to.requestForQuotes);
 }

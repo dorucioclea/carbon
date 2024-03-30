@@ -62,13 +62,13 @@ export async function action({ request }: ActionFunctionArgs) {
     if (logoPath === null || typeof logoPath === "string") {
       const logoUpdate = await updateLogo(client, logoPath);
       if (logoUpdate.error) {
-        return redirect(
+        throw redirect(
           path.to.company,
           await flash(request, error(logoUpdate.error, "Failed to update logo"))
         );
       }
 
-      return redirect(
+      throw redirect(
         path.to.company,
         await flash(
           request,
@@ -80,7 +80,7 @@ export async function action({ request }: ActionFunctionArgs) {
         )
       );
     } else {
-      return redirect(
+      throw redirect(
         path.to.company,
         await flash(request, error(null, "Invalid logo path"))
       );

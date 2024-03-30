@@ -33,7 +33,7 @@ export async function action({ request }: ActionFunctionArgs) {
   });
 
   if (updateLabels.error) {
-    return redirect(
+    throw redirect(
       path.to.documents,
       await flash(
         request,
@@ -42,5 +42,5 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(path.to.documents);
+  throw redirect(path.to.documents);
 }

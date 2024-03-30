@@ -19,7 +19,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const remove = await deletePurchaseOrder(client, orderId);
 
   if (remove.error) {
-    return redirect(
+    throw redirect(
       path.to.purchaseOrders,
       await flash(
         request,
@@ -28,5 +28,5 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(path.to.purchaseOrders);
+  throw redirect(path.to.purchaseOrders);
 }

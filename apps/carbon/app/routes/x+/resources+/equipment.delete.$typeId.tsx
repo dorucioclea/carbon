@@ -13,7 +13,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
 
   const { typeId } = params;
   if (!typeId) {
-    return redirect(
+    throw redirect(
       path.to.equipment,
       await flash(request, error(params, "Failed to get a equipment type id"))
     );
@@ -21,7 +21,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
 
   const deactivateEquipmentType = await deleteEquipmentType(client, typeId);
   if (deactivateEquipmentType.error) {
-    return redirect(
+    throw redirect(
       path.to.equipment,
       await flash(
         request,
@@ -33,7 +33,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.equipment,
     await flash(request, success("Successfully deactivated equipment type"))
   );

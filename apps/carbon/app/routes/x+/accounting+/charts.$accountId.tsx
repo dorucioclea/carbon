@@ -65,7 +65,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.chartOfAccounts,
     await flash(request, success("Updated account"))
   );

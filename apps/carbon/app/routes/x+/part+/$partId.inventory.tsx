@@ -36,7 +36,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!locationId) {
     const userDefaults = await getUserDefaults(client, userId);
     if (userDefaults.error) {
-      return redirect(
+      throw redirect(
         path.to.part(partId),
         await flash(
           request,
@@ -51,7 +51,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!locationId) {
     const locations = await getLocationsList(client);
     if (locations.error || !locations.data?.length) {
-      return redirect(
+      throw redirect(
         path.to.part(partId),
         await flash(
           request,
@@ -76,7 +76,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     });
 
     if (insertPartInventory.error) {
-      return redirect(
+      throw redirect(
         path.to.part(partId),
         await flash(
           request,
@@ -87,7 +87,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
     partInventory = await getPartInventory(client, partId, locationId);
     if (partInventory.error || !partInventory.data) {
-      return redirect(
+      throw redirect(
         path.to.part(partId),
         await flash(
           request,
@@ -98,7 +98,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   }
 
   if (shelves.error) {
-    return redirect(
+    throw redirect(
       path.to.parts,
       await flash(request, error(shelves.error, "Failed to load shelves"))
     );
@@ -106,7 +106,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const quantities = await getPartQuantities(client, partId, locationId);
   if (quantities.error || !quantities.data) {
-    return redirect(
+    throw redirect(
       path.to.parts,
       await flash(request, error(quantities, "Failed to load part quantities"))
     );
@@ -145,7 +145,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     updatedBy: userId,
   });
   if (updatePartInventory.error) {
-    return redirect(
+    throw redirect(
       path.to.part(partId),
       await flash(
         request,
@@ -154,7 +154,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.partInventoryLocation(partId, update.locationId),
     await flash(request, success("Updated part inventory"))
   );

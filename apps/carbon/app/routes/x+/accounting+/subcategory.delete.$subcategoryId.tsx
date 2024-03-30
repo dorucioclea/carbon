@@ -13,7 +13,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
 
   const { subcategoryId } = params;
   if (!subcategoryId) {
-    return redirect(
+    throw redirect(
       `${path.to.accountingCategories}?${getParams(request)}`,
       await flash(
         request,
@@ -27,7 +27,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
     subcategoryId
   );
   if (deactivateSubcategory.error) {
-    return redirect(
+    throw redirect(
       `${path.to.accountingCategories}?${getParams(request)}`,
       await flash(
         request,
@@ -39,7 +39,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     `${path.to.accountingCategories}?${getParams(request)}`,
     await flash(
       request,

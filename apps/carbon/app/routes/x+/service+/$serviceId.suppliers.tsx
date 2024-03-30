@@ -20,7 +20,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   ]);
 
   if (serviceSuppliers.error) {
-    return redirect(
+    throw redirect(
       path.to.service(serviceId),
       await flash(
         request,

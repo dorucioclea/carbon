@@ -32,7 +32,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
       await flash(request, error(update.error, "Failed to update attribute"))
     );
 
-  return redirect(
+  throw redirect(
     path.to.attributeCategoryList(validation.data.userAttributeCategoryId),
     await flash(request, success("Successfully updated attribtue"))
   );

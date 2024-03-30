@@ -13,7 +13,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
 
   const { categoryId } = params;
   if (!categoryId) {
-    return redirect(
+    throw redirect(
       `${path.to.accountingCategories}?${getParams(request)}`,
       await flash(request, error(params, "Failed to get a category id"))
     );
@@ -21,7 +21,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
 
   const deactivateAttribute = await deleteAccountCategory(client, categoryId);
   if (deactivateAttribute.error) {
-    return redirect(
+    throw redirect(
       `${path.to.accountingCategories}?${getParams(request)}`,
       await flash(
         request,
@@ -33,7 +33,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     `${path.to.accountingCategories}?${getParams(request)}`,
     await flash(
       request,

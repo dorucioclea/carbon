@@ -33,7 +33,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   ]);
 
   if (employeeType?.data?.protected) {
-    return redirect(
+    throw redirect(
       path.to.employeeTypes,
       await flash(request, error(null, "Cannot edit a protected employee type"))
     );
@@ -111,7 +111,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.employeeTypes,
     await flash(request, success("Updated employee type"))
   );

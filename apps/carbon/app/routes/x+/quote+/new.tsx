@@ -30,7 +30,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const nextSequence = await getNextSequence(client, "quote", userId);
   if (nextSequence.error) {
-    return redirect(
+    throw redirect(
       path.to.newQuote,
       await flash(
         request,
@@ -49,7 +49,7 @@ export async function action({ request }: ActionFunctionArgs) {
   if (createQuotation.error || !createQuotation.data?.[0]) {
     // TODO: this should be done as a transaction
     await rollbackNextSequence(client, "quote", userId);
-    return redirect(
+    throw redirect(
       path.to.quotes,
       await flash(
         request,
@@ -60,7 +60,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const order = createQuotation.data?.[0];
 
-  return redirect(path.to.quote(order.id!));
+  throw redirect(path.to.quote(order.id!));
 }
 
 export default function QuotationNewRoute() {

@@ -30,7 +30,7 @@ export async function action({ request }: ActionFunctionArgs) {
     const [userId] = users;
     const result = await deactivateUser(client, userId);
 
-    return redirect(safeRedirect(redirectTo), await flash(request, result));
+    throw redirect(safeRedirect(redirectTo), await flash(request, result));
   } else {
     const jobs = users.map<{
       name: string;
@@ -45,7 +45,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
     try {
       await triggerClient.sendEvents(jobs);
-      return redirect(
+      throw redirect(
         safeRedirect(redirectTo),
         await flash(
           request,
@@ -53,7 +53,7 @@ export async function action({ request }: ActionFunctionArgs) {
         )
       );
     } catch (e) {
-      return redirect(
+      throw redirect(
         safeRedirect(redirectTo),
         await flash(request, error(e, "Failed to deactivate users"))
       );

@@ -19,7 +19,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const employeeType = await getEmployeeType(client, employeeTypeId);
   if (employeeType.error) {
-    return redirect(
+    throw redirect(
       path.to.employeeTypes,
       await flash(
         request,
@@ -40,7 +40,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { employeeTypeId } = params;
   if (!employeeTypeId) {
-    return redirect(
+    throw redirect(
       path.to.employeeTypes,
       await flash(request, error(params, "Failed to get an employee type id"))
     );
@@ -51,7 +51,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     employeeTypeId
   );
   if (deleteTypeError) {
-    return redirect(
+    throw redirect(
       path.to.employeeTypes,
       await flash(
         request,
@@ -62,7 +62,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   // TODO - delete employeeType group
 
-  return redirect(
+  throw redirect(
     path.to.employeeTypes,
     await flash(request, success("Successfully deleted employee type"))
   );

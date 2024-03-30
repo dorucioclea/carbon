@@ -45,7 +45,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   });
 
   if (createQuotationOperation.error) {
-    return redirect(
+    throw redirect(
       path.to.newQuoteOperation(quoteId, quoteLineId),
       await flash(
         request,
@@ -59,7 +59,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const operationId = createQuotationOperation.data.id;
   if (operationId) {
-    return redirect(path.to.quoteOperation(quoteId, quoteLineId, operationId));
+    throw redirect(path.to.quoteOperation(quoteId, quoteLineId, operationId));
   }
 }
 

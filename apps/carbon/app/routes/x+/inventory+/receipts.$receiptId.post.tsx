@@ -23,7 +23,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     .eq("id", receiptId);
 
   if (setPendingState.error) {
-    return redirect(
+    throw redirect(
       path.to.receipts,
       await flash(
         request,
@@ -40,7 +40,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     },
   });
 
-  return redirect(path.to.receipts);
+  throw redirect(path.to.receipts);
 }
 
 export default function ReceiptPostRoute() {

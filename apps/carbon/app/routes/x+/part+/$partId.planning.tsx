@@ -34,7 +34,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!locationId) {
     const userDefaults = await getUserDefaults(client, userId);
     if (userDefaults.error) {
-      return redirect(
+      throw redirect(
         path.to.part(partId),
         await flash(
           request,
@@ -49,7 +49,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!locationId) {
     const locations = await getLocationsList(client);
     if (locations.error || !locations.data?.length) {
-      return redirect(
+      throw redirect(
         path.to.part(partId),
         await flash(
           request,
@@ -70,7 +70,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     });
 
     if (insertPartPlanning.error) {
-      return redirect(
+      throw redirect(
         path.to.part(partId),
         await flash(
           request,
@@ -81,7 +81,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
     partPlanning = await getPartPlanning(client, partId, locationId);
     if (partPlanning.error || !partPlanning.data) {
-      return redirect(
+      throw redirect(
         path.to.part(partId),
         await flash(
           request,
@@ -119,7 +119,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     customFields: setCustomFields(formData),
   });
   if (updatePartPlanning.error) {
-    return redirect(
+    throw redirect(
       path.to.part(partId),
       await flash(
         request,
@@ -128,7 +128,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.partPlanningLocation(partId, validation.data.locationId),
     await flash(request, success("Updated part planning"))
   );

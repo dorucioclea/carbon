@@ -97,7 +97,7 @@ export async function action({ request }: ActionFunctionArgs) {
     permissions,
   });
 
-  return redirect(path.to.employeeAccounts, await flash(request, result));
+  throw redirect(path.to.employeeAccounts, await flash(request, result));
 }
 
 export default function UsersEmployeeRoute() {

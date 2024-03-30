@@ -32,7 +32,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const { id, ...data } = validation.data;
 
   if (!id) {
-    return redirect(
+    throw redirect(
       path.to.suppliers,
       await flash(request, error(null, "Failed to update supplier"))
     );
@@ -45,7 +45,7 @@ export async function action({ request }: ActionFunctionArgs) {
     customFields: setCustomFields(formData),
   });
   if (update.error) {
-    return redirect(
+    throw redirect(
       path.to.suppliers,
       await flash(request, error(update.error, "Failed to update supplier"))
     );

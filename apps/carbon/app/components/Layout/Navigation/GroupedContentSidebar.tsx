@@ -1,10 +1,11 @@
 import { Button, VStack } from "@carbon/react";
-import { Link, useMatches } from "@remix-run/react";
+import { Link } from "@remix-run/react";
+import { useOptimisticLocation } from "~/hooks";
 import type { RouteGroup } from "~/types";
 import { CollapsibleSidebar } from "./CollapsibleSidebar";
 
 const GroupedContentSidebar = ({ groups }: { groups: RouteGroup[] }) => {
-  const matches = useMatches();
+  const location = useOptimisticLocation();
 
   return (
     <CollapsibleSidebar>
@@ -20,9 +21,7 @@ const GroupedContentSidebar = ({ groups }: { groups: RouteGroup[] }) => {
                 {group.name}
               </h4>
               {group.routes.map((route) => {
-                const isActive = matches.some((match) =>
-                  match.pathname.includes(route.to)
-                );
+                const isActive = route.to === location.pathname;
                 return (
                   <Button
                     key={route.name}

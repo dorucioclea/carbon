@@ -59,7 +59,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.quoteOperation(quoteId, quoteLineId, quoteOperationId)
   );
 }

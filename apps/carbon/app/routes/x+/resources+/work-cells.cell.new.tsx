@@ -39,5 +39,5 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(path.to.workCells);
+  throw redirect(path.to.workCells);
 }

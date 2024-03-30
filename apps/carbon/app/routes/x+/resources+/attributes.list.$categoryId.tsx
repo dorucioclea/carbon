@@ -24,7 +24,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const attributeCategory = await getAttributeCategory(client, categoryId);
   if (attributeCategory.error) {
-    return redirect(
+    throw redirect(
       path.to.attributes,
       await flash(
         request,

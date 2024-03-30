@@ -11,7 +11,6 @@ import {
   IconButton,
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
   useKeyboardShortcuts,
 } from "@carbon/react";
@@ -103,7 +102,7 @@ export const PaginationButtons = ({
   return (
     <>
       {condensed ? (
-        <TooltipProvider>
+        <>
           <Tooltip>
             <TooltipTrigger>
               <IconButton
@@ -132,9 +131,9 @@ export const PaginationButtons = ({
               <HStack>{prettifyKeyboardShortcut("ArrowRight")}</HStack>
             </TooltipContent>
           </Tooltip>
-        </TooltipProvider>
+        </>
       ) : (
-        <TooltipProvider>
+        <>
           <div className="text-foreground flex text-sm font-medium align-center">
             {count > 0 ? offset + 1 : 0} - {Math.min(offset + pageSize, count)}{" "}
             of {count}
@@ -171,7 +170,7 @@ export const PaginationButtons = ({
               <HStack>{prettifyKeyboardShortcut("ArrowRight")}</HStack>
             </TooltipContent>
           </Tooltip>
-        </TooltipProvider>
+        </>
       )}
     </>
   );

@@ -74,7 +74,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
   });
 
   if (updateEmployeeAbility.error) {
-    return redirect(
+    throw redirect(
       path.to.ability(abilityId),
       await flash(
         request,
@@ -86,7 +86,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.ability(abilityId),
     await flash(request, success("Employee ability updated"))
   );

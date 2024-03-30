@@ -32,7 +32,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const { id, ...data } = validation.data;
 
   if (!id) {
-    return redirect(
+    throw redirect(
       path.to.customers,
       await flash(request, error(null, "Failed to update customer"))
     );
@@ -45,7 +45,7 @@ export async function action({ request }: ActionFunctionArgs) {
     updatedBy: userId,
   });
   if (update.error) {
-    return redirect(
+    throw redirect(
       path.to.customers,
       await flash(request, error(update.error, "Failed to update customer"))
     );

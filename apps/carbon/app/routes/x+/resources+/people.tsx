@@ -39,7 +39,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getPeople(client, { search, limit, offset, sorts, filters }),
   ]);
   if (attributeCategories.error) {
-    return redirect(
+    throw redirect(
       path.to.authenticatedRoot,
       await flash(
         request,
@@ -48,7 +48,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     );
   }
   if (employeeTypes.error) {
-    return redirect(
+    throw redirect(
       path.to.authenticatedRoot,
       await flash(
         request,
@@ -57,7 +57,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     );
   }
   if (people.error) {
-    return redirect(
+    throw redirect(
       path.to.authenticatedRoot,
       await flash(request, error(people.error, "Error loading people"))
     );

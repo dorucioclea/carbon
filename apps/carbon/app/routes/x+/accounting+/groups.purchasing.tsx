@@ -43,7 +43,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getSupplierTypesList(client),
   ]);
   if (purchasingGroups.error) {
-    return redirect(
+    throw redirect(
       path.to.accounting,
       await flash(
         request,

@@ -33,7 +33,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(path.to.quote(quoteId));
+  throw redirect(path.to.quote(quoteId));
 }
 
 export default function DeleteQuoteLine() {

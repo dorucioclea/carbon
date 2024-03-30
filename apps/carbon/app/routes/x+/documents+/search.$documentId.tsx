@@ -25,7 +25,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const document = await getDocument(client, documentId);
 
   if (document.error) {
-    return redirect(
+    throw redirect(
       path.to.documents,
       await flash(request, error(document.error, "Failed to get document"))
     );
@@ -61,7 +61,7 @@ export async function action({ request }: ActionFunctionArgs) {
   });
 
   if (updateDocument.error) {
-    return redirect(
+    throw redirect(
       path.to.documents,
       await flash(
         request,
@@ -70,7 +70,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.documents,
     await flash(request, success("Updated document"))
   );

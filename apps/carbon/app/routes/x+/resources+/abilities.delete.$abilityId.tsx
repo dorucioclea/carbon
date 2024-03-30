@@ -20,7 +20,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const ability = await getAbility(client, abilityId);
   if (ability.error) {
-    return redirect(
+    throw redirect(
       path.to.abilities,
       await flash(request, error(ability.error, "Failed to get ability"))
     );
@@ -38,7 +38,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { abilityId } = params;
   if (!abilityId) {
-    return redirect(
+    throw redirect(
       path.to.abilities,
       await flash(request, error(params, "Failed to get ability id"))
     );
@@ -46,7 +46,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { error: deleteAbilityError } = await deleteAbility(client, abilityId);
   if (deleteAbilityError) {
-    return redirect(
+    throw redirect(
       path.to.abilities,
       await flash(
         request,
@@ -55,7 +55,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.abilities,
     await flash(request, success("Successfully deleted employee type"))
   );

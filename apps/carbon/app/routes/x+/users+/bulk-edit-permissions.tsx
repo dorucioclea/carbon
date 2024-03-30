@@ -38,7 +38,7 @@ export async function action({ request }: ActionFunctionArgs) {
       (permission) => userPermissionsValidator.safeParse(permission).success
     )
   ) {
-    return redirect(
+    throw redirect(
       path.to.employeeAccounts,
       await flash(request, error(permissions, "Failed to parse permissions"))
     );
@@ -58,7 +58,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   await triggerClient.sendEvents(jobs);
 
-  return redirect(
+  throw redirect(
     `${path.to.employeeAccounts}?${getParams(request)}`,
     await flash(request, success("Updating user permissions"))
   );

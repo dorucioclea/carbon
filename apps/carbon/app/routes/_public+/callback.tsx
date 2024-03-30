@@ -42,7 +42,7 @@ export async function action({ request }: ActionFunctionArgs): FormActionData {
   const { refreshToken } = validation.data;
   const authSession = await refreshAccessToken(refreshToken);
   if (!authSession) {
-    return redirect(
+    throw redirect(
       path.to.root,
       await flash(request, error(authSession, "Invalid refresh token"))
     );
@@ -50,7 +50,7 @@ export async function action({ request }: ActionFunctionArgs): FormActionData {
 
   const user = await getUserByEmail(authSession.email);
   if (user?.data) {
-    return redirect(path.to.resetPassord, {
+    throw redirect(path.to.resetPassord, {
       headers: {
         "Set-Cookie": await commitAuthSession(request, {
           authSession,
@@ -58,7 +58,7 @@ export async function action({ request }: ActionFunctionArgs): FormActionData {
       },
     });
   } else {
-    return redirect(
+    throw redirect(
       path.to.root,
       await flash(request, error(user.error, "User not found"))
     );

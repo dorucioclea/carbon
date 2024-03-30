@@ -1,11 +1,11 @@
 import { Button, VStack } from "@carbon/react";
-import { Link, useMatches } from "@remix-run/react";
-import { useUrlParams } from "~/hooks";
+import { Link } from "@remix-run/react";
+import { useOptimisticLocation, useUrlParams } from "~/hooks";
 import type { Route } from "~/types";
 import { CollapsibleSidebar } from "./CollapsibleSidebar";
 
 const ContentSidebar = ({ links }: { links: Route[] }) => {
-  const matches = useMatches();
+  const location = useOptimisticLocation();
   const [params] = useUrlParams();
   const filter = params.get("q") ?? undefined;
 
@@ -15,10 +15,8 @@ const ContentSidebar = ({ links }: { links: Route[] }) => {
         <VStack>
           <VStack spacing={1} className="border-b border-border p-2">
             {links.map((route) => {
-              const isActive = matches.some(
-                (match) =>
-                  match.pathname.includes(route.to) && route.q === filter
-              );
+              const isActive =
+                route.to === location.pathname && route.q === filter;
               return (
                 <Button
                   key={route.name}

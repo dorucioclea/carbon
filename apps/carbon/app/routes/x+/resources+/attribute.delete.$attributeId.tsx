@@ -13,7 +13,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
 
   const { attributeId } = params;
   if (!attributeId) {
-    return redirect(
+    throw redirect(
       path.to.attributes,
       await flash(request, error(params, "Failed to get an attribute id"))
     );
@@ -21,7 +21,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
 
   const deactivateAttribute = await deleteAttribute(client, attributeId);
   if (deactivateAttribute.error) {
-    return redirect(
+    throw redirect(
       path.to.attributes,
       await flash(
         request,
@@ -30,7 +30,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.attributes,
     await flash(request, success("Successfully deactivated attribute"))
   );

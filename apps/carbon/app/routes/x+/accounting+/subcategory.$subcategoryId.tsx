@@ -47,7 +47,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
       )
     );
 
-  return redirect(
+  throw redirect(
     `${path.to.accountingCategories}?${getParams(request)}`,
     await flash(request, success("Successfully updated G/L subcategory"))
   );

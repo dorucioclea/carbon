@@ -26,7 +26,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const job = await getEmployeeJob(client, personId);
   if (job.error) {
-    return redirect(
+    throw redirect(
       path.to.people,
       await flash(request, error(job.error, "Failed to load job"))
     );
@@ -58,13 +58,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
     customFields: setCustomFields(formData),
   });
   if (updateJob.error) {
-    return redirect(
+    throw redirect(
       path.to.personJob(personId),
       await flash(request, error(updateJob.error, "Failed to update job"))
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.personJob(personId),
     await flash(request, success("Successfully updated job"))
   );

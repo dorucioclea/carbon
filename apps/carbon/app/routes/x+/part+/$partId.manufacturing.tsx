@@ -26,7 +26,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const partManufacturing = await getPartManufacturing(client, partId);
 
   if (partManufacturing.error) {
-    return redirect(
+    throw redirect(
       path.to.parts,
       await flash(
         request,
@@ -68,7 +68,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     customFields: setCustomFields(formData),
   });
   if (updatePartManufacturing.error) {
-    return redirect(
+    throw redirect(
       path.to.part(partId),
       await flash(
         request,
@@ -80,7 +80,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.partManufacturing(partId),
     await flash(request, success("Updated part manufacturing"))
   );

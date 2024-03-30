@@ -4,7 +4,6 @@ import {
   Kbd,
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
   useKeyboardShortcuts,
 } from "@carbon/react";
@@ -27,23 +26,21 @@ const New = ({ label, to }: NewProps) => {
   });
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger>
-          <Button asChild leftIcon={<IoMdAdd />} ref={buttonRef}>
-            <Link to={to} prefetch="intent">
-              New
-            </Link>
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <HStack>
-            <span>New {label}</span>
-            <Kbd>N</Kbd>
-          </HStack>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger>
+        <Button asChild leftIcon={<IoMdAdd />} ref={buttonRef}>
+          <Link to={to} prefetch="intent">
+            New
+          </Link>
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <HStack>
+          <span>New {label}</span>
+          <Kbd>N</Kbd>
+        </HStack>
+      </TooltipContent>
+    </Tooltip>
   );
 };
 

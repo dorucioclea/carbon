@@ -32,5 +32,5 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(request.headers.get("Referer") ?? request.url);
+  throw redirect(request.headers.get("Referer") ?? request.url);
 }

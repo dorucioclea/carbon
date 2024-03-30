@@ -13,7 +13,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
 
   const { typeId } = params;
   if (!typeId) {
-    return redirect(
+    throw redirect(
       path.to.workCells,
       await flash(request, error(params, "Failed to get a work cell type id"))
     );
@@ -21,7 +21,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
 
   const deactivateWorkCellType = await deleteWorkCellType(client, typeId);
   if (deactivateWorkCellType.error) {
-    return redirect(
+    throw redirect(
       path.to.workCells,
       await flash(
         request,
@@ -33,7 +33,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.workCells,
     await flash(request, success("Successfully deactivated work cell type"))
   );

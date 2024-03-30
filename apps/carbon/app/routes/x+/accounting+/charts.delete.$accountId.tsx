@@ -18,7 +18,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const account = await getAccount(client, accountId);
   if (account.error) {
-    return redirect(
+    throw redirect(
       path.to.chartOfAccounts,
       await flash(request, error(account.error, "Failed to get account"))
     );
@@ -34,7 +34,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { accountId } = params;
   if (!accountId) {
-    return redirect(
+    throw redirect(
       path.to.chartOfAccounts,
       await flash(request, error(params, "Failed to get an account id"))
     );
@@ -42,13 +42,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { error: deleteTypeError } = await deleteAccount(client, accountId);
   if (deleteTypeError) {
-    return redirect(
+    throw redirect(
       path.to.chartOfAccounts,
       await flash(request, error(deleteTypeError, "Failed to delete account"))
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.chartOfAccounts,
     await flash(request, success("Successfully deleted account"))
   );

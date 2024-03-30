@@ -35,7 +35,7 @@ export async function action({ request }: ActionFunctionArgs) {
     createdBy: userId,
   });
   if (createAttributeCategory.error) {
-    return redirect(
+    throw redirect(
       path.to.attributes,
       await flash(
         request,
@@ -47,7 +47,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(path.to.attributes);
+  throw redirect(path.to.attributes);
 }
 
 export default function NewAttributeCategoryRoute() {

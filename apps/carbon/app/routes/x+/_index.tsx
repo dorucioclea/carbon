@@ -11,7 +11,7 @@ export default function AppIndexRoute() {
   const user = useUser();
   const modules = useModules();
   return (
-    <div className="p-8 w-full">
+    <div className="p-8 w-full h-full bg-muted">
       <Heading size="h3">Hello, {user.firstName}</Heading>
       <Subheading>
         {formatDate(today(getLocalTimeZone()).toString(), {

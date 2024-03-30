@@ -18,7 +18,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const customerType = await getCustomerType(client, customerTypeId);
   if (customerType.error) {
-    return redirect(
+    throw redirect(
       `${path.to.customerTypes}?${getParams(request)}`,
       await flash(
         request,
@@ -37,7 +37,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { customerTypeId } = params;
   if (!customerTypeId) {
-    return redirect(
+    throw redirect(
       `${path.to.customerTypes}?${getParams(request)}`,
       await flash(request, error(params, "Failed to get an customer type id"))
     );
@@ -48,7 +48,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     customerTypeId
   );
   if (deleteTypeError) {
-    return redirect(
+    throw redirect(
       `${path.to.customerTypes}?${getParams(request)}`,
       await flash(
         request,
@@ -57,7 +57,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     `${path.to.customerTypes}?${getParams(request)}`,
     await flash(request, success("Successfully deleted customer type"))
   );

@@ -25,7 +25,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const partPurchasing = await getPartPurchasing(client, partId);
 
   if (partPurchasing.error) {
-    return redirect(
+    throw redirect(
       path.to.parts,
       await flash(
         request,
@@ -63,7 +63,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     updatedBy: userId,
   });
   if (updatePartPurchasing.error) {
-    return redirect(
+    throw redirect(
       path.to.part(partId),
       await flash(
         request,
@@ -72,7 +72,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.partPurchasing(partId),
     await flash(request, success("Updated part purchasing"))
   );

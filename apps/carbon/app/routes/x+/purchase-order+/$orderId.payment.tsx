@@ -30,7 +30,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   ]);
 
   if (purchaseOrderPayment.error) {
-    return redirect(
+    throw redirect(
       path.to.purchaseOrder(orderId),
       await flash(
         request,
@@ -43,7 +43,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   }
 
   if (paymentTerms.error) {
-    return redirect(
+    throw redirect(
       path.to.purchaseOrders,
       await flash(
         request,
@@ -83,7 +83,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     customFields: setCustomFields(formData),
   });
   if (updatePurchaseOrderPayment.error) {
-    return redirect(
+    throw redirect(
       path.to.purchaseOrderPayment(orderId),
       await flash(
         request,
@@ -95,7 +95,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.purchaseOrderPayment(orderId),
     await flash(request, success("Updated purchase order payment"))
   );

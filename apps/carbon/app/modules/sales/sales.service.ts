@@ -16,6 +16,7 @@ import type {
   quotationLineValidator,
   quotationMaterialValidator,
   quotationOperationValidator,
+  quotationPricingValidator,
   quotationValidator,
 } from "./sales.models";
 
@@ -76,13 +77,6 @@ export async function deleteQuoteLine(
   quoteLineId: string
 ) {
   return client.from("quoteLine").delete().eq("id", quoteLineId);
-}
-
-export async function deleteQuoteLineQuantity(
-  client: SupabaseClient<Database>,
-  id: string
-) {
-  return client.from("quoteLineQuantity").delete().eq("id", id);
 }
 
 export async function deleteQuoteMaterial(
@@ -355,7 +349,7 @@ export async function getQuoteLines(
   client: SupabaseClient<Database>,
   quoteId: string
 ) {
-  return client.from("quoteLine").select("*").eq("quoteId", quoteId);
+  return client.from("quoteLines").select("*").eq("quoteId", quoteId);
 }
 
 export async function getQuoteCustomerDetails(
@@ -369,23 +363,23 @@ export async function getQuoteCustomerDetails(
     .single();
 }
 
-export async function getQuoteLineQuantities(
+export async function getQuoteLinePrice(
   client: SupabaseClient<Database>,
   quoteLineId: string
 ) {
   return client
-    .from("quoteLineQuantity")
+    .from("quoteLinePrice")
     .select("*")
     .eq("quoteLineId", quoteLineId)
-    .order("createdAt");
+    .single();
 }
 
-export async function getQuoteLineQuantitiesByQuoteId(
+export async function getQuoteLinePricesByQuoteId(
   client: SupabaseClient<Database>,
   quoteId: string
 ) {
   return client
-    .from("quoteLineQuantity")
+    .from("quoteLinePrice")
     .select("*")
     .eq("quoteId", quoteId)
     .order("createdAt");
@@ -523,22 +517,24 @@ export async function insertCustomerLocation(
     .single();
 }
 
-export async function insertQuoteLineQuantity(
+export async function insertQuoteLinePrice(
   client: SupabaseClient<Database>,
-  quoteLineQuantity: {
+  quoteLinePrice: {
     quoteId: string;
     quoteLineId: string;
     quantity?: number;
-    materialCost?: number;
+    markupPercent?: number;
+    unitCost?: number;
     createdBy: string;
   }
 ) {
-  const quoteLine = await getQuoteLine(client, quoteLineQuantity.quoteLineId);
+  const quoteLine = await getQuoteLine(client, quoteLinePrice.quoteLineId);
   if (quoteLine.error) {
     return quoteLine;
   }
 
-  let materialCost = 0;
+  let unitCost = 0;
+
   if (quoteLine.data?.replenishmentSystem === "Buy") {
     const partId = quoteLine.data?.partId;
     const [partCost] = await Promise.all([
@@ -549,13 +545,17 @@ export async function insertQuoteLineQuantity(
       return partCost;
     }
 
-    materialCost = partCost.data?.unitCost;
+    unitCost = partCost.data?.unitCost;
   }
 
-  return client.from("quoteLineQuantity").insert([
+  const totalCost = unitCost * (quoteLinePrice.quantity ?? 0);
+
+  return client.from("quoteLinePrice").insert([
     {
-      ...quoteLineQuantity,
-      materialCost,
+      ...quoteLinePrice,
+      unitCost,
+      extendedPrice:
+        totalCost + totalCost * ((quoteLinePrice?.markupPercent ?? 0) / 100),
     },
   ]);
 }
@@ -565,14 +565,28 @@ export async function releaseQuote(
   quoteId: string,
   usedId: string
 ) {
-  return client
+  const quoteUpdate = await client
     .from("quote")
     .update({
       status: "Open",
+      quoteDate: today(getLocalTimeZone()).toString(),
       updatedAt: today(getLocalTimeZone()).toString(),
       updatedBy: usedId,
     })
     .eq("id", quoteId);
+
+  if (quoteUpdate.error) {
+    return quoteUpdate;
+  }
+
+  return client
+    .from("quoteLine")
+    .update({
+      status: "Complete",
+      updatedAt: today(getLocalTimeZone()).toString(),
+      updatedBy: usedId,
+    })
+    .eq("quoteId", quoteId);
 }
 
 export async function upsertCustomer(
@@ -832,6 +846,20 @@ export async function upsertQuoteLine(
       .single();
   }
   return client.from("quoteLine").insert([quotationLine]).select("*").single();
+}
+
+export async function updateQuoteLinePrice(
+  client: SupabaseClient<Database>,
+  quoteLinePrice: z.infer<typeof quotationPricingValidator> & {
+    quoteId: string;
+    quoteLineId: string;
+    updatedBy: string;
+  }
+) {
+  return client
+    .from("quoteLinePrice")
+    .update(sanitize(quoteLinePrice))
+    .eq("quoteLineId", quoteLinePrice.quoteLineId);
 }
 
 export async function upsertQuoteMaterial(

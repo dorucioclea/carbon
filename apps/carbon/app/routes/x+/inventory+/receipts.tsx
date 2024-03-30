@@ -39,7 +39,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   ]);
 
   if (receipts.error) {
-    return redirect(
+    throw redirect(
       path.to.authenticatedRoot,
       await flash(request, error(null, "Error loading receipts"))
     );

@@ -20,11 +20,12 @@ import {
   Hidden,
   Input,
   Location,
+  Select,
   Submit,
   TextArea,
 } from "~/components/Form";
 import { usePermissions } from "~/hooks";
-import { quotationValidator } from "~/modules/sales";
+import { quotationValidator, quoteStatusType } from "~/modules/sales";
 
 type QuotationFormValues = z.infer<typeof quotationValidator>;
 
@@ -39,6 +40,11 @@ const QuotationForm = ({ initialValues }: QuotationFormProps) => {
   );
 
   const isEditing = initialValues.id !== undefined;
+
+  const statusOptions = quoteStatusType.map((status) => ({
+    label: status,
+    value: status,
+  }));
 
   return (
     <ValidatedForm
@@ -96,6 +102,15 @@ const QuotationForm = ({ initialValues }: QuotationFormProps) => {
                 <>
                   <DatePicker name="expirationDate" label="Expiration Date" />
                   <TextArea name="notes" label="Notes" />
+                  {permissions.can("delete", "purchasing") && (
+                    <Select
+                      name="status"
+                      label="Status"
+                      value={initialValues.status}
+                      options={statusOptions}
+                      isReadOnly={permissions.is("customer")}
+                    />
+                  )}
                 </>
               )}
               <CustomFormFields table="quote" />

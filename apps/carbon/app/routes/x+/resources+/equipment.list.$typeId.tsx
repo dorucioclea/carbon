@@ -20,7 +20,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const equipmentType = await getEquipmentType(client, typeId);
   if (equipmentType.error) {
-    return redirect(
+    throw redirect(
       path.to.equipment,
       await flash(
         request,

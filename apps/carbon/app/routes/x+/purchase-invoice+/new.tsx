@@ -43,7 +43,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       );
 
       if (result.error || !result?.data) {
-        return redirect(
+        throw redirect(
           request.headers.get("Referer") ?? path.to.purchaseOrders,
           await flash(
             request,
@@ -52,7 +52,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         );
       }
 
-      return redirect(path.to.purchaseInvoice(result.data?.id!));
+      throw redirect(path.to.purchaseInvoice(result.data?.id!));
 
     case "Receipt":
       if (!sourceDocumentId) throw new Error("Missing sourceDocumentId");
@@ -60,7 +60,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       result = await createPurchaseInvoiceFromReceipt(sourceDocumentId, userId);
 
       if (result.error || !result?.data) {
-        return redirect(
+        throw redirect(
           request.headers.get("Referer") ?? path.to.receipts,
           await flash(
             request,
@@ -69,7 +69,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         );
       }
 
-      return redirect(path.to.purchaseInvoice(result.data?.id!));
+      throw redirect(path.to.purchaseInvoice(result.data?.id!));
 
     default:
       return null;
@@ -93,7 +93,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const nextSequence = await getNextSequence(client, "purchaseInvoice", userId);
   if (nextSequence.error) {
-    return redirect(
+    throw redirect(
       path.to.newPurchaseInvoice,
       await flash(
         request,
@@ -113,7 +113,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   if (createPurchaseInvoice.error || !createPurchaseInvoice.data?.[0]) {
     await rollbackNextSequence(client, "purchaseInvoice", userId);
-    return redirect(
+    throw redirect(
       path.to.purchaseInvoices,
       await flash(
         request,
@@ -124,7 +124,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const invoice = createPurchaseInvoice.data?.[0];
 
-  return redirect(path.to.purchaseInvoice(invoice?.id!));
+  throw redirect(path.to.purchaseInvoice(invoice?.id!));
 }
 
 export default function PurchaseInvoiceNewRoute() {

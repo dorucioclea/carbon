@@ -21,7 +21,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   ]);
   // we don't need to do onboarding if we have a company name or locations
   if (company.data?.name && locations.data?.length) {
-    return redirect(path.to.authenticatedRoot);
+    throw redirect(path.to.authenticatedRoot);
   }
 
   const pathname = new URL(request.url).pathname;

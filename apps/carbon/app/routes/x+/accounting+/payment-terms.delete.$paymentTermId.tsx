@@ -18,7 +18,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const paymentTerm = await getPaymentTerm(client, paymentTermId);
   if (paymentTerm.error) {
-    return redirect(
+    throw redirect(
       `${path.to.paymentTerms}?${getParams(request)}`,
       await flash(
         request,
@@ -37,7 +37,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { paymentTermId } = params;
   if (!paymentTermId) {
-    return redirect(
+    throw redirect(
       `${path.to.paymentTerms}?${getParams(request)}`,
       await flash(request, error(params, "Failed to get an payment term id"))
     );
@@ -48,7 +48,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     paymentTermId
   );
   if (deleteTypeError) {
-    return redirect(
+    throw redirect(
       `${path.to.paymentTerms}?${getParams(request)}`,
       await flash(
         request,
@@ -57,7 +57,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     `${path.to.paymentTerms}?${getParams(request)}`,
     await flash(request, success("Successfully deleted payment term"))
   );

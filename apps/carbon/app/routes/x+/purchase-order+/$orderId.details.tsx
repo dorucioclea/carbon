@@ -43,7 +43,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     customFields: setCustomFields(formData),
   });
   if (updatePurchaseOrder.error) {
-    return redirect(
+    throw redirect(
       path.to.purchaseOrder(orderId),
       await flash(
         request,
@@ -52,7 +52,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.purchaseOrder(orderId),
     await flash(request, success("Updated purchase order"))
   );

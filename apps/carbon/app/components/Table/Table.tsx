@@ -462,7 +462,7 @@ const Table = <T extends object>({
       />
 
       <div
-        className="w-full h-full bg-card"
+        className="w-full h-full bg-card overflow-x-auto"
         style={{ contain: "strict" }}
         ref={tableContainerRef}
         onKeyDown={editMode ? onKeyDown : undefined}
@@ -475,8 +475,8 @@ const Table = <T extends object>({
         >
           {/* Pinned left columns */}
           {withColumnOrdering ? (
-            <TableBase className="bg-background border-r-4 border-border sticky left-0 z-50">
-              <Thead>
+            <TableBase className="bg-background border-r-4 border-border relative">
+              <Thead className="sticky top-0 z-10">
                 {table.getLeftHeaderGroups().map((headerGroup) => (
                   <Tr key={headerGroup.id} className="h-10">
                     {headerGroup.headers.map((header) => {
@@ -589,8 +589,8 @@ const Table = <T extends object>({
           ) : null}
 
           {/* Unpinned columns */}
-          <TableBase>
-            <Thead>
+          <TableBase className="relative">
+            <Thead className="sticky top-0 z-10">
               {(withColumnOrdering
                 ? table.getCenterHeaderGroups()
                 : table.getHeaderGroups()

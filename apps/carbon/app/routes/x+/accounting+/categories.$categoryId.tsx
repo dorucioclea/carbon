@@ -26,7 +26,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const accountCategory = await getAccountCategory(client, categoryId);
   if (accountCategory.error) {
-    return redirect(
+    throw redirect(
       path.to.accountingCategories,
       await flash(
         request,
@@ -63,7 +63,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     updatedBy: userId,
   });
   if (updateCategory.error) {
-    return redirect(
+    throw redirect(
       `${path.to.accountingCategories}?${getParams(request)}`,
       await flash(
         request,
@@ -72,7 +72,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     `${path.to.accountingCategories}?${getParams(request)}`,
     await flash(request, success("Updated G/L account category "))
   );

@@ -46,7 +46,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   ]);
 
   if (purchaseOrder.error) {
-    return redirect(
+    throw redirect(
       path.to.purchaseOrders,
       await flash(
         request,
@@ -65,7 +65,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  return redirect(request.headers.get("Referer") ?? request.url);
+  throw redirect(request.headers.get("Referer") ?? request.url);
 }
 
 export default function PurchaseOrderRoute() {

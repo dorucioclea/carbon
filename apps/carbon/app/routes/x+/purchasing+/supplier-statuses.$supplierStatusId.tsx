@@ -27,7 +27,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const supplierStatus = await getSupplierStatus(client, supplierStatusId);
 
   if (supplierStatus.error) {
-    return redirect(
+    throw redirect(
       path.to.supplierStatuses,
       await flash(
         request,
@@ -76,7 +76,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     `${path.to.supplierStatuses}?${getParams(request)}`,
     await flash(request, success("Updated supplier status"))
   );

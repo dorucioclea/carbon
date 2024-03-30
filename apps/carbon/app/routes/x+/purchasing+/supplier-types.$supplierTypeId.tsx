@@ -27,7 +27,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const supplierType = await getSupplierType(client, supplierTypeId);
 
   if (supplierType.error) {
-    return redirect(
+    throw redirect(
       `${path.to.supplierTypes}?${getParams(request)}`,
       await flash(
         request,
@@ -36,7 +36,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     );
   }
   if (supplierType?.data?.protected) {
-    return redirect(
+    throw redirect(
       path.to.supplierTypes,
       await flash(request, error(null, "Cannot edit a protected supplier type"))
     );
@@ -80,7 +80,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     `${path.to.supplierTypes}?${getParams(request)}`,
     await flash(request, success("Updated supplier type"))
   );

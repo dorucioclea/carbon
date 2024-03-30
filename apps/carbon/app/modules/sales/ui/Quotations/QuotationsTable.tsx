@@ -137,7 +137,7 @@ const QuotationsTable = memo(({ data, count }: QuotationsTableProps) => {
       {
         id: "partIds",
         header: "Parts",
-        cell: (item) => item.getValue<string[]>()?.length ?? 0,
+        cell: ({ row }) => row.original.partIds?.length ?? 0,
         meta: {
           filter: {
             type: "static",

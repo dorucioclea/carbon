@@ -44,7 +44,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     customFields: setCustomFields(formData),
   });
   if (updateQuotation.error) {
-    return redirect(
+    throw redirect(
       path.to.quote(id),
       await flash(
         request,
@@ -53,7 +53,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.quote(id),
     await flash(request, success("Updated quote"))
   );

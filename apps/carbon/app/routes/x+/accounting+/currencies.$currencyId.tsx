@@ -65,7 +65,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     `${path.to.currencies}?${getParams(request)}`,
     await flash(request, success("Updated currency"))
   );

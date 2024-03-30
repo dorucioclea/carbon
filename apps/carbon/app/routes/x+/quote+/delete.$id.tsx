@@ -19,11 +19,11 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const remove = await deleteQuote(client, id);
 
   if (remove.error) {
-    return redirect(
+    throw redirect(
       path.to.quotes,
       await flash(request, error(remove.error, "Failed to delete quote"))
     );
   }
 
-  return redirect(path.to.quotes);
+  throw redirect(path.to.quotes);
 }

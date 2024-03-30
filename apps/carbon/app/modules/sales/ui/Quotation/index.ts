@@ -3,17 +3,15 @@ import QuotationDocuments from "./QuotationDocuments";
 import QuotationExplorer from "./QuotationExplorer";
 import QuotationForm from "./QuotationForm";
 import QuotationLineForm from "./QuotationLineForm";
-import QuotationLineQuantities from "./QuotationLineQuantities";
 import QuotationMaterialForm from "./QuotationMaterialForm";
 import QuotationMaterialLines from "./QuotationMaterialLines";
 import QuotationOperationForm from "./QuotationOperationForm";
-
+import QuotationPricing from "./QuotationPricing";
 import QuotationStatus from "./QuotationStatus";
 import {
   getLinePriceUpdate,
   useQuotation,
   useQuotationLinePriceEffects,
-  useQuotationLinePriceEffectsUpdate,
 } from "./useQuotation";
 export {
   QuotationAssemblyForm,
@@ -21,13 +19,12 @@ export {
   QuotationExplorer,
   QuotationForm,
   QuotationLineForm,
-  QuotationLineQuantities,
   QuotationMaterialForm,
   QuotationMaterialLines,
   QuotationOperationForm,
+  QuotationPricing,
   QuotationStatus,
   getLinePriceUpdate,
   useQuotation,
   useQuotationLinePriceEffects,
-  useQuotationLinePriceEffectsUpdate,
 };

@@ -44,7 +44,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   });
 
   if (createQuotationAssembly.error) {
-    return redirect(
+    throw redirect(
       path.to.newQuoteAssembly(quoteId, quoteLineId),
       await flash(
         request,
@@ -55,7 +55,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const assemblyId = createQuotationAssembly.data.id;
   if (assemblyId) {
-    return redirect(path.to.quoteAssembly(quoteId, quoteLineId, assemblyId));
+    throw redirect(path.to.quoteAssembly(quoteId, quoteLineId, assemblyId));
   }
 }
 

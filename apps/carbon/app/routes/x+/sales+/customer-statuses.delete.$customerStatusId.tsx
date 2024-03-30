@@ -19,7 +19,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const customerStatus = await getCustomerStatus(client, customerStatusId);
   if (customerStatus.error) {
-    return redirect(
+    throw redirect(
       `${path.to.customerStatuses}?${getParams(request)}`,
       await flash(
         request,
@@ -38,7 +38,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { customerStatusId } = params;
   if (!customerStatusId) {
-    return redirect(
+    throw redirect(
       `${path.to.customerStatuses}?${getParams(request)}`,
       await flash(request, error(params, "Failed to get an customer status id"))
     );
@@ -49,7 +49,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     customerStatusId
   );
   if (deleteStatusError) {
-    return redirect(
+    throw redirect(
       `${path.to.customerStatuses}?${getParams(request)}`,
       await flash(
         request,
@@ -58,7 +58,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     `${path.to.customerStatuses}?${getParams(request)}`,
     await flash(request, success("Successfully deleted customer status"))
   );

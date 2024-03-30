@@ -26,7 +26,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const department = await getDepartment(client, departmentId);
 
   if (department.error) {
-    return redirect(
+    throw redirect(
       path.to.departments,
       await flash(request, error(department.error, "Failed to get department"))
     );
@@ -61,7 +61,7 @@ export async function action({ request }: ActionFunctionArgs) {
   });
 
   if (updateDepartment.error) {
-    return redirect(
+    throw redirect(
       path.to.departments,
       await flash(
         request,
@@ -70,7 +70,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.departments,
     await flash(request, success("Department updated."))
   );

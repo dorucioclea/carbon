@@ -17,7 +17,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
 
   const deleteField = await deleteCustomField(client, id);
   if (deleteField.error) {
-    return redirect(
+    throw redirect(
       path.to.attributes,
       await flash(
         request,
@@ -26,7 +26,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.customFieldList(tableId),
     await flash(request, success("Successfully deleted custom field"))
   );

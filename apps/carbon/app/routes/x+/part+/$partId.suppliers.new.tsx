@@ -39,7 +39,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   });
 
   if (createPartSupplier.error) {
-    return redirect(
+    throw redirect(
       path.to.partSuppliers(partId),
       await flash(
         request,
@@ -48,7 +48,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(path.to.partSuppliers(partId));
+  throw redirect(path.to.partSuppliers(partId));
 }
 
 export default function NewPartSupplierRoute() {

@@ -35,7 +35,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const nextSequence = await getNextSequence(client, "purchaseOrder", userId);
   if (nextSequence.error) {
-    return redirect(
+    throw redirect(
       path.to.newPurchaseOrder,
       await flash(
         request,
@@ -54,7 +54,7 @@ export async function action({ request }: ActionFunctionArgs) {
   if (createPurchaseOrder.error || !createPurchaseOrder.data?.[0]) {
     // TODO: this should be done as a transaction
     await rollbackNextSequence(client, "purchaseOrder", userId);
-    return redirect(
+    throw redirect(
       path.to.purchaseOrders,
       await flash(
         request,
@@ -65,7 +65,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const order = createPurchaseOrder.data?.[0];
 
-  return redirect(path.to.purchaseOrder(order.id!));
+  throw redirect(path.to.purchaseOrder(order.id!));
 }
 
 export default function PurchaseOrderNewRoute() {

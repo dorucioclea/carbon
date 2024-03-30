@@ -26,7 +26,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const supplierPayment = await getSupplierPayment(client, supplierId);
 
   if (supplierPayment.error || !supplierPayment.data) {
-    return redirect(
+    throw redirect(
       path.to.supplier(supplierId),
       await flash(
         request,
@@ -65,7 +65,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     customFields: setCustomFields(formData),
   });
   if (update.error) {
-    return redirect(
+    throw redirect(
       path.to.supplier(supplierId),
       await flash(
         request,
@@ -74,7 +74,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.supplierPayment(supplierId),
     await flash(request, success("Updated supplier payment"))
   );

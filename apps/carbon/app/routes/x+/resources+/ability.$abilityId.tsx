@@ -51,7 +51,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const { abilityId } = params;
   if (!abilityId) {
-    return redirect(
+    throw redirect(
       path.to.abilities,
       await flash(request, error(null, "Ability ID not found"))
     );
@@ -59,7 +59,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const ability = await getAbility(client, abilityId);
   if (ability.error || !ability.data) {
-    return redirect(
+    throw redirect(
       path.to.abilities,
       await flash(request, error(ability.error, "Failed to load ability"))
     );
@@ -96,7 +96,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
       name,
     });
     if (updateAbilityName.error) {
-      return redirect(
+      throw redirect(
         path.to.ability(abilityId),
         await flash(
           request,
@@ -122,7 +122,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
       shadowWeeks,
     });
     if (updateAbilityCurve.error) {
-      return redirect(
+      throw redirect(
         path.to.ability(abilityId),
         await flash(
           request,
@@ -132,7 +132,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     }
   }
 
-  return redirect(
+  throw redirect(
     path.to.ability(abilityId),
     await flash(request, success("Ability updated"))
   );

@@ -20,7 +20,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const department = await getDepartment(client, departmentId);
   if (department.error) {
-    return redirect(
+    throw redirect(
       path.to.departments,
       await flash(request, error(department.error, "Failed to get department"))
     );
@@ -38,7 +38,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { departmentId } = params;
   if (!departmentId) {
-    return redirect(
+    throw redirect(
       path.to.departments,
       await flash(request, error(params, "Failed to get department id"))
     );
@@ -49,7 +49,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     departmentId
   );
   if (deleteDepartmentError) {
-    return redirect(
+    throw redirect(
       path.to.departments,
       await flash(
         request,
@@ -58,7 +58,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.departments,
     await flash(request, success("Successfully deleted department"))
   );

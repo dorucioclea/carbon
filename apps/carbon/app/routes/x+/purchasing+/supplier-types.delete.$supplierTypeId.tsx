@@ -19,7 +19,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const supplierType = await getSupplierType(client, supplierTypeId);
   if (supplierType.error) {
-    return redirect(
+    throw redirect(
       path.to.supplierTypes,
       await flash(
         request,
@@ -38,7 +38,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { supplierTypeId } = params;
   if (!supplierTypeId) {
-    return redirect(
+    throw redirect(
       `${path.to.supplierTypes}?${getParams(request)}`,
       await flash(request, error(params, "Failed to get an supplier type id"))
     );
@@ -49,7 +49,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     supplierTypeId
   );
   if (deleteTypeError) {
-    return redirect(
+    throw redirect(
       `${path.to.supplierTypes}?${getParams(request)}`,
       await flash(
         request,
@@ -58,7 +58,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     `${path.to.supplierTypes}?${getParams(request)}`,
     await flash(request, success("Successfully deleted supplier type"))
   );

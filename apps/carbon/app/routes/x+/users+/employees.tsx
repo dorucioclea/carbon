@@ -38,13 +38,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
   ]);
 
   if (employees.error) {
-    return redirect(
+    throw redirect(
       path.to.users,
       await flash(request, error(employees.error, "Error loading employees"))
     );
   }
   if (employeeTypes.error) {
-    return redirect(
+    throw redirect(
       path.to.users,
       await flash(
         request,

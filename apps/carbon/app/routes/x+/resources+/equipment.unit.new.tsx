@@ -39,5 +39,5 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(path.to.equipment);
+  throw redirect(path.to.equipment);
 }

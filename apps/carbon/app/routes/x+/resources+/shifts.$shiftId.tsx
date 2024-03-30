@@ -26,7 +26,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const shift = await getShift(client, shiftId);
 
   if (shift.error) {
-    return redirect(
+    throw redirect(
       path.to.shifts,
       await flash(request, error(shift.error, "Failed to get shift"))
     );
@@ -61,13 +61,13 @@ export async function action({ request }: ActionFunctionArgs) {
   });
 
   if (createShift.error) {
-    return redirect(
+    throw redirect(
       path.to.shifts,
       await flash(request, error(createShift.error, "Failed to create shift"))
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.shifts,
     await flash(request, success("Shift updated"))
   );

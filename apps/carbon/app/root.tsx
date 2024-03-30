@@ -1,5 +1,5 @@
 // root.tsx
-import { Heading, toast } from "@carbon/react";
+import { Button, Heading, toast } from "@carbon/react";
 import { validator } from "@carbon/remix-validated-form";
 import type {
   ActionFunctionArgs,
@@ -116,7 +116,7 @@ function Document({
         <title>{title}</title>
         <Links />
       </head>
-      <body className="bg-background">
+      <body className="h-full bg-background">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -168,8 +168,16 @@ export function ErrorBoundary() {
     <Document title="Error!">
       <div className="dark">
         <div className="flex flex-col w-full h-screen bg-zinc-900 items-center justify-center space-y-4">
-          <Heading size="display">Cuss! Something went wrong</Heading>
+          <img
+            src="/carbon-logo-light.png"
+            alt="Carbon Logo"
+            className="block max-w-[60px]"
+          />
+          <Heading size="h2">Something went wrong</Heading>
           <p className="text-foreground">{message}</p>
+          <Button onClick={() => (window.location.href = "/")}>
+            Back Home
+          </Button>
         </div>
       </div>
     </Document>

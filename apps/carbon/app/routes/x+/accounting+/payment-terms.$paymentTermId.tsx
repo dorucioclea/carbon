@@ -65,7 +65,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     `${path.to.paymentTerms}?${getParams(request)}`,
     await flash(request, success("Updated payment term"))
   );

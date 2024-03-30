@@ -39,7 +39,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     updatedBy: userId,
   });
   if (updatePurchaseInvoice.error) {
-    return redirect(
+    throw redirect(
       path.to.purchaseInvoice(id),
       await flash(
         request,
@@ -48,7 +48,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.purchaseInvoice(id),
     await flash(request, success("Updated purchase invoice"))
   );

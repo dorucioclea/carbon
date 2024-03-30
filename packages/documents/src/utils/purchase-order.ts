@@ -52,10 +52,10 @@ export function getLineTotal(
   line: Database["public"]["Views"]["purchaseOrderLines"]["Row"]
 ) {
   if (line?.purchaseQuantity && line?.unitPrice) {
-    return (line.purchaseQuantity * line.unitPrice).toFixed(2);
+    return line.purchaseQuantity * line.unitPrice;
   }
 
-  return "";
+  return 0;
 }
 
 export function getTotal(
@@ -69,5 +69,5 @@ export function getTotal(
     }
   });
 
-  return total.toFixed(2);
+  return total;
 }

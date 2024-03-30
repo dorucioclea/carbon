@@ -100,7 +100,7 @@ export async function action({ request }: ActionFunctionArgs) {
     }
   }
 
-  return redirect(
+  throw redirect(
     path.to.abilities,
     await flash(request, success(`Ability created`))
   );

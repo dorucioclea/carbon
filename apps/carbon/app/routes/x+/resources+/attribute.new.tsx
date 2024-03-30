@@ -48,5 +48,5 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(path.to.attributeCategoryList(userAttributeCategoryId));
+  throw redirect(path.to.attributeCategoryList(userAttributeCategoryId));
 }

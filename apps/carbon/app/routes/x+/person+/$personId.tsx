@@ -36,7 +36,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   ]);
 
   if (employeeSummary.error) {
-    return redirect(
+    throw redirect(
       path.to.people,
       await flash(
         request,

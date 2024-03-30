@@ -25,7 +25,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const customerShipping = await getCustomerShipping(client, customerId);
 
   if (customerShipping.error || !customerShipping.data) {
-    return redirect(
+    throw redirect(
       path.to.customer(customerId),
       await flash(
         request,
@@ -63,7 +63,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     updatedBy: userId,
   });
   if (update.error) {
-    return redirect(
+    throw redirect(
       path.to.customer(customerId),
       await flash(
         request,
@@ -72,7 +72,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.customerShipping(customerId),
     await flash(request, success("Updated customer shipping"))
   );

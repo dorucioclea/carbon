@@ -38,7 +38,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   ]);
 
   if (accounts.error) {
-    return redirect(
+    throw redirect(
       path.to.authenticatedRoot,
       await flash(request, error(accounts.error, "Failed to fetch accounts"))
     );

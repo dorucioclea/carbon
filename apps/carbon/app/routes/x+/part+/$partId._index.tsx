@@ -5,5 +5,5 @@ import { path } from "~/utils/path";
 export async function loader({ params }: LoaderFunctionArgs) {
   const { partId } = params;
   if (!partId) throw new Error("Could not find partId");
-  return redirect(path.to.partDetails(partId));
+  throw redirect(path.to.partDetails(partId));
 }

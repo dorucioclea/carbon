@@ -40,14 +40,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
   ]);
 
   if (partGroups.error) {
-    return redirect(
+    throw redirect(
       path.to.parts,
       await flash(request, error(null, "Error loading part groups"))
     );
   }
 
   if (accounts.error) {
-    return redirect(
+    throw redirect(
       path.to.partGroups,
       await flash(request, error(accounts.error, "Error loading accounts"))
     );

@@ -27,7 +27,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const integration = await getIntegration(client, "resend");
   if (integration.error) {
-    return redirect(
+    throw redirect(
       path.to.integrations,
       await flash(
         request,
@@ -73,7 +73,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     updatedBy: userId,
   });
   if (update.error) {
-    return redirect(
+    throw redirect(
       path.to.integrations,
       await flash(
         request,
@@ -82,7 +82,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.integrations,
     await flash(request, success("Updated Resend integration"))
   );

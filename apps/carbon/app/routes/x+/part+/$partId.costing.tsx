@@ -30,13 +30,13 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   ]);
 
   if (partCost.error) {
-    return redirect(
+    throw redirect(
       path.to.parts,
       await flash(request, error(partCost.error, "Failed to load part costing"))
     );
   }
   if (accounts.error) {
-    return redirect(
+    throw redirect(
       path.to.parts,
       await flash(request, error(accounts.error, "Failed to load accounts"))
     );
@@ -71,7 +71,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     customFields: setCustomFields(formData),
   });
   if (updatePartCost.error) {
-    return redirect(
+    throw redirect(
       path.to.part(partId),
       await flash(
         request,
@@ -80,7 +80,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.partCosting(partId),
     await flash(request, success("Updated part costing"))
   );

@@ -27,7 +27,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     getAccountSubcategoriesByCategory(client, categoryId),
   ]);
   if (accountCategory.error) {
-    return redirect(
+    throw redirect(
       path.to.accountingCategories,
       await flash(
         request,
@@ -37,7 +37,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   }
 
   if (accountSubcategories.error) {
-    return redirect(
+    throw redirect(
       path.to.accountingCategories,
       await flash(
         request,

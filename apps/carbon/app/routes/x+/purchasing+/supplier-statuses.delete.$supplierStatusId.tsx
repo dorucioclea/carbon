@@ -19,7 +19,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const supplierStatus = await getSupplierStatus(client, supplierStatusId);
   if (supplierStatus.error) {
-    return redirect(
+    throw redirect(
       `${path.to.supplierStatuses}?${getParams(request)}`,
       await flash(
         request,
@@ -38,7 +38,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { supplierStatusId } = params;
   if (!supplierStatusId) {
-    return redirect(
+    throw redirect(
       `${path.to.supplierStatuses}?${getParams(request)}`,
       await flash(request, error(params, "Failed to get an supplier status id"))
     );
@@ -49,7 +49,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     supplierStatusId
   );
   if (deleteStatusError) {
-    return redirect(
+    throw redirect(
       `${path.to.supplierStatuses}?${getParams(request)}`,
       await flash(
         request,
@@ -58,7 +58,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     `${path.to.supplierStatuses}?${getParams(request)}`,
     await flash(request, success("Successfully deleted supplier status"))
   );

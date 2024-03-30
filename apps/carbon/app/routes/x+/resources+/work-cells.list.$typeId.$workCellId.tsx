@@ -23,7 +23,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const workCell = await getWorkCell(client, workCellId);
   if (workCell.error) {
-    return redirect(
+    throw redirect(
       path.to.workCellTypeList(typeId),
       await flash(request, error(workCell.error, "Failed to fetch work cell"))
     );

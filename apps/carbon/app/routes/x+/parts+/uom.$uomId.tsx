@@ -64,7 +64,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     `${path.to.uoms}?${getParams(request)}`,
     await flash(request, success("Updated unit of measure"))
   );

@@ -8,7 +8,6 @@ import type {
   getCustomerTypes,
   getQuoteAssembly,
   getQuoteExternalDocuments,
-  getQuoteLineQuantities,
   getQuoteLines,
   getQuoteMaterials,
   getQuoteOperation,
@@ -53,10 +52,6 @@ export type Quotation = NonNullable<
 
 export type QuotationLine = NonNullable<
   Awaited<ReturnType<typeof getQuoteLines>>["data"]
->[number];
-
-export type QuotationLineQuantity = NonNullable<
-  Awaited<ReturnType<typeof getQuoteLineQuantities>>["data"]
 >[number];
 
 export type QuotationMaterial = NonNullable<

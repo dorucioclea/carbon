@@ -35,7 +35,7 @@ export async function action({ request }: ActionFunctionArgs) {
     customFields: setCustomFields(formData),
   });
   if (createService.error) {
-    return redirect(
+    throw redirect(
       path.to.services,
       await flash(
         request,
@@ -46,7 +46,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const serviceId = createService.data?.id;
   if (!serviceId) {
-    return redirect(
+    throw redirect(
       path.to.services,
       await flash(
         request,
@@ -55,7 +55,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(path.to.service(serviceId));
+  throw redirect(path.to.service(serviceId));
 }
 
 export default function ServiceNewRoute() {

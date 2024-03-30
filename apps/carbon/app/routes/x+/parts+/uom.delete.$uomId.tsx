@@ -18,7 +18,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const unitOfMeasure = await getUnitOfMeasure(client, uomId);
   if (unitOfMeasure.error) {
-    return redirect(
+    throw redirect(
       `${path.to.uoms}?${getParams(request)}`,
       await flash(
         request,
@@ -37,7 +37,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { uomId } = params;
   if (!uomId) {
-    return redirect(
+    throw redirect(
       path.to.uoms,
       await flash(request, error(params, "Failed to get an unit of measure id"))
     );
@@ -45,7 +45,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { error: deleteTypeError } = await deleteUnitOfMeasure(client, uomId);
   if (deleteTypeError) {
-    return redirect(
+    throw redirect(
       path.to.uoms,
       await flash(
         request,
@@ -54,7 +54,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.uoms,
     await flash(request, success("Successfully deleted unit of measure"))
   );

@@ -28,6 +28,7 @@ import { HiOutlineCube } from "react-icons/hi";
 import { IoMdAdd } from "react-icons/io";
 import { LuClock } from "react-icons/lu";
 import { RxCheck, RxChevronDown } from "react-icons/rx";
+import { useOptimisticLocation } from "~/hooks";
 import type { BillOfMaterialNode } from "~/modules/shared";
 import { path } from "~/utils/path";
 import type {
@@ -76,7 +77,7 @@ const QuotationExplorerItem = (
         <Button
           variant={isActive ? "primary" : "ghost"}
           className={cn(
-            "w-full justify-between",
+            "font-mono w-full justify-between",
             !isActive && "text-muted-foreground"
           )}
           asChild
@@ -148,7 +149,7 @@ const QuotationExplorerItem = (
       return (
         <Button
           variant="ghost"
-          className="w-full justify-between text-muted-foreground"
+          className="font-mono w-full justify-between text-muted-foreground"
           asChild
         >
           <Link
@@ -168,7 +169,7 @@ const QuotationExplorerItem = (
         <Button
           variant={isActive ? "primary" : "ghost"}
           className={cn(
-            "w-full justify-between",
+            "font-mono w-full justify-between",
             !isActive && "text-muted-foreground"
           )}
           asChild
@@ -233,7 +234,7 @@ const QuotationExplorerItem = (
 };
 
 const QuotationExplorer = () => {
-  const { pathname, search } = useLocation();
+  const { pathname, search } = useOptimisticLocation();
 
   const params = useParams();
   if (!params.id) throw new Error("id not found");
@@ -437,8 +438,6 @@ const QuotationExplorer = () => {
     {}
   );
 
-  console.log({ collapsedNodes });
-
   const openNode = (id: string) => {
     const collapsed = { [id]: false };
     let currentId = id;
@@ -468,10 +467,10 @@ const QuotationExplorer = () => {
       return (
         <div className="w-full" role="group" key={`${node.id}:${node.type}`}>
           <HStack
-            className="items-stretch w-full"
+            className="items-stretch w-full border-l border-border"
             spacing={0}
             style={{
-              paddingLeft: `calc(${0.5 * level}rem)`,
+              paddingLeft: `calc(${0.75 * level}rem)`,
             }}
           >
             <IconButton
@@ -543,7 +542,7 @@ const QuotationExplorer = () => {
           </Tooltip>
         </HStack>
       </VStack>
-      <VStack className="min-h-[calc(100vh-210px)] p-2 w-full">
+      <VStack className="h-full w-full p-2">
         <div className="w-full h-full overflow-auto" role="tree">
           {renderBillOfMaterial(tree)}
         </div>

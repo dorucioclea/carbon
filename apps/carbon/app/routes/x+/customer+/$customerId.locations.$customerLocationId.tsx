@@ -26,7 +26,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const location = await getCustomerLocation(client, customerLocationId);
   if (location.error) {
-    return redirect(
+    throw redirect(
       path.to.customerLocations(customerId),
       await flash(
         request,
@@ -70,7 +70,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     customFields: setCustomFields(formData),
   });
   if (update.error) {
-    return redirect(
+    throw redirect(
       path.to.customerLocations(customerId),
       await flash(
         request,
@@ -79,7 +79,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.customerLocations(customerId),
     await flash(request, success("Customer address updated"))
   );

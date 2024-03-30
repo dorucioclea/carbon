@@ -35,7 +35,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     ]);
 
   if (purchaseOrderDelivery.error) {
-    return redirect(
+    throw redirect(
       path.to.purchaseOrder(orderId),
       await flash(
         request,
@@ -48,7 +48,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   }
 
   if (shippingMethods.error) {
-    return redirect(
+    throw redirect(
       path.to.purchaseOrders,
       await flash(
         request,
@@ -58,7 +58,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   }
 
   if (shippingTerms.error) {
-    return redirect(
+    throw redirect(
       path.to.purchaseOrders,
       await flash(
         request,
@@ -102,7 +102,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     }
   );
   if (updatePurchaseOrderDelivery.error) {
-    return redirect(
+    throw redirect(
       path.to.purchaseOrderDelivery(orderId),
       await flash(
         request,
@@ -114,7 +114,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.purchaseOrderDelivery(orderId),
     await flash(request, success("Updated purchase order delivery"))
   );

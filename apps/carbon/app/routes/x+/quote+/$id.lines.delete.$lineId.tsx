@@ -19,7 +19,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const quotationLine = await getQuoteLine(client, lineId);
   if (quotationLine.error) {
-    return redirect(
+    throw redirect(
       path.to.quote(id),
       await flash(
         request,
@@ -42,7 +42,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { error: deleteTypeError } = await deleteQuoteLine(client, lineId);
   if (deleteTypeError) {
-    return redirect(
+    throw redirect(
       path.to.quote(id),
       await flash(
         request,
@@ -51,7 +51,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.quote(id),
     await flash(request, success("Successfully deleted quotation line"))
   );

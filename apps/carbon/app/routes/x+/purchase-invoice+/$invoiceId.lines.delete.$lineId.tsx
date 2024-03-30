@@ -22,7 +22,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const purchaseInvoiceLine = await getPurchaseInvoiceLine(client, lineId);
   if (purchaseInvoiceLine.error) {
-    return redirect(
+    throw redirect(
       path.to.purchaseInvoiceLines(invoiceId),
       await flash(
         request,
@@ -48,7 +48,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     lineId
   );
   if (deleteTypeError) {
-    return redirect(
+    throw redirect(
       path.to.purchaseInvoiceLines(invoiceId),
       await flash(
         request,
@@ -57,7 +57,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.purchaseInvoiceLines(invoiceId),
     await flash(request, success("Successfully deleted purchase invoice line"))
   );

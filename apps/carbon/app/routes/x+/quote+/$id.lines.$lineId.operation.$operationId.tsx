@@ -31,7 +31,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     getQuoteMaterialsByOperation(client, operationId),
   ]);
   if (operation.error) {
-    return redirect(
+    throw redirect(
       path.to.quote(id),
       await flash(
         request,
@@ -41,7 +41,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   }
 
   if (materials.error) {
-    return redirect(
+    throw redirect(
       path.to.quote(id),
       await flash(
         request,
@@ -100,7 +100,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(path.to.quoteOperation(quoteId, quoteLineId, operationId));
+  throw redirect(path.to.quoteOperation(quoteId, quoteLineId, operationId));
 }
 
 export default function QuoteOperation() {

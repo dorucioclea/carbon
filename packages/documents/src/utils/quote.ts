@@ -1,30 +1,32 @@
 import type { Database } from "@carbon/database";
 
 export function getLineDescription(
-  line: Database["public"]["Tables"]["quoteLineQuantity"]["Row"]
+  line: Database["public"]["Views"]["quoteLines"]["Row"]
 ) {
-  return line?.quantity;
+  const customerPartNumber = line.customerPartId
+    ? ` (${line.customerPartId} ${
+        line.customerPartRevision ? `Rev ${line.customerPartRevision}` : ""
+      })`
+    : "";
+  return line?.partId + customerPartNumber;
 }
 
-export function getExtendedPrice(
-  line: Database["public"]["Tables"]["quoteLineQuantity"]["Row"]
+export function getLineDescriptionDetails(
+  line: Database["public"]["Views"]["quoteLines"]["Row"]
 ) {
-  return (
-    line?.quantity *
-    (getUnitCost(line) + line.unitTaxAmount) *
-    (1 - line.discountPercentage / 100) *
-    (1 + line.markupPercentage / 100)
-  );
+  return line?.description ? `${line.description}` : "";
 }
 
-export function getUnitCost(
-  line: Database["public"]["Tables"]["quoteLineQuantity"]["Row"]
+export function getTotal(
+  lines: Database["public"]["Views"]["quoteLines"]["Row"][]
 ) {
-  return line.quantity
-    ? (line.materialCost +
-        line.laborCost +
-        line.overheadCost +
-        line.additionalCost) /
-        line.quantity
-    : 0;
+  let total = 0;
+
+  lines.forEach((line) => {
+    if (line?.pricingExtendedPrice) {
+      total += line.pricingExtendedPrice;
+    }
+  });
+
+  return total;
 }

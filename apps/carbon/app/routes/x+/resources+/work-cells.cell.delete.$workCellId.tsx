@@ -18,7 +18,7 @@ export async function loader({ request, params }: ActionFunctionArgs) {
 
   const workCell = await getWorkCell(client, workCellId);
   if (workCell.error) {
-    return redirect(
+    throw redirect(
       path.to.workCells,
       await flash(request, error(workCell.error, "Failed to get work cell"))
     );
@@ -39,7 +39,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const deactivateWorkCell = await deleteWorkCell(client, workCellId);
   if (deactivateWorkCell.error) {
-    return redirect(
+    throw redirect(
       path.to.workCells,
       await flash(
         request,
@@ -48,7 +48,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.workCells,
     await flash(request, success("Successfully deleted work cell"))
   );

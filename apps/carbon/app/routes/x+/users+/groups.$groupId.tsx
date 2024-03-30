@@ -38,7 +38,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const groupName = groupWithMembers.data?.[0].name;
   if (!groupName)
-    return redirect(
+    throw redirect(
       path.to.groups,
       await flash(request, error(groupWithMembers, "Group not found"))
     );
@@ -93,7 +93,7 @@ export async function action({ request }: ActionFunctionArgs) {
       )
     );
 
-  return redirect(
+  throw redirect(
     path.to.groups,
     await flash(request, success("Group updated successfully"))
   );

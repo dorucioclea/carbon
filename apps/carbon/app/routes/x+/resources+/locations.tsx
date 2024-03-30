@@ -36,7 +36,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   });
 
   if (locations.error) {
-    return redirect(
+    throw redirect(
       path.to.resources,
       await flash(request, error(locations.error, "Failed to load locations"))
     );

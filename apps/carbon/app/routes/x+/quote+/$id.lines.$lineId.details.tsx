@@ -1,13 +1,15 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Outlet, useLoaderData } from "@remix-run/react";
 import {
   QuotationLineForm,
-  QuotationLineQuantities,
+  QuotationPricing,
   getQuoteLine,
-  getQuoteLineQuantities,
+  getQuoteLinePrice,
   quotationLineValidator,
+  quotationPricingValidator,
+  updateQuoteLinePrice,
   upsertQuoteLine,
 } from "~/modules/sales";
 import { requirePermissions } from "~/services/auth";
@@ -26,14 +28,14 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const { lineId } = params;
   if (!lineId) throw notFound("lineId not found");
 
-  const [quotationLine, quotationLineQuantities] = await Promise.all([
+  const [quotationLine, quotationLinePricing] = await Promise.all([
     getQuoteLine(client, lineId),
-    getQuoteLineQuantities(client, lineId),
+    getQuoteLinePrice(client, lineId),
   ]);
 
   return json({
     quotationLine: quotationLine?.data ?? null,
-    quotationLineQuantities: quotationLineQuantities?.data ?? [],
+    quotationLinePricing: quotationLinePricing?.data,
   });
 }
 
@@ -48,40 +50,71 @@ export async function action({ request, params }: ActionFunctionArgs) {
   if (!lineId) throw new Error("Could not find lineId");
 
   const formData = await request.formData();
-  const validation = await validator(quotationLineValidator).validate(formData);
+  const intent = formData.get("intent");
 
-  if (validation.error) {
-    return validationError(validation.error);
-  }
-
-  const { id, ...data } = validation.data;
-
-  const updateQuotationLine = await upsertQuoteLine(client, {
-    id: lineId,
-    ...data,
-    updatedBy: userId,
-    customFields: setCustomFields(formData),
-  });
-
-  if (updateQuotationLine.error) {
-    return redirect(
-      path.to.quoteLine(quoteId, lineId),
-      await flash(
-        request,
-        error(updateQuotationLine.error, "Failed to update quote line")
-      )
+  if (intent === "line") {
+    const validation = await validator(quotationLineValidator).validate(
+      formData
     );
+
+    if (validation.error) {
+      return validationError(validation.error);
+    }
+
+    const { id, ...data } = validation.data;
+
+    const updateQuotationLine = await upsertQuoteLine(client, {
+      id: lineId,
+      ...data,
+      updatedBy: userId,
+      customFields: setCustomFields(formData),
+    });
+
+    if (updateQuotationLine.error) {
+      throw redirect(
+        path.to.quoteLine(quoteId, lineId),
+        await flash(
+          request,
+          error(updateQuotationLine.error, "Failed to update quote line")
+        )
+      );
+    }
+  } else if (intent === "pricing") {
+    const validation = await validator(quotationPricingValidator).validate(
+      formData
+    );
+
+    if (validation.error) {
+      return validationError(validation.error);
+    }
+
+    const updateLinePrice = await updateQuoteLinePrice(client, {
+      quoteId,
+      quoteLineId: lineId,
+      ...validation.data,
+      updatedBy: userId,
+    });
+
+    if (updateLinePrice.error) {
+      throw redirect(
+        path.to.quoteLine(quoteId, lineId),
+        await flash(
+          request,
+          error(updateLinePrice.error, "Failed to update quote line price")
+        )
+      );
+    }
   }
 
-  return redirect(path.to.quoteLine(quoteId, lineId));
+  throw redirect(path.to.quoteLine(quoteId, lineId));
 }
 
 export default function EditQuotationLineRoute() {
-  const { quotationLine, quotationLineQuantities } =
+  const { quotationLine, quotationLinePricing } =
     useLoaderData<typeof loader>();
   if (!quotationLine) throw new Error("Could not find quotation line");
 
-  const initialValues = {
+  const lineInitialValues = {
     id: quotationLine?.id ?? undefined,
     quoteId: quotationLine?.quoteId ?? "",
     partId: quotationLine?.partId ?? "",
@@ -96,13 +129,27 @@ export default function EditQuotationLineRoute() {
     ...getCustomFields(quotationLine?.customFields),
   };
 
+  const pricingInitialValues = {
+    quantity: quotationLinePricing?.quantity ?? 1,
+    unitCost: quotationLinePricing?.unitCost ?? 0,
+    leadTime: quotationLinePricing?.leadTime ?? 0,
+    discountPercent: quotationLinePricing?.discountPercent ?? 0,
+    markupPercent: quotationLinePricing?.markupPercent ?? 0,
+    extendedPrice: quotationLinePricing?.extendedPrice ?? 0,
+  };
+
   return (
     <>
-      <QuotationLineForm key={initialValues.id} initialValues={initialValues} />
-      <QuotationLineQuantities
-        quotationLine={quotationLine}
-        quotationLineQuantities={quotationLineQuantities}
+      <QuotationLineForm
+        key={`${lineInitialValues.id}-line`}
+        initialValues={lineInitialValues}
       />
+      <QuotationPricing
+        key={`${lineInitialValues.id}-pricing`}
+        initialValues={pricingInitialValues}
+        isMade={quotationLine?.replenishmentSystem === "Make"}
+      />
+      <Outlet />
     </>
   );
 }

@@ -63,7 +63,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.groups,
     await flash(request, success("Group created"))
   );

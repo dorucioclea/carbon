@@ -4,7 +4,6 @@ import {
   validationError,
   validator,
 } from "@carbon/remix-validated-form";
-import posthog from "posthog-js";
 import type {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -12,6 +11,7 @@ import type {
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Link, useActionData, useSearchParams } from "@remix-run/react";
+import posthog from "posthog-js";
 import { LuAlertCircle } from "react-icons/lu";
 
 import { Hidden, Input, Password, Submit } from "~/components/Form";
@@ -20,9 +20,9 @@ import {
   signInWithEmail,
   verifyAuthSession,
 } from "~/services/auth";
-import { createAuthSession, getAuthSession } from "~/services/session.server";
-import type { FormActionData, Result } from "~/types";
-import { assertIsPost } from "~/utils/http";
+import { commitAuthSession, getAuthSession } from "~/services/session.server";
+import type { Result } from "~/types";
+import { assertIsPost, safeRedirect } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";
 
@@ -33,13 +33,13 @@ export const meta: MetaFunction = () => {
 export async function loader({ request }: LoaderFunctionArgs) {
   const authSession = await getAuthSession(request);
   if (authSession && (await verifyAuthSession(authSession))) {
-    if (authSession) return redirect(path.to.authenticatedRoot);
+    if (authSession) throw redirect(path.to.authenticatedRoot);
   }
 
   return null;
 }
 
-export async function action({ request }: ActionFunctionArgs): FormActionData {
+export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
   const validation = await validator(loginValidator).validate(
     await request.formData()
@@ -61,10 +61,13 @@ export async function action({ request }: ActionFunctionArgs): FormActionData {
     });
   }
 
-  return createAuthSession({
-    request,
-    authSession,
-    redirectTo: redirectTo || path.to.authenticatedRoot,
+  throw redirect(safeRedirect(redirectTo), {
+    headers: {
+      "Set-Cookie": await commitAuthSession(request, {
+        authSession,
+        flashErrorMessage: null,
+      }),
+    },
   });
 }
 

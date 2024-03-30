@@ -43,7 +43,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getCustomerTypesList(client),
   ]);
   if (salesGroups.error) {
-    return redirect(
+    throw redirect(
       path.to.accounting,
       await flash(
         request,

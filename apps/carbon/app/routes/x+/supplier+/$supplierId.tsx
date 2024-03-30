@@ -34,7 +34,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   ]);
 
   if (supplier.error) {
-    return redirect(
+    throw redirect(
       path.to.suppliers,
       await flash(
         request,

@@ -33,7 +33,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   ]);
 
   if (shifts.error) {
-    return redirect(
+    throw redirect(
       path.to.resources,
       await flash(request, error(shifts.error, "Failed to load shifts"))
     );

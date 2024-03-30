@@ -34,7 +34,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(path.to.quoteLine(quoteId, quoteLineId));
+  throw redirect(path.to.quoteLine(quoteId, quoteLineId));
 }
 
 export default function DeleteQuoteAssembly() {

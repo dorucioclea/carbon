@@ -57,7 +57,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.authenticatedRoot,
     await flash(request, success("Updated password"))
   );

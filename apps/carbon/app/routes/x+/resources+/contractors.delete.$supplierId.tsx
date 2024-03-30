@@ -20,7 +20,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const contractor = await getContractor(client, supplierId);
   if (contractor.error) {
-    return redirect(
+    throw redirect(
       path.to.contractors,
       await flash(request, error(contractor.error, "Failed to get contractor"))
     );
@@ -38,7 +38,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { supplierId } = params;
   if (!supplierId) {
-    return redirect(
+    throw redirect(
       path.to.contractors,
       await flash(request, error(params, "Failed to get contractor id"))
     );
@@ -49,7 +49,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     supplierId
   );
   if (deleteContractorError) {
-    return redirect(
+    throw redirect(
       path.to.contractors,
       await flash(
         request,
@@ -58,7 +58,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.contractors,
     await flash(request, success("Successfully deleted contractor"))
   );

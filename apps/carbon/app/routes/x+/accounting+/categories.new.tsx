@@ -39,7 +39,7 @@ export async function action({ request }: ActionFunctionArgs) {
     createdBy: userId,
   });
   if (createAccountCategory.error) {
-    return redirect(
+    throw redirect(
       `${path.to.accountingCategories}?${getParams(request)}`,
       await flash(
         request,
@@ -51,7 +51,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(`${path.to.accountingCategories}?${getParams(request)}`);
+  throw redirect(`${path.to.accountingCategories}?${getParams(request)}`);
 }
 
 export default function NewAccountCategoryRoute() {

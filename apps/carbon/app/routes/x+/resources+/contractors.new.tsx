@@ -38,7 +38,7 @@ export async function action({ request }: ActionFunctionArgs) {
   });
 
   if (createContractor.error) {
-    return redirect(
+    throw redirect(
       path.to.contractors,
       await flash(
         request,
@@ -47,7 +47,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.contractors,
     await flash(request, success("Contractor created"))
   );

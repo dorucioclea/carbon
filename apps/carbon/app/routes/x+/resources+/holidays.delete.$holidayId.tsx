@@ -20,7 +20,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const holiday = await getHoliday(client, holidayId);
   if (holiday.error) {
-    return redirect(
+    throw redirect(
       path.to.holidays,
       await flash(request, error(holiday.error, "Failed to get holiday"))
     );
@@ -38,7 +38,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { holidayId } = params;
   if (!holidayId) {
-    return redirect(
+    throw redirect(
       path.to.holidays,
       await flash(request, error(params, "Failed to get holiday id"))
     );
@@ -46,7 +46,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { error: deleteHolidayError } = await deleteHoliday(client, holidayId);
   if (deleteHolidayError) {
-    return redirect(
+    throw redirect(
       path.to.holidays,
       await flash(
         request,
@@ -55,7 +55,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.holidays,
     await flash(request, success("Successfully deleted holiday"))
   );

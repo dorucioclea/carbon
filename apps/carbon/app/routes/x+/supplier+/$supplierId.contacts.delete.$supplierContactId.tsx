@@ -13,7 +13,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { supplierId, supplierContactId } = params;
   if (!supplierId || !supplierContactId) {
-    return redirect(
+    throw redirect(
       path.to.suppliers,
       await flash(request, error(params, "Failed to get a supplier contact id"))
     );
@@ -27,7 +27,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     supplierContactId
   );
   if (deleteSupplierContactError) {
-    return redirect(
+    throw redirect(
       path.to.supplierContacts(supplierId),
       await flash(
         request,
@@ -36,7 +36,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.supplierContacts(supplierId),
     await flash(request, success("Successfully deleted supplier contact"))
   );

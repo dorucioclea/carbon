@@ -20,7 +20,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const location = await getLocation(client, locationId);
   if (location.error) {
-    return redirect(
+    throw redirect(
       path.to.locations,
       await flash(request, error(location.error, "Failed to get location"))
     );
@@ -38,7 +38,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { locationId } = params;
   if (!locationId) {
-    return redirect(
+    throw redirect(
       path.to.locations,
       await flash(request, error(params, "Failed to get location id"))
     );
@@ -49,7 +49,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     locationId
   );
   if (deleteLocationError) {
-    return redirect(
+    throw redirect(
       path.to.locations,
       await flash(
         request,
@@ -58,7 +58,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.locations,
     await flash(request, success("Successfully deleted location"))
   );

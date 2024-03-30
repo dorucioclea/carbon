@@ -62,6 +62,7 @@ const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
             aria-controls={id}
             aria-expanded={open}
             role="combobox"
+            tabIndex={0}
             variant="secondary"
             className={cn(
               multiSelectTriggerVariants({ size, hasSelections }),
@@ -69,6 +70,7 @@ const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
               className
             )}
             onClick={() => setOpen(!open)}
+            onKeyDown={() => setOpen(!open)}
             asChild
           >
             <div>

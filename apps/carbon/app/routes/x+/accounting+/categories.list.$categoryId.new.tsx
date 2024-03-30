@@ -51,7 +51,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(`${path.to.accountingCategories}?${getParams(request)}`);
+  throw redirect(`${path.to.accountingCategories}?${getParams(request)}`);
 }
 
 export default function NewAccountSubcategoryRoute() {

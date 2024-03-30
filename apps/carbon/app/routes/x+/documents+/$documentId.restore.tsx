@@ -19,7 +19,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const removeFromTrash = await restoreDocument(client, documentId, userId);
 
   if (removeFromTrash.error) {
-    return redirect(
+    throw redirect(
       path.to.documents,
       await flash(
         request,
@@ -28,5 +28,5 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(path.to.documentsTrash);
+  throw redirect(path.to.documentsTrash);
 }

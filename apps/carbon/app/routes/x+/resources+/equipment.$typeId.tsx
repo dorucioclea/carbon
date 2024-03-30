@@ -26,7 +26,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const equipmentType = await getEquipmentType(client, typeId);
   if (equipmentType.error) {
-    return redirect(
+    throw redirect(
       path.to.equipment,
       await flash(
         request,
@@ -61,7 +61,7 @@ export async function action({ request }: ActionFunctionArgs) {
     customFields: setCustomFields(formData),
   });
   if (updateCategory.error) {
-    return redirect(
+    throw redirect(
       path.to.equipment,
       await flash(
         request,
@@ -70,7 +70,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.equipment,
     await flash(request, success("Updated equipment type "))
   );

@@ -13,7 +13,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { customerId, customerLocationId } = params;
   if (!customerId || !customerLocationId) {
-    return redirect(
+    throw redirect(
       path.to.customers,
       await flash(
         request,
@@ -28,7 +28,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     customerLocationId
   );
   if (deleteCustomerLocationError) {
-    return redirect(
+    throw redirect(
       path.to.customerLocations(customerId),
       await flash(
         request,
@@ -37,7 +37,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.customerLocations(customerId),
     await flash(request, success("Successfully deleted customer location"))
   );

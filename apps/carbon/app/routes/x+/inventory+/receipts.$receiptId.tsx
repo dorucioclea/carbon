@@ -72,7 +72,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.receipt(id),
     await flash(request, success("Updated receipt"))
   );

@@ -36,7 +36,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   ]);
 
   if (purchaseInvoice.error) {
-    return redirect(
+    throw redirect(
       path.to.purchaseInvoices,
       await flash(
         request,
@@ -53,7 +53,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  return redirect(request.headers.get("Referer") ?? request.url);
+  throw redirect(request.headers.get("Referer") ?? request.url);
 }
 
 export default function PurchaseInvoiceRoute() {

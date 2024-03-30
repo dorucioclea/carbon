@@ -20,7 +20,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const partner = await getPartnerBySupplierId(client, supplierId);
   if (partner.error) {
-    return redirect(
+    throw redirect(
       path.to.partners,
       await flash(request, error(partner.error, "Failed to get partner"))
     );
@@ -38,7 +38,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { supplierId } = params;
   if (!supplierId) {
-    return redirect(
+    throw redirect(
       path.to.partners,
       await flash(request, error(params, "Failed to get partner id"))
     );
@@ -46,7 +46,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { error: deletePartnerError } = await deletePartner(client, supplierId);
   if (deletePartnerError) {
-    return redirect(
+    throw redirect(
       path.to.partners,
       await flash(
         request,
@@ -55,7 +55,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.partners,
     await flash(request, success("Successfully deleted partner"))
   );

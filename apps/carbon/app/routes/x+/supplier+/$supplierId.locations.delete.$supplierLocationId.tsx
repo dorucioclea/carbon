@@ -13,7 +13,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { supplierId, supplierLocationId } = params;
   if (!supplierId || !supplierLocationId) {
-    return redirect(
+    throw redirect(
       path.to.suppliers,
       await flash(
         request,
@@ -28,7 +28,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     supplierLocationId
   );
   if (deleteSupplierLocationError) {
-    return redirect(
+    throw redirect(
       path.to.supplierLocations(supplierId),
       await flash(
         request,
@@ -37,7 +37,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.supplierLocations(supplierId),
     await flash(request, success("Successfully deleted supplier location"))
   );

@@ -4,6 +4,7 @@ import { noop } from "@tanstack/react-table";
 import { forwardRef, type AnchorHTMLAttributes } from "react";
 import { BsFillHexagonFill } from "react-icons/bs";
 import { z } from "zod";
+import { useOptimisticLocation } from "~/hooks";
 import type { Authenticated, NavItem } from "~/types";
 import { useModules } from "./useModules";
 
@@ -13,6 +14,8 @@ export const ModuleHandle = z.object({
 
 const IconSidebar = () => {
   const navigationPanel = useDisclosure();
+  const location = useOptimisticLocation();
+  const currentModule = getModule(location.pathname);
   const links = useModules();
   const matchedModules = useMatches().reduce((acc, match) => {
     if (match.handle) {
@@ -46,9 +49,15 @@ const IconSidebar = () => {
           </Button>
 
           {links.map((link) => {
-            const module = link.to.split("/")[2]; // link.to is "/x/parts" -- this returns "parts"
+            const m = getModule(link.to);
+            const moduleMatches = matchedModules.has(m);
+            const anotherModuleMatches = links.some((l) => {
+              const m = getModule(l.to);
+              return matchedModules.has(m);
+            });
 
-            const isActive = matchedModules.has(module);
+            const isActive =
+              currentModule === m || (moduleMatches && !anotherModuleMatches);
             return (
               <NavigationIconLink
                 key={link.name}
@@ -130,3 +139,7 @@ const NavigationIconLink = forwardRef<
 NavigationIconLink.displayName = "NavigationIconLink";
 
 export default IconSidebar;
+
+function getModule(link: string) {
+  return link.split("/")?.[2];
+}

@@ -29,7 +29,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   ]);
 
   if (privateAttributes.error) {
-    return redirect(
+    throw redirect(
       path.to.authenticatedRoot,
       await flash(
         request,

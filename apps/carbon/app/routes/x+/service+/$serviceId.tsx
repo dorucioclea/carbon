@@ -24,7 +24,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const [service] = await Promise.all([getService(client, serviceId)]);
 
   if (service.error) {
-    return redirect(
+    throw redirect(
       path.to.parts,
       await flash(request, error(service.error, "Failed to load service"))
     );

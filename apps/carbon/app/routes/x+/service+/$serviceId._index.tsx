@@ -5,5 +5,5 @@ import { path } from "~/utils/path";
 export async function loader({ params }: LoaderFunctionArgs) {
   const { serviceId } = params;
   if (!serviceId) throw new Error("Could not find serviceId");
-  return redirect(path.to.serviceDetails(serviceId));
+  throw redirect(path.to.serviceDetails(serviceId));
 }

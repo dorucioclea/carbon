@@ -20,7 +20,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const group = await getGroup(client, groupId);
   if (group.error) {
-    return redirect(
+    throw redirect(
       path.to.groups,
       await flash(request, error(group.error, "Failed to get group"))
     );
@@ -36,7 +36,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { groupId } = params;
   if (!groupId) {
-    return redirect(
+    throw redirect(
       path.to.groups,
       await flash(request, error(params, "Failed to get an group id"))
     );
@@ -44,13 +44,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { error: deleteGroupError } = await deleteGroup(client, groupId);
   if (deleteGroupError) {
-    return redirect(
+    throw redirect(
       path.to.groups,
       await flash(request, error(deleteGroupError, "Failed to delete group"))
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.groups,
     await flash(request, success("Successfully deleted group"))
   );

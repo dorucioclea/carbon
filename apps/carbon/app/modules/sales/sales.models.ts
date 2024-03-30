@@ -77,6 +77,7 @@ export const quotationValidator = z.object({
   customerContactId: zfd.text(z.string().optional()),
   customerReference: zfd.text(z.string().optional()),
   locationId: zfd.text(z.string().optional()),
+  status: z.enum(quoteStatusType).optional(),
   notes: zfd.text(z.string().optional()),
   expirationDate: zfd.text(z.string().optional()),
 });
@@ -119,6 +120,15 @@ export const quotationOperationValidator = z.object({
   quotingRate: zfd.numeric(z.number().min(0)),
   laborRate: zfd.numeric(z.number().min(0)),
   overheadRate: zfd.numeric(z.number().min(0)),
+});
+
+export const quotationPricingValidator = z.object({
+  quantity: zfd.numeric(z.number()),
+  unitCost: zfd.numeric(z.number()),
+  leadTime: zfd.numeric(z.number().int().nonnegative()),
+  discountPercent: zfd.numeric(z.number().nonnegative()),
+  markupPercent: zfd.numeric(z.number().nonnegative()),
+  extendedPrice: zfd.numeric(z.number()),
 });
 
 export const quotationLineValidator = z.object({

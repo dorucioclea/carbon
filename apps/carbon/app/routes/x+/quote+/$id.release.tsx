@@ -4,12 +4,12 @@ import { renderAsync } from "@react-email/components";
 import { redirect, type ActionFunctionArgs } from "@remix-run/node";
 import { triggerClient } from "~/lib/trigger.server";
 import {
-  getQuote,
-  releaseQuote,
-  quotationReleaseValidator,
   getCustomer,
-  getQuoteLines,
   getCustomerContact,
+  getQuote,
+  getQuoteLines,
+  quotationReleaseValidator,
+  releaseQuote,
 } from "~/modules/sales";
 import { getCompany } from "~/modules/settings";
 import { getUser } from "~/modules/users/users.server";
@@ -38,7 +38,7 @@ export async function action(args: ActionFunctionArgs) {
 
   const release = await releaseQuote(client, id, userId);
   if (release.error) {
-    return redirect(
+    throw redirect(
       path.to.quote(id),
       await flash(request, error(release.error, "Failed to release quote"))
     );
@@ -46,7 +46,7 @@ export async function action(args: ActionFunctionArgs) {
 
   const quote = await getQuote(client, id);
   if (quote.error) {
-    return redirect(
+    throw redirect(
       path.to.quote(id),
       await flash(request, error(quote.error, "Failed to get quote"))
     );
@@ -70,13 +70,13 @@ export async function action(args: ActionFunctionArgs) {
       });
 
     if (fileUpload.error) {
-      return redirect(
+      throw redirect(
         path.to.quote(id),
         await flash(request, error(fileUpload.error, "Failed to upload file"))
       );
     }
   } catch (err) {
-    return redirect(
+    throw redirect(
       path.to.quote(id),
       await flash(request, error(err, "Failed to generate PDF"))
     );
@@ -100,7 +100,7 @@ export async function action(args: ActionFunctionArgs) {
         const [company, customer, customerContact, quoteLines, user] =
           await Promise.all([
             getCompany(client),
-            getCustomer(client, quote.data.customerId),
+            getCustomer(client, quote.data.customerId!),
             getCustomerContact(client, customerContactId),
             getQuoteLines(client, id),
             getUser(client, userId),
@@ -115,10 +115,12 @@ export async function action(args: ActionFunctionArgs) {
         // TODO: Update sender email
         const emailTemplate = QuoteEmail({
           company: company.data,
+          // @ts-ignore
           quote: quote.data,
+          // @ts-ignore
           quoteLines: quoteLines.data ?? [],
           recipient: {
-            email: customerContact.data.contact.email,
+            email: customerContact.data?.contact!.email!,
             firstName: "Customer",
             lastName: "",
           },
@@ -132,7 +134,7 @@ export async function action(args: ActionFunctionArgs) {
         await triggerClient.sendEvent({
           name: "resend.email",
           payload: {
-            to: customerContact.data.contact.email,
+            to: customerContact.data.contact!.email!,
             from: user.data.email,
             subject: `${quote.data.quoteId} from ${company.data.name}`,
             html: await renderAsync(emailTemplate),
@@ -146,7 +148,7 @@ export async function action(args: ActionFunctionArgs) {
           },
         });
       } catch (err) {
-        return redirect(
+        throw redirect(
           path.to.quote(id),
           await flash(request, error(err, "Failed to send email"))
         );
@@ -160,7 +162,7 @@ export async function action(args: ActionFunctionArgs) {
       throw new Error("Invalid notification type");
   }
 
-  return redirect(
+  throw redirect(
     path.to.quote(id),
     await flash(request, success("Quote released"))
   );

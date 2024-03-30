@@ -18,6 +18,10 @@ interface PurchaseOrderPDFProps extends PDF {
 }
 
 // TODO: format currency based on settings
+const formatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
 
 const PurchaseOrderPDF = ({
   company,
@@ -162,30 +166,21 @@ const PurchaseOrderPDF = ({
                   : line.purchaseQuantity}
               </Text>
               <Text style={styles.tableCol3}>
-                {line.purchaseOrderLineType === "Comment" ? null : (
-                  <>
-                    <Text>$</Text>
-                    <Text>
-                      {line.unitPrice ? line.unitPrice.toFixed(2) : ""}
-                    </Text>
-                  </>
-                )}
+                {line.purchaseOrderLineType === "Comment"
+                  ? null
+                  : formatter.format(line.unitPrice ?? 0)}
               </Text>
               <Text style={styles.tableCol4}>
-                {line.purchaseOrderLineType === "Comment" ? null : (
-                  <>
-                    <Text>$</Text>
-                    <Text>{getLineTotal(line)}</Text>
-                  </>
-                )}
+                {line.purchaseOrderLineType === "Comment"
+                  ? null
+                  : formatter.format(getLineTotal(line))}
               </Text>
             </View>
           ))}
           <View style={styles.tfoot}>
             <Text>Total</Text>
             <Text style={styles.bold}>
-              <Text>$</Text>
-              <Text>{getTotal(purchaseOrderLines)}</Text>
+              {formatter.format(getTotal(purchaseOrderLines))}
             </Text>
           </View>
         </View>

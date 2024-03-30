@@ -43,7 +43,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(`${path.to.customFieldList(tableId)}?${getParams(request)}`);
+  throw redirect(`${path.to.customFieldList(tableId)}?${getParams(request)}`);
 }
 
 export default function NewCustomFieldRoute() {

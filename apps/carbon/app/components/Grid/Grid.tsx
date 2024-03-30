@@ -340,8 +340,8 @@ const Grid = <T extends object>({
         ref={tableContainerRef}
         onKeyDown={onKeyDown}
       >
-        <Table>
-          <Thead>
+        <Table className="absolute">
+          <Thead className="sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <Tr key={headerGroup.id} className="h-10">
                 {headerGroup.headers.map((header) => {

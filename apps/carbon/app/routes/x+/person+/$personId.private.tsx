@@ -23,7 +23,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const privateAttributes = await getPrivateAttributes(client, personId);
   if (privateAttributes.error) {
-    return redirect(
+    throw redirect(
       path.to.people,
       await flash(
         request,
@@ -55,13 +55,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const updateJob = await upsertEmployeeJob(client, personId, validation.data);
   if (updateJob.error) {
-    return redirect(
+    throw redirect(
       path.to.personJob(personId),
       await flash(request, error(updateJob.error, "Failed to update job"))
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.personJob(personId),
     await flash(request, success("Successfully updated job"))
   );

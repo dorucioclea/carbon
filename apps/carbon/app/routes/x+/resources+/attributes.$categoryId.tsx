@@ -25,7 +25,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const attributeCategory = await getAttributeCategory(client, categoryId);
   if (attributeCategory.error) {
-    return redirect(
+    throw redirect(
       path.to.attributes,
       await flash(
         request,
@@ -61,7 +61,7 @@ export async function action({ request }: ActionFunctionArgs) {
     updatedBy: userId,
   });
   if (updateCategory.error) {
-    return redirect(
+    throw redirect(
       path.to.attributes,
       await flash(
         request,
@@ -70,7 +70,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.attributes,
     await flash(request, success("Updated attribute category "))
   );

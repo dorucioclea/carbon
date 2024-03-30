@@ -22,7 +22,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const customFields = await getCustomFields(client, tableId);
   if (customFields.error) {
-    return redirect(
+    throw redirect(
       path.to.customFields,
       await flash(
         request,

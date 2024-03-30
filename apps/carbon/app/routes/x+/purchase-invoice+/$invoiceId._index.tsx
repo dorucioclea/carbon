@@ -6,5 +6,5 @@ import { path } from "~/utils/path";
 export async function loader({ params }: LoaderFunctionArgs) {
   const { invoiceId } = params;
   if (!invoiceId) throw notFound("Could not find invoiceId");
-  return redirect(path.to.purchaseInvoiceDetails(invoiceId));
+  throw redirect(path.to.purchaseInvoiceDetails(invoiceId));
 }

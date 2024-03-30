@@ -1,4 +1,3 @@
-import { Toaster, VStack } from "@carbon/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData, useNavigation } from "@remix-run/react";
@@ -21,6 +20,7 @@ import {
 } from "~/services/session.server";
 import { path } from "~/utils/path";
 
+import { TooltipProvider } from "@carbon/react";
 import type { ShouldRevalidateFunction } from "@remix-run/react";
 
 export const shouldRevalidate: ShouldRevalidateFunction = ({
@@ -55,7 +55,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const requiresOnboarding = !company.data?.name;
   if (requiresOnboarding) {
-    return redirect(path.to.onboarding.root);
+    throw redirect(path.to.onboarding.root);
   }
 
   return json({
@@ -94,7 +94,26 @@ export default function AuthenticatedRoute() {
   return (
     <SupabaseProvider session={session}>
       <RealtimeDataProvider>
-        <div className="h-screen min-h-[0px] basis-0 flex-1">
+        <TooltipProvider>
+          <div className="min-h-full flex flex-col">
+            <div className="flex-none" />
+            <div className="h-screen min-h-[0px] basis-0 flex-1">
+              <div className="flex h-full">
+                <IconSidebar />
+                <div className="flex w-full h-full">
+                  <div className="w-full h-full flex-1 overflow-hidden">
+                    <main className="h-full flex flex-col flex-1 w-full overflow-x-hidden">
+                      <Topbar />
+                      <main className="flex-1 overflow-y-auto max-h-[calc(100vh-49px)]">
+                        <Outlet />
+                      </main>
+                    </main>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* <div className="h-screen min-h-[0px] basis-0 flex-1">
           <div className="flex h-full">
             <IconSidebar />
             <div className="w-full h-full">
@@ -109,7 +128,8 @@ export default function AuthenticatedRoute() {
             </div>
           </div>
           <Toaster />
-        </div>
+        </div> */}
+        </TooltipProvider>
       </RealtimeDataProvider>
     </SupabaseProvider>
   );

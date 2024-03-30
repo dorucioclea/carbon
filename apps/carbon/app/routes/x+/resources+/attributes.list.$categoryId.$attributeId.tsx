@@ -22,7 +22,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const attribute = await getAttribute(client, attributeId);
   if (attribute.error) {
-    return redirect(
+    throw redirect(
       path.to.attributeCategoryList(categoryId),
       await flash(request, error(attribute.error, "Failed to fetch attribute"))
     );

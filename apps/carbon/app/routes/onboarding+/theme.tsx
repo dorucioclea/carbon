@@ -56,7 +56,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const { next, theme } = validation.data;
   if (!next) throw new Error("Fatal: next is required");
 
-  return redirect(next, {
+  throw redirect(next, {
     headers: { "Set-Cookie": setTheme(theme) },
   });
 }

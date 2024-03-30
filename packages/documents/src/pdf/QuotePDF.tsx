@@ -1,96 +1,135 @@
 import type { Database } from "@carbon/database";
+import { getLocalTimeZone, today } from "@internationalized/date";
 import { StyleSheet, Text, View } from "@react-pdf/renderer";
 
 import type { PDF } from "../types";
-import { QuoteSummary, Template, QuoteHeader } from "./components";
-import { getExtendedPrice, getUnitCost } from "../utils/quote";
+import {
+  getLineDescription,
+  getLineDescriptionDetails,
+  getTotal,
+} from "../utils/quote";
+import { formatAddress } from "../utils/shared";
+import { Header, Summary, Template } from "./components";
 
 interface QuotePDFProps extends PDF {
   quote: Database["public"]["Views"]["quotes"]["Row"];
-  quoteLines: Database["public"]["Tables"]["quoteLine"]["Row"][];
-  quoteLineQuantities:
-    | Database["public"]["Tables"]["quoteLineQuantity"]["Row"][]
-    | null;
+  quoteLines: Database["public"]["Views"]["quoteLines"]["Row"][];
   quoteCustomerDetails: Database["public"]["Views"]["quoteCustomerDetails"]["Row"];
 }
+
+// TODO: format currency based on settings
+const formatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
 
 const QuotePDF = ({
   company,
   meta,
   quote,
   quoteLines,
-  quoteLineQuantities,
   quoteCustomerDetails,
   title = "Quote",
 }: QuotePDFProps) => {
+  const {
+    customerName,
+    customerAddressLine1,
+    customerAddressLine2,
+    customerCity,
+    customerState,
+    customerPostalCode,
+    customerCountryCode,
+  } = quoteCustomerDetails;
+
   return (
     <Template
       title={title}
       meta={{
         author: meta?.author ?? "Carbon ERP",
-        keywords: meta?.keywords ?? "Quote",
+        keywords: meta?.keywords ?? "quote",
         subject: meta?.subject ?? "Quote",
       }}
     >
       <View>
-        <QuoteHeader
-          title={title}
-          quoteNumber={quote.quoteId ? quote.quoteId : null}
+        <Header title={title} company={company} />
+        <Summary
           company={company}
-        />
-        <QuoteSummary
-          company={company}
-          quoteCustomerDetails={quoteCustomerDetails}
           items={[
             {
               label: "Date",
-              value: quote?.quoteDate ? quote.quoteDate : null,
+              value: quote?.quoteDate ?? today(getLocalTimeZone()).toString(),
+            },
+            {
+              label: "Expires",
+              value: quote?.expirationDate ?? "",
+            },
+            {
+              label: "Quote #",
+              value: quote?.quoteId,
             },
           ]}
         />
+        <View style={styles.row}>
+          <View style={styles.colThird}>
+            <Text style={styles.label}>Supplier</Text>
+            <Text>{customerName}</Text>
+            {customerAddressLine1 && <Text>{customerAddressLine1}</Text>}
+            {customerAddressLine2 && <Text>{customerAddressLine2}</Text>}
+            <Text>
+              {formatAddress(customerCity, customerState, customerPostalCode)}
+            </Text>
+            <Text>{customerCountryCode}</Text>
+          </View>
+        </View>
+
         <View style={styles.table}>
           <View style={styles.thead}>
             <Text style={styles.tableCol1}>Description</Text>
             <Text style={styles.tableCol2}>Qty</Text>
-            <Text style={styles.tableCol3}>Time</Text>
-            <Text style={styles.tableCol4}>Cost</Text>
-            <Text style={styles.tableCol5}>Total</Text>
+            <Text style={styles.tableCol3}>Price</Text>
+            <Text style={styles.tableCol3}>Lead Time</Text>
+            <Text style={styles.tableCol4}>Total</Text>
           </View>
           {quoteLines.map((line) => (
-            <View key={line.id} style={styles.tr}>
+            <View style={styles.tr} key={line.id}>
               <View style={styles.tableCol1}>
-                <Text style={styles.bold}>{line.description}</Text>
-                <Text style={{ fontSize: 9, opacity: 0.8 }}>{line.partId}</Text>
+                <Text style={{ ...styles.bold, marginBottom: 4 }}>
+                  {getLineDescription(line)}
+                </Text>
+                <Text style={{ fontSize: 9, opacity: 0.8 }}>
+                  {getLineDescriptionDetails(line)}
+                </Text>
               </View>
-              <View style={styles.quantityTable}>
-                {quoteLineQuantities &&
-                  quoteLineQuantities.map((quantity) =>
-                    quantity.quoteLineId === line.id ? (
-                      <View style={styles.quantityRow} key={quantity.id}>
-                        <View style={styles.quantityCol1}>
-                          <Text>{quantity.quantity}</Text>
-                        </View>
-                        <View style={styles.quantityCol2}>
-                          <Text>{quantity.leadTime} d</Text>
-                        </View>
-                        <View style={styles.quantityCol3}>
-                          <Text>{getUnitCost(quantity).toFixed(2)}</Text>
-                        </View>
-                        <View style={styles.quantityCol4}>
-                          <Text>${getExtendedPrice(quantity).toFixed(2)}</Text>
-                        </View>
-                      </View>
-                    ) : null
-                  )}
-              </View>
+              <Text style={styles.tableCol2}>{line.pricingQuantity}</Text>
+              <Text style={styles.tableCol3}>
+                <Text>
+                  {line.pricingQuantity
+                    ? formatter.format(
+                        (line.pricingExtendedPrice ?? 0) / line.pricingQuantity
+                      )
+                    : formatter.format(0)}
+                </Text>
+              </Text>
+              <Text style={styles.tableCol3}>
+                <Text>{line.pricingLeadTime ?? 0}</Text>
+              </Text>
+              <Text style={styles.tableCol4}>
+                <Text>{formatter.format(line.pricingExtendedPrice ?? 0)}</Text>
+              </Text>
             </View>
           ))}
+          <View style={styles.tfoot}>
+            <Text>Total</Text>
+            <Text style={styles.bold}>
+              <Text>{formatter.format(getTotal(quoteLines))}</Text>
+            </Text>
+          </View>
         </View>
-        {quote.notes && (
+        {quote?.notes && (
           <View style={styles.row}>
-            <View style={styles.colFull}>
+            <View style={styles.colHalf}>
               <Text style={styles.label}>Notes</Text>
-              <Text>{quote.notes}</Text>
+              <Text>{quote?.notes}</Text>
             </View>
           </View>
         )}
@@ -185,47 +224,18 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   tableCol1: {
-    width: "40%",
+    width: "50%",
     textAlign: "left",
   },
   tableCol2: {
     width: "15%",
-    textAlign: "left",
+    textAlign: "right",
   },
   tableCol3: {
-    width: "12.5%",
-    textAlign: "left",
-  },
-  tableCol4: {
-    width: "12.5%",
-    textAlign: "left",
-  },
-  tableCol5: {
     width: "15%",
     textAlign: "right",
   },
-  quantityTable: {
-    width: "60%",
-  },
-  quantityRow: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: "6px 3px 6px 3px",
-  },
-  quantityCol1: {
-    width: "15%",
-    textAlign: "left",
-  },
-  quantityCol2: {
-    width: "12.5%",
-    textAlign: "left",
-  },
-  quantityCol3: {
-    width: "12.5%",
-    textAlign: "left",
-  },
-  quantityCol4: {
+  tableCol4: {
     width: "20%",
     textAlign: "right",
   },

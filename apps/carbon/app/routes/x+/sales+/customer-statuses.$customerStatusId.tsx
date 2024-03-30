@@ -27,7 +27,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const customerStatus = await getCustomerStatus(client, customerStatusId);
 
   if (customerStatus.error) {
-    return redirect(
+    throw redirect(
       path.to.customerStatuses,
       await flash(
         request,
@@ -76,7 +76,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.customerStatuses,
     await flash(request, success("Updated customer status"))
   );

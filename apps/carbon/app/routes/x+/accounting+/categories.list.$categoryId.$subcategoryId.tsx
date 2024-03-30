@@ -24,7 +24,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const subcategory = await getAccountSubcategory(client, subcategoryId);
   if (subcategory.error) {
-    return redirect(
+    throw redirect(
       path.to.accountingCategoryList(categoryId),
       await flash(
         request,

@@ -18,7 +18,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const partGroup = await getPartGroup(client, groupId);
   if (partGroup.error) {
-    return redirect(
+    throw redirect(
       path.to.partGroups,
       await flash(request, error(partGroup.error, "Failed to get part group"))
     );
@@ -34,7 +34,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { groupId } = params;
   if (!groupId) {
-    return redirect(
+    throw redirect(
       path.to.partGroups,
       await flash(request, error(params, "Failed to get an part group id"))
     );
@@ -42,7 +42,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { error: deleteTypeError } = await deletePartGroup(client, groupId);
   if (deleteTypeError) {
-    return redirect(
+    throw redirect(
       `${path.to.partGroups}?${getParams(request)}`,
       await flash(
         request,
@@ -51,7 +51,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.partGroups,
     await flash(request, success("Successfully deleted part group"))
   );

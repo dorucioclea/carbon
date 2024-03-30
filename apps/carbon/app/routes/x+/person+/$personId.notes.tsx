@@ -19,7 +19,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const notes = await getNotes(client, personId);
   if (notes.error) {
-    return redirect(
+    throw redirect(
       path.to.people,
       await flash(
         request,

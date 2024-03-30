@@ -18,7 +18,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const receipt = await getReceipt(client, receiptId);
   if (receipt.error) {
-    return redirect(
+    throw redirect(
       path.to.receipts,
       await flash(request, error(receipt.error, "Failed to get receipt"))
     );
@@ -34,7 +34,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { receiptId } = params;
   if (!receiptId) {
-    return redirect(
+    throw redirect(
       path.to.receipts,
       await flash(request, error(params, "Failed to get an receipt id"))
     );
@@ -46,14 +46,14 @@ export async function action({ request, params }: ActionFunctionArgs) {
     receiptId
   );
   if (getReceiptError) {
-    return redirect(
+    throw redirect(
       path.to.receipts,
       await flash(request, error(getReceiptError, "Failed to get receipt"))
     );
   }
 
   if (receipt?.postingDate) {
-    return redirect(
+    throw redirect(
       path.to.receipts,
       await flash(
         request,
@@ -64,7 +64,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { error: deleteReceiptError } = await deleteReceipt(client, receiptId);
   if (deleteReceiptError) {
-    return redirect(
+    throw redirect(
       path.to.receipts,
       await flash(
         request,
@@ -73,7 +73,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.receipts,
     await flash(request, success("Successfully deleted receipt"))
   );

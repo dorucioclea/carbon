@@ -25,7 +25,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const sequence = await getSequence(client, tableId);
   if (sequence.error) {
-    return redirect(
+    throw redirect(
       path.to.sequences,
       await flash(request, error(sequence.error, "Failed to get sequence"))
     );
@@ -64,7 +64,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     path.to.sequences,
     await flash(request, success("Updated sequence"))
   );

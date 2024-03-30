@@ -27,7 +27,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const customerType = await getCustomerType(client, customerTypeId);
 
   if (customerType?.data?.protected) {
-    return redirect(
+    throw redirect(
       `${path.to.customerTypes}?${getParams(request)}`,
       await flash(request, error(null, "Cannot edit a protected customer type"))
     );
@@ -71,7 +71,7 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  return redirect(
+  throw redirect(
     `${path.to.customerTypes}?${getParams(request)}`,
     await flash(request, success("Updated customer type"))
   );
