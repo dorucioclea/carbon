@@ -107,7 +107,7 @@ const SuppliersTable = memo(
           cell: ({ row }) => (
             <Button variant="secondary" asChild>
               <Link
-                to={`${path.to.purchaseOrders}?filter=supplierName:eq:${row.original.name}`}
+                to={`${path.to.purchaseOrders}?filter=supplierId:eq:${row.original.id}`}
               >
                 {row.original.orderCount ?? 0} Orders
               </Link>

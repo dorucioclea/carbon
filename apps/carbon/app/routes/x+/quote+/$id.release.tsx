@@ -63,7 +63,6 @@ export async function action(args: ActionFunctionArgs) {
       .slice(0, -5)}.pdf`;
 
     const documentFilePath = `quote/internal/${id}/${fileName}`;
-    console.log(documentFilePath);
 
     const documentFileUpload = await client.storage
       .from("private")

@@ -8,7 +8,6 @@ import { path } from "~/utils/path";
 import { error } from "~/utils/result";
 
 export async function action({ request, params }: ActionFunctionArgs) {
-  console.log("deleting document");
   assertIsPost(request);
   const { client, userId } = await requirePermissions(request, {
     delete: "documents",
@@ -16,8 +15,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { documentId } = params;
   if (!documentId) throw notFound("documentId not found");
-
-  console.log("deleting document", documentId, userId);
 
   const moveToTrash = await deleteDocument(client, documentId, userId);
 
