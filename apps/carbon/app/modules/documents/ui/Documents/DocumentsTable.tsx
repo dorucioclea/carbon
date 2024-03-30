@@ -20,7 +20,7 @@ import {
   cn,
   useDisclosure,
 } from "@carbon/react";
-import { convertKbToString, filterEmpty } from "@carbon/utils";
+import { convertKbToString, filterEmpty, formatDate } from "@carbon/utils";
 import { useRevalidator } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
@@ -28,11 +28,12 @@ import { BsFillPenFill, BsPin, BsPinFill } from "react-icons/bs";
 import { IoMdAdd, IoMdTrash } from "react-icons/io";
 import { RxCheck } from "react-icons/rx";
 import { VscOpenPreview } from "react-icons/vsc";
-import { Avatar, Hyperlink, Table } from "~/components";
+import { EmployeeAvatar, Hyperlink, Table } from "~/components";
 import { Confirm, ConfirmDelete } from "~/components/Modals";
 import { usePermissions, useUrlParams } from "~/hooks";
 import type { Document, DocumentLabel } from "~/modules/documents";
 import { DocumentIcon, documentTypes } from "~/modules/documents";
+import { usePeople } from "~/stores";
 import { path } from "~/utils/path";
 import DocumentCreateForm from "./DocumentCreateForm";
 import { useDocument } from "./useDocument";
@@ -69,6 +70,7 @@ const DocumentsTable = memo(
       setLabel,
     } = useDocument();
 
+    const [people] = usePeople();
     const deleteDocumentModal = useDisclosure();
 
     const [selectedDocument, setSelectedDocument] = useState<Document | null>(
@@ -301,42 +303,46 @@ const DocumentsTable = memo(
           },
         },
         {
-          accessorKey: "createdByFullName",
+          id: "createdBy",
           header: "Created By",
-          cell: ({ row }) => {
-            return (
-              <HStack>
-                <Avatar
-                  size="xs"
-                  path={row.original.createdByAvatar ?? undefined}
-                />
-                <span>{row.original.createdByFullName}</span>
-              </HStack>
-            );
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.createdBy} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
           },
         },
-
         {
           accessorKey: "createdAt",
           header: "Created At",
-          cell: (item) => item.getValue(),
+          cell: (item) => formatDate(item.getValue<string>()),
         },
         {
-          accessorKey: "updatedByFullName",
+          id: "updatedBy",
           header: "Updated By",
-          cell: ({ row }) => {
-            return row.original.updatedByFullName ? (
-              <HStack>
-                <Avatar size="sm" path={row.original.updatedByAvatar ?? null} />
-                <span>{row.original.updatedByFullName}</span>
-              </HStack>
-            ) : null;
+          cell: ({ row }) => (
+            <EmployeeAvatar employeeId={row.original.updatedBy} />
+          ),
+          meta: {
+            filter: {
+              type: "static",
+              options: people.map((employee) => ({
+                value: employee.id,
+                label: employee.name,
+              })),
+            },
           },
         },
         {
           accessorKey: "updatedAt",
-          header: "Updated At",
-          cell: (item) => item.getValue(),
+          header: "Created At",
+          cell: (item) => formatDate(item.getValue<string>()),
         },
       ];
     }, [
@@ -346,6 +352,7 @@ const DocumentsTable = memo(
       onDeleteLabel,
       onFavorite,
       onLabel,
+      people,
       revalidator,
       setLabel,
     ]);
