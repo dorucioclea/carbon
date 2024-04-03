@@ -545,3 +545,75 @@ CREATE POLICY "Employees with sales_update can update sales order payments" ON "
 CREATE POLICY "Employees with sales_delete can delete sales order payments" ON "salesOrderPayment"
   FOR DELETE
   USING (coalesce(get_my_claim('sales_delete')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+
+ALTER VIEW "salesOrders" SET (security_invoker = on);
+ALTER VIEW "salesOrderCustomers" SET (security_invoker = on);
+
+
+DROP VIEW "customers";
+CREATE OR REPLACE VIEW "customers" WITH(SECURITY_INVOKER=true) AS 
+  SELECT 
+    c.*,
+    ct.name AS "type",
+    cs.name AS "status",
+    so.count AS "orderCount"
+  FROM "customer" c
+  LEFT JOIN "customerType" ct ON ct.id = c."customerTypeId"
+  LEFT JOIN "customerStatus" cs ON cs.id = c."customerStatusId"
+  LEFT JOIN (
+    SELECT 
+      "customerId",
+      COUNT(*) AS "count"
+    FROM "salesOrder"
+    GROUP BY "customerId"
+  ) so ON so."customerId" = c.id;
+
+DROP VIEW "partQuantities";
+CREATE OR REPLACE VIEW "partQuantities" AS 
+  SELECT 
+    p."id" AS "partId", 
+    loc."id" AS "locationId",
+    COALESCE(SUM(pl."quantity"), 0) AS "quantityOnHand",
+    COALESCE(pol."quantityToReceive", 0) AS "quantityOnPurchaseOrder",
+    COALESCE(sol."quantityToSend", 0) AS "quantityOnSalesOrder",
+    0 AS "quantityOnProdOrder",
+    0 AS "quantityAvailable"
+  FROM "part" p 
+  CROSS JOIN "location" loc
+  LEFT JOIN "partLedger" pl
+    ON pl."partId" = p."id" AND pl."locationId" = loc."id"
+  LEFT JOIN (
+    SELECT 
+        pol."partId",
+        pol."locationId",
+        COALESCE(SUM(GREATEST(pol."quantityToReceive", 0)), 0) AS "quantityToReceive"
+      FROM "purchaseOrderLine" pol 
+      INNER JOIN "purchaseOrder" po 
+        ON pol."purchaseOrderId" = po."id"
+      WHERE po."status" != 'Draft' 
+        AND po."status" != 'Rejected'
+        AND po."status" != 'Closed'
+      GROUP BY 
+        pol."partId",
+        pol."locationId"
+  ) pol ON pol."partId" = p."id" AND pol."locationId" = loc."id"
+  LEFT JOIN (
+    SELECT 
+        sol."partId",
+        sol."locationId",
+        COALESCE(SUM(GREATEST(sol."quantityToSend", 0)), 0) AS "quantityToSend"
+      FROM "salesOrderLine" sol 
+      INNER JOIN "salesOrder" so 
+        ON sol."salesOrderId" = so."id"
+      WHERE so."status" != 'Draft' 
+        AND so."status" != 'Cancelled'
+        AND so."status" != 'Needs Approval'
+      GROUP BY 
+        sol."partId",
+        sol."locationId"
+  ) sol ON sol."partId" = p."id" AND sol."locationId" = loc."id"
+  GROUP BY 
+    p."id", 
+    loc."id",
+    pol."quantityToReceive",
+    sol."quantityToSend"
