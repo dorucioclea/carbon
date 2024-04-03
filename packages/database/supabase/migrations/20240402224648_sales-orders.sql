@@ -289,3 +289,259 @@ CREATE OR REPLACE VIEW "salesOrderCustomers" AS
   FROM "customer" c
   INNER JOIN "salesOrder" s ON s."customerId" = c."id";
   
+ALTER TABLE "salesOrder" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Employees with sales_view, inventory_view, or invoicing_view can view sales orders" ON "salesOrder"
+  FOR SELECT
+  USING (
+    (
+      coalesce(get_my_claim('sales_view')::boolean, false) = true OR
+      coalesce(get_my_claim('inventory_view')::boolean, false) = true OR
+      coalesce(get_my_claim('invoicing_view')::boolean, false) = true
+    ) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+
+CREATE POLICY "Customers with sales_view can their own sales orders" ON "salesOrder"
+  FOR SELECT
+  USING (
+    coalesce(get_my_claim('sales_view')::boolean, false) = true 
+    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
+    AND "customerId" IN (
+      SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
+    )
+  );
+
+CREATE POLICY "Employees with sales_create can create sales orders" ON "salesOrder"
+  FOR INSERT
+  WITH CHECK (coalesce(get_my_claim('sales_create')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+
+
+CREATE POLICY "Employees with sales_update can update sales orders" ON "salesOrder"
+  FOR UPDATE
+  USING (coalesce(get_my_claim('sales_update')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+
+CREATE POLICY "Customers with sales_update can update their own sales orders" ON "salesOrder"
+  FOR UPDATE
+  USING (
+    coalesce(get_my_claim('sales_update')::boolean, false) = true 
+    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
+    AND "customerId" IN (
+      SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
+    )
+  );
+
+CREATE POLICY "Employees with sales_delete can delete sales orders" ON "salesOrder"
+  FOR DELETE
+  USING (coalesce(get_my_claim('sales_delete')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+
+
+CREATE POLICY "Customers with sales_view can search for their own sales orders" ON "search"
+  FOR SELECT
+  USING (
+    coalesce(get_my_claim('sales_view')::boolean, false) = true 
+    AND (get_my_claim('role'::text)) = '"customer"'::jsonb
+    AND entity = 'Sales Order' 
+    AND uuid IN (
+        SELECT id FROM "salesOrder" WHERE "customerId" IN (
+          SELECT "customerId" FROM "salesOrder" WHERE "customerId" IN (
+            SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
+          )
+        )
+      )
+  );
+
+-- Search
+
+CREATE FUNCTION public.create_sales_order_search_result()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.search(name, entity, uuid, link)
+  VALUES (new."salesOrderId", 'Sales Order', new.id, '/x/sales-order/' || new.id);
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER create_sales_order_search_result
+  AFTER INSERT on public."salesOrder"
+  FOR EACH ROW EXECUTE PROCEDURE public.create_sales_order_search_result();
+
+CREATE FUNCTION public.update_sales_order_search_result()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF (old."salesOrderId" <> new."salesOrderId") THEN
+    UPDATE public.search SET name = new."salesOrderId"
+    WHERE entity = 'Sales Order' AND uuid = new.id;
+  END IF;
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER update_sales_order_search_result
+  AFTER UPDATE on public."salesOrder"
+  FOR EACH ROW EXECUTE PROCEDURE public.update_sales_order_search_result();
+
+CREATE FUNCTION public.delete_sales_order_search_result()
+RETURNS TRIGGER AS $$
+BEGIN
+  DELETE FROM public.search WHERE entity = 'Sales Order' AND uuid = old.id;
+  RETURN old;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER delete_sales_order_search_result
+  AFTER DELETE on public."salesOrder"
+  FOR EACH ROW EXECUTE PROCEDURE public.delete_sales_order_search_result();
+
+
+-- Sales Order Status History
+
+ALTER TABLE "salesOrderStatusHistory" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Anyone with sales_view can view sales order status history" ON "salesOrderStatusHistory"
+  FOR SELECT
+  USING (coalesce(get_my_claim('sales_view')::boolean, false) = true);
+
+-- Sales Order Lines
+
+ALTER TABLE "salesOrderLine" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Employees with sales_view can view sales order lines" ON "salesOrderLine"
+  FOR SELECT
+  USING (coalesce(get_my_claim('sales_view')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+
+CREATE POLICY "Customers with sales_view can their own sales order lines" ON "salesOrderLine"
+  FOR SELECT
+  USING (
+    coalesce(get_my_claim('sales_view')::boolean, false) = true 
+    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
+    AND "salesOrderId" IN (
+      SELECT id FROM "salesOrder" WHERE "customerId" IN (
+        SELECT "customerId" FROM "salesOrder" WHERE "customerId" IN (
+          SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
+        )
+      )
+    )
+  );
+
+CREATE POLICY "Employees with sales_create can create sales order lines" ON "salesOrderLine"
+  FOR INSERT
+  WITH CHECK (coalesce(get_my_claim('sales_create')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+
+CREATE POLICY "Customers with sales_create can create lines on their own sales order" ON "salesOrderLine"
+  FOR INSERT
+  WITH CHECK (
+    coalesce(get_my_claim('sales_create')::boolean, false) = true 
+    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
+    AND "salesOrderId" IN (
+      SELECT id FROM "salesOrder" WHERE "customerId" IN (
+        SELECT "customerId" FROM "salesOrder" WHERE "customerId" IN (
+          SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
+        )
+      )
+    )
+  );
+
+CREATE POLICY "Employees with sales_update can update sales order lines" ON "salesOrderLine"
+  FOR UPDATE
+  USING (coalesce(get_my_claim('sales_update')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+
+CREATE POLICY "Customers with sales_update can update their own sales order lines" ON "salesOrderLine"
+  FOR UPDATE
+  USING (
+    coalesce(get_my_claim('sales_update')::boolean, false) = true 
+    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
+    AND "salesOrderId" IN (
+      SELECT id FROM "salesOrder" WHERE "customerId" IN (
+        SELECT "customerId" FROM "salesOrder" WHERE "customerId" IN (
+          SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
+        )
+      )
+    )
+  );
+
+CREATE POLICY "Employees with sales_delete can delete sales order lines" ON "salesOrderLine"
+  FOR DELETE
+  USING (coalesce(get_my_claim('sales_delete')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+
+CREATE POLICY "Customers with sales_delete can delete lines on their own sales order" ON "salesOrderLine"
+  FOR DELETE
+  USING (
+    coalesce(get_my_claim('sales_delete')::boolean, false) = true 
+    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
+    AND "salesOrderId" IN (
+      SELECT id FROM "salesOrder" WHERE "customerId" IN (
+        SELECT "customerId" FROM "salesOrder" WHERE "customerId" IN (
+          SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
+        )
+      )
+    )
+  );
+
+
+-- Sales Order Deliveries
+
+ALTER TABLE "salesOrderShipment" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Employees with sales_view can view sales order shipments" ON "salesOrderShipment"
+  FOR SELECT
+  USING (coalesce(get_my_claim('sales_view')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+
+CREATE POLICY "Customers with sales_view can their own sales order shipments" ON "salesOrderShipment"
+  FOR SELECT
+  USING (
+    coalesce(get_my_claim('sales_view')::boolean, false) = true 
+    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
+    AND id IN (
+      SELECT id FROM "salesOrder" WHERE "customerId" IN (
+        SELECT "customerId" FROM "salesOrder" WHERE "customerId" IN (
+          SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
+        )
+      )
+    )
+  );
+
+CREATE POLICY "Employees with sales_create can create sales order shipments" ON "salesOrderShipment"
+  FOR INSERT
+  WITH CHECK (coalesce(get_my_claim('sales_create')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+
+CREATE POLICY "Employees with sales_update can update sales order shipments" ON "salesOrderShipment"
+  FOR UPDATE
+  USING (coalesce(get_my_claim('sales_update')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+
+CREATE POLICY "Customers with sales_update can their own sales order shipments" ON "salesOrderShipment"
+  FOR UPDATE
+  USING (
+    coalesce(get_my_claim('sales_update')::boolean, false) = true 
+    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
+    AND id IN (
+      SELECT id FROM "salesOrder" WHERE "customerId" IN (
+        SELECT "customerId" FROM "salesOrder" WHERE "customerId" IN (
+          SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
+        )
+      )
+    )
+  );
+
+CREATE POLICY "Employees with sales_delete can delete sales order shipments" ON "salesOrderShipment"
+  FOR DELETE
+  USING (coalesce(get_my_claim('sales_delete')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+
+
+-- Sales Order Payments
+
+ALTER TABLE "salesOrderPayment" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Employees with sales_view can view sales order payments" ON "salesOrderPayment"
+  FOR SELECT
+  USING (coalesce(get_my_claim('sales_view')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+
+CREATE POLICY "Employees with sales_create can create sales order payments" ON "salesOrderPayment"
+  FOR INSERT
+  WITH CHECK (coalesce(get_my_claim('sales_create')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+
+CREATE POLICY "Employees with sales_update can update sales order payments" ON "salesOrderPayment"
+  FOR UPDATE
+  USING (coalesce(get_my_claim('sales_update')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+
+CREATE POLICY "Employees with sales_delete can delete sales order payments" ON "salesOrderPayment"
+  FOR DELETE
+  USING (coalesce(get_my_claim('sales_delete')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
