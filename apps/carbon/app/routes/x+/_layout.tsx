@@ -24,10 +24,17 @@ import { TooltipProvider } from "@carbon/react";
 import type { ShouldRevalidateFunction } from "@remix-run/react";
 
 export const shouldRevalidate: ShouldRevalidateFunction = ({
+  currentUrl,
   defaultShouldRevalidate,
 }) => {
-  // TODO: some more sophisticated logic here
-  return false;
+  if (
+    currentUrl.pathname.startsWith("/x/settings") ||
+    currentUrl.pathname.startsWith("/x/users")
+  ) {
+    return true;
+  }
+
+  return defaultShouldRevalidate;
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
