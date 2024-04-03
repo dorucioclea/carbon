@@ -5,6 +5,7 @@ import type { z } from "zod";
 import type { GenericQueryFilters } from "~/utils/query";
 import { setGenericQueryFilters } from "~/utils/query";
 import { sanitize } from "~/utils/supabase";
+import { getEmployeeJob } from "~/modules/resources";
 import type {
   customerContactValidator,
   customerPaymentValidator,
@@ -18,6 +19,10 @@ import type {
   quotationOperationValidator,
   quotationPricingValidator,
   quotationValidator,
+  salesOrderShipmentValidator,
+  salesOrderLineValidator,
+  salesOrderPaymentValidator,
+  salesOrderValidator,
 } from "./sales.models";
 
 export async function deleteCustomerContact(
@@ -924,6 +929,356 @@ export async function upsertQuoteOperation(
   return client
     .from("quoteOperation")
     .insert([quotationOperation])
+    .select("id")
+    .single();
+}
+
+export async function closeSalesOrder(
+  client: SupabaseClient<Database>,
+  salesOrderId: string,
+  userId: string
+) {
+  return client
+    .from("salesOrder")
+    .update({
+      closed: true,
+      closedAt: today(getLocalTimeZone()).toString(),
+      closedBy: userId,
+    })
+    .eq("id", salesOrderId)
+    .select("id")
+    .single();
+}
+
+export async function deleteSalesOrder(
+  client: SupabaseClient<Database>,
+  salesOrderId: string
+) {
+  return client.from("salesOrder").delete().eq("id", salesOrderId);
+}
+
+export async function deleteSalesOrderLine(
+  client: SupabaseClient<Database>,
+  salesOrderLineId: string
+) {
+  return client.from("salesOrderLine").delete().eq("id", salesOrderLineId);
+}
+
+/*export async function getSalesOrderExternalDocuments(
+  client: SupabaseClient<Database>,
+  salesOrderId: string
+) {
+  return client.storage
+    .from("private")
+    .list(`sales/external/${salesOrderId}`);
+}
+
+export async function getSalesOrderInternalDocuments(
+  client: SupabaseClient<Database>,
+  salesOrderId: string
+) {
+  return client.storage
+    .from("private")
+    .list(`sales/internal/${salesOrderId}`);
+}*/
+
+export async function getSalesOrder(
+  client: SupabaseClient<Database>,
+  salesOrderId: string
+) {
+  return client.from("salesOrders").select("*").eq("id", salesOrderId).single();
+}
+
+export async function getSalesOrders(
+  client: SupabaseClient<Database>,
+  args: GenericQueryFilters & {
+    search: string | null;
+    status: string | null;
+    customerId: string | null;
+  }
+) {
+  let query = client.from("salesOrders").select("*", { count: "exact" });
+
+  if (args.search) {
+    query = query.or(
+      `salesOrderId.ilike.%${args.search}%,customerReference.ilike.%${args.search}%`
+    );
+  }
+
+  if (args.customerId) {
+    query = query.eq("customerId", args.customerId);
+  }
+
+  query = setGenericQueryFilters(query, args, [
+    { column: "favorite", ascending: false },
+    { column: "salesOrderId", ascending: false },
+  ]);
+
+  return query;
+}
+
+export async function getSalesOrderShipment(
+  client: SupabaseClient<Database>,
+  salesOrderId: string
+) {
+  return client
+    .from("salesOrderDelivery")
+    .select("*")
+    .eq("id", salesOrderId)
+    .single();
+}
+
+export async function getSalesOrderLocations(
+  client: SupabaseClient<Database>,
+  salesOrderId: string
+) {
+  return client
+    .from("salesOrderLocations")
+    .select("*")
+    .eq("id", salesOrderId)
+    .single();
+}
+
+/*export async function getSalesOrderPayment(
+  client: SupabaseClient<Database>,
+  salesOrderId: string
+) {
+  return client
+    .from("salesOrderPayment")
+    .select("*")
+    .eq("id", salesOrderId)
+    .single();
+}*/
+
+export async function getSalesOrderLines(
+  client: SupabaseClient<Database>,
+  salesOrderId: string
+) {
+  return client
+    .from("salesOrderLines")
+    .select("*")
+    .eq("salesOrderId", salesOrderId)
+    .order("createdAt", { ascending: true });
+}
+
+export async function getSalesOrderLine(
+  client: SupabaseClient<Database>,
+  salesOrderLineId: string
+) {
+  return client
+    .from("salesOrderLine")
+    .select("*")
+    .eq("id", salesOrderLineId)
+    .single();
+}
+
+export async function getSalesOrderCustomers(client: SupabaseClient<Database>) {
+  return client.from("salesOrderCustomers").select("id, name");
+}
+
+export async function releaseSalesOrder(
+  client: SupabaseClient<Database>,
+  salesOrderId: string,
+  userId: string
+) {
+  return client
+    .from("salesOrder")
+    .update({
+      status: "To Receive and Invoice",
+      updatedAt: today(getLocalTimeZone()).toString(),
+      updatedBy: userId,
+    })
+    .eq("id", salesOrderId);
+}
+
+export async function updateSalesOrderFavorite(
+  client: SupabaseClient<Database>,
+  args: {
+    id: string;
+    favorite: boolean;
+    userId: string;
+  }
+) {
+  const { id, favorite, userId } = args;
+  if (!favorite) {
+    return client
+      .from("salesOrderFavorite")
+      .delete()
+      .eq("salesOrderId", id)
+      .eq("userId", userId);
+  } else {
+    return client
+      .from("salesOrderFavorite")
+      .insert({ salesOrderId: id, userId: userId });
+  }
+}
+
+export async function upsertSalesOrder(
+  client: SupabaseClient<Database>,
+  salesOrder:
+    | (Omit<z.infer<typeof salesOrderValidator>, "id" | "salesOrderId"> & {
+        salesOrderId: string;
+        createdBy: string;
+        customFields?: Json;
+      })
+    | (Omit<z.infer<typeof salesOrderValidator>, "id" | "salesOrderId"> & {
+        id: string;
+        salesOrderId: string;
+        updatedBy: string;
+        customFields?: Json;
+      })
+) {
+  if ("id" in salesOrder) {
+    return client
+      .from("salesOrder")
+      .update(sanitize(salesOrder))
+      .eq("id", salesOrder.id)
+      .select("id, salesOrder");
+  }
+
+  const [customerPayment, customerShipping, customer] = await Promise.all([
+    getCustomerPayment(client, salesOrder.customerId),
+    getCustomerShipping(client, salesOrder.customerId),
+    getEmployeeJob(client, salesOrder.createdBy),
+  ]);
+
+  if (customerPayment.error) return customerPayment;
+  if (customerShipping.error) return customerShipping;
+
+  const {
+    currencyCode,
+    paymentTermId,
+    invoiceCustomerId,
+    invoiceCustomerContactId,
+    invoiceCustomerLocationId,
+  } = customerPayment.data;
+
+  const { shippingMethodId, shippingTermId } = customerShipping.data;
+
+  const locationId = customer?.data?.locationId ?? null;
+
+  const order = await client
+    .from("salesOrder")
+    .insert([{ ...salesOrder }])
+    .select("id, salesOrderId");
+
+  if (order.error) return order;
+
+  const salesOrderId = order.data[0].id;
+
+  const [shipment, payment] = await Promise.all([
+    client.from("salesOrderShipment").insert([
+      {
+        id: salesOrderId,
+        locationId: locationId,
+        shippingMethodId: shippingMethodId,
+        shippingTermId: shippingTermId,
+      },
+    ]),
+    client.from("salesOrderPayment").insert([
+      {
+        id: salesOrderId,
+        currencyCode: currencyCode ?? "USD",
+        invoiceCustomerId: invoiceCustomerId,
+        invoiceCustomerContactId: invoiceCustomerContactId,
+        invoiceCustomerLocationId: invoiceCustomerLocationId,
+        paymentTermId: paymentTermId,
+      },
+    ]),
+  ]);
+
+  if (shipment.error) {
+    await deleteSalesOrder(client, salesOrderId);
+    return payment;
+  }
+  if (payment.error) {
+    await deleteSalesOrder(client, salesOrderId);
+    return payment;
+  }
+
+  return order;
+}
+
+export async function upsertSalesOrderShipment(
+  client: SupabaseClient<Database>,
+  salesOrderShipment:
+    | (z.infer<typeof salesOrderShipmentValidator> & {
+        createdBy: string;
+        customFields?: Json;
+      })
+    | (z.infer<typeof salesOrderShipmentValidator> & {
+        id: string;
+        updatedBy: string;
+        customFields?: Json;
+      })
+) {
+  if ("id" in salesOrderShipment) {
+    return client
+      .from("salesOrderShipment")
+      .update(sanitize(salesOrderShipment))
+      .eq("id", salesOrderShipment.id)
+      .select("id")
+      .single();
+  }
+  return client
+    .from("salesOrderShipment")
+    .insert([salesOrderShipment])
+    .select("id")
+    .single();
+}
+
+export async function upsertSalesOrderLine(
+  client: SupabaseClient<Database>,
+  salesOrderLine:
+    | (Omit<z.infer<typeof salesOrderLineValidator>, "id"> & {
+        createdBy: string;
+        customFields?: Json;
+      })
+    | (Omit<z.infer<typeof salesOrderLineValidator>, "id"> & {
+        id: string;
+        updatedBy: string;
+        customFields?: Json;
+      })
+) {
+  if ("id" in salesOrderLine) {
+    return client
+      .from("salesOrderLine")
+      .update(sanitize(salesOrderLine))
+      .eq("id", salesOrderLine.id)
+      .select("id")
+      .single();
+  }
+  return client
+    .from("salesOrderLine")
+    .insert([salesOrderLine])
+    .select("id")
+    .single();
+}
+
+export async function upsertSalesOrderPayment(
+  client: SupabaseClient<Database>,
+  salesOrderPayment:
+    | (z.infer<typeof salesOrderPaymentValidator> & {
+        createdBy: string;
+        customFields?: Json;
+      })
+    | (z.infer<typeof salesOrderPaymentValidator> & {
+        id: string;
+        updatedBy: string;
+        customFields?: Json;
+      })
+) {
+  if ("id" in salesOrderPayment) {
+    return client
+      .from("salesOrderPayment")
+      .update(sanitize(salesOrderPayment))
+      .eq("id", salesOrderPayment.id)
+      .select("id")
+      .single();
+  }
+  return client
+    .from("salesOrderPayment")
+    .insert([salesOrderPayment])
     .select("id")
     .single();
 }

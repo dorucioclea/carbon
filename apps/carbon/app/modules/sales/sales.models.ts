@@ -2,6 +2,7 @@ import { z } from "zod";
 import { zfd } from "zod-form-data";
 import { address, contact } from "~/types/validators";
 import { standardFactorType } from "../shared/types";
+import { currencyCodes } from "../accounting";
 
 export const customerValidator = z.object({
   id: zfd.text(z.string().optional()),
@@ -156,6 +157,149 @@ export const quotationReleaseValidator = z
     (data) => (data.notification === "Email" ? data.customerContact : true),
     {
       message: "Supplier contact is required for email",
+      path: ["customerContact"], // path of error
+    }
+  );
+
+export const salesOrderLineType = [
+  "Part",
+  "Service",
+  "G/L Account",
+  "Fixed Asset",
+  "Comment",
+] as const;
+
+export const salesOrderStatusType = [
+  "Draft",
+  "Needs Approval",
+  "Confirmed",
+  "In Progress",
+  "Completed",
+  "Invoiced",
+  "Cancelled",
+] as const;
+
+export const salesOrderValidator = z.object({
+  id: zfd.text(z.string().optional()),
+  salesOrderId: zfd.text(z.string().optional()),
+  orderDate: z.string().min(1, { message: "Order Date is required" }),
+  status: z.enum(salesOrderStatusType).optional(),
+  notes: zfd.text(z.string().optional()),
+  customerId: z.string().min(36, { message: "Customer is required" }),
+  customerLocationId: zfd.text(z.string().optional()),
+  customerContactId: zfd.text(z.string().optional()),
+  customerReference: zfd.text(z.string().optional()),
+});
+
+export const salesOrderShipmentValidator = z
+  .object({
+    id: z.string(),
+    locationId: zfd.text(z.string().optional()),
+    shippingMethodId: zfd.text(z.string().optional()),
+    shippingTermId: zfd.text(z.string().optional()),
+    trackingNumber: z.string(),
+    deliveryDate: zfd.text(z.string().optional()),
+    receiptRequestedDate: zfd.text(z.string().optional()),
+    receiptPromisedDate: zfd.text(z.string().optional()),
+    dropShipment: zfd.checkbox(),
+    customerId: zfd.text(z.string().optional()),
+    customerLocationId: zfd.text(z.string().optional()),
+    supplierId: zfd.text(z.string().optional()),
+    supplierLocationId: zfd.text(z.string().optional()),
+    notes: zfd.text(z.string().optional()),
+  })
+  .refine(
+    (data) => {
+      if (data.dropShipment) {
+        return data.customerId && data.customerLocationId;
+      }
+      return true;
+    },
+    {
+      message: "Drop shipment requires supplier and location",
+      path: ["dropShipment"], // path of error
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.locationId) {
+        return !data.dropShipment;
+      }
+      return true;
+    },
+    {
+      message: "Location is not required for drop shipment",
+      path: ["locationId"], // path of error
+    }
+  );
+
+export const salesOrderLineValidator = z
+  .object({
+    id: zfd.text(z.string().optional()),
+    salesOrderId: z.string().min(20, { message: "Order is required" }),
+    salesOrderLineType: z.enum(salesOrderLineType, {
+      errorMap: (issue, ctx) => ({
+        message: "Type is required",
+      }),
+    }),
+    partId: zfd.text(z.string().optional()),
+    serviceId: zfd.text(z.string().optional()),
+    accountNumber: zfd.text(z.string().optional()),
+    assetId: zfd.text(z.string().optional()),
+    description: zfd.text(z.string().optional()),
+    saleQuantity: zfd.numeric(z.number().optional()),
+    unitOfMeasureCode: zfd.text(z.string().optional()),
+    unitPrice: zfd.numeric(z.number().optional()),
+    setupPrice: zfd.numeric(z.number().optional()),
+    locationId: zfd.text(z.string().optional()),
+    shelfId: zfd.text(z.string().optional()),
+  })
+  .refine((data) => (data.salesOrderLineType === "Part" ? data.partId : true), {
+    message: "Part is required",
+    path: ["partId"], // path of error
+  })
+  .refine(
+    (data) =>
+      data.salesOrderLineType === "G/L Account" ? data.accountNumber : true,
+    {
+      message: "Account is required",
+      path: ["accountNumber"], // path of error
+    }
+  )
+  .refine(
+    (data) => (data.salesOrderLineType === "Fixed Asset" ? data.assetId : true),
+    {
+      message: "Asset is required",
+      path: ["assetId"], // path of error
+    }
+  )
+  .refine(
+    (data) => (data.salesOrderLineType === "Comment" ? data.description : true),
+    {
+      message: "Comment is required",
+      path: ["description"], // path of error
+    }
+  );
+
+export const salesOrderPaymentValidator = z.object({
+  id: z.string(),
+  invoiceCustomerId: zfd.text(z.string().optional()),
+  invoiceCustomerLocationId: zfd.text(z.string().optional()),
+  invoiceCustomerContactId: zfd.text(z.string().optional()),
+  paymentTermId: zfd.text(z.string().optional()),
+  paymentComplete: zfd.checkbox(),
+  currencyCode: z.enum(currencyCodes).optional(),
+});
+
+export const salesOrderReleaseValidator = z
+  .object({
+    notification: z.enum(["Email", "None"]).optional(),
+    customerContact: zfd.text(z.string().optional()),
+  })
+  .refine(
+    (data) => (data.notification === "Email" ? data.customerContact : true),
+    {
+      message: "Customer contact is required for email",
       path: ["customerContact"], // path of error
     }
   );

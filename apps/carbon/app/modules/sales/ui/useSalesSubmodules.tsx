@@ -35,6 +35,7 @@ const salesRoutes: AuthenticatedRouteGroup[] = [
 
 export default function useSalesSubmodules() {
   const permissions = usePermissions();
+  // to modify
   return {
     groups: salesRoutes
       .filter((group) => {

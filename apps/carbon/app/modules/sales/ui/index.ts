@@ -5,4 +5,6 @@ export * from "./CustomerTypes";
 export * from "./Customers";
 export * from "./Quotation";
 export * from "./Quotations";
+export * from "./SalesOrder";
+export * from "./SalesOrders";
 export { useSalesSubmodules };

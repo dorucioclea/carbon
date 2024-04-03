@@ -183,6 +183,8 @@ CREATE TABLE "salesOrderShipment" (
   "dropShipment" BOOLEAN NOT NULL DEFAULT FALSE,
   "customerId" TEXT,
   "customerLocationId" TEXT,
+  "supplierId" TEXT,
+  "supplierLocationId" TEXT,
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "customFields" JSONB,
