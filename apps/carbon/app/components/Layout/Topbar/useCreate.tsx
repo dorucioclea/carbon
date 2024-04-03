@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { AiOutlinePartition } from "react-icons/ai";
-import { BsCartDash, BsCartPlus, BsShieldLock } from "react-icons/bs";
+import { BsCartCheck, BsCartDash, BsCartPlus, BsShieldLock } from "react-icons/bs";
 import { IoMdPeople } from "react-icons/io";
 import { PiShareNetworkFill } from "react-icons/pi";
 import { usePermissions } from "~/hooks";
@@ -48,6 +48,11 @@ export default function useCreate(): Route[] {
         to: path.to.newQuote,
         icon: <BsCartPlus />,
       });
+      links.push({
+        name: "Sales Order",
+        to: path.to.newSalesOrder,
+        icon: <BsCartCheck />,
+      })
     }
 
     if (permissions.can("create", "users")) {

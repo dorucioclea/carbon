@@ -57,6 +57,8 @@ export const path = {
       previewFile: (path: string) => generatePath(`${file}/preview/${path}`),
       purchaseOrder: (id: string) =>
         generatePath(`${file}/purchase-order/${id}.pdf`),
+      salesOrder: (id: string) => 
+        generatePath(`${file}/sales-order/${id}.pdf`),
       quote: (id: string) => generatePath(`${file}/quote/${id}.pdf`),
     },
     onboarding: {
@@ -206,6 +208,10 @@ export const path = {
       generatePath(`${x}/inventory/receipts/delete/${id}`),
     deleteRequestForQuote: (id: string) =>
       generatePath(`${x}/rfq/delete/${id}`),
+    deleteSalesOrder: (id: string) =>
+      generatePath(`${x}/sales-order/delete/${id}`),
+    deleteSalesOrderLine: (orderId: string, lineId: string) =>
+      generatePath(`${x}/sales-order/${orderId}/lines/delete/${lineId}`),
     deleteShift: (id: string) =>
       generatePath(`${x}/resources/shifts/delete/${id}`),
     deleteShippingMethod: (id: string) =>
@@ -334,6 +340,9 @@ export const path = {
       ),
     newReceipt: `${x}/inventory/receipts/new`,
     newRequestForQuote: `${x}/rfq/new`,
+    newSalesOrder: `${x}/sales-order/new`,
+    newSalesOrderLine: (id: string) =>
+      generatePath(`${x}/sales-order/${id}/lines/new`),
     newShift: `${x}/resources/shifts/new`,
     newShippingMethod: `${x}/inventory/shipping-methods/new`,
     newService: `${x}/service/new`,
@@ -461,6 +470,25 @@ export const path = {
     routings: `${x}/parts/routing`,
     sales: `${x}/sales`,
     salesInvoices: `${x}/invoicing/sales`,
+    salesOrder: (id: string) => generatePath(`${x}/sales-order/${id}`),
+    salesOrderDelivery: (id: string) =>
+      generatePath(`${x}/sales-order/${id}/delivery`),
+    salesOrderDetails: (id: string) =>
+      generatePath(`${x}/sales-order/${id}/details`),
+    salesOrderExternalDocuments: (id: string) =>
+      generatePath(`${x}/sales-order/${id}/external`),
+    salesOrderFavorite: `${x}/sales/orders/favorite`,
+    salesOrderInternalDocuments: (id: string) =>
+      generatePath(`${x}/sales-order/${id}/internal`),
+    salesOrderLines: (orderId: string) =>
+      generatePath(`${x}/sales-order/${orderId}/lines`),
+    salesOrderLine: (orderId: string, id: string) =>
+      generatePath(`${x}/sales-order/${orderId}/lines/${id}`),
+    salesOrderPayment: (id: string) =>
+      generatePath(`${x}/sales-order/${id}/payment`),
+    salesOrderRelease: (id: string) =>
+      generatePath(`${x}/sales-order/${id}/release`),
+    salesOrders: `${x}/sales/orders`,
     scheduling: `${x}/scheduling`,
     service: (id: string) => generatePath(`${x}/service/${id}`),
     services: `${x}/parts/services`,
