@@ -22,31 +22,31 @@ import { MdMoreHoriz } from "react-icons/md";
 import { New } from "~/components";
 import {
   EditableNumber,
-  EditablePurchaseOrderLineNumber,
+  EditableSalesOrderLineNumber,
   EditableText,
 } from "~/components/Editable";
 import Grid from "~/components/Grid";
 import { useRealtime, useRouteData, useUser } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
-import type { PurchaseOrder, PurchaseOrderLine } from "~/modules/purchasing";
-import { usePurchaseOrderTotals } from "~/modules/purchasing";
+import type { SalesOrder, SalesOrderLine } from "~/modules/sales";
+import { useSalesOrderTotals } from "~/modules/sales";
 import type { ListItem } from "~/types";
 import { path } from "~/utils/path";
-import usePurchaseOrderLines from "./usePurchaseOrderLines";
+import useSalesOrderLines from "./useSalesOrderLines";
 
-const PurchaseOrderLines = () => {
+const SalesOrderLines = () => {
   const { orderId } = useParams();
   if (!orderId) throw new Error("orderId not found");
 
-  useRealtime("purchaseOrderLine", `purchaseOrderId=eq.${orderId}`);
+  useRealtime("salesOrderLine", `salesOrderId=eq.${orderId}`);
 
   const navigate = useNavigate();
 
   const routeData = useRouteData<{
-    purchaseOrderLines: PurchaseOrderLine[];
+    salesOrderLines: SalesOrderLine[];
     locations: ListItem[];
-    purchaseOrder: PurchaseOrder;
-  }>(path.to.purchaseOrder(orderId));
+    salesOrder: SalesOrder;
+  }>(path.to.salesOrder(orderId));
 
   const locations = routeData?.locations ?? [];
   const { defaults, id: userId } = useUser();
@@ -58,33 +58,32 @@ const PurchaseOrderLines = () => {
     serviceOptions,
     accountOptions,
     onCellEdit,
-  } = usePurchaseOrderLines();
-  const [, setPurchaseOrderTotals] = usePurchaseOrderTotals();
+  } = useSalesOrderLines();
+  const [, setSalesOrderTotals] = useSalesOrderTotals();
 
   const isEditable = ["Draft", "To Review"].includes(
-    routeData?.purchaseOrder?.status ?? ""
+    routeData?.salesOrder?.status ?? ""
   );
 
-  const customColumns =
-    useCustomColumns<PurchaseOrderLine>("purchaseOrderLine");
+  const customColumns = useCustomColumns<SalesOrderLine>("salesOrderLine");
 
-  const columns = useMemo<ColumnDef<PurchaseOrderLine>[]>(() => {
-    const defaultColumns: ColumnDef<PurchaseOrderLine>[] = [
+  const columns = useMemo<ColumnDef<SalesOrderLine>[]>(() => {
+    const defaultColumns: ColumnDef<SalesOrderLine>[] = [
       {
         header: "Line",
         cell: ({ row }) => row.index + 1,
       },
       {
-        accessorKey: "purchaseOrderLineType",
+        accessorKey: "salesOrderLineType",
         header: "Type",
         cell: ({ row }) => (
           <HStack className="justify-between min-w-[100px]">
-            <span>{row.original.purchaseOrderLineType}</span>
+            <span>{row.original.salesOrderLineType}</span>
             <div className="relative w-6 h-5">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <IconButton
-                    aria-label="Edit purchase order line type"
+                    aria-label="Edit sales order line type"
                     icon={<MdMoreHoriz />}
                     size="md"
                     className="absolute right-[-1px] top-[-6px]"
@@ -117,7 +116,7 @@ const PurchaseOrderLines = () => {
         accessorKey: "partId",
         header: "Number",
         cell: ({ row }) => {
-          switch (row.original.purchaseOrderLineType) {
+          switch (row.original.salesOrderLineType) {
             case "Part":
               return <span>{row.original.partId}</span>;
             case "Service":
@@ -145,14 +144,14 @@ const PurchaseOrderLines = () => {
         },
       },
       {
-        accessorKey: "purchaseQuantity",
+        accessorKey: "saleQuantity",
         header: "Quantity",
         cell: ({ row }) => {
-          switch (row.original.purchaseOrderLineType) {
+          switch (row.original.salesOrderLineType) {
             case "Comment":
               return null;
             default:
-              return <span>{row.original.purchaseQuantity}</span>;
+              return <span>{row.original.saleQuantity}</span>;
           }
         },
       },
@@ -160,7 +159,7 @@ const PurchaseOrderLines = () => {
         accessorKey: "unitPrice",
         header: "Unit Price",
         cell: ({ row }) => {
-          switch (row.original.purchaseOrderLineType) {
+          switch (row.original.salesOrderLineType) {
             case "Comment":
               return null;
             default:
@@ -172,7 +171,7 @@ const PurchaseOrderLines = () => {
         accessorKey: "locationId",
         header: "Location",
         cell: ({ row }) => {
-          switch (row.original.purchaseOrderLineType) {
+          switch (row.original.salesOrderLineType) {
             case "Part":
               return (
                 <span>
@@ -186,7 +185,7 @@ const PurchaseOrderLines = () => {
         accessorKey: "shelfId",
         header: "Shelf",
         cell: ({ row }) => {
-          switch (row.original.purchaseOrderLineType) {
+          switch (row.original.salesOrderLineType) {
             case "Comment":
               return null;
             default:
@@ -198,14 +197,14 @@ const PurchaseOrderLines = () => {
         id: "totalPrice",
         header: "Total Price",
         cell: ({ row }) => {
-          switch (row.original.purchaseOrderLineType) {
+          switch (row.original.salesOrderLineType) {
             case "Comment":
               return null;
             default:
-              if (!row.original.unitPrice || !row.original.purchaseQuantity)
+              if (!row.original.unitPrice || !row.original.saleQuantity)
                 return 0;
               return (
-                row.original.unitPrice * row.original.purchaseQuantity
+                row.original.unitPrice * row.original.saleQuantity
               ).toFixed(2);
           }
         },
@@ -214,7 +213,7 @@ const PurchaseOrderLines = () => {
         id: "quantityReceived",
         header: "Quantity Received",
         cell: ({ row }) => {
-          switch (row.original.purchaseOrderLineType) {
+          switch (row.original.salesOrderLineType) {
             case "Comment":
               return null;
             default:
@@ -226,7 +225,7 @@ const PurchaseOrderLines = () => {
         id: "quantityInvoiced",
         header: "Quantity Invoiced",
         cell: ({ row }) => {
-          switch (row.original.purchaseOrderLineType) {
+          switch (row.original.salesOrderLineType) {
             case "Comment":
               return null;
             default:
@@ -238,7 +237,7 @@ const PurchaseOrderLines = () => {
         id: "receivedComplete",
         header: "Received Complete",
         cell: ({ row }) => {
-          switch (row.original.purchaseOrderLineType) {
+          switch (row.original.salesOrderLineType) {
             case "Comment":
               return null;
             default:
@@ -250,7 +249,7 @@ const PurchaseOrderLines = () => {
         id: "invoicedComplete",
         header: "Invoiced Complete",
         cell: ({ row }) => {
-          switch (row.original.purchaseOrderLineType) {
+          switch (row.original.salesOrderLineType) {
             case "Comment":
               return null;
             default:
@@ -266,9 +265,9 @@ const PurchaseOrderLines = () => {
   const editableComponents = useMemo(
     () => ({
       description: EditableText(onCellEdit),
-      purchaseQuantity: EditableNumber(onCellEdit),
+      saleQuantity: EditableNumber(onCellEdit),
       unitPrice: EditableNumber(onCellEdit),
-      partId: EditablePurchaseOrderLineNumber(onCellEdit, {
+      partId: EditableSalesOrderLineNumber(onCellEdit, {
         client: supabase,
         parts: partOptions,
         services: serviceOptions,
@@ -293,28 +292,27 @@ const PurchaseOrderLines = () => {
       <Card className="w-full h-full min-h-[50vh]">
         <HStack className="justify-between items-start">
           <CardHeader>
-            <CardTitle>Purchase Order Lines</CardTitle>
+            <CardTitle>Sales Order Lines</CardTitle>
           </CardHeader>
           <CardAction>{canEdit && isEditable && <New to="new" />}</CardAction>
         </HStack>
 
         <CardContent>
-          <Grid<PurchaseOrderLine>
-            data={routeData?.purchaseOrderLines ?? []}
+          <Grid<SalesOrderLine>
+            data={routeData?.salesOrderLines ?? []}
             columns={columns}
             canEdit={canEdit && isEditable}
             editableComponents={editableComponents}
-            onDataChange={(lines: PurchaseOrderLine[]) => {
+            onDataChange={(lines: SalesOrderLine[]) => {
               const totals = lines.reduce(
                 (acc, line) => {
-                  acc.total +=
-                    (line.purchaseQuantity ?? 0) * (line.unitPrice ?? 0);
+                  acc.total += (line.saleQuantity ?? 0) * (line.unitPrice ?? 0);
 
                   return acc;
                 },
                 { total: 0 }
               );
-              setPurchaseOrderTotals(totals);
+              setSalesOrderTotals(totals);
             }}
             onNewRow={canEdit && isEditable ? () => navigate("new") : undefined}
           />
@@ -325,4 +323,4 @@ const PurchaseOrderLines = () => {
   );
 };
 
-export default PurchaseOrderLines;
+export default SalesOrderLines;

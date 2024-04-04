@@ -1,3 +1,3 @@
-import PurchaseOrderLines from "./PurchaseOrderLines";
+import SalesOrderLines from "./SalesOrderLines";
 
-export default PurchaseOrderLines;
+export default SalesOrderLines;

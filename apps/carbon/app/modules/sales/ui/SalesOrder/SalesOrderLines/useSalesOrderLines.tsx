@@ -5,26 +5,29 @@ import { usePermissions, useUser } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import type { getAccountsList } from "~/modules/accounting";
 import type { getServicesList } from "~/modules/parts";
-import type { PurchaseOrderLine } from "~/modules/purchasing";
-import { usePurchasedParts } from "~/stores/parts";
+import type { SalesOrderLine } from "~/modules/sales";
+import { usePurchasedParts, useManufacturedParts } from "~/stores/parts";
 import { path } from "~/utils/path";
 
-export default function usePurchaseOrderLines() {
+export default function useSalesOrderLines() {
   const { id: userId } = useUser();
   const { supabase } = useSupabase();
   const permissions = usePermissions();
 
-  const canEdit = permissions.can("update", "purchasing");
-  const canDelete = permissions.can("delete", "purchasing");
+  const canEdit = permissions.can("update", "sales");
+  const canDelete = permissions.can("delete", "sales");
 
-  const parts = usePurchasedParts();
+  const purchasedParts = usePurchasedParts();
+  const manufacturedParts = useManufacturedParts();
+  const parts = [...purchasedParts, ...manufacturedParts];
   const partOptions = useMemo(
     () =>
       parts.map((p) => ({
         value: p.id,
         label: p.id,
       })),
-    [parts]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [purchasedParts, manufacturedParts]
   );
 
   const accountsFetcher =
@@ -63,10 +66,10 @@ export default function usePurchaseOrderLines() {
   );
 
   const onCellEdit = useCallback(
-    async (id: string, value: unknown, row: PurchaseOrderLine) => {
+    async (id: string, value: unknown, row: SalesOrderLine) => {
       if (!supabase) throw new Error("Supabase client not found");
       return await supabase
-        .from("purchaseOrderLine")
+        .from("salesOrderLine")
         .update({
           [id]: value,
           updatedBy: userId,

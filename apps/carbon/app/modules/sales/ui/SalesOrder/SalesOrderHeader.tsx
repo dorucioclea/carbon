@@ -21,28 +21,27 @@ import { useParams } from "@remix-run/react";
 import { useMemo } from "react";
 import { Assign, EmployeeAvatar, useOptimisticAssignment } from "~/components";
 import { usePermissions, useRouteData } from "~/hooks";
-import type { PurchaseOrder } from "~/modules/purchasing";
-import { PurchasingStatus, usePurchaseOrderTotals } from "~/modules/purchasing";
-import { useSuppliers } from "~/stores";
+import type { SalesOrder } from "~/modules/sales";
+import { SalesStatus, useSalesOrderTotals } from "~/modules/sales";
+import { useCustomers } from "~/stores";
 import { path } from "~/utils/path";
-import { usePurchaseOrder } from "../SalesOrders/useSalesOrder";
-import PurchaseOrderReleaseModal from "./SalesOrderReleaseModal";
+// import { useSalesOrder } from "../SalesOrders/useSalesOrder";
 
-const PurchaseOrderHeader = () => {
+const SalesOrderHeader = () => {
   const permissions = usePermissions();
   const { orderId } = useParams();
   if (!orderId) throw new Error("Could not find orderId");
 
-  const routeData = useRouteData<{ purchaseOrder: PurchaseOrder }>(
-    path.to.purchaseOrder(orderId)
+  const routeData = useRouteData<{ salesOrder: SalesOrder }>(
+    path.to.salesOrderDelivery(orderId)
   );
 
-  if (!routeData?.purchaseOrder) throw new Error("purchaseOrder not found");
+  if (!routeData?.salesOrder) throw new Error("salesOrder not found");
   const isReleased = !["Draft", "Approved"].includes(
-    routeData?.purchaseOrder?.status ?? ""
+    routeData?.salesOrder?.status ?? ""
   );
 
-  const [purchaseOrderTotals] = usePurchaseOrderTotals();
+  const [salesOrderTotals] = useSalesOrderTotals();
 
   // TODO: factor in default currency, po currency and exchange rate
   const formatter = useMemo(
@@ -51,21 +50,21 @@ const PurchaseOrderHeader = () => {
     []
   );
 
-  const { receive, invoice } = usePurchaseOrder();
+  //const { receive, invoice } = useSalesOrder();
   const releaseDisclosure = useDisclosure();
 
   const optimisticAssignment = useOptimisticAssignment({
     id: orderId,
-    table: "purchaseOrder",
+    table: "salesOrder",
   });
   const assignee =
     optimisticAssignment !== undefined
       ? optimisticAssignment
-      : routeData?.purchaseOrder?.assignee;
+      : routeData?.salesOrder?.assignee;
 
-  const [suppliers] = useSuppliers();
-  const supplier = suppliers.find(
-    (s) => s.id === routeData.purchaseOrder?.supplierId
+  const [customers] = useCustomers();
+  const customer = customers.find(
+    (c) => c.id === routeData.salesOrder?.customerId
   );
 
   return (
@@ -75,13 +74,13 @@ const PurchaseOrderHeader = () => {
           <Menubar>
             <Assign
               id={orderId}
-              table="purchaseOrder"
+              table="salesOrder"
               value={assignee ?? undefined}
             />
             <MenubarItem asChild>
               <a
                 target="_blank"
-                href={path.to.file.purchaseOrder(orderId)}
+                href={path.to.file.salesOrder(orderId)}
                 rel="noreferrer"
               >
                 Preview
@@ -94,37 +93,37 @@ const PurchaseOrderHeader = () => {
             >
               Release
             </MenubarItem>
-            <MenubarItem
+            {/*<MenubarItem
               onClick={() => {
-                receive(routeData.purchaseOrder);
+                receive(routeData.salesOrder);
               }}
               isDisabled={
-                routeData?.purchaseOrder?.status !== "To Receive" &&
-                routeData?.purchaseOrder?.status !== "To Receive and Invoice"
+                routeData?.salesOrder?.status !== "To Receive" &&
+                routeData?.salesOrder?.status !== "To Receive and Invoice"
               }
             >
               Receive
             </MenubarItem>
             <MenubarItem
               onClick={() => {
-                invoice(routeData.purchaseOrder);
+                invoice(routeData.salesOrder);
               }}
               isDisabled={
-                routeData?.purchaseOrder?.status !== "To Invoice" &&
-                routeData?.purchaseOrder?.status !== "To Receive and Invoice"
+                routeData?.salesOrder?.status !== "To Invoice" &&
+                routeData?.salesOrder?.status !== "To Receive and Invoice"
               }
             >
               Invoice
-            </MenubarItem>
+            </MenubarItem>*/}
           </Menubar>
         )}
 
         <Card>
           <HStack className="justify-between items-start">
             <CardHeader>
-              <CardTitle>{routeData?.purchaseOrder?.purchaseOrderId}</CardTitle>
+              <CardTitle>{routeData?.salesOrder?.salesOrderId}</CardTitle>
               <CardDescription>
-                {supplier ? supplier.name : "-"}
+                {customer ? customer.name : "-"}
               </CardDescription>
             </CardHeader>
             <CardAction>
@@ -133,7 +132,7 @@ const PurchaseOrderHeader = () => {
                 onClick={() => alert("TODO")}
                 leftIcon={<FaHistory />}
               >
-                Supplier Details
+                Customer Details
               </Button> */}
             </CardAction>
           </HStack>
@@ -153,44 +152,44 @@ const PurchaseOrderHeader = () => {
               <CardAttribute>
                 <CardAttributeLabel>Order Date</CardAttributeLabel>
                 <CardAttributeValue>
-                  {formatDate(routeData?.purchaseOrder?.orderDate)}
+                  {formatDate(routeData?.salesOrder?.orderDate)}
                 </CardAttributeValue>
               </CardAttribute>
 
               <CardAttribute>
                 <CardAttributeLabel>Promised Date</CardAttributeLabel>
                 <CardAttributeValue>
-                  {formatDate(routeData?.purchaseOrder?.receiptPromisedDate)}
+                  {formatDate(routeData?.salesOrder?.receiptPromisedDate)}
                 </CardAttributeValue>
               </CardAttribute>
               <CardAttribute>
                 <CardAttributeLabel>Type</CardAttributeLabel>
                 <CardAttributeValue>
-                  <Enumerable value={routeData?.purchaseOrder?.type} />
+                  <Enumerable value={routeData?.salesOrder?.type} />
                 </CardAttributeValue>
               </CardAttribute>
               <CardAttribute>
                 <CardAttributeLabel>Status</CardAttributeLabel>
-                <PurchasingStatus status={routeData?.purchaseOrder?.status} />
+                <SalesStatus status={routeData?.salesOrder?.status} />
               </CardAttribute>
               <CardAttribute>
                 <CardAttributeLabel>Total</CardAttributeLabel>
                 <CardAttributeValue>
-                  {formatter.format(purchaseOrderTotals?.total ?? 0)}
+                  {formatter.format(salesOrderTotals?.total ?? 0)}
                 </CardAttributeValue>
               </CardAttribute>
             </CardAttributes>
           </CardContent>
         </Card>
       </VStack>
-      {releaseDisclosure.isOpen && (
-        <PurchaseOrderReleaseModal
-          purchaseOrder={routeData?.purchaseOrder}
+      {/*releaseDisclosure.isOpen && (
+        <SalesOrderReleaseModal
+          salesOrder={routeData?.salesOrder}
           onClose={releaseDisclosure.onClose}
         />
-      )}
+      )*/}
     </>
   );
 };
 
-export default PurchaseOrderHeader;
+export default SalesOrderHeader;
