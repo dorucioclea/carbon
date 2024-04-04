@@ -1,13 +1,13 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import Image from "next/image";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -17,13 +17,12 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import React, { useRef } from "react";
 import { cn } from "@/lib/utils";
-import { useScroll, useTransform, motion, MotionValue } from "framer-motion";
-import { Input } from "@/components/ui/input";
-import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
-import { Award } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { MotionValue, motion, useScroll, useTransform } from "framer-motion";
+import { Award, Files, HeartHandshake, Receipt, Zap } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import React, { useRef } from "react";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -62,36 +61,31 @@ const components: { title: string; href: string; description: string }[] = [
       "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
   },
 ];
-const items = [
+const bentoItems = [
   {
-    title: "The Dawn of Innovation",
-    description: "Explore the birth of groundbreaking ideas and inventions.",
-    header: <Skeleton />,
-    icon: <Award className="h-6 w-6 text-neutral-500" />,
+    title: "Quote faster",
+    description: "Create quotes and orders from your email with the help of AI",
+    icon: <Receipt className="h-6 w-6 " />,
   },
   {
-    title: "The Dawn of Innovation",
-    description: "Explore the birth of groundbreaking ideas and inventions.",
-    header: <Skeleton />,
-    icon: <Award className="h-6 w-6 text-neutral-500" />,
+    title: "Close deals faster",
+    description: "Track your sales pipeline and close deals faster",
+    icon: <HeartHandshake className="h-6 w-6 " />,
   },
   {
-    title: "The Dawn of Innovation",
-    description: "Explore the birth of groundbreaking ideas and inventions.",
-    header: <Skeleton />,
-    icon: <Award className="h-6 w-6 text-neutral-500" />,
+    title: "Documents",
+    description: "Store and view all your files in one place",
+    icon: <Files className="h-6 w-6 " />,
   },
   {
-    title: "The Dawn of Innovation",
+    title: "Real Time ",
     description: "Explore the birth of groundbreaking ideas and inventions.",
-    header: <Skeleton />,
-    icon: <Award className="h-6 w-6 text-neutral-500" />,
+    icon: <Zap className="h-6 w-6 " />,
   },
   {
-    title: "The Dawn of Innovation",
+    title: "Manufacturing",
     description: "Explore the birth of groundbreaking ideas and inventions.",
-    header: <Skeleton />,
-    icon: <Award className="h-6 w-6 text-neutral-500" />,
+    icon: <Award className="h-6 w-6 " />,
   },
 ];
 
@@ -99,9 +93,9 @@ function Logo() {
   return (
     <div className="flex items-center justify-center gap-2.5">
       <div className="inline-flex items-start justify-start shadow">
-        <div className="relative h-8 w-8 rounded-lg border border-gray-300 bg-gradient-to-b from-white to-gray-300">
+        <div className="relative h-8 w-8 rounded-lg border border-zinc-300 bg-gradient-to-b from-white to-zinc-300">
           <div className="absolute left-0 top-0 h-8 w-8"></div>
-          <div className="absolute left-[8px] top-[8px] h-4 w-4 rounded-full bg-gradient-to-tr from-gray-900 to-gray-700 shadow"></div>
+          <div className="absolute left-[8px] top-[8px] h-4 w-4 rounded-full bg-gradient-to-tr from-zinc-900 to-zinc-700 shadow"></div>
           <div className="absolute left-0 top-[16px] h-4 w-8 rounded-bl-lg rounded-br-lg bg-opacity-20 backdrop-blur-[5px]"></div>
         </div>
       </div>
@@ -177,7 +171,7 @@ function HeaderNavigationMenu() {
             Products
           </NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
               {components.map((component) => (
                 <ListItem
                   key={component.title}
@@ -250,10 +244,10 @@ export const ContainerScroll = ({
         <div className="flex flex-col items-center justify-start gap-8 mb-60">
           <div className="flex flex-col items-center justify-start gap-12 ">
             <div className="flex flex-col items-center justify-center gap-6">
-              <h1 className="max-w-2xl text-center text-6xl font-bold text-gray-900">
+              <h1 className="max-w-2xl text-center text-6xl font-semibold text-zinc-900">
                 ERP for the builders
               </h1>
-              <div className="self-stretch text-center text-xl font-normal  text-slate-600">
+              <div className="self-stretch text-center text-xl font-normal  text-zinc-600">
                 Carbon is an open-source ERP to meet your exact manufacturing
                 needs
               </div>
@@ -306,9 +300,9 @@ export const Card = ({
         boxShadow:
           "0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042, 0 84px 50px #00000026, 0 149px 60px #0000000a, 0 233px 65px #00000003",
       }}
-      className="max-w-5xl -mt-12 mx-auto h-[30rem] md:h-[40rem] w-full border-4 border-[#6C6C6C] p-2 bg-[#222222] rounded-[30px] shadow-2xl"
+      className="max-w-5xl -mt-12 mx-auto h-[30rem] md:h-[40rem] w-full border-4 border-[#6C6C6C] p-2 bg-[#222222] rounded-[30px] shadow-xl"
     >
-      <div className="h-full w-full  overflow-hidden rounded-2xl bg-gray-100 dark:bg-zinc-900 md:rounded-2xl md:p-2">
+      <div className="h-full w-full  overflow-hidden rounded-2xl bg-zinc-100 dark:bg-zinc-900 md:rounded-2xl md:p-2">
         {children}
       </div>
     </motion.div>
@@ -317,9 +311,9 @@ export const Card = ({
 
 export default function Home() {
   return (
-    <div className="">
+    <div className="w-screen">
       {/* Hero header section */}
-      <section className="flex w-screen flex-col items-center justify-start bg-zinc-50 ">
+      <section className="flex flex-col items-center justify-start bg-zinc-50 ">
         <div className="flex h-20 container items-center justify-between ">
           <div className="flex gap-10">
             <Logo />
@@ -342,30 +336,29 @@ export default function Home() {
       </section>
       {/* Features section */}
       <section className="flex flex-col justify-center items-center gap-16 py-24">
-        <div className="w-[1216px] h-40 flex-col justify-start items-center gap-12 inline-flex">
-          <div className="self-stretch h-40 flex-col justify-start items-center gap-5 flex">
-            <div className="self-stretch h-20 flex-col justify-start items-start gap-3 flex">
-              <div className="self-stretch text-center text-orange-700 text-base font-semibold font-['Inter'] leading-normal">
+        <div className=" h-40 flex-col justify-start items-center gap-12 inline-flex">
+          <div className="h-40 flex-col justify-start items-center gap-5 flex">
+            <div className="h-20 flex-col justify-start items-start gap-3 flex">
+              <div className="self-stretch text-center text-blue-600 text-base font-semibold  ">
                 Features
               </div>
-              <div className="self-stretch text-center text-gray-900 text-4xl font-semibold font-['Inter'] leading-[44px]">
-                Beautiful analytics to grow smarter
+              <div className="text-center text-zinc-900 text-4xl font-semibold  leading-[44px]">
+                An ERP created to be your own
               </div>
             </div>
-            <div className="self-stretch text-center text-slate-600 text-xl font-normal font-['Inter'] leading-[30px]">
-              Powerful, self-serve product and growth analytics to help you
-              convert, engage, and retain more users. Trusted by over 4,000
-              startups.
+            <div className="max-w-2xl text-center text-zinc-600 text-xl font-normal  leading-[30px]">
+              Every business is unique. Carbon gives you the basic building
+              blocks to build your own proprietary business systems with the
+              best modern, open-source software.
             </div>
           </div>
         </div>
         <BentoGrid className="max-w-4xl mx-auto">
-          {items.map((item, i) => (
+          {bentoItems.map((item, i) => (
             <BentoGridItem
               key={i}
               title={item.title}
               description={item.description}
-              header={item.header}
               icon={item.icon}
               className={i === 3 || i === 6 ? "md:col-span-2" : ""}
             />
@@ -374,15 +367,15 @@ export default function Home() {
       </section>
       {/* FAQ section */}
       <section className="py-24  mx-auto flex flex-col items-center bg-zinc-50">
-        <div className="w-[768px] h-[94px] flex-col justify-start items-center gap-5 inline-flex">
-          <div className="self-stretch text-center text-zinc-900 text-4xl font-semibold font-['Inter'] leading-[44px]">
+        <div className="flex-col justify-start items-center gap-5 inline-flex">
+          <div className="self-stretch text-center text-zinc-900 text-4xl font-semibold  leading-[44px]">
             Frequently asked questions
           </div>
-          <div className="self-stretch text-center text-zinc-600 text-xl font-normal font-['Inter'] leading-[30px]">
+          <div className="self-stretch text-center text-zinc-600 text-xl font-normal  leading-[30px]">
             Everything you need to know about the product and billing.
           </div>
         </div>
-        <Accordion type="single" collapsible className="w-full max-w-2xl">
+        <Accordion type="single" collapsible className="w-full max-w-2xl py-8">
           <AccordionItem value="item-1">
             <AccordionTrigger>Is it accessible?</AccordionTrigger>
             <AccordionContent>
@@ -409,10 +402,10 @@ export default function Home() {
         <div className="px-16 flex-col justify-start max-w-7xl gap-8 flex">
           <div className="self-stretch p-16 bg-zinc-50 rounded-2xl justify-start items-start gap-8 inline-flex">
             <div className="grow shrink basis-0 flex-col justify-start items-start gap-4 inline-flex">
-              <div className="self-stretch text-zinc-900 text-3xl font-semibold font-['Inter'] leading-[38px]">
+              <div className="self-stretch text-zinc-900 text-3xl font-semibold  leading-[38px]">
                 Start your 30-day free trial
               </div>
-              <div className="self-stretch text-zinc-600 text-xl font-normal font-['Inter'] leading-[30px]">
+              <div className="self-stretch text-zinc-600 text-xl font-normal  leading-[30px]">
                 Get up and running in less than 5 minutes.
               </div>
             </div>
@@ -428,54 +421,16 @@ export default function Home() {
       <div className=" w-screen h-32 py-12 flex-col justify-start items-center gap-16 flex">
         <div className="self-stretch h-8 px-8 flex-col justify-start items-start gap-8 flex">
           <div className="self-stretch justify-between items-center inline-flex">
-            <div className="flex-col justify-start items-start flex">
-              <Logo />
+            <Logo />
+            <div className="justify-center items-center gap-8 flex text-zinc-600 font-semibold">
+              <p>Overview</p>
+              <p>Features</p>
+              <p>Pricing</p>
+              <p>Careers</p>
+              <p>Help</p>
+              <p>Privacy</p>
             </div>
-            <div className="justify-center items-center gap-8 flex">
-              <div className="justify-start items-center gap-2 flex">
-                <div className="justify-center items-center gap-2 flex">
-                  <div className="text-slate-600 text-base font-semibold font-['Inter'] leading-normal">
-                    Overview
-                  </div>
-                </div>
-              </div>
-              <div className="justify-start items-center gap-2 flex">
-                <div className="justify-center items-center gap-2 flex">
-                  <div className="text-slate-600 text-base font-semibold font-['Inter'] leading-normal">
-                    Features
-                  </div>
-                </div>
-              </div>
-              <div className="justify-start items-center gap-2 flex">
-                <div className="justify-center items-center gap-2 flex">
-                  <div className="text-slate-600 text-base font-semibold font-['Inter'] leading-normal">
-                    Pricing
-                  </div>
-                </div>
-              </div>
-              <div className="justify-start items-center gap-2 flex">
-                <div className="justify-center items-center gap-2 flex">
-                  <div className="text-slate-600 text-base font-semibold font-['Inter'] leading-normal">
-                    Careers
-                  </div>
-                </div>
-              </div>
-              <div className="justify-start items-center gap-2 flex">
-                <div className="justify-center items-center gap-2 flex">
-                  <div className="text-slate-600 text-base font-semibold font-['Inter'] leading-normal">
-                    Help
-                  </div>
-                </div>
-              </div>
-              <div className="justify-start items-center gap-2 flex">
-                <div className="justify-center items-center gap-2 flex">
-                  <div className="text-slate-600 text-base font-semibold font-['Inter'] leading-normal">
-                    Privacy
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="w-40 text-right text-gray-500 text-base font-normal font-['Inter'] leading-normal">
+            <div className="w-40 text-right text-zinc-500 text-base font-normal  ">
               © 2024 Carbon
             </div>
           </div>
