@@ -3,6 +3,12 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
@@ -15,6 +21,9 @@ import React, { useRef } from "react";
 import { cn } from "@/lib/utils";
 import { useScroll, useTransform, motion, MotionValue } from "framer-motion";
 import { Input } from "@/components/ui/input";
+import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
+import { Award } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -51,6 +60,38 @@ const components: { title: string; href: string; description: string }[] = [
     href: "/docs/primitives/tooltip",
     description:
       "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
+  },
+];
+const items = [
+  {
+    title: "The Dawn of Innovation",
+    description: "Explore the birth of groundbreaking ideas and inventions.",
+    header: <Skeleton />,
+    icon: <Award className="h-6 w-6 text-neutral-500" />,
+  },
+  {
+    title: "The Dawn of Innovation",
+    description: "Explore the birth of groundbreaking ideas and inventions.",
+    header: <Skeleton />,
+    icon: <Award className="h-6 w-6 text-neutral-500" />,
+  },
+  {
+    title: "The Dawn of Innovation",
+    description: "Explore the birth of groundbreaking ideas and inventions.",
+    header: <Skeleton />,
+    icon: <Award className="h-6 w-6 text-neutral-500" />,
+  },
+  {
+    title: "The Dawn of Innovation",
+    description: "Explore the birth of groundbreaking ideas and inventions.",
+    header: <Skeleton />,
+    icon: <Award className="h-6 w-6 text-neutral-500" />,
+  },
+  {
+    title: "The Dawn of Innovation",
+    description: "Explore the birth of groundbreaking ideas and inventions.",
+    header: <Skeleton />,
+    icon: <Award className="h-6 w-6 text-neutral-500" />,
   },
 ];
 
@@ -276,9 +317,9 @@ export const Card = ({
 
 export default function Home() {
   return (
-    <div>
+    <div className="">
       {/* Hero header section */}
-      <div className="flex w-screen flex-col items-center justify-start bg-zinc-50 ">
+      <section className="flex w-screen flex-col items-center justify-start bg-zinc-50 ">
         <div className="flex h-20 container items-center justify-between ">
           <div className="flex gap-10">
             <Logo />
@@ -297,6 +338,147 @@ export default function Home() {
               draggable={false}
             />
           </ContainerScroll>
+        </div>
+      </section>
+      {/* Features section */}
+      <section className="flex flex-col justify-center items-center gap-16 py-24">
+        <div className="w-[1216px] h-40 flex-col justify-start items-center gap-12 inline-flex">
+          <div className="self-stretch h-40 flex-col justify-start items-center gap-5 flex">
+            <div className="self-stretch h-20 flex-col justify-start items-start gap-3 flex">
+              <div className="self-stretch text-center text-orange-700 text-base font-semibold font-['Inter'] leading-normal">
+                Features
+              </div>
+              <div className="self-stretch text-center text-gray-900 text-4xl font-semibold font-['Inter'] leading-[44px]">
+                Beautiful analytics to grow smarter
+              </div>
+            </div>
+            <div className="self-stretch text-center text-slate-600 text-xl font-normal font-['Inter'] leading-[30px]">
+              Powerful, self-serve product and growth analytics to help you
+              convert, engage, and retain more users. Trusted by over 4,000
+              startups.
+            </div>
+          </div>
+        </div>
+        <BentoGrid className="max-w-4xl mx-auto">
+          {items.map((item, i) => (
+            <BentoGridItem
+              key={i}
+              title={item.title}
+              description={item.description}
+              header={item.header}
+              icon={item.icon}
+              className={i === 3 || i === 6 ? "md:col-span-2" : ""}
+            />
+          ))}
+        </BentoGrid>
+      </section>
+      {/* FAQ section */}
+      <section className="py-24  mx-auto flex flex-col items-center bg-zinc-50">
+        <div className="w-[768px] h-[94px] flex-col justify-start items-center gap-5 inline-flex">
+          <div className="self-stretch text-center text-zinc-900 text-4xl font-semibold font-['Inter'] leading-[44px]">
+            Frequently asked questions
+          </div>
+          <div className="self-stretch text-center text-zinc-600 text-xl font-normal font-['Inter'] leading-[30px]">
+            Everything you need to know about the product and billing.
+          </div>
+        </div>
+        <Accordion type="single" collapsible className="w-full max-w-2xl">
+          <AccordionItem value="item-1">
+            <AccordionTrigger>Is it accessible?</AccordionTrigger>
+            <AccordionContent>
+              Yes. It adheres to the WAI-ARIA design pattern.
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-2">
+            <AccordionTrigger>Is it styled?</AccordionTrigger>
+            <AccordionContent>
+              Yes. It comes with default styles that matches the other
+              components&apos; aesthetic.
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-3">
+            <AccordionTrigger>Is it animated?</AccordionTrigger>
+            <AccordionContent>
+              Yes. It&apos;s animated by default, but you can disable it if you
+              prefer.
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </section>
+      <section className="py-24 flex-col justify-center items-center flex">
+        <div className="px-16 flex-col justify-start max-w-7xl gap-8 flex">
+          <div className="self-stretch p-16 bg-zinc-50 rounded-2xl justify-start items-start gap-8 inline-flex">
+            <div className="grow shrink basis-0 flex-col justify-start items-start gap-4 inline-flex">
+              <div className="self-stretch text-zinc-900 text-3xl font-semibold font-['Inter'] leading-[38px]">
+                Start your 30-day free trial
+              </div>
+              <div className="self-stretch text-zinc-600 text-xl font-normal font-['Inter'] leading-[30px]">
+                Get up and running in less than 5 minutes.
+              </div>
+            </div>
+            <div className="justify-start items-start gap-3 flex">
+              <Button size="xl" variant={"outline"}>
+                Learn more
+              </Button>
+              <Button size="xl">Get started</Button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div className=" w-screen h-32 py-12 flex-col justify-start items-center gap-16 flex">
+        <div className="self-stretch h-8 px-8 flex-col justify-start items-start gap-8 flex">
+          <div className="self-stretch justify-between items-center inline-flex">
+            <div className="flex-col justify-start items-start flex">
+              <Logo />
+            </div>
+            <div className="justify-center items-center gap-8 flex">
+              <div className="justify-start items-center gap-2 flex">
+                <div className="justify-center items-center gap-2 flex">
+                  <div className="text-slate-600 text-base font-semibold font-['Inter'] leading-normal">
+                    Overview
+                  </div>
+                </div>
+              </div>
+              <div className="justify-start items-center gap-2 flex">
+                <div className="justify-center items-center gap-2 flex">
+                  <div className="text-slate-600 text-base font-semibold font-['Inter'] leading-normal">
+                    Features
+                  </div>
+                </div>
+              </div>
+              <div className="justify-start items-center gap-2 flex">
+                <div className="justify-center items-center gap-2 flex">
+                  <div className="text-slate-600 text-base font-semibold font-['Inter'] leading-normal">
+                    Pricing
+                  </div>
+                </div>
+              </div>
+              <div className="justify-start items-center gap-2 flex">
+                <div className="justify-center items-center gap-2 flex">
+                  <div className="text-slate-600 text-base font-semibold font-['Inter'] leading-normal">
+                    Careers
+                  </div>
+                </div>
+              </div>
+              <div className="justify-start items-center gap-2 flex">
+                <div className="justify-center items-center gap-2 flex">
+                  <div className="text-slate-600 text-base font-semibold font-['Inter'] leading-normal">
+                    Help
+                  </div>
+                </div>
+              </div>
+              <div className="justify-start items-center gap-2 flex">
+                <div className="justify-center items-center gap-2 flex">
+                  <div className="text-slate-600 text-base font-semibold font-['Inter'] leading-normal">
+                    Privacy
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="w-40 text-right text-gray-500 text-base font-normal font-['Inter'] leading-normal">
+              © 2024 Carbon
+            </div>
+          </div>
         </div>
       </div>
     </div>
