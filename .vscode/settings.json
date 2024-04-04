@@ -2,5 +2,7 @@
   "deno.cacheOnSave": true,
   "deno.enablePaths": ["./packages/database/supabase/functions"],
   "typescript.tsdk": "node_modules/typescript/lib",
-  "deno.enable": true
+  "deno.enable": true,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
