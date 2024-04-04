@@ -1,4 +1,7 @@
 "use client";
+
+import Cal, { getCalApi } from "@calcom/embed-react";
+import { useEffect } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -310,6 +313,16 @@ export const Card = ({
 };
 
 export default function Home() {
+  useEffect(() => {
+    (async function () {
+      const cal = await getCalApi();
+      cal("ui", {
+        styles: { branding: { brandColor: "#000000" } },
+        hideEventTypeDetails: false,
+        layout: "month_view",
+      });
+    })();
+  }, []);
   return (
     <div className="w-screen">
       {/* Hero header section */}
@@ -398,7 +411,17 @@ export default function Home() {
           </AccordionItem>
         </Accordion>
       </section>
-      <section className="py-24 flex-col justify-center items-center flex">
+      <section className="flex flex-col items-center py-24 gap-8">
+        <div className="self-stretch text-center text-zinc-900 text-4xl font-semibold  leading-[44px]">
+          Chat with us
+        </div>
+        <Cal
+          calLink="neilkanakia/quickchat"
+          style={{ width: "100%", height: "100%", overflow: "scroll" }}
+          config={{ layout: "month_view" }}
+        />
+      </section>
+      <section className="flex-col justify-center items-center flex">
         <div className="px-16 flex-col justify-start max-w-7xl gap-8 flex">
           <div className="self-stretch p-16 bg-zinc-50 rounded-2xl justify-start items-start gap-8 inline-flex">
             <div className="grow shrink basis-0 flex-col justify-start items-start gap-4 inline-flex">
