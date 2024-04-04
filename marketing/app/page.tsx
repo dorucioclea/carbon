@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -10,23 +11,9 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import React from "react";
+import React, { useRef } from "react";
 import { cn } from "@/lib/utils";
-
-function Logo() {
-  return (
-    <div className="flex h-8 items-center justify-center gap-2.5">
-      <div className="inline-flex items-start justify-start shadow">
-        <div className="relative h-8 w-8 rounded-lg border border-gray-300 bg-gradient-to-b from-white to-gray-300">
-          <div className="absolute left-0 top-0 h-8 w-8"></div>
-          <div className="absolute left-[8px] top-[8px] h-4 w-4 rounded-full bg-gradient-to-tr from-gray-900 to-gray-700 shadow"></div>
-          <div className="absolute left-0 top-[16px] h-4 w-8 rounded-bl-lg rounded-br-lg bg-opacity-20 backdrop-blur-[5px]"></div>
-        </div>
-      </div>
-      <span className="font-semibold">Carbon</span>
-    </div>
-  );
-}
+import { useScroll, useTransform, motion, MotionValue } from "framer-motion";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -65,6 +52,21 @@ const components: { title: string; href: string; description: string }[] = [
       "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
   },
 ];
+
+function Logo() {
+  return (
+    <div className="flex h-8 items-center justify-center gap-2.5">
+      <div className="inline-flex items-start justify-start shadow">
+        <div className="relative h-8 w-8 rounded-lg border border-gray-300 bg-gradient-to-b from-white to-gray-300">
+          <div className="absolute left-0 top-0 h-8 w-8"></div>
+          <div className="absolute left-[8px] top-[8px] h-4 w-4 rounded-full bg-gradient-to-tr from-gray-900 to-gray-700 shadow"></div>
+          <div className="absolute left-0 top-[16px] h-4 w-8 rounded-bl-lg rounded-br-lg bg-opacity-20 backdrop-blur-[5px]"></div>
+        </div>
+      </div>
+      <span className="font-semibold">Carbon</span>
+    </div>
+  );
+}
 
 const ListItem = React.forwardRef<
   React.ElementRef<"a">,
@@ -159,6 +161,97 @@ function HeaderNavigationMenu() {
     </NavigationMenu>
   );
 }
+export const ContainerScroll = ({
+  titleComponent,
+  children,
+}: {
+  titleComponent: string | React.ReactNode;
+  children: React.ReactNode;
+}) => {
+  const containerRef = useRef<any>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+  });
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+    };
+  }, []);
+
+  const scaleDimensions = () => {
+    return isMobile ? [0.7, 0.9] : [1.05, 1];
+  };
+
+  const rotate = useTransform(scrollYProgress, [0, 1], [20, 0]);
+  const scale = useTransform(scrollYProgress, [0, 1], scaleDimensions());
+  const translate = useTransform(scrollYProgress, [0, 1], [0, -100]);
+
+  return (
+    <div
+      className="h-[60rem] md:h-[80rem] flex items-center justify-center relative p-2 md:p-20"
+      ref={containerRef}
+    >
+      <div
+        className="py-10 md:py-40 w-full relative"
+        style={{
+          perspective: "1000px",
+        }}
+      >
+        {/* <Header translate={translate} titleComponent={titleComponent} /> */}
+        <Card rotate={rotate} translate={translate} scale={scale}>
+          {children}
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export const Header = ({ translate, titleComponent }: any) => {
+  return (
+    <motion.div
+      style={{
+        translateY: translate,
+      }}
+      className="div max-w-5xl mx-auto text-center"
+    >
+      {titleComponent}
+    </motion.div>
+  );
+};
+
+export const Card = ({
+  rotate,
+  scale,
+  children,
+}: {
+  rotate: MotionValue<number>;
+  scale: MotionValue<number>;
+  translate: MotionValue<number>;
+  children: React.ReactNode;
+}) => {
+  return (
+    <motion.div
+      style={{
+        rotateX: rotate,
+        scale,
+        boxShadow:
+          "0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042, 0 84px 50px #00000026, 0 149px 60px #0000000a, 0 233px 65px #00000003",
+      }}
+      className="max-w-5xl -mt-12 mx-auto h-[30rem] md:h-[40rem] w-full border-4 border-[#6C6C6C] p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl"
+    >
+      <div className=" h-full w-full  overflow-hidden rounded-2xl bg-gray-100 dark:bg-zinc-900 md:rounded-2xl md:p-4 ">
+        {children}
+      </div>
+    </motion.div>
+  );
+};
 
 export default function Home() {
   return (
@@ -166,7 +259,7 @@ export default function Home() {
       {/* Hero header section */}
       <div className="flex w-screen flex-col items-center justify-start bg-zinc-50">
         <div className="w-full flex h-20 flex-col justify-center">
-          <div className="flex container items-center justify-between px-8">
+          <div className="flex container items-center justify-between">
             <div className="flex gap-10">
               <Logo />
               <HeaderNavigationMenu />
@@ -174,37 +267,48 @@ export default function Home() {
             <Button variant={"outline"}>Log in</Button>
           </div>
         </div>
-        <div className="flex flex-col items-center justify-start gap-16 self-stretch py-24">
-          <div className="flex  flex-col items-center justify-start gap-8 self-stretch px-8">
-            <div className="flex  flex-col items-center justify-start gap-12 self-stretch">
+        <div className="flex flex-col items-center justify-start gap-16 py-24">
+          <div className="flex  flex-col items-center justify-start gap-8 ">
+            <div className="flex  flex-col items-center justify-start gap-12 ">
               <div className="flex flex-col items-center justify-center gap-6">
-                <div className="max-w-2xl text-center text-6xl font-semibold leading-[72px] text-gray-900">
+                <h1 className="max-w-2xl text-center text-6xl font-semibold leading-[72px] text-gray-900">
                   Open Source ERP to power your business
-                </div>
+                </h1>
                 <div className="self-stretch text-center text-xl font-normal leading-[30px]  text-slate-600">
                   Carbon is cloud manufacturing software that helps you make
                   better decisions faster.
                 </div>
               </div>
               <div className="inline-flex items-start justify-start gap-3">
-                <Button size="lg" variant={"outline"}>
+                <Button size="xl" variant={"outline"}>
                   Demo
                 </Button>
-                <Button size={"lg"}>Sign up</Button>
+                <Button size={"xl"}>Sign up</Button>
               </div>
             </div>
           </div>
-          <div className="flex h-[512px] flex-col items-center justify-start gap-8 self-stretch px-8">
-            <div className="flex h-[512px] flex-col items-center justify-start self-stretch">
-              <div className="relative h-[512px] w-[768px] rounded-[10px] border-4 border-gray-900">
-                <div className="absolute left-[28px] top-0 h-[512px] w-[712px] bg-black shadow"></div>
-                <img
-                  className="absolute left-0 top-0 h-[512px] w-[768px] rounded-[10px]"
-                  src="https://via.placeholder.com/768x512"
-                />
-              </div>
-            </div>
-          </div>
+          <ContainerScroll
+            titleComponent={
+              <>
+                {/* <h1 className="text-4xl font-semibold text-black dark:text-white">
+                  Unleash the power of <br />
+                  <span className="text-4xl md:text-[6rem] font-bold mt-1 leading-none">
+                    Scroll Animations
+                  </span>
+                </h1> */}
+              </>
+            }
+          >
+            <Image
+              src={`/linear.webp`}
+              alt="hero"
+              height={720}
+              width={1400}
+              className="mx-auto rounded-2xl object-cover h-full object-left-top"
+              draggable={false}
+            />
+          </ContainerScroll>
+          <div className="flex h-[512px] flex-col items-center justify-start gap-8 self-stretch px-8"></div>
         </div>
       </div>
     </div>
