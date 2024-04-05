@@ -33,7 +33,7 @@ const SalesOrderHeader = () => {
   if (!orderId) throw new Error("Could not find orderId");
 
   const routeData = useRouteData<{ salesOrder: SalesOrder }>(
-    path.to.salesOrderDelivery(orderId)
+    path.to.salesOrder(orderId)
   );
 
   if (!routeData?.salesOrder) throw new Error("salesOrder not found");

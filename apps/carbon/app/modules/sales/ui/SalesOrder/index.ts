@@ -1,25 +1,25 @@
-import PurchaseOrderDeliveryForm from "./SalesOrderShipmentForm";
-import PurchaseOrderDocuments from "./SalesOrderDocuments";
-import PurchaseOrderDocumentForm from "./SalesOrderDocuments/PurchaseOrderDocumentForm";
-import PurchaseOrderForm from "./SalesOrderForm";
+import SalesOrderShipmentForm from "./SalesOrderShipmentForm";
+//import SalesOrderDocuments from "./SalesOrderDocuments";
+//import SalesOrderDocumentForm from "./SalesOrderDocuments/SalesOrderDocumentForm";
+import SalesOrderForm from "./SalesOrderForm";
 import SalesOrderHeader from "./SalesOrderHeader";
-import PurchaseOrderLineForm from "./SalesOrderLineForm";
-import PurchaseOrderLines from "./SalesOrderLines";
-import PurchaseOrderPaymentForm from "./SalesOrderPaymentForm";
-import PurchaseOrderSidebar from "./SalesOrderSidebar";
+import SalesOrderLineForm from "./SalesOrderLineForm";
+import SalesOrderLines from "./SalesOrderLines";
+//import SalesOrderPaymentForm from "./SalesOrderPaymentForm";
+import SalesOrderSidebar from "./SalesOrderSidebar";
 import SalesStatus from "./SalesStatus";
 import { useSalesOrderTotals } from "./useSalesOrderTotals";
 
 export {
-  PurchaseOrderDeliveryForm,
-  PurchaseOrderDocumentForm,
-  PurchaseOrderDocuments,
-  PurchaseOrderForm,
+  SalesOrderShipmentForm,
+  //SalesOrderDocumentForm,
+  //SalesOrderDocuments,
+  SalesOrderForm,
   SalesOrderHeader,
-  PurchaseOrderLineForm,
-  PurchaseOrderLines,
-  PurchaseOrderPaymentForm,
-  PurchaseOrderSidebar,
+  SalesOrderLineForm,
+  SalesOrderLines,
+  //SalesOrderPaymentForm,
+  SalesOrderSidebar,
   SalesStatus,
   useSalesOrderTotals,
 };

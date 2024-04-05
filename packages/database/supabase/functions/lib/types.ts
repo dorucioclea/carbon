@@ -11252,6 +11252,8 @@ export type Database = {
           receiptRequestedDate: string | null
           shippingMethodId: string | null
           shippingTermId: string | null
+          supplierId: string | null
+          supplierLocationId: string | null
           trackingNumber: string | null
           updatedAt: string | null
           updatedBy: string | null
@@ -11269,6 +11271,8 @@ export type Database = {
           receiptRequestedDate?: string | null
           shippingMethodId?: string | null
           shippingTermId?: string | null
+          supplierId?: string | null
+          supplierLocationId?: string | null
           trackingNumber?: string | null
           updatedAt?: string | null
           updatedBy?: string | null
@@ -11286,6 +11290,8 @@ export type Database = {
           receiptRequestedDate?: string | null
           shippingMethodId?: string | null
           shippingTermId?: string | null
+          supplierId?: string | null
+          supplierLocationId?: string | null
           trackingNumber?: string | null
           updatedAt?: string | null
           updatedBy?: string | null

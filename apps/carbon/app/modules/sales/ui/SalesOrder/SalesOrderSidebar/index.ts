@@ -1,3 +1,3 @@
-import PurchaseOrderSidebar from "./PurchaseOrderSidebar";
+import SalesOrderSidebar from "./SalesOrderSidebar";
 
-export default PurchaseOrderSidebar;
+export default SalesOrderSidebar;

@@ -7,11 +7,11 @@ import {
   getShippingTermsList,
 } from "~/modules/inventory";
 import {
-  PurchaseOrderDeliveryForm,
-  getPurchaseOrderDelivery,
-  purchaseOrderDeliveryValidator,
-  upsertPurchaseOrderDelivery,
-} from "~/modules/purchasing";
+  SalesOrderShipmentForm,
+  getSalesOrderShipment,
+  salesOrderShipmentValidator,
+  upsertSalesOrderShipment,
+} from "~/modules/sales";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { getCustomFields, setCustomFields } from "~/utils/form";
@@ -22,27 +22,27 @@ import type { ListItem } from "~/types";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { client } = await requirePermissions(request, {
-    view: "purchasing",
+    view: "sales",
   });
 
   const { orderId } = params;
   if (!orderId) throw new Error("Could not find orderId");
 
-  const [purchaseOrderDelivery, shippingMethods, shippingTerms] =
+  const [salesOrderShipment, shippingMethods, shippingTerms] =
     await Promise.all([
-      getPurchaseOrderDelivery(client, orderId),
+      getSalesOrderShipment(client, orderId),
       getShippingMethodsList(client),
       getShippingTermsList(client),
     ]);
 
-  if (purchaseOrderDelivery.error) {
+  if (salesOrderShipment.error) {
     throw redirect(
-      path.to.purchaseOrder(orderId),
+      path.to.salesOrder(orderId),
       await flash(
         request,
         error(
-          purchaseOrderDelivery.error,
-          "Failed to load purchase order delivery"
+          salesOrderShipment.error,
+          "Failed to load sales order shipment"
         )
       )
     );
@@ -50,7 +50,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   if (shippingMethods.error) {
     throw redirect(
-      path.to.purchaseOrders,
+      path.to.salesOrders,
       await flash(
         request,
         error(shippingMethods.error, "Failed to load shipping methods")
@@ -60,7 +60,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   if (shippingTerms.error) {
     throw redirect(
-      path.to.purchaseOrders,
+      path.to.salesOrders,
       await flash(
         request,
         error(shippingTerms.error, "Failed to load shipping terms")
@@ -69,7 +69,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   }
 
   return json({
-    purchaseOrderDelivery: purchaseOrderDelivery.data,
+    salesOrderShipment: salesOrderShipment.data,
     shippingMethods: shippingMethods.data ?? [],
     shippingTerms: shippingTerms.data ?? [],
   });
@@ -78,14 +78,14 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 export async function action({ request, params }: ActionFunctionArgs) {
   assertIsPost(request);
   const { client, userId } = await requirePermissions(request, {
-    update: "purchasing",
+    update: "sales",
   });
 
   const { orderId } = params;
   if (!orderId) throw new Error("Could not find orderId");
 
   const formData = await request.formData();
-  const validation = await validator(purchaseOrderDeliveryValidator).validate(
+  const validation = await validator(salesOrderShipmentValidator).validate(
     formData
   );
 
@@ -93,7 +93,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     return validationError(validation.error);
   }
 
-  const updatePurchaseOrderDelivery = await upsertPurchaseOrderDelivery(
+  const updateSalesOrderShipment = await upsertSalesOrderShipment(
     client,
     {
       ...validation.data,
@@ -102,47 +102,47 @@ export async function action({ request, params }: ActionFunctionArgs) {
       customFields: setCustomFields(formData),
     }
   );
-  if (updatePurchaseOrderDelivery.error) {
+  if (updateSalesOrderShipment.error) {
     throw redirect(
-      path.to.purchaseOrderDelivery(orderId),
+      path.to.salesOrderShipment(orderId),
       await flash(
         request,
         error(
-          updatePurchaseOrderDelivery.error,
-          "Failed to update purchase order delivery"
+          updateSalesOrderShipment.error,
+          "Failed to update sales order shipment"
         )
       )
     );
   }
 
   throw redirect(
-    path.to.purchaseOrderDelivery(orderId),
-    await flash(request, success("Updated purchase order delivery"))
+    path.to.salesOrderShipment(orderId),
+    await flash(request, success("Updated sales order shipment"))
   );
 }
 
-export default function PurchaseOrderDeliveryRoute() {
-  const { purchaseOrderDelivery, shippingMethods, shippingTerms } =
+export default function SalesOrderShipmentRoute() {
+  const { salesOrderShipment, shippingMethods, shippingTerms } =
     useLoaderData<typeof loader>();
 
   const initialValues = {
-    id: purchaseOrderDelivery.id,
-    locationId: purchaseOrderDelivery.locationId ?? "",
-    shippingMethodId: purchaseOrderDelivery.shippingMethodId ?? "",
-    shippingTermId: purchaseOrderDelivery.shippingTermId ?? "",
-    trackingNumber: purchaseOrderDelivery.trackingNumber ?? "",
-    receiptRequestedDate: purchaseOrderDelivery.receiptRequestedDate ?? "",
-    receiptPromisedDate: purchaseOrderDelivery.receiptPromisedDate ?? "",
-    deliveryDate: purchaseOrderDelivery.deliveryDate ?? "",
-    notes: purchaseOrderDelivery.notes ?? "",
-    dropShipment: purchaseOrderDelivery.dropShipment ?? false,
-    customerId: purchaseOrderDelivery.customerId ?? "",
-    customerLocationId: purchaseOrderDelivery.customerLocationId ?? "",
-    ...getCustomFields(purchaseOrderDelivery.customFields),
+    id: salesOrderShipment.id,
+    locationId: salesOrderShipment.locationId ?? "",
+    shippingMethodId: salesOrderShipment.shippingMethodId ?? "",
+    shippingTermId: salesOrderShipment.shippingTermId ?? "",
+    trackingNumber: salesOrderShipment.trackingNumber ?? "",
+    receiptRequestedDate: salesOrderShipment.receiptRequestedDate ?? "",
+    receiptPromisedDate: salesOrderShipment.receiptPromisedDate ?? "",
+    shipmentDate: salesOrderShipment.shipmentDate ?? "",
+    notes: salesOrderShipment.notes ?? "",
+    dropShipment: salesOrderShipment.dropShipment ?? false,
+    customerId: salesOrderShipment.customerId ?? "",
+    customerLocationId: salesOrderShipment.customerLocationId ?? "",
+    ...getCustomFields(salesOrderShipment.customFields),
   };
 
   return (
-    <PurchaseOrderDeliveryForm
+    <SalesOrderShipmentForm
       key={initialValues.id}
       initialValues={initialValues}
       shippingMethods={shippingMethods as ListItem[]}

@@ -1022,7 +1022,7 @@ export async function getSalesOrderShipment(
   salesOrderId: string
 ) {
   return client
-    .from("salesOrderDelivery")
+    .from("salesOrderShipment")
     .select("*")
     .eq("id", salesOrderId)
     .single();

@@ -21,20 +21,20 @@ import {
   Submit,
 } from "~/components/Form";
 import { usePermissions } from "~/hooks";
-import { purchaseOrderDeliveryValidator } from "~/modules/purchasing";
+import { salesOrderShipmentValidator } from "~/modules/sales";
 import type { ListItem } from "~/types";
 
-type PurchaseOrderDeliveryFormProps = {
-  initialValues: z.infer<typeof purchaseOrderDeliveryValidator>;
+type SalesOrderShipmentFormProps = {
+  initialValues: z.infer<typeof salesOrderShipmentValidator>;
   shippingMethods: ListItem[];
   shippingTerms: ListItem[];
 };
 
-const PurchaseOrderDeliveryForm = ({
+const SalesOrderShipmentForm = ({
   initialValues,
   shippingMethods,
   shippingTerms,
-}: PurchaseOrderDeliveryFormProps) => {
+}: SalesOrderShipmentFormProps) => {
   const permissions = usePermissions();
   const [dropShip, setDropShip] = useState<boolean>(
     initialValues.dropShipment ?? false
@@ -53,25 +53,25 @@ const PurchaseOrderDeliveryForm = ({
     value: term.id,
   }));
 
-  const isSupplier = permissions.is("supplier");
+  const isCustomer = permissions.is("customer");
 
   return (
     <ValidatedForm
       method="post"
-      validator={purchaseOrderDeliveryValidator}
+      validator={salesOrderShipmentValidator}
       defaultValues={initialValues}
     >
       <Card>
         <CardHeader>
-          <CardTitle>Delivery</CardTitle>
+          <CardTitle>Shipment</CardTitle>
         </CardHeader>
         <CardContent>
           <Hidden name="id" />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-8 gap-y-2 w-full">
             <Location
               name="locationId"
-              label="Delivery Location"
-              isReadOnly={isSupplier}
+              label="Shipment Location"
+              isReadOnly={isCustomer}
               isClearable
             />
             <Select
@@ -82,13 +82,13 @@ const PurchaseOrderDeliveryForm = ({
             <Select
               name="shippingTermId"
               label="Shipping Terms"
-              isReadOnly={isSupplier}
+              isReadOnly={isCustomer}
               options={shippingTermOptions}
             />
 
             <DatePicker name="receiptRequestedDate" label="Requested Date" />
             <DatePicker name="receiptPromisedDate" label="Promised Date" />
-            <DatePicker name="deliveryDate" label="Delivery Date" />
+            <DatePicker name="shipmentDate" label="Shipment Date" />
 
             <Input name="trackingNumber" label="Tracking Number" />
             {/* <TextArea name="notes" label="Shipping Notes" /> */}
@@ -111,7 +111,7 @@ const PurchaseOrderDeliveryForm = ({
                 />
               </>
             )}
-            <CustomFormFields table="purchaseOrderDelivery" />
+            <CustomFormFields table="salesOrderShipment" />
           </div>
         </CardContent>
         <CardFooter>
@@ -124,4 +124,4 @@ const PurchaseOrderDeliveryForm = ({
   );
 };
 
-export default PurchaseOrderDeliveryForm;
+export default SalesOrderShipmentForm;

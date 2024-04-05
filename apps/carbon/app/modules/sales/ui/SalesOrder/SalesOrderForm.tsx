@@ -18,62 +18,56 @@ import {
   Input,
   Select,
   Submit,
-  Supplier,
-  SupplierContact,
-  SupplierLocation,
+  Customer,
+  CustomerContact,
+  CustomerLocation,
   TextArea,
 } from "~/components/Form";
 import { usePermissions } from "~/hooks";
 import {
-  purchaseOrderStatusType,
-  purchaseOrderTypeType,
-  purchaseOrderValidator,
-} from "~/modules/purchasing";
+  salesOrderStatusType,
+  salesOrderValidator,
+} from "~/modules/sales";
 
-type PurchaseOrderFormValues = z.infer<typeof purchaseOrderValidator>;
+type SalesOrderFormValues = z.infer<typeof salesOrderValidator>;
 
-type PurchaseOrderFormProps = {
-  initialValues: PurchaseOrderFormValues;
+type SalesOrderFormProps = {
+  initialValues: SalesOrderFormValues;
 };
 
-const PurchaseOrderForm = ({ initialValues }: PurchaseOrderFormProps) => {
+const SalesOrderForm = ({ initialValues }: SalesOrderFormProps) => {
   const permissions = usePermissions();
-  const [supplier, setSupplier] = useState<string | undefined>(
-    initialValues.supplierId
+  const [customer, setCustomer] = useState<string | undefined>(
+    initialValues.customerId
   );
   const isEditing = initialValues.id !== undefined;
-  const isSupplier = permissions.is("supplier");
+  const isCustomer = permissions.is("customer");
 
-  const statusOptions = purchaseOrderStatusType.map((status) => ({
+  const statusOptions = salesOrderStatusType.map((status) => ({
     label: status,
     value: status,
-  }));
-
-  const typeOptions = purchaseOrderTypeType.map((type) => ({
-    label: type,
-    value: type,
   }));
 
   return (
     <ValidatedForm
       method="post"
-      validator={purchaseOrderValidator}
+      validator={salesOrderValidator}
       defaultValues={initialValues}
     >
       <Card>
         <CardHeader>
           <CardTitle>
-            {isEditing ? "Purchase Order" : "New Purchase Order"}
+            {isEditing ? "Sales Order" : "New Sales Order"}
           </CardTitle>
           {!isEditing && (
             <CardDescription>
-              A purchase order contains information about the agreement between
-              the company and a specific supplier for parts and services.
+              A sales order contains information about the agreement between
+              the company and a specific customer for parts and services.
             </CardDescription>
           )}
         </CardHeader>
         <CardContent>
-          <Hidden name="purchaseOrderId" />
+          <Hidden name="salesOrderId" />
           <VStack>
             <div
               className={cn(
@@ -81,51 +75,45 @@ const PurchaseOrderForm = ({ initialValues }: PurchaseOrderFormProps) => {
                 isEditing ? "grid-cols-1 lg:grid-cols-3" : "grid-cols-1"
               )}
             >
-              <Supplier
+              <Customer
                 autoFocus={!isEditing}
-                name="supplierId"
-                label="Supplier"
+                name="customerId"
+                label="Customer"
                 onChange={(newValue) =>
-                  setSupplier(newValue?.value as string | undefined)
+                  setCustomer(newValue?.value as string | undefined)
                 }
               />
-              <Input name="supplierReference" label="Supplier Order Number" />
-              {isEditing && permissions.can("delete", "purchasing") && (
+              <Input name="customerReference" label="Customer Order Number" />
+              {isEditing && permissions.can("delete", "sales") && (
                 <Select
                   name="status"
                   label="Status"
                   value={initialValues.status}
                   options={statusOptions}
-                  isReadOnly={isSupplier}
+                  isReadOnly={isCustomer}
                 />
               )}
-              <SupplierLocation
-                name="supplierLocationId"
-                label="Supplier Location"
-                supplier={supplier}
+              <CustomerLocation
+                name="customerLocationId"
+                label="Customer Location"
+                customer={customer}
               />
-              <SupplierContact
-                name="supplierContactId"
-                label="Supplier Contact"
-                supplier={supplier}
+              <CustomerContact
+                name="customerContactId"
+                label="Customer Contact"
+                customer={customer}
               />
 
               <DatePicker
                 name="orderDate"
                 label="Order Date"
-                isDisabled={isSupplier}
-              />
-              <Select
-                name="type"
-                label="Type"
-                options={typeOptions}
-                isReadOnly={true} // {isSupplier}
+                isDisabled={isCustomer}
               />
 
               {isEditing && (
-                <TextArea name="notes" label="Notes" readOnly={isSupplier} />
+                <TextArea name="notes" label="Notes" readOnly={isCustomer} />
               )}
-              <CustomFormFields table="purchaseOrder" />
+              <CustomFormFields table="salesOrder" />
             </div>
           </VStack>
         </CardContent>
@@ -133,8 +121,8 @@ const PurchaseOrderForm = ({ initialValues }: PurchaseOrderFormProps) => {
           <Submit
             isDisabled={
               isEditing
-                ? !permissions.can("update", "purchasing")
-                : !permissions.can("create", "purchasing")
+                ? !permissions.can("update", "sales")
+                : !permissions.can("create", "sales")
             }
           >
             Save
@@ -145,4 +133,4 @@ const PurchaseOrderForm = ({ initialValues }: PurchaseOrderFormProps) => {
   );
 };
 
-export default PurchaseOrderForm;
+export default SalesOrderForm;

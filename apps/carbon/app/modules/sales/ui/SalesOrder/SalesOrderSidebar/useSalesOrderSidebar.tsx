@@ -14,7 +14,7 @@ type Props = {
   internalDocuments?: number;
 };
 
-export function usePurchaseOrderSidebar({
+export function useSalesOrderSidebar({
   lines = 0,
   internalDocuments = 0,
   externalDocuments = 0,
@@ -26,34 +26,34 @@ export function usePurchaseOrderSidebar({
   return [
     {
       name: "Summary",
-      to: path.to.purchaseOrderDetails(orderId),
+      to: path.to.salesOrderDetails(orderId),
       icon: BsBank,
       shortcut: "Command+Shift+s",
     },
     {
       name: "Lines",
-      to: path.to.purchaseOrderLines(orderId),
+      to: path.to.salesOrderLines(orderId),
       count: lines,
       icon: BsListCheck,
       shortcut: "Command+Shift+l",
     },
-    {
-      name: "Delivery",
-      to: path.to.purchaseOrderDelivery(orderId),
-      role: ["employee", "supplier"],
+    /*{
+      name: "Shipment",
+      to: path.to.salesOrderShipment(orderId),
+      role: ["employee", "customer"],
       icon: BsTruck,
       shortcut: "Command+Shift+d",
     },
     {
       name: "Payment",
-      to: path.to.purchaseOrderPayment(orderId),
+      to: path.to.salesOrderPayment(orderId),
       role: ["employee"],
       icon: BsCreditCard,
       shortcut: "Command+Shift+p",
     },
     {
       name: "Internal Documents",
-      to: path.to.purchaseOrderInternalDocuments(orderId),
+      to: path.to.salesOrderInternalDocuments(orderId),
       role: ["employee"],
       count: internalDocuments,
       icon: HiOutlineDocumentArrowDown,
@@ -61,12 +61,12 @@ export function usePurchaseOrderSidebar({
     },
     {
       name: "External Documents",
-      to: path.to.purchaseOrderExternalDocuments(orderId),
-      role: ["employee", "supplier"],
+      to: path.to.salesOrderExternalDocuments(orderId),
+      role: ["employee", "customer"],
       count: externalDocuments,
       icon: HiOutlineDocumentArrowUp,
       shortcut: "Command+Shift+e",
-    },
+    },*/
   ].filter(
     (item) =>
       item.role === undefined ||

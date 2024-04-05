@@ -260,7 +260,7 @@ const SalesOrdersTable = memo(({ data, count }: SalesOrdersTableProps) => {
     return (row: SalesOrder) => (
       <>
         <MenuItem
-          disabled={!permissions.can("view", "purchasing")}
+          disabled={!permissions.can("view", "sales")}
           onClick={() => edit(row)}
         >
           <MenuIcon icon={<BsFillPenFill />} />

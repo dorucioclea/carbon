@@ -31,23 +31,23 @@ import { usePermissions, useRouteData, useUser } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import type { getShelvesList } from "~/modules/parts";
 import type {
-  PurchaseOrder,
-  PurchaseOrderLineType,
-} from "~/modules/purchasing";
+  SalesOrder,
+  SalesOrderLineType,
+} from "~/modules/sales";
 import {
-  purchaseOrderLineType,
-  purchaseOrderLineValidator,
-} from "~/modules/purchasing";
+  salesOrderLineType,
+  salesOrderLineValidator,
+} from "~/modules/sales";
 import type { ListItem } from "~/types";
 import { path } from "~/utils/path";
 
-type PurchaseOrderLineFormProps = {
-  initialValues: z.infer<typeof purchaseOrderLineValidator>;
+type SalesOrderLineFormProps = {
+  initialValues: z.infer<typeof salesOrderLineValidator>;
 };
 
-const PurchaseOrderLineForm = ({
+const SalesOrderLineForm = ({
   initialValues,
-}: PurchaseOrderLineFormProps) => {
+}: SalesOrderLineFormProps) => {
   const permissions = usePermissions();
   const { supabase } = useSupabase();
   const navigate = useNavigate();
@@ -58,8 +58,8 @@ const PurchaseOrderLineForm = ({
 
   const routeData = useRouteData<{
     locations: ListItem[];
-    purchaseOrder: PurchaseOrder;
-  }>(path.to.purchaseOrder(orderId));
+    salesOrder: SalesOrder;
+  }>(path.to.salesOrder(orderId));
 
   const locations = routeData?.locations ?? [];
   const locationOptions = locations.map((location) => ({
@@ -68,10 +68,10 @@ const PurchaseOrderLineForm = ({
   }));
 
   const isEditable = ["Draft", "To Review"].includes(
-    routeData?.purchaseOrder?.status ?? ""
+    routeData?.salesOrder?.status ?? ""
   );
 
-  const [type, setType] = useState(initialValues.purchaseOrderLineType);
+  const [type, setType] = useState(initialValues.salesOrderLineType);
   const [locationId, setLocationId] = useState(defaults.locationId ?? "");
   const [partData, setPartData] = useState<{
     partId: string;
@@ -109,17 +109,17 @@ const PurchaseOrderLineForm = ({
   const isDisabled = !isEditable
     ? true
     : isEditing
-    ? !permissions.can("update", "purchasing")
-    : !permissions.can("create", "purchasing");
+    ? !permissions.can("update", "sales")
+    : !permissions.can("create", "sales");
 
-  const purchaseOrderLineTypeOptions = purchaseOrderLineType.map((type) => ({
+  const salesOrderLineTypeOptions = salesOrderLineType.map((type) => ({
     label: type,
     value: type,
   }));
 
   const onClose = () => navigate(-1);
 
-  const onTypeChange = (type: PurchaseOrderLineType) => {
+  const onTypeChange = (type: SalesOrderLineType) => {
     setType(type);
     setPartData({
       partId: "",
@@ -207,31 +207,31 @@ const PurchaseOrderLineForm = ({
       <DrawerContent>
         <ValidatedForm
           defaultValues={initialValues}
-          validator={purchaseOrderLineValidator}
+          validator={salesOrderLineValidator}
           method="post"
           action={
             isEditing
-              ? path.to.purchaseOrderLine(orderId, initialValues.id!)
-              : path.to.newPurchaseOrderLine(orderId)
+              ? path.to.salesOrderLine(orderId, initialValues.id!)
+              : path.to.newSalesOrderLine(orderId)
           }
           className="flex flex-col h-full"
         >
           <DrawerHeader>
             <DrawerTitle>
-              {isEditing ? "Edit" : "New"} Purchase Order Line
+              {isEditing ? "Edit" : "New"} Sales Order Line
             </DrawerTitle>
           </DrawerHeader>
           <DrawerBody>
             <Hidden name="id" />
-            <Hidden name="purchaseOrderId" />
+            <Hidden name="salesOrderId" />
 
             <VStack spacing={4}>
               <Select
-                name="purchaseOrderLineType"
+                name="salesOrderLineType"
                 label="Type"
-                options={purchaseOrderLineTypeOptions}
+                options={salesOrderLineTypeOptions}
                 onChange={(value) => {
-                  onTypeChange(value?.value as PurchaseOrderLineType);
+                  onTypeChange(value?.value as SalesOrderLineType);
                 }}
               />
               {type === "Part" && (
@@ -286,7 +286,7 @@ const PurchaseOrderLineForm = ({
               />
               {type !== "Comment" && (
                 <>
-                  <Number name="purchaseQuantity" label="Quantity" />
+                  <Number name="salesQuantity" label="Quantity" />
                   {/* 
                 // TODO: implement this and replace the UoM in PartForm */}
                   {/* <UnitOfMeasure name="unitOfMeasureCode" label="Unit of Measure" value={uom} /> */}
@@ -328,7 +328,7 @@ const PurchaseOrderLineForm = ({
                   )}
                 </>
               )}
-              <CustomFormFields table="purchaseOrderLine" />
+              <CustomFormFields table="salesOrderLine" />
             </VStack>
           </DrawerBody>
           <DrawerFooter>
@@ -345,4 +345,4 @@ const PurchaseOrderLineForm = ({
   );
 };
 
-export default PurchaseOrderLineForm;
+export default SalesOrderLineForm;
