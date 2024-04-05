@@ -30,14 +30,8 @@ import {
 import { usePermissions, useRouteData, useUser } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import type { getShelvesList } from "~/modules/parts";
-import type {
-  SalesOrder,
-  SalesOrderLineType,
-} from "~/modules/sales";
-import {
-  salesOrderLineType,
-  salesOrderLineValidator,
-} from "~/modules/sales";
+import type { SalesOrder, SalesOrderLineType } from "~/modules/sales";
+import { salesOrderLineType, salesOrderLineValidator } from "~/modules/sales";
 import type { ListItem } from "~/types";
 import { path } from "~/utils/path";
 
@@ -45,9 +39,7 @@ type SalesOrderLineFormProps = {
   initialValues: z.infer<typeof salesOrderLineValidator>;
 };
 
-const SalesOrderLineForm = ({
-  initialValues,
-}: SalesOrderLineFormProps) => {
+const SalesOrderLineForm = ({ initialValues }: SalesOrderLineFormProps) => {
   const permissions = usePermissions();
   const { supabase } = useSupabase();
   const navigate = useNavigate();
@@ -238,7 +230,7 @@ const SalesOrderLineForm = ({
                 <Part
                   name="partId"
                   label="Part"
-                  partReplenishmentSystem="Buy"
+                  partReplenishmentSystem="Buy and Make"
                   onChange={(value) => {
                     onPartChange(value?.value as string);
                   }}
