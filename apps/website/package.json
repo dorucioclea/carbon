@@ -1,5 +1,5 @@
 {
-  "name": "marketing",
+  "name": "website",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -19,23 +19,23 @@
     "lucide-react": "^0.364.0",
     "mini-svg-data-uri": "^1.4.4",
     "next": "14.1.4",
-    "react": "^18",
-    "react-dom": "^18",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.12",
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "autoprefixer": "^10.0.1",
-    "eslint": "^8",
+    "@types/react": "^18.2.33",
+    "@types/react-dom": "^18.2.14",
+    "autoprefixer": "10.4.14",
+    "eslint": "^8.23.1",
     "eslint-config-next": "14.1.4",
-    "postcss": "^8",
+    "postcss": "^8.4.33",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.13",
-    "tailwindcss": "^3.3.0",
-    "typescript": "^5"
+    "tailwindcss": "3.3.2",
+    "typescript": "^5.2.2"
   }
 }
