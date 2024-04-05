@@ -1028,7 +1028,7 @@ export async function getSalesOrderShipment(
     .single();
 }
 
-export async function getSalesOrderLocations(
+/*export async function getSalesOrderLocations(
   client: SupabaseClient<Database>,
   salesOrderId: string
 ) {
@@ -1037,7 +1037,7 @@ export async function getSalesOrderLocations(
     .select("*")
     .eq("id", salesOrderId)
     .single();
-}
+}*/
 
 /*export async function getSalesOrderPayment(
   client: SupabaseClient<Database>,

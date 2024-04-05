@@ -570,6 +570,62 @@ CREATE OR REPLACE VIEW "customers" WITH(SECURITY_INVOKER=true) AS
     GROUP BY "customerId"
   ) so ON so."customerId" = c.id;
 
+CREATE OR REPLACE VIEW "salesOrderLines" WITH(SECURITY_INVOKER=true) AS
+  SELECT 
+    sol.*,
+    so."customerId" ,
+    p.name AS "partName",
+    p.description AS "partDescription"
+  FROM "salesOrderLine" sol
+    INNER JOIN "salesOrder" so 
+      ON so.id = sol."salesOrderId"
+    LEFT OUTER JOIN "part" p
+      ON p.id = sol."partId";
+
+/*CREATE OR REPLACE VIEW "salesOrderLocations" WITH(SECURITY_INVOKER=true) AS
+  SELECT 
+    so.id,
+    s.name AS "supplierName",
+    sa."addressLine1" AS "supplierAddressLine1",
+    sa."addressLine2" AS "supplierAddressLine2",
+    sa."city" AS "supplierCity",
+    sa."state" AS "supplierState",
+    sa."postalCode" AS "supplierPostalCode",
+    sa."countryCode" AS "supplierCountryCode",
+    dl.name AS "deliveryName",
+    dl."addressLine1" AS "deliveryAddressLine1",
+    dl."addressLine2" AS "deliveryAddressLine2",
+    dl."city" AS "deliveryCity",
+    dl."state" AS "deliveryState",
+    dl."postalCode" AS "deliveryPostalCode",
+    dl."countryCode" AS "deliveryCountryCode",
+    pod."dropShipment",
+    c.name AS "customerName",
+    ca."addressLine1" AS "customerAddressLine1",
+    ca."addressLine2" AS "customerAddressLine2",
+    ca."city" AS "customerCity",
+    ca."state" AS "customerState",
+    ca."postalCode" AS "customerPostalCode",
+    ca."countryCode" AS "customerCountryCode"
+  FROM "salesOrder" so 
+  LEFT OUTER JOIN "supplier" s 
+    ON s.id = po."supplierId"
+  LEFT OUTER JOIN "supplierLocation" sl
+    ON sl.id = po."supplierLocationId"
+  LEFT OUTER JOIN "address" sa
+    ON sa.id = sl."addressId"
+  INNER JOIN "purchaseOrderDelivery" pod 
+    ON pod.id = po.id 
+  LEFT OUTER JOIN "location" dl
+    ON dl.id = pod."locationId"
+  LEFT OUTER JOIN "customer" c
+    ON c.id = pod."customerId"
+  LEFT OUTER JOIN "customerLocation" cl
+    ON cl.id = pod."customerLocationId"
+  LEFT OUTER JOIN "address" ca
+    ON ca.id = cl."addressId";*/
+  
+/*
 DROP VIEW "partQuantities";
 CREATE OR REPLACE VIEW "partQuantities" AS 
   SELECT 
@@ -618,4 +674,4 @@ CREATE OR REPLACE VIEW "partQuantities" AS
     p."id", 
     loc."id",
     pol."quantityToReceive",
-    sol."quantityToSend"
+    sol."quantityToSend"*/

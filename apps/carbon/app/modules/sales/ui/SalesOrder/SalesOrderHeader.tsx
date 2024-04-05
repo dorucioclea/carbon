@@ -77,7 +77,7 @@ const SalesOrderHeader = () => {
               table="salesOrder"
               value={assignee ?? undefined}
             />
-            <MenubarItem asChild>
+            {/*<MenubarItem asChild>
               <a
                 target="_blank"
                 href={path.to.file.salesOrder(orderId)}
@@ -92,7 +92,7 @@ const SalesOrderHeader = () => {
               isDisabled={isReleased}
             >
               Release
-            </MenubarItem>
+            </MenubarItem>*/}
             {/*<MenubarItem
               onClick={() => {
                 receive(routeData.salesOrder);

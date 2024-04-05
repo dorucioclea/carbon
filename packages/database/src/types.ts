@@ -16617,6 +16617,197 @@ export type Database = {
         }
         Relationships: []
       }
+      salesOrderLines: {
+        Row: {
+          accountNumber: string | null
+          assetId: string | null
+          createdAt: string | null
+          createdBy: string | null
+          customerId: string | null
+          customFields: Json | null
+          description: string | null
+          id: string | null
+          invoicedComplete: boolean | null
+          locationId: string | null
+          partDescription: string | null
+          partId: string | null
+          partName: string | null
+          quantityInvoiced: number | null
+          quantitySent: number | null
+          quantityToInvoice: number | null
+          quantityToSend: number | null
+          requiresInspection: boolean | null
+          saleQuantity: number | null
+          salesOrderId: string | null
+          salesOrderLineType:
+            | Database["public"]["Enums"]["salesOrderLineType"]
+            | null
+          sentComplete: boolean | null
+          serviceId: string | null
+          setupPrice: number | null
+          shelfId: string | null
+          unitOfMeasureCode: string | null
+          unitPrice: number | null
+          updatedAt: string | null
+          updatedBy: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "salesOrder_customerId_fkey"
+            columns: ["customerId"]
+            isOneToOne: false
+            referencedRelation: "customer"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrder_customerId_fkey"
+            columns: ["customerId"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrder_customerId_fkey"
+            columns: ["customerId"]
+            isOneToOne: false
+            referencedRelation: "salesOrderCustomers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrderLine_accountNumber_fkey"
+            columns: ["accountNumber"]
+            isOneToOne: false
+            referencedRelation: "account"
+            referencedColumns: ["number"]
+          },
+          {
+            foreignKeyName: "salesOrderLine_accountNumber_fkey"
+            columns: ["accountNumber"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["number"]
+          },
+          {
+            foreignKeyName: "salesOrderLine_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrderLine_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrderLine_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrderLine_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "salesOrderLine_partId_fkey"
+            columns: ["partId"]
+            isOneToOne: false
+            referencedRelation: "part"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrderLine_partId_fkey"
+            columns: ["partId"]
+            isOneToOne: false
+            referencedRelation: "partQuantities"
+            referencedColumns: ["partId"]
+          },
+          {
+            foreignKeyName: "salesOrderLine_partId_fkey"
+            columns: ["partId"]
+            isOneToOne: false
+            referencedRelation: "parts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrderLine_salesOrderId_fkey"
+            columns: ["salesOrderId"]
+            isOneToOne: false
+            referencedRelation: "salesOrder"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrderLine_salesOrderId_fkey"
+            columns: ["salesOrderId"]
+            isOneToOne: false
+            referencedRelation: "salesOrders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrderLine_serviceId_fkey"
+            columns: ["serviceId"]
+            isOneToOne: false
+            referencedRelation: "service"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrderLine_serviceId_fkey"
+            columns: ["serviceId"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrderLine_shelfId_fkey"
+            columns: ["shelfId", "locationId"]
+            isOneToOne: false
+            referencedRelation: "shelf"
+            referencedColumns: ["id", "locationId"]
+          },
+          {
+            foreignKeyName: "salesOrderLine_unitOfMeasureCode_fkey"
+            columns: ["unitOfMeasureCode"]
+            isOneToOne: false
+            referencedRelation: "unitOfMeasure"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "salesOrderLine_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrderLine_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrderLine_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrderLine_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+        ]
+      }
       salesOrders: {
         Row: {
           closedAt: string | null
