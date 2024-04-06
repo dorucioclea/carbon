@@ -1,9 +1,13 @@
-import { useScroll, useTransform } from "framer-motion";
-import React from "react";
-import { useRef } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useScroll, useTransform, motion } from "framer-motion";
+import React, { useRef, useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { MotionValue, motion } from "framer-motion";
+import type { MotionValue } from "framer-motion";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { supabase } from "@/lib/supabase";
 
 export const ContainerScroll = ({
   titleComponent,
@@ -12,6 +16,39 @@ export const ContainerScroll = ({
   titleComponent: string | React.ReactNode;
   children: React.ReactNode;
 }) => {
+  const formSchema = z.object({
+    email: z.string().email(),
+  });
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+  const [showForm, setShowForm] = useState(true);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const response = await supabase
+        .from("leads")
+        .insert({ email: values.email });
+
+      if (response.error) {
+        form.setError("email", {
+          type: "manual",
+          message: "Failed to insert email",
+        });
+        console.error(response.error.message);
+      } else {
+        form.reset();
+        form.clearErrors();
+        setShowForm(false);
+      }
+
+      // const data = await response.json();
+    } catch (error) {
+      console.error("Failed to submit email:", error);
+    }
+  }
   const containerRef = useRef<any>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -59,13 +96,35 @@ export const ContainerScroll = ({
                 needs
               </div>
             </div>
-            <div className="inline-flex items-start justify-start gap-3">
-              <Input type="email" className="w-[220px]" placeholder="Email" />
-              <Button size="xl" className="relative">
-                Get early access
-                <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-emerald-400/0 via-violet-400/90 to-violet-400/0 transition-opacity duration-500 group-hover:opacity-40" />
-              </Button>
-            </div>
+            {showForm && (
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="flex w-full max-w-sm items-start space-x-2"
+                >
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            className="w-60"
+                            type="email"
+                            placeholder="Email"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button size="xl" type="submit">
+                    Get early access
+                  </Button>
+                </form>
+              </Form>
+            )}
           </div>
         </div>
         <Card rotate={rotate} translate={translate} scale={scale}>
