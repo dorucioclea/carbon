@@ -1133,7 +1133,7 @@ export async function upsertSalesOrder(
       .from("salesOrder")
       .update(sanitize(salesOrder))
       .eq("id", salesOrder.id)
-      .select("id, salesOrder");
+      .select("id, salesOrderId");
   }
 
   const [customerPayment, customerShipping, customer] = await Promise.all([
