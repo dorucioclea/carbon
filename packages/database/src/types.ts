@@ -10690,6 +10690,7 @@ export type Database = {
           id: string
           notes: string | null
           orderDate: string
+          quoteId: string | null
           revisionId: number
           salesOrderId: string
           status: Database["public"]["Enums"]["salesOrderStatus"]
@@ -10709,6 +10710,7 @@ export type Database = {
           id?: string
           notes?: string | null
           orderDate?: string
+          quoteId?: string | null
           revisionId?: number
           salesOrderId: string
           status?: Database["public"]["Enums"]["salesOrderStatus"]
@@ -10728,6 +10730,7 @@ export type Database = {
           id?: string
           notes?: string | null
           orderDate?: string
+          quoteId?: string | null
           revisionId?: number
           salesOrderId?: string
           status?: Database["public"]["Enums"]["salesOrderStatus"]
@@ -10824,6 +10827,27 @@ export type Database = {
             columns: ["customerLocationId"]
             isOneToOne: false
             referencedRelation: "customerLocation"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrder_quoteId_fkey"
+            columns: ["quoteId"]
+            isOneToOne: false
+            referencedRelation: "quote"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrder_quoteId_fkey"
+            columns: ["quoteId"]
+            isOneToOne: false
+            referencedRelation: "quoteCustomerDetails"
+            referencedColumns: ["quoteId"]
+          },
+          {
+            foreignKeyName: "salesOrder_quoteId_fkey"
+            columns: ["quoteId"]
+            isOneToOne: false
+            referencedRelation: "quotes"
             referencedColumns: ["id"]
           },
           {
@@ -16832,6 +16856,7 @@ export type Database = {
           notes: string | null
           orderDate: string | null
           paymentTermName: string | null
+          quoteId: string | null
           receiptPromisedDate: string | null
           receiptRequestedDate: string | null
           revisionId: number | null
@@ -16934,6 +16959,27 @@ export type Database = {
             columns: ["customerLocationId"]
             isOneToOne: false
             referencedRelation: "customerLocation"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrder_quoteId_fkey"
+            columns: ["quoteId"]
+            isOneToOne: false
+            referencedRelation: "quote"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrder_quoteId_fkey"
+            columns: ["quoteId"]
+            isOneToOne: false
+            referencedRelation: "quoteCustomerDetails"
+            referencedColumns: ["quoteId"]
+          },
+          {
+            foreignKeyName: "salesOrder_quoteId_fkey"
+            columns: ["quoteId"]
+            isOneToOne: false
+            referencedRelation: "quotes"
             referencedColumns: ["id"]
           },
           {

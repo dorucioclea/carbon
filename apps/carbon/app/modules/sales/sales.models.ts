@@ -189,6 +189,7 @@ export const salesOrderValidator = z.object({
   customerLocationId: zfd.text(z.string().optional()),
   customerContactId: zfd.text(z.string().optional()),
   customerReference: zfd.text(z.string().optional()),
+  quoteId: zfd.text(z.string().optional()),
 });
 
 export const salesOrderShipmentValidator = z

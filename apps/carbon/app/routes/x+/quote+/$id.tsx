@@ -32,6 +32,7 @@ import {
   useQuotation,
 } from "~/modules/sales";
 import QuotationReleaseModal from "~/modules/sales/ui/Quotation/QuotationReleaseModal";
+import ConvertToSalesOrderModal from "~/modules/sales/ui/Quotation/ConvertToSalesOrderModal";
 
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
@@ -109,6 +110,7 @@ export default function QuotationRoute() {
     quotationOperations,
   } = useLoaderData<typeof loader>();
   const releaseDisclosure = useDisclosure();
+  const salesOrderDisclosure = useDisclosure();
 
   const [quote, setQuote] = useQuotation();
 
@@ -210,7 +212,12 @@ export default function QuotationRoute() {
               >
                 Release
               </MenubarItem>
-            </Menubar>
+              <MenubarItem
+                onClick={salesOrderDisclosure.onOpen}
+              >
+                Convert to Sales Order
+              </MenubarItem>
+              </Menubar>          
             <Outlet />
           </VStack>
         </div>
@@ -219,6 +226,12 @@ export default function QuotationRoute() {
         <QuotationReleaseModal
           quotation={quotation}
           onClose={releaseDisclosure.onClose}
+        />
+      )}
+      {salesOrderDisclosure.isOpen && (
+        <ConvertToSalesOrderModal
+          quotation={quotation}
+          onClose={salesOrderDisclosure.onClose}
         />
       )}
     </div>

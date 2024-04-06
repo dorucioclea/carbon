@@ -26,12 +26,14 @@ CREATE TABLE "salesOrder" (
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
+  "quoteId" TEXT,
 
   CONSTRAINT "salesOrder_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "salesOrder_salesOrderId_key" UNIQUE ("salesOrderId"),
   CONSTRAINT "salesOrder_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "customer" ("id") ON DELETE CASCADE,
   CONSTRAINT "salesOrder_customerLocationId_fkey" FOREIGN KEY ("customerLocationId") REFERENCES "customerLocation" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "salesOrder_customerContactId_fkey" FOREIGN KEY ("customerContactId") REFERENCES "customerContact" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT "salesOrder_quoteId_fkey" FOREIGN KEY ("quoteId") REFERENCES "quote"("id") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "salesOrder_closedBy_fkey" FOREIGN KEY ("closedBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "salesOrder_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "salesOrder_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
@@ -41,6 +43,7 @@ CREATE INDEX "salesOrder_salesOrderId_idx" ON "salesOrder" ("salesOrderId");
 CREATE INDEX "salesOrder_customerId_idx" ON "salesOrder" ("customerId");
 CREATE INDEX "salesOrder_customerContactId_idx" ON "salesOrder" ("customerContactId");
 CREATE INDEX "salesOrder_status_idx" ON "salesOrder" ("status");
+CREATE INDEX "salesOrder_quoteId_idx" ON "salesOrder" ("quoteId");
 
 CREATE TYPE "salesOrderLineType" AS ENUM (
   'Comment',

@@ -568,7 +568,7 @@ export async function insertQuoteLinePrice(
 export async function releaseQuote(
   client: SupabaseClient<Database>,
   quoteId: string,
-  usedId: string
+  userId: string
 ) {
   const quoteUpdate = await client
     .from("quote")
@@ -576,7 +576,7 @@ export async function releaseQuote(
       status: "Open",
       quoteDate: today(getLocalTimeZone()).toString(),
       updatedAt: today(getLocalTimeZone()).toString(),
-      updatedBy: usedId,
+      updatedBy: userId,
     })
     .eq("id", quoteId);
 
@@ -589,7 +589,36 @@ export async function releaseQuote(
     .update({
       status: "Complete",
       updatedAt: today(getLocalTimeZone()).toString(),
-      updatedBy: usedId,
+      updatedBy: userId,
+    })
+    .eq("quoteId", quoteId);
+}
+
+export async function convertQuoteToOrder(
+  client: SupabaseClient<Database>,
+  quoteId: string,
+  userId: string
+) {
+  const quoteUpdate = await client
+    .from("quote")
+    .update({
+      status: "Ordered",
+      quoteDate: today(getLocalTimeZone()).toString(),
+      updatedAt: today(getLocalTimeZone()).toString(),
+      updatedBy: userId,
+    })
+    .eq("id", quoteId);
+
+  if (quoteUpdate.error) {
+    return quoteUpdate;
+  }
+
+  return client
+    .from("quoteLine")
+    .update({
+      status: "Complete",
+      updatedAt: today(getLocalTimeZone()).toString(),
+      updatedBy: userId,
     })
     .eq("quoteId", quoteId);
 }
