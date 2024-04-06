@@ -1,9 +1,9 @@
 import { redirect, type ActionFunctionArgs } from "@remix-run/node";
 import {
   getQuote,
-  //getQuoteLines,
+  getQuoteLines,
   convertQuoteToOrder,
-  upsertSalesOrder,
+  upsertSalesOrder
 } from "~/modules/sales";
 import { getNextSequence, rollbackNextSequence } from "~/modules/settings";
 import { requirePermissions } from "~/services/auth";
@@ -75,6 +75,10 @@ export async function action(args: ActionFunctionArgs) {
   
     const order = createSalesOrder.data?.[0];
     newSalesOrderId = order.id;
+
+    // construct and insert the sales order lines
+    //const quoteLines = await getQuoteLines(client, id);
+
   } catch (err) {
     throw redirect(
       path.to.quote(id),
