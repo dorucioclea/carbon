@@ -255,6 +255,8 @@ CREATE POLICY "Users can delete their own sales order favorites" ON "salesOrderF
     auth.uid()::text = "userId"
   ); 
 
+ALTER TABLE "salesOrder" ADD COLUMN "assignee" TEXT REFERENCES "user" ("id") ON DELETE SET NULL;
+
 CREATE OR REPLACE VIEW "salesOrders" AS
   SELECT
     s.*,

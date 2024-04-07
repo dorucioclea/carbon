@@ -10678,6 +10678,7 @@ export type Database = {
       }
       salesOrder: {
         Row: {
+          assignee: string | null
           closedAt: string | null
           closedBy: string | null
           createdAt: string
@@ -10698,6 +10699,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
+          assignee?: string | null
           closedAt?: string | null
           closedBy?: string | null
           createdAt?: string
@@ -10718,6 +10720,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
+          assignee?: string | null
           closedAt?: string | null
           closedBy?: string | null
           createdAt?: string
@@ -10738,6 +10741,34 @@ export type Database = {
           updatedBy?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "salesOrder_assignee_fkey"
+            columns: ["assignee"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrder_assignee_fkey"
+            columns: ["assignee"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrder_assignee_fkey"
+            columns: ["assignee"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrder_assignee_fkey"
+            columns: ["assignee"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
           {
             foreignKeyName: "salesOrder_closedBy_fkey"
             columns: ["closedBy"]
@@ -16834,6 +16865,7 @@ export type Database = {
       }
       salesOrders: {
         Row: {
+          assignee: string | null
           closedAt: string | null
           closedBy: string | null
           closedByAvatar: string | null
@@ -16870,6 +16902,34 @@ export type Database = {
           updatedByFullName: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "salesOrder_assignee_fkey"
+            columns: ["assignee"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrder_assignee_fkey"
+            columns: ["assignee"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrder_assignee_fkey"
+            columns: ["assignee"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrder_assignee_fkey"
+            columns: ["assignee"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
           {
             foreignKeyName: "salesOrder_closedBy_fkey"
             columns: ["closedBy"]
