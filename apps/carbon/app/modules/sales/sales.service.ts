@@ -1284,6 +1284,25 @@ export async function upsertSalesOrderLine(
     .single();
 }
 
+export async function insertSalesOrderLines(
+  client: SupabaseClient<Database>,
+  salesOrderLines:
+    | (Omit<z.infer<typeof salesOrderLineValidator>, "id"> & {
+        createdBy: string;
+        customFields?: Json;
+      })[]
+    | (Omit<z.infer<typeof salesOrderLineValidator>, "id"> & {
+        id: string;
+        updatedBy: string;
+        customFields?: Json;
+      })[]
+) {
+  return client
+    .from("salesOrderLine")
+    .insert([...salesOrderLines])
+    .select("id");
+}
+
 export async function upsertSalesOrderPayment(
   client: SupabaseClient<Database>,
   salesOrderPayment:

@@ -1,9 +1,12 @@
 import { redirect, type ActionFunctionArgs } from "@remix-run/node";
+import type {
+  SalesOrderLine} from "~/modules/sales";
 import {
   getQuote,
   getQuoteLines,
   convertQuoteToOrder,
-  upsertSalesOrder
+  upsertSalesOrder,
+  insertSalesOrderLines
 } from "~/modules/sales";
 import { getNextSequence, rollbackNextSequence } from "~/modules/settings";
 import { requirePermissions } from "~/services/auth";
@@ -30,7 +33,13 @@ export async function action(args: ActionFunctionArgs) {
   if (updateQuoteStatus.error) {
     throw redirect(
       path.to.quote(id),
-      await flash(request, error(updateQuoteStatus.error, "Failed to update quote status to Ordered"))
+      await flash(
+        request,
+        error(
+          updateQuoteStatus.error,
+          "Failed to update quote status to Ordered"
+        )
+      )
     );
   }
 
@@ -72,13 +81,40 @@ export async function action(args: ActionFunctionArgs) {
         )
       );
     }
-  
+
     const order = createSalesOrder.data?.[0];
     newSalesOrderId = order.id;
 
     // construct and insert the sales order lines
-    //const quoteLines = await getQuoteLines(client, id);
+    const quoteLines = await getQuoteLines(client, id);
+    if (quoteLines.data) {
+      const constructedSalesOrderLines: SalesOrderLine[] = quoteLines?.data.map(
+        (quoteLine) => {
+          return {
+            salesOrderId: newSalesOrderId,
+            salesOrderLineType: "Part",
+            partId: quoteLine.partId,
+            description: quoteLine.description,
+            createdBy: userId,
+          };
+        }
+      );
 
+      const salesOrderLines = await insertSalesOrderLines(
+        client,
+        constructedSalesOrderLines
+      );
+
+      if (salesOrderLines.error) {
+        throw redirect(
+          path.to.quote(id),
+          await flash(
+            request,
+            error(salesOrderLines.error, "Failed to create sales order lines")
+          )
+        );
+      }
+    }
   } catch (err) {
     throw redirect(
       path.to.quote(id),
