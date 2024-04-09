@@ -1,3 +1,5 @@
+"use client";
+
 import type { ComponentProps } from "react";
 import { forwardRef } from "react";
 import type { ButtonProps } from "~/Button";

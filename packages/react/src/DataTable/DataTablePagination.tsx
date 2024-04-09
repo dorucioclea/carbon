@@ -1,3 +1,5 @@
+"use client";
+
 import type { Table } from "@tanstack/react-table";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import { Button } from "~/Button";

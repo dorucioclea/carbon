@@ -1,3 +1,5 @@
+"use client";
+
 /*
   ModalDrawer components are an abstraction over Drawer and Modal components.
 */

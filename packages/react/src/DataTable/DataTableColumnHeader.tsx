@@ -1,3 +1,5 @@
+"use client";
+
 import type { Column } from "@tanstack/react-table";
 import { FaSort, FaSortDown, FaSortUp } from "react-icons/fa";
 import {

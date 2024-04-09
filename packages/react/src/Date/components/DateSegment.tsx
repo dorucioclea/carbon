@@ -1,3 +1,5 @@
+"use client";
+
 import { useDateSegment } from "@react-aria/datepicker";
 import type {
   DateSegment as DateSegmentType,

@@ -1,3 +1,5 @@
+"use client";
+
 import { sanitize } from "dompurify";
 
 type HTMLProps = {

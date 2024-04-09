@@ -1,3 +1,5 @@
+"use client";
+
 import type { DateValue } from "@internationalized/date";
 import { createCalendar } from "@internationalized/date";
 import type { RangeCalendarProps } from "@react-aria/calendar";

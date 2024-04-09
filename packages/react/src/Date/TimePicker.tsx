@@ -1,3 +1,5 @@
+"use client";
+
 import { useTimeField } from "@react-aria/datepicker";
 import { useLocale } from "@react-aria/i18n";
 import type { TimeFieldStateOptions } from "@react-stately/datepicker";

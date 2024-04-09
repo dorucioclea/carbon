@@ -1,3 +1,5 @@
+"use client";
+
 import type { ReactElement } from "react";
 import type { ButtonProps } from "~/Button";
 import { IconButton } from "~/IconButton";

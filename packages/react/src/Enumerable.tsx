@@ -1,3 +1,5 @@
+"use client";
+
 import { getColor } from "@carbon/utils";
 import type { BadgeProps } from "./Badge";
 import { Badge } from "./Badge";

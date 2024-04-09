@@ -1,3 +1,5 @@
+"use client";
+
 import { useButton } from "@react-aria/button";
 import type { AriaButtonProps } from "@react-types/button";
 import { useRef } from "react";

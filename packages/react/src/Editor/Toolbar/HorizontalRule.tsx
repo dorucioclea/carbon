@@ -1,3 +1,5 @@
+"use client";
+
 import { MdHorizontalRule } from "react-icons/md";
 import type { EditorComponent } from "../types";
 import ToolbarButton from "./ToolbarButton";

@@ -1,0 +1,38 @@
+{
+  "name": "website",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "build": "NODE_ENV=production next build",
+    "clean": "rimraf .next .turbo node_modules",
+    "dev": "next dev -p 4200",
+    "lint": "next lint",
+    "start": "next start",
+    "check:types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@carbon/react": "*",
+    "@radix-ui/react-navigation-menu": "^1.1.4",
+    "@uidotdev/usehooks": "^2.4.1",
+    "@vercel/analytics": "^1.2.2",
+    "d3": "^7.9.0",
+    "date-fns": "^3.6.0",
+    "framer-motion": "^11.0.25",
+    "geist": "^1.3.0",
+    "next": "14.2.0-canary.63",
+    "next-themes": "^0.3.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-icons": "4.12.0",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@carbon/tailwind": "*",
+    "@carbon/tsconfig": "*",
+    "@types/node": "^20.12.5",
+    "@types/react": "^18.2.74",
+    "@types/react-dom": "^18.2.24",
+    "eslint-config-carbon": "*",
+    "eslint-config-next": "14.2.0-canary.63"
+  }
+}

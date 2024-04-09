@@ -1,3 +1,5 @@
+"use client";
+
 import type { ComponentProps } from "react";
 import { RxDotFilled } from "react-icons/rx";
 import { cn } from "~/utils/cn";

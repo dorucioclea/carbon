@@ -1,3 +1,5 @@
+"use client";
+
 import type { ComponentProps, ForwardedRef } from "react";
 import {
   createContext,

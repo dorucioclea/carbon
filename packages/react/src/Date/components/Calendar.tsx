@@ -1,3 +1,5 @@
+"use client";
+
 import type { CalendarDate, DateValue } from "@internationalized/date";
 import { createCalendar } from "@internationalized/date";
 import type { CalendarProps } from "@react-aria/calendar";

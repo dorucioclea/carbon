@@ -1,3 +1,5 @@
+"use client";
+
 import type { CalendarDate } from "@internationalized/date";
 import { isSameMonth } from "@internationalized/date";
 import { useCalendarCell } from "@react-aria/calendar";

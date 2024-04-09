@@ -1,3 +1,5 @@
+"use client";
+
 import { BsTypeStrikethrough } from "react-icons/bs";
 import type { EditorComponent } from "../types";
 import ToolbarButton from "./ToolbarButton";

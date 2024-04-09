@@ -1,3 +1,5 @@
+"use client";
+
 import type { DateValue } from "@internationalized/date";
 import { useDatePicker } from "@react-aria/datepicker";
 import { useDatePickerState } from "@react-stately/datepicker";

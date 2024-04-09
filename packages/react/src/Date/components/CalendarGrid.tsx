@@ -1,3 +1,5 @@
+"use client";
+
 import type { DateDuration } from "@internationalized/date";
 import { endOfMonth, getWeeksInMonth } from "@internationalized/date";
 import { useCalendarGrid } from "@react-aria/calendar";

@@ -1,3 +1,5 @@
+"use client";
+
 /*
   ModalCard components are an abstraction over Card and Modal components.
 */

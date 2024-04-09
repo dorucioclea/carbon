@@ -1,3 +1,5 @@
+"use client";
+
 import { GoQuote } from "react-icons/go";
 import type { EditorComponent } from "../types";
 import ToolbarButton from "./ToolbarButton";

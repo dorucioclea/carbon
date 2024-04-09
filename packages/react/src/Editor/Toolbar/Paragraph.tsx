@@ -1,3 +1,5 @@
+"use client";
+
 import { BsType } from "react-icons/bs";
 import type { EditorComponent } from "../types";
 import ToolbarButton from "./ToolbarButton";

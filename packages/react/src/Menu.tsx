@@ -1,3 +1,5 @@
+"use client";
+
 /*
   Menu components are an abstraction over ContextMenu and DropdownMenu components.
 */

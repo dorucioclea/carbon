@@ -1,3 +1,5 @@
+"use client";
+
 import type { ComponentProps } from "react";
 export interface CountProps extends ComponentProps<"div"> {
   count: number;

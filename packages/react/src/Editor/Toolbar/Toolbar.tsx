@@ -1,3 +1,5 @@
+"use client";
+
 import { TooltipProvider } from "~/Tooltip";
 import type { EditorComponent } from "../types";
 import BlockQuote from "./BlockQuote";
