@@ -43,10 +43,10 @@
     "db:stop": "npm run db:stop -w @carbon/database",
     "db:types": "npm run db:types -w @carbon/database",
     "deploy": "turbo run deploy",
-    "dev": "turbo run dev --filter=./apps/* --filter=./packages/*",
-    "dev:apps": "turbo run dev --filter=./apps/*",
+    "dev": "turbo run dev --filter=./apps/carbon --filter=./packages/*",
+    "dev:apps": "turbo run dev --filter=./apps/carbon",
     "dev:packages": "turbo run dev --filter=./packages/*",
-    "dev:www": "turbo run dev --filter=./www",
+    "dev:website": "turbo run dev --filter=./apps/website",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint",
     "postdb:build": "tsx scripts/generate-db-types.ts",
@@ -56,8 +56,6 @@
   },
   "workspaces": [
     "apps/*",
-    "packages/*",
-    "shared",
-    "www"
+    "packages/*"
   ]
 }

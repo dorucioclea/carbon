@@ -58,14 +58,14 @@ export function Header() {
 
   return (
     <header className="h-12 sticky mt-4 top-4 z-50 px-2 md:px-4 md:flex justify-center">
-      <nav className="border border-border p-3 rounded-2xl flex items-center backdrop-filter backdrop-blur-xl bg-[#FDFDFC] dark:bg-[#121212] bg-opacity-70">
+      <nav className="border border-border p-3 rounded-xl flex items-center backdrop-filter backdrop-blur-xl bg-[#FDFDFC] dark:bg-[#121212] bg-opacity-70">
         <NavigationMenu>
           <Link href="/">
             <span className="sr-only">Carbon Logo</span>
             <BsFillHexagonFill />
           </Link>
 
-          <ul className="space-x-2 font-medium text-sm hidden md:flex mx-3">
+          <ul className="space-x-2 font-medium text-sm hidden md:flex mx-2">
             {links.map(({ path, title }) => {
               const isActive = pathname.includes(path);
 
@@ -101,7 +101,7 @@ export function Header() {
         </button>
 
         <Button className={cn("hidden md:inline-flex")} asChild>
-          <Link href="https://login.carbon.us.org">Sign in</Link>
+          <Link href="/get-started">Early Access</Link>
         </Button>
       </nav>
 
@@ -165,11 +165,8 @@ export function Header() {
               </motion.li>
 
               <motion.li variants={itemVariant}>
-                <Link
-                  className="text-xl text-primary"
-                  href="https://login.carbon.us.org"
-                >
-                  Sign in
+                <Link className="text-xl text-primary" href="#">
+                  Early Access
                 </Link>
               </motion.li>
             </motion.ul>

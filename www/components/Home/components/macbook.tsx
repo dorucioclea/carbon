@@ -1,4 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   IconBrightnessDown,
   IconBrightnessUp,
@@ -24,19 +23,7 @@ import type { MotionValue } from "framer-motion";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { cn } from "../../../utils/cn";
-import { supabase } from "../../../utils/supabase";
-import { Button } from "../../ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "../../ui/form";
-import { Input } from "../../ui/input";
 
 const MacbookScroll = ({
   showGradient,
@@ -46,41 +33,6 @@ const MacbookScroll = ({
   title?: string | React.ReactNode;
   badge?: React.ReactNode;
 }) => {
-  const [showForm, setShowForm] = useState(true);
-  const formSchema = z.object({
-    email: z.string().email(),
-  });
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-    },
-  });
-
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      const response = await supabase
-        .from("leads")
-        .insert({ email: values.email });
-
-      if (response.error) {
-        form.setError("email", {
-          type: "manual",
-          message: "Failed to insert email",
-        });
-        console.error(response.error.message);
-      } else {
-        form.reset();
-        form.clearErrors();
-        setShowForm(false);
-      }
-
-      // const data = await response.json();
-    } catch (error) {
-      console.error("Failed to submit email:", error);
-    }
-  }
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -126,35 +78,8 @@ const MacbookScroll = ({
       </h1>
       <div className="flex flex-col gap-6 items-center mt-6 mb-20">
         <p className="max-w-lg nx-text-2xl font-medium leading-tight text-black/80 dark:text-white/80 sm:nx-text-2xl md:nx-text-3xl lg:nx-text-4xl">
-          Carbon is an open-source ERP to meet your exact manufacturing needs
+          Carbon makes it easy to build the exact ERP your business needs
         </p>
-        {showForm && (
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="flex w-full max-w-sm items-start space-x-2"
-            >
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        className="w-60"
-                        type="email"
-                        placeholder="Email"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit">Get early access</Button>
-            </form>
-          </Form>
-        )}
       </div>
       <Lid
         scaleX={scaleX}
@@ -232,13 +157,13 @@ export const Lid = ({
       >
         <div className="absolute inset-0 bg-[#272729] rounded-lg" />
         <Image
-          src={"/carbon-dark.jpg"}
+          src={"/carbon-dark-mode.jpg"}
           alt="Carbon Screenshot"
           fill
           className="object-cover object-left-top absolute rounded-lg inset-0 h-full w-full hidden dark:block"
         />
         <Image
-          src={"/carbon-light.jpg"}
+          src={"/carbon-light-mode.jpg"}
           alt="Carbon Screenshot"
           fill
           className="object-cover object-left-top absolute rounded-lg inset-0 h-full w-full dark:hidden"
