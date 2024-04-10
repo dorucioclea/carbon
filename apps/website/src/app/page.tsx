@@ -49,7 +49,7 @@ function Hero() {
               variant="secondary"
               className="border border-border"
             >
-              Subscribe
+              Get Updates
             </Button>
             <Button size="lg" variant="primary">
               Early Access
@@ -69,10 +69,10 @@ function ProductViews() {
         "Infinitely nestable, infinitely customizable bill of materials.",
       value: "manufacturing",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 bg-gradient-to-br from-emerald-200 to-green-400">
+        <div className="w-full overflow-hidden relative h-full rounded-2xl p-6 bg-gradient-to-br from-emerald-100 to-emerald-300">
           <Image
             src="/carbon-dark-mode-manufacturing.jpg"
-            className="object-cover object-left-top h-[60%]  md:h-[90%] absolute -bottom-10 inset-x-0 w-[90%] rounded-xl mx-auto"
+            className="object-cover object-left-top h-[80%]  md:h-[90%] absolute -bottom-10 inset-x-0 w-[90%] rounded-xl mx-auto"
             width="1209"
             height="903"
             alt="carbon manufacturing"
@@ -86,10 +86,10 @@ function ProductViews() {
         "Realtime chart of accounts with double-entry accrual accounting",
       value: "accounting",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 bg-gradient-to-br from-emerald-200 to-orange-300">
+        <div className="w-full overflow-hidden relative h-full rounded-2xl p-6 bg-gradient-to-br from-emerald-100 to-emerald-300">
           <Image
             src="/carbon-dark-mode-accounting.jpg"
-            className="object-cover object-left-top h-[60%]  md:h-[90%] absolute -bottom-10 inset-x-0 w-[90%] rounded-xl mx-auto"
+            className="object-cover object-left-top h-[80%]  md:h-[90%] absolute -bottom-10 inset-x-0 w-[90%] rounded-xl mx-auto"
             width="1204"
             height="883"
             alt="carbon accounting"
@@ -102,10 +102,10 @@ function ProductViews() {
       description: "Search across all your core or custom fields.",
       value: "search",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 bg-gradient-to-br from-emerald-200 to-orange-300">
+        <div className="w-full overflow-hidden relative h-full rounded-2xl p-6 bg-gradient-to-br from-emerald-100 to-emerald-300">
           <Image
             src="/carbon-dark-mode-search.jpg"
-            className="object-cover object-left-top h-[60%]  md:h-[90%] absolute -bottom-10 inset-x-0 w-[90%] rounded-xl mx-auto"
+            className="object-cover object-left-top h-[80%]  md:h-[90%] absolute -bottom-10 inset-x-0 w-[90%] rounded-xl mx-auto"
             width="1209"
             height="903"
             alt="carbon search"
@@ -119,10 +119,10 @@ function ProductViews() {
       description: "Fine-grained permissions for every user and every action.",
       value: "permission",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 bg-gradient-to-br from-emerald-200 to-orange-300">
+        <div className="w-full overflow-hidden relative h-full rounded-2xl p-6 bg-gradient-to-br from-emerald-100 to-emerald-300">
           <Image
             src="/carbon-dark-mode-permissions.jpg"
-            className="object-cover object-left-top h-[60%]  md:h-[90%] absolute -bottom-10 inset-x-0 w-[90%] rounded-xl mx-auto"
+            className="object-cover object-left-top h-[80%]  md:h-[90%] absolute -bottom-10 inset-x-0 w-[90%] rounded-xl mx-auto"
             width="1209"
             height="903"
             alt="carbon screenshot"
@@ -135,10 +135,10 @@ function ProductViews() {
       description: "Store and manage all your documents in one place.",
       value: "documents",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 bg-gradient-to-br from-emerald-200 to-orange-300">
+        <div className="w-full overflow-hidden relative h-full rounded-2xl p-6 bg-gradient-to-br from-emerald-100 to-emerald-300">
           <Image
             src="/carbon-dark-mode-2.jpg"
-            className="object-cover object-left-top h-[60%]  md:h-[90%] absolute -bottom-10 inset-x-0 w-[90%] rounded-xl mx-auto"
+            className="object-cover object-left-top h-[80%]  md:h-[90%] absolute -bottom-10 inset-x-0 w-[90%] rounded-xl mx-auto"
             width="1209"
             height="903"
             alt="carbon screenshot"
@@ -169,7 +169,7 @@ const features = [
       "Unlike other open-source ERPs, you can use Carbon to build your own proprietary systems.",
   },
   {
-    name: "Serverless Architecture",
+    name: "Serverless",
     icon: GoSync,
     description:
       "So you can focus on your business systems, not your infrastructure.",
@@ -227,7 +227,7 @@ function OpenCore() {
               key={feature.name.split(" ").join("-")}
             >
               <Icon className="text-primary w-10 h-10" aria-hidden="true" />
-              <h2 className="font-bold text-foreground text-xl md:text-2xl lg:text-3xl tracking-tighter">
+              <h2 className="font-bold text-foreground text-xl md:text-2xl lg:text-3xl tracking-tight">
                 {feature.name}
               </h2>
               <p className="font-medium text-foreground/60 text-lg">

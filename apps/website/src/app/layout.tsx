@@ -2,6 +2,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
+import { ThemeProvider } from "next-themes";
 import type { ReactElement } from "react";
 import { Header } from "~/components/Header";
 import "~/styles/tailwind.css";
@@ -20,10 +21,12 @@ export default function Layout({ children }: { children: ReactElement }) {
       <body
         className={`${GeistSans.variable} ${GeistMono.variable} overflow-x-hidden`}
       >
-        <Header />
-        <main className="container mx-auto px-4 overflow-hidden md:overflow-visible">
-          {children}
-        </main>
+        <ThemeProvider attribute="class">
+          <Header />
+          <main className="container mx-auto px-4 overflow-hidden md:overflow-visible">
+            {children}
+          </main>
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

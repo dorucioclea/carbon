@@ -9,21 +9,21 @@ import { NavigationMenu } from "~/components/Navigation";
 
 const links = [
   {
-    title: "Story",
-    path: "/story",
+    title: "Why",
+    path: "/why",
   },
   {
     title: "Updates",
     path: "/updates",
   },
-  {
-    title: "Product",
-    path: "/product",
-  },
-  {
-    title: "Pricing",
-    path: "/pricing",
-  },
+  // {
+  //   title: "Product",
+  //   path: "/product",
+  // },
+  // {
+  //   title: "Pricing",
+  //   path: "/pricing",
+  // },
   {
     title: "Docs",
     path: "https://docs.carbon.us.org",
