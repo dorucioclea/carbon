@@ -96,12 +96,7 @@ import {
 import { Editor, useEditor } from "./Editor";
 import { Enumerable } from "./Enumerable";
 import { File } from "./File";
-import {
-  FormControl,
-  FormErrorMessage,
-  FormHelperText,
-  FormLabel,
-} from "./Form";
+import { Form, FormField, FormItem, FormControl, FormMessage } from "./Form";
 import { HStack } from "./HStack";
 import { HTML } from "./HTML";
 import { Heading } from "./Heading";
@@ -118,6 +113,7 @@ import {
   InputRightElement,
 } from "./Input";
 import { Kbd } from "./Kbd";
+import { Label } from "./Label";
 import {
   Menu,
   MenuCheckboxItem,
@@ -229,8 +225,10 @@ import {
   useOutsideClick,
   useWindowSize,
 } from "./hooks";
+import { useForm } from "react-hook-form";
 import { cn } from "./utils/cn";
 import { getValidChildren, reactNodeToString } from "./utils/react";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export {
   ActionMenu,
@@ -317,10 +315,11 @@ export {
   Editor,
   Enumerable,
   File,
+  Form,
   FormControl,
-  FormErrorMessage,
-  FormHelperText,
-  FormLabel,
+  FormField,
+  FormMessage,
+  FormItem,
   HStack,
   HTML,
   Heading,
@@ -335,6 +334,7 @@ export {
   InputRightAddon,
   InputRightElement,
   Kbd,
+  Label,
   Menu,
   MenuCheckboxItem,
   MenuGroup,
@@ -439,6 +439,7 @@ export {
   useDisclosure,
   useEditor,
   useEscape,
+  useForm,
   useHydrated,
   useInterval,
   useKeyboardShortcuts,
@@ -447,6 +448,7 @@ export {
   useMount,
   useOutsideClick,
   useWindowSize,
+  zodResolver,
 };
 export type {
   AvatarProps,

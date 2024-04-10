@@ -1,14 +1,29 @@
 "use client";
 
-import { Button, cn } from "@carbon/react";
+import {
+  Form,
+  Button,
+  cn,
+  FormField,
+  FormItem,
+  FormControl,
+  Input,
+  zodResolver,
+  useForm,
+  FormMessage,
+} from "@carbon/react";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { z } from "zod";
+import Cal, { getCalApi } from "@calcom/embed-react";
 import { BsGithub, BsLightningCharge, BsPlay } from "react-icons/bs";
 import { GiSpeedometer } from "react-icons/gi";
 import { GoSync } from "react-icons/go";
 import { HiCode, HiFingerPrint } from "react-icons/hi";
 import { TbBuildingFactory2 } from "react-icons/tb";
 import { Tabs } from "~/components/Tabs";
+import { supabase } from "~/lib/supabase";
 
 export default function Page() {
   return (
@@ -16,11 +31,46 @@ export default function Page() {
       <Hero />
       <ProductViews />
       <OpenCore />
+      <Calendar />
+      <Footer />
     </>
   );
 }
 
 function Hero() {
+  const [showForm, setShowForm] = useState(true);
+  const formSchema = z.object({
+    email: z.string().email(),
+  });
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const response = await supabase
+        .from("leads")
+        .insert({ email: values.email });
+
+      if (response.error) {
+        form.setError("email", {
+          type: "manual",
+          message: "Failed to insert email",
+        });
+        console.error(response.error.message);
+      } else {
+        form.reset();
+        form.clearErrors();
+        setShowForm(false);
+      }
+
+      // const data = await response.json();
+    } catch (error) {
+      console.error("Failed to submit email:", error);
+    }
+  }
   return (
     <>
       <div className="my-24 flex flex-col space-y-8 max-w-2xl mx-auto text-center">
@@ -33,28 +83,45 @@ function Hero() {
             Watch the guided tour
           </Button>
         </p>
-        <h1 className="mx-auto text-5xl font-extrabold tracking-tight leading-tighter sm:text-5xl lg:text-6xl xl:text-7xl">
+        <h1 className="text-zinc-900 mx-auto text-5xl font-semibold tracking-tight leading-tighter sm:text-5xl lg:text-6xl xl:text-7xl">
           <span className="text-foreground dark:bg-clip-text dark:text-transparent dark:bg-gradient-to-b dark:from-white  dark:to-zinc-200">
             ERP for the builders
           </span>
         </h1>
         <div className="max-w-xl mx-auto text-center space-y-8">
-          <p className=" text-lg font-medium leading-tight text-foreground/60 sm:text-lg md:text-xl lg:text-2xl">
+          <p className="text-2xl font-medium leading-tight text-foreground/60 sm:text-lg md:text-xl lg:text-2xl">
             Powerful, customizable and fast, Carbon makes it easy to build the
             exact ERP your business needs.
           </p>
-          <p className="flex items-center justify-center space-x-2 w-full">
-            <Button
-              size="lg"
-              variant="secondary"
-              className="border border-border"
-            >
-              Get Updates
-            </Button>
-            <Button size="lg" variant="primary">
-              Early Access
-            </Button>
-          </p>
+          {showForm && (
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="flex w-full justify-center items-center space-x-2"
+              >
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          className="w-60 border-primary"
+                          type="email"
+                          placeholder="Email"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button size="lg" type="submit">
+                  Get early access
+                </Button>
+              </form>
+            </Form>
+          )}
         </div>
       </div>
     </>
@@ -238,5 +305,53 @@ function OpenCore() {
         </div>
       </div>
     </section>
+  );
+}
+
+function Calendar() {
+  useEffect(() => {
+    (async function () {
+      const cal = await getCalApi();
+      cal("ui", {
+        theme: "light",
+        styles: { branding: { brandColor: "#000000" } },
+        hideEventTypeDetails: false,
+        layout: "month_view",
+      });
+    })();
+  }, []);
+  return (
+    <section className="flex flex-col items-center py-24 gap-8">
+      <div className="self-stretch text-center text-zinc-900 text-4xl font-semibold  leading-[44px]">
+        Chat with us
+      </div>
+      <Cal
+        calLink="neilkanakia/quickchat"
+        style={{ width: "100%", height: "100%", overflow: "scroll" }}
+        config={{ layout: "month_view" }}
+      />
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <div className=" w-screen h-32 py-12 flex-col justify-start items-center gap-16 flex">
+      <div className="self-stretch h-8 px-8 flex-col justify-start items-start gap-8 flex">
+        <div className="self-stretch justify-between items-center inline-flex">
+          <div className="justify-center items-center gap-8 flex text-zinc-600 font-semibold">
+            <p>Overview</p>
+            <p>Features</p>
+            <p>Pricing</p>
+            <p>Careers</p>
+            <p>Help</p>
+            <p>Privacy</p>
+          </div>
+          <div className="w-40 text-right text-zinc-500 text-base font-normal  ">
+            © 2024 Carbon
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
