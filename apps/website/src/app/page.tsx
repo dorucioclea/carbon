@@ -1,27 +1,27 @@
 "use client";
 
+import Cal, { getCalApi } from "@calcom/embed-react";
 import {
-  Form,
   Button,
-  cn,
+  Form,
+  FormControl,
   FormField,
   FormItem,
-  FormControl,
-  Input,
-  zodResolver,
-  useForm,
   FormMessage,
+  Input,
+  cn,
+  useForm,
+  zodResolver,
 } from "@carbon/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { z } from "zod";
-import Cal, { getCalApi } from "@calcom/embed-react";
 import { BsGithub, BsLightningCharge, BsPlay } from "react-icons/bs";
 import { GiSpeedometer } from "react-icons/gi";
 import { GoSync } from "react-icons/go";
 import { HiCode, HiFingerPrint } from "react-icons/hi";
 import { TbBuildingFactory2 } from "react-icons/tb";
+import { z } from "zod";
 import { Tabs } from "~/components/Tabs";
 import { supabase } from "~/lib/supabase";
 
@@ -263,7 +263,7 @@ function OpenCore() {
   return (
     <section className="relative bg-background py-24 sm:py-36 lg:py-48 ">
       <div className="flex flex-col space-y-8 px-4 mx-auto  lg:max-w-7xl">
-        <h2 className="text-4xl font-bold tracking-tight lg:text-5xl xl:text-6xl text-center text-foreground">
+        <h2 className="text-4xl font-semibold tracking-tight lg:text-5xl xl:text-6xl text-center text-foreground">
           Open Core
         </h2>
         <p className="mt-8 w-full text-center">
@@ -294,7 +294,7 @@ function OpenCore() {
               key={feature.name.split(" ").join("-")}
             >
               <Icon className="text-primary w-10 h-10" aria-hidden="true" />
-              <h2 className="font-bold text-foreground text-xl md:text-2xl lg:text-3xl tracking-tight">
+              <h2 className="font-semibold text-foreground text-xl md:text-2xl lg:text-3xl tracking-tight">
                 {feature.name}
               </h2>
               <p className="font-medium text-foreground/60 text-lg">
