@@ -33,7 +33,7 @@ function Hero() {
             Watch the guided tour
           </Button>
         </p>
-        <h1 className="mx-auto text-5xl font-bold tracking-tight leading-tighter sm:text-5xl lg:text-6xl xl:text-7xl">
+        <h1 className="mx-auto text-5xl font-extrabold tracking-tight leading-tighter sm:text-5xl lg:text-6xl xl:text-7xl">
           <span className="text-foreground dark:bg-clip-text dark:text-transparent dark:bg-gradient-to-b dark:from-white  dark:to-zinc-200">
             ERP for the builders
           </span>
@@ -69,7 +69,7 @@ function ProductViews() {
         "Infinitely nestable, infinitely customizable bill of materials.",
       value: "manufacturing",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 bg-gradient-to-br from-purple-300 to-orange-300">
+        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 bg-gradient-to-br from-emerald-200 to-green-400">
           <Image
             src="/carbon-dark-mode-manufacturing.jpg"
             className="object-cover object-left-top h-[60%]  md:h-[90%] absolute -bottom-10 inset-x-0 w-[90%] rounded-xl mx-auto"
@@ -86,7 +86,7 @@ function ProductViews() {
         "Realtime chart of accounts with double-entry accrual accounting",
       value: "accounting",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 bg-gradient-to-br from-purple-300 to-orange-300">
+        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 bg-gradient-to-br from-emerald-200 to-orange-300">
           <Image
             src="/carbon-dark-mode-accounting.jpg"
             className="object-cover object-left-top h-[60%]  md:h-[90%] absolute -bottom-10 inset-x-0 w-[90%] rounded-xl mx-auto"
@@ -102,7 +102,7 @@ function ProductViews() {
       description: "Search across all your core or custom fields.",
       value: "search",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 bg-gradient-to-br from-purple-300 to-orange-300">
+        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 bg-gradient-to-br from-emerald-200 to-orange-300">
           <Image
             src="/carbon-dark-mode-search.jpg"
             className="object-cover object-left-top h-[60%]  md:h-[90%] absolute -bottom-10 inset-x-0 w-[90%] rounded-xl mx-auto"
@@ -119,7 +119,7 @@ function ProductViews() {
       description: "Fine-grained permissions for every user and every action.",
       value: "permission",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 bg-gradient-to-br from-purple-300 to-orange-300">
+        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 bg-gradient-to-br from-emerald-200 to-orange-300">
           <Image
             src="/carbon-dark-mode-permissions.jpg"
             className="object-cover object-left-top h-[60%]  md:h-[90%] absolute -bottom-10 inset-x-0 w-[90%] rounded-xl mx-auto"
@@ -135,7 +135,7 @@ function ProductViews() {
       description: "Store and manage all your documents in one place.",
       value: "documents",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 bg-gradient-to-br from-purple-300 to-orange-300">
+        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 bg-gradient-to-br from-emerald-200 to-orange-300">
           <Image
             src="/carbon-dark-mode-2.jpg"
             className="object-cover object-left-top h-[60%]  md:h-[90%] absolute -bottom-10 inset-x-0 w-[90%] rounded-xl mx-auto"
