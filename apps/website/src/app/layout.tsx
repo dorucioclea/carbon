@@ -18,7 +18,7 @@ export default function Layout({ children }: { children: ReactElement }) {
     <html lang="en" suppressHydrationWarning>
       <head></head>
       <body
-        className={`${GeistSans.variable} ${GeistMono.variable} dark overflow-x-hidden`}
+        className={`${GeistSans.variable} ${GeistMono.variable} overflow-x-hidden`}
       >
         <Header />
         <main className="container mx-auto px-4 overflow-hidden md:overflow-visible">
