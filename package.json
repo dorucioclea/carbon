@@ -44,7 +44,7 @@
     "db:types": "npm run db:types -w @carbon/database",
     "deploy": "turbo run deploy",
     "dev": "turbo run dev --filter=./apps/carbon --filter=./packages/*",
-    "dev:apps": "turbo run dev --filter=./apps/carbon",
+    "dev:docs": "turbo run dev --filter=./apps/docs",
     "dev:packages": "turbo run dev --filter=./packages/*",
     "dev:website": "turbo run dev --filter=./apps/website",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",

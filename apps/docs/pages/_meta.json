@@ -1,0 +1,16 @@
+{
+  "index": {
+    "type": "page",
+    "title": "Home",
+    "display": "hidden",
+    "layout": "full"
+  },
+  "learn": {
+    "type": "page",
+    "title": "Learn"
+  },
+  "develop": {
+    "type": "page",
+    "title": "Develop"
+  }
+}
