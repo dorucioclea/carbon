@@ -9,12 +9,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  Enumerable,
   HStack,
   Menubar,
-  MenubarItem,
   VStack,
-  useDisclosure,
 } from "@carbon/react";
 import { formatDate } from "@carbon/utils";
 import { useParams } from "@remix-run/react";
@@ -37,9 +34,6 @@ const SalesOrderHeader = () => {
   );
 
   if (!routeData?.salesOrder) throw new Error("salesOrder not found");
-  const isReleased = !["Draft", "Approved"].includes(
-    routeData?.salesOrder?.status ?? ""
-  );
 
   const [salesOrderTotals] = useSalesOrderTotals();
 
@@ -51,7 +45,6 @@ const SalesOrderHeader = () => {
   );
 
   //const { receive, invoice } = useSalesOrder();
-  const releaseDisclosure = useDisclosure();
 
   const optimisticAssignment = useOptimisticAssignment({
     id: orderId,
@@ -153,19 +146,6 @@ const SalesOrderHeader = () => {
                 <CardAttributeLabel>Order Date</CardAttributeLabel>
                 <CardAttributeValue>
                   {formatDate(routeData?.salesOrder?.orderDate)}
-                </CardAttributeValue>
-              </CardAttribute>
-
-              <CardAttribute>
-                <CardAttributeLabel>Promised Date</CardAttributeLabel>
-                <CardAttributeValue>
-                  {formatDate(routeData?.salesOrder?.receiptPromisedDate)}
-                </CardAttributeValue>
-              </CardAttribute>
-              <CardAttribute>
-                <CardAttributeLabel>Type</CardAttributeLabel>
-                <CardAttributeValue>
-                  <Enumerable value={routeData?.salesOrder?.type} />
                 </CardAttributeValue>
               </CardAttribute>
               <CardAttribute>
