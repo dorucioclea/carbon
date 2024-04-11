@@ -6,7 +6,7 @@ import { useSupabase } from "~/lib/supabase";
 import type { getAccountsList } from "~/modules/accounting";
 import type { getServicesList } from "~/modules/parts";
 import type { SalesOrderLine } from "~/modules/sales";
-import { usePurchasedParts, useManufacturedParts } from "~/stores/parts";
+import { useParts } from "~/stores/parts";
 import { path } from "~/utils/path";
 
 export default function useSalesOrderLines() {
@@ -17,9 +17,7 @@ export default function useSalesOrderLines() {
   const canEdit = permissions.can("update", "sales");
   const canDelete = permissions.can("delete", "sales");
 
-  const purchasedParts = usePurchasedParts();
-  const manufacturedParts = useManufacturedParts();
-  const parts = [...purchasedParts, ...manufacturedParts];
+  const [parts] = useParts();
   const partOptions = useMemo(
     () =>
       parts.map((p) => ({
@@ -27,7 +25,7 @@ export default function useSalesOrderLines() {
         label: p.id,
       })),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [purchasedParts, manufacturedParts]
+    [parts]
   );
 
   const accountsFetcher =
