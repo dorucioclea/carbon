@@ -17,7 +17,7 @@ export default function Page() {
         <EmailForm />
       </div>
       <div>
-        <Link href="/updates/my-mdx-page">My MDX Page</Link>
+        <Link href="/changelog/my-mdx-page">My MDX Page</Link>
       </div>
     </div>
   );
