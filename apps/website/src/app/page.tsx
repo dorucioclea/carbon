@@ -128,6 +128,26 @@ function Hero() {
   );
 }
 
+const ImageContainer: React.FC<{ imagePath: string }> = ({ imagePath }) => {
+  return (
+    <div
+      style={{
+        boxShadow:
+          "0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042, 0 84px 50px #00000026, 0 149px 60px #0000000a, 0 233px 65px #00000003",
+      }}
+      className="max-w-5xl -mt-12 mx-auto h-[30rem] md:h-[40rem] w-full border-4 border-[#6C6C6C] p-2 bg-[#222222] rounded-[30px] shadow-xl"
+    >
+      <Image
+        src={imagePath}
+        className="rounded-xl"
+        width="1209"
+        height="903"
+        alt="carbon manufacturing"
+      />
+    </div>
+  );
+};
+
 function ProductViews() {
   const tabs = [
     {
@@ -136,15 +156,7 @@ function ProductViews() {
         "Infinitely nestable, infinitely customizable bill of materials.",
       value: "manufacturing",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-6 bg-gradient-to-br from-emerald-100 to-emerald-300">
-          <Image
-            src="/carbon-dark-mode-manufacturing.jpg"
-            className="object-cover object-left-top h-[80%]  md:h-[90%] absolute -bottom-10 inset-x-0 w-[90%] rounded-xl mx-auto"
-            width="1209"
-            height="903"
-            alt="carbon manufacturing"
-          />
-        </div>
+        <ImageContainer imagePath="/carbon-dark-mode-manufacturing.jpg" />
       ),
     },
     {
@@ -153,32 +165,14 @@ function ProductViews() {
         "Realtime chart of accounts with double-entry accrual accounting",
       value: "accounting",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-6 bg-gradient-to-br from-emerald-100 to-emerald-300">
-          <Image
-            src="/carbon-dark-mode-accounting.jpg"
-            className="object-cover object-left-top h-[80%]  md:h-[90%] absolute -bottom-10 inset-x-0 w-[90%] rounded-xl mx-auto"
-            width="1204"
-            height="883"
-            alt="carbon accounting"
-          />
-        </div>
+        <ImageContainer imagePath={"/carbon-dark-mode-accounting.jpg"} />
       ),
     },
     {
       title: "Search",
       description: "Search across all your core or custom fields.",
       value: "search",
-      content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-6 bg-gradient-to-br from-emerald-100 to-emerald-300">
-          <Image
-            src="/carbon-dark-mode-search.jpg"
-            className="object-cover object-left-top h-[80%]  md:h-[90%] absolute -bottom-10 inset-x-0 w-[90%] rounded-xl mx-auto"
-            width="1209"
-            height="903"
-            alt="carbon search"
-          />
-        </div>
-      ),
+      content: <ImageContainer imagePath={"/carbon-dark-mode-search.jpg"} />,
     },
 
     {
@@ -186,32 +180,14 @@ function ProductViews() {
       description: "Fine-grained permissions for every user and every action.",
       value: "permission",
       content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-6 bg-gradient-to-br from-emerald-100 to-emerald-300">
-          <Image
-            src="/carbon-dark-mode-permissions.jpg"
-            className="object-cover object-left-top h-[80%]  md:h-[90%] absolute -bottom-10 inset-x-0 w-[90%] rounded-xl mx-auto"
-            width="1209"
-            height="903"
-            alt="carbon screenshot"
-          />
-        </div>
+        <ImageContainer imagePath={"/carbon-dark-mode-permissions.jpg"} />
       ),
     },
     {
       title: "Documents",
       description: "Store and manage all your documents in one place.",
       value: "documents",
-      content: (
-        <div className="w-full overflow-hidden relative h-full rounded-2xl p-6 bg-gradient-to-br from-emerald-100 to-emerald-300">
-          <Image
-            src="/carbon-dark-mode-2.jpg"
-            className="object-cover object-left-top h-[80%]  md:h-[90%] absolute -bottom-10 inset-x-0 w-[90%] rounded-xl mx-auto"
-            width="1209"
-            height="903"
-            alt="carbon screenshot"
-          />
-        </div>
-      ),
+      content: <ImageContainer imagePath={"/carbon-dark-mode-2.jpg"} />,
     },
   ];
 
