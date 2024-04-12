@@ -6,8 +6,6 @@
 </a>
 </p>
 
-
-
 # Carbon ERP
 
 Carbon is a high performance, open-source, single tenant (incomplete) ERP written in Typescript. It allows customers, suppliers, and employees to share a common platform that's easy to integrate with.
@@ -35,7 +33,7 @@ Product highlights/roadmap are:
 ## Project Status
 
 - [x] Pre-Alpha: Developing foundation
-- [X] Alpha: Heavy feature development and refinement
+- [x] Alpha: Heavy feature development and refinement
 - [ ] Public Alpha: Ready for use. But go easy on us, there'll be bugs.
 - [ ] Public Beta: Stable enough for most non-enterprise use-cases.
 - [ ] Public: Production-ready
@@ -96,12 +94,11 @@ After installation you should be able to access the following apps/containers lo
 
 In addition you must configure the following external services:
 
-| Service         | Purpose                    | URL                                                                                   |
-| --------------- | ---------------------------|-------------------------------------------------------------------------------------- |
-| Upstash         | Serverless Redis           | [https://console.upstash.com/login](https://console.upstash.com/login)                |
-| Trigger.dev     | Job runner                 | [https://cloud.trigger.dev/login](https://cloud.trigger.dev/login)                    |
-| Posthog         | Product analytics platform | [https://us.posthog.com/signup](https://us.posthog.com/signup)                        |
-
+| Service     | Purpose                    | URL                                                                    |
+| ----------- | -------------------------- | ---------------------------------------------------------------------- |
+| Upstash     | Serverless Redis           | [https://console.upstash.com/login](https://console.upstash.com/login) |
+| Trigger.dev | Job runner                 | [https://cloud.trigger.dev/login](https://cloud.trigger.dev/login)     |
+| Posthog     | Product analytics platform | [https://us.posthog.com/signup](https://us.posthog.com/signup)         |
 
 Each of these services has a free tier which should be plenty to support local development.
 
@@ -121,8 +118,6 @@ Create an `.env` file and copy the contents of `.env.example` file into it
 $ cp ./.env.example ./.env
 ```
 
-Add your environment variables:
-
 1. Use the output of `npm run db:start` to set the supabase entries:
 
 - SUPABASE_SERVICE_ROLE=[service_role key]
@@ -135,21 +130,19 @@ Add your environment variables:
 
 3. Navigate to the project you created in [https://cloud.trigger.dev/](Trigger.dev) and copy the following from the `Environments & API Keys` section:
 
-- TRIGGER_PUBLIC_API_KEY=[Public 'dev' API Key, starting 'pk_dev_']
-- TRIGGER_API_KEY=[Server 'dev' API Key, starting 'tr_dev_']
+- TRIGGER*PUBLIC_API_KEY=[Public 'dev' API Key, starting 'pk_dev*']
+- TRIGGER*API_KEY=[Server 'dev' API Key, starting 'tr_dev*']
 
 4. In Posthog go to [https://[region].posthog.com/project/[project-id]/settings/project-details](https://[region].posthog.com/project/[project-id]/settings/project-details) to find your Project ID and Project API key:
 
 - POSTHOG_API_HOST=[https://[region].posthog.com]
-- POSTHOG_PROJECT_PUBLIC_KEY=[Project API Key starting 'phc_']
-
+- POSTHOG*PROJECT_PUBLIC_KEY=[Project API Key starting 'phc*']
 
 Then you can run the following:
 
-
 ```bash
 $ npm run db:build     # run db migrations and seed script
-$ npm run build:app    # build the app
+$ npm run build        # build the packages
 ```
 
 Finally, start the apps and packages:

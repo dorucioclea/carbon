@@ -1363,7 +1363,7 @@ export type Database = {
           countryCode: string | null
           email: string | null
           fax: string | null
-          id: boolean
+          id: string
           logo: string | null
           name: string
           phone: string | null
@@ -1380,7 +1380,7 @@ export type Database = {
           countryCode?: string | null
           email?: string | null
           fax?: string | null
-          id?: boolean
+          id?: string
           logo?: string | null
           name: string
           phone?: string | null
@@ -1397,7 +1397,7 @@ export type Database = {
           countryCode?: string | null
           email?: string | null
           fax?: string | null
-          id?: boolean
+          id?: string
           logo?: string | null
           name?: string
           phone?: string | null
@@ -1957,6 +1957,7 @@ export type Database = {
         Row: {
           accountManagerId: string | null
           assignee: string | null
+          companyId: string | null
           createdAt: string
           createdBy: string | null
           customerStatusId: string | null
@@ -1972,6 +1973,7 @@ export type Database = {
         Insert: {
           accountManagerId?: string | null
           assignee?: string | null
+          companyId?: string | null
           createdAt?: string
           createdBy?: string | null
           customerStatusId?: string | null
@@ -1987,6 +1989,7 @@ export type Database = {
         Update: {
           accountManagerId?: string | null
           assignee?: string | null
+          companyId?: string | null
           createdAt?: string
           createdBy?: string | null
           customerStatusId?: string | null
@@ -2055,6 +2058,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "userDefaults"
             referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "customer_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "customer_createdBy_fkey"
@@ -4516,6 +4526,7 @@ export type Database = {
           approvedBy: string | null
           assignee: string | null
           blocked: boolean
+          companyId: string | null
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -4538,6 +4549,7 @@ export type Database = {
           approvedBy?: string | null
           assignee?: string | null
           blocked?: boolean
+          companyId?: string | null
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -4560,6 +4572,7 @@ export type Database = {
           approvedBy?: string | null
           assignee?: string | null
           blocked?: boolean
+          companyId?: string | null
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -4632,6 +4645,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "userDefaults"
             referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "part_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "part_createdBy_fkey"
@@ -6693,6 +6713,7 @@ export type Database = {
         Row: {
           assignee: string | null
           balance: number
+          companyId: string | null
           createdAt: string
           createdBy: string
           currencyCode: string
@@ -6721,6 +6742,7 @@ export type Database = {
         Insert: {
           assignee?: string | null
           balance?: number
+          companyId?: string | null
           createdAt?: string
           createdBy: string
           currencyCode: string
@@ -6749,6 +6771,7 @@ export type Database = {
         Update: {
           assignee?: string | null
           balance?: number
+          companyId?: string | null
           createdAt?: string
           createdBy?: string
           currencyCode?: string
@@ -6802,6 +6825,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "userDefaults"
             referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "purchaseInvoice_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "purchaseInvoice_createdBy_fkey"
@@ -7418,6 +7448,7 @@ export type Database = {
           assignee: string | null
           closedAt: string | null
           closedBy: string | null
+          companyId: string | null
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -7439,6 +7470,7 @@ export type Database = {
           assignee?: string | null
           closedAt?: string | null
           closedBy?: string | null
+          companyId?: string | null
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -7460,6 +7492,7 @@ export type Database = {
           assignee?: string | null
           closedAt?: string | null
           closedBy?: string | null
+          companyId?: string | null
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -7533,6 +7566,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "userDefaults"
             referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "purchaseOrder_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "purchaseOrder_createdBy_fkey"
@@ -8540,6 +8580,7 @@ export type Database = {
       quote: {
         Row: {
           assignee: string | null
+          companyId: string | null
           createdAt: string
           createdBy: string
           customerContactId: string | null
@@ -8561,6 +8602,7 @@ export type Database = {
         }
         Insert: {
           assignee?: string | null
+          companyId?: string | null
           createdAt?: string
           createdBy: string
           customerContactId?: string | null
@@ -8582,6 +8624,7 @@ export type Database = {
         }
         Update: {
           assignee?: string | null
+          companyId?: string | null
           createdAt?: string
           createdBy?: string
           customerContactId?: string | null
@@ -8629,6 +8672,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "userDefaults"
             referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "quote_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "quote_createdBy_fkey"
@@ -9603,6 +9653,7 @@ export type Database = {
       receipt: {
         Row: {
           assignee: string | null
+          companyId: string | null
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -9624,6 +9675,7 @@ export type Database = {
         }
         Insert: {
           assignee?: string | null
+          companyId?: string | null
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -9645,6 +9697,7 @@ export type Database = {
         }
         Update: {
           assignee?: string | null
+          companyId?: string | null
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -9692,6 +9745,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "userDefaults"
             referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "receipt_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "receipt_createdBy_fkey"
@@ -10008,6 +10068,7 @@ export type Database = {
       requestForQuote: {
         Row: {
           assignee: string | null
+          companyId: string | null
           createdAt: string | null
           createdBy: string
           customFields: Json | null
@@ -10025,6 +10086,7 @@ export type Database = {
         }
         Insert: {
           assignee?: string | null
+          companyId?: string | null
           createdAt?: string | null
           createdBy: string
           customFields?: Json | null
@@ -10042,6 +10104,7 @@ export type Database = {
         }
         Update: {
           assignee?: string | null
+          companyId?: string | null
           createdAt?: string | null
           createdBy?: string
           customFields?: Json | null
@@ -10085,6 +10148,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "userDefaults"
             referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "requestForQuote_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "requestForQuote_createdBy_fkey"
@@ -11768,6 +11838,7 @@ export type Database = {
           approvedBy: string | null
           assignee: string | null
           blocked: boolean
+          companyId: string | null
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -11787,6 +11858,7 @@ export type Database = {
           approvedBy?: string | null
           assignee?: string | null
           blocked?: boolean
+          companyId?: string | null
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -11806,6 +11878,7 @@ export type Database = {
           approvedBy?: string | null
           assignee?: string | null
           blocked?: boolean
+          companyId?: string | null
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -11875,6 +11948,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "userDefaults"
             referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "service_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "service_createdBy_fkey"
@@ -12566,6 +12646,7 @@ export type Database = {
         Row: {
           accountManagerId: string | null
           assignee: string | null
+          companyId: string | null
           createdAt: string
           createdBy: string | null
           customFields: Json | null
@@ -12581,6 +12662,7 @@ export type Database = {
         Insert: {
           accountManagerId?: string | null
           assignee?: string | null
+          companyId?: string | null
           createdAt?: string
           createdBy?: string | null
           customFields?: Json | null
@@ -12596,6 +12678,7 @@ export type Database = {
         Update: {
           accountManagerId?: string | null
           assignee?: string | null
+          companyId?: string | null
           createdAt?: string
           createdBy?: string | null
           customFields?: Json | null
@@ -12664,6 +12747,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "userDefaults"
             referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "supplier_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "supplier_createdBy_fkey"
