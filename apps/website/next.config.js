@@ -1,5 +1,8 @@
+const withMDX = require("@next/mdx")();
+
 /** @type {import("next").NextConfig} */
 const config = {
+  pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
   reactStrictMode: true,
   transpilePackages: ["@carbon/react", "@carbon/tailwind"],
   eslint: {
@@ -18,4 +21,6 @@ const config = {
   },
 };
 
-export default config;
+module.exports = withMDX(config);
+
+// export default config;
