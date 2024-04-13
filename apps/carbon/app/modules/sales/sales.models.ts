@@ -161,13 +161,7 @@ export const quotationReleaseValidator = z
     }
   );
 
-export const salesOrderLineType = [
-  "Part",
-  "Service",
-  "G/L Account",
-  "Fixed Asset",
-  "Comment",
-] as const;
+export const salesOrderLineType = ["Part", "Service", "Comment"] as const;
 
 export const salesOrderStatusType = [
   "Draft",
@@ -259,21 +253,6 @@ export const salesOrderLineValidator = z
     message: "Part is required",
     path: ["partId"], // path of error
   })
-  .refine(
-    (data) =>
-      data.salesOrderLineType === "G/L Account" ? data.accountNumber : true,
-    {
-      message: "Account is required",
-      path: ["accountNumber"], // path of error
-    }
-  )
-  .refine(
-    (data) => (data.salesOrderLineType === "Fixed Asset" ? data.assetId : true),
-    {
-      message: "Asset is required",
-      path: ["assetId"], // path of error
-    }
-  )
   .refine(
     (data) => (data.salesOrderLineType === "Comment" ? data.description : true),
     {
