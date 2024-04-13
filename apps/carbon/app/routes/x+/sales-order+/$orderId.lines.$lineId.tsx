@@ -61,14 +61,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
     data.accountNumber = undefined;
     data.assetId = undefined;
     data.partId = undefined;
-  } else if (data.salesOrderLineType === "G/L Account") {
-    data.assetId = undefined;
-    data.partId = undefined;
-    data.serviceId = undefined;
-  } else if (data.salesOrderLineType === "Fixed Asset") {
-    data.accountNumber = undefined;
-    data.partId = undefined;
-    data.serviceId = undefined;
   } else if (data.salesOrderLineType === "Comment") {
     data.accountNumber = undefined;
     data.assetId = undefined;
@@ -88,10 +80,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
       path.to.salesOrderLines(orderId),
       await flash(
         request,
-        error(
-          updateSalesOrderLine.error,
-          "Failed to update sales order line"
-        )
+        error(updateSalesOrderLine.error, "Failed to update sales order line")
       )
     );
   }
@@ -106,8 +95,7 @@ export default function EditSalesOrderLineRoute() {
     id: salesOrderLine?.id ?? undefined,
     salesOrderId: salesOrderLine?.salesOrderId ?? "",
     salesOrderLineType:
-      salesOrderLine?.salesOrderLineType ??
-      ("Part" as SalesOrderLineType),
+      salesOrderLine?.salesOrderLineType ?? ("Part" as SalesOrderLineType),
     partId: salesOrderLine?.partId ?? "",
     serviceId: salesOrderLine?.serviceId ?? "",
     accountNumber: salesOrderLine?.accountNumber ?? "",
@@ -122,9 +110,6 @@ export default function EditSalesOrderLineRoute() {
   };
 
   return (
-    <SalesOrderLineForm
-      key={initialValues.id}
-      initialValues={initialValues}
-    />
+    <SalesOrderLineForm key={initialValues.id} initialValues={initialValues} />
   );
 }
