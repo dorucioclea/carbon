@@ -51,7 +51,7 @@ CREATE INDEX "salesOrder_quoteId_idx" ON "salesOrder" ("quoteId");
 CREATE TYPE "salesOrderLineType" AS ENUM (
   'Comment',
   'Part',
-  'Service',
+  'Service'
 );
 
 CREATE TABLE "salesOrderStatusHistory" (
