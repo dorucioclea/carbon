@@ -19,7 +19,6 @@ const EditableSalesOrderLineNumber =
       client?: SupabaseClient<Database>;
       parts: { label: string; value: string }[];
       services: { label: string; value: string }[];
-      accounts: { label: string; value: string }[];
       defaultLocationId: string | null;
       userId: string;
     }
@@ -31,46 +30,13 @@ const EditableSalesOrderLineNumber =
     onError,
     onUpdate,
   }: EditableTableCellComponentProps<SalesOrderLine>) => {
-    const { client, parts, services, accounts, userId } = options;
+    const { client, parts, services, userId } = options;
     const selectOptions =
       row.salesOrderLineType === "Part"
         ? parts
         : row.salesOrderLineType === "Service"
         ? services
-        : row.salesOrderLineType === "G/L Account"
-        ? accounts
         : [];
-
-    const onAccountChange = async (accountNumber: string) => {
-      if (!client) throw new Error("Supabase client not found");
-
-      const account = await client
-        .from("account")
-        .select("name")
-        .eq("number", accountNumber)
-        .single();
-
-      onUpdate({
-        description: account.data?.name ?? "",
-        accountNumber: accountNumber,
-      });
-
-      try {
-        const { error } = await client
-          .from("salesOrderLine")
-          .update({
-            accountNumber: accountNumber,
-            description: account.data?.name ?? "",
-            updatedBy: userId,
-          })
-          .eq("id", row.id!);
-
-        if (error) onError();
-      } catch (error) {
-        console.error(error);
-        onError();
-      }
-    };
 
     const onPartChange = async (partId: string) => {
       if (!client) throw new Error("Supabase client not found");
@@ -169,8 +135,6 @@ const EditableSalesOrderLineNumber =
 
       if (row.salesOrderLineType === "Part") {
         onPartChange(newValue);
-      } else if (row.salesOrderLineType === "G/L Account") {
-        onAccountChange(newValue);
       } else if (row.salesOrderLineType === "Service") {
         onServiceChange(newValue);
       }
@@ -199,10 +163,6 @@ function getValue(row: SalesOrderLine) {
       return row.partId;
     case "Service":
       return row.serviceId;
-    case "G/L Account":
-      return row.accountNumber;
-    case "Fixed Asset":
-      return row.assetId;
     default:
       return null;
   }
