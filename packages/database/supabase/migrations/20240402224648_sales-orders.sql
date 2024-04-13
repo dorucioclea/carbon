@@ -27,6 +27,8 @@ CREATE TABLE "salesOrder" (
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
   "quoteId" TEXT,
+  "assignee" TEXT,
+
 
   CONSTRAINT "salesOrder_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "salesOrder_salesOrderId_key" UNIQUE ("salesOrderId"),
@@ -36,7 +38,8 @@ CREATE TABLE "salesOrder" (
   CONSTRAINT "salesOrder_quoteId_fkey" FOREIGN KEY ("quoteId") REFERENCES "quote"("id") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "salesOrder_closedBy_fkey" FOREIGN KEY ("closedBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "salesOrder_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
-  CONSTRAINT "salesOrder_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
+  CONSTRAINT "salesOrder_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
+  CONSTRAINT "salesOrder_assignee_fkey" FOREIGN KEY ("assignee") REFERENCES "user" ("id") ON DELETE SET NULL
 );
 
 CREATE INDEX "salesOrder_salesOrderId_idx" ON "salesOrder" ("salesOrderId");
@@ -47,10 +50,8 @@ CREATE INDEX "salesOrder_quoteId_idx" ON "salesOrder" ("quoteId");
 
 CREATE TYPE "salesOrderLineType" AS ENUM (
   'Comment',
-  'G/L Account',
   'Part',
   'Service',
-  'Fixed Asset'
 );
 
 CREATE TABLE "salesOrderStatusHistory" (
@@ -103,14 +104,7 @@ CREATE TABLE "salesOrderLine" (
         "accountNumber" IS NULL AND
         "assetId" IS NULL AND
         "description" IS NOT NULL
-      ) 
-      OR (
-        "salesOrderLineType" = 'G/L Account' AND
-        "partId" IS NULL AND
-        "serviceId" IS NULL AND
-        "accountNumber" IS NOT NULL AND
-        "assetId" IS NULL 
-      ) 
+      )
       OR (
         "salesOrderLineType" = 'Part' AND
         "partId" IS NOT NULL AND
@@ -124,14 +118,7 @@ CREATE TABLE "salesOrderLine" (
         "serviceId" IS NOT NULL AND
         "accountNumber" IS NULL AND
         "assetId" IS NULL 
-      ) 
-      OR (
-        "salesOrderLineType" = 'Fixed Asset' AND
-        "partId" IS NULL AND
-        "serviceId" IS NULL AND
-        "accountNumber" IS NULL AND
-        "assetId" IS NOT NULL 
-      ) 
+      )
     ),
 
   CONSTRAINT "salesOrderLine_pkey" PRIMARY KEY ("id"),
@@ -191,6 +178,7 @@ CREATE TABLE "salesOrderShipment" (
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "customFields" JSONB,
+  "assignee" TEXT,
 
   CONSTRAINT "salesOrderShipment_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "salesOrderShipment_id_fkey" FOREIGN KEY ("id") REFERENCES "salesOrder" ("id") ON DELETE CASCADE,
@@ -199,7 +187,8 @@ CREATE TABLE "salesOrderShipment" (
   CONSTRAINT "salesOrderShipment_shippingTermId_fkey" FOREIGN KEY ("shippingTermId") REFERENCES "shippingTerm" ("id") ON DELETE CASCADE,
   CONSTRAINT "salesOrderShipment_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "customer" ("id") ON DELETE CASCADE,
   CONSTRAINT "salesOrderShipment_customerLocationId_fkey" FOREIGN KEY ("customerLocationId") REFERENCES "customerLocation" ("id") ON DELETE CASCADE,
-  CONSTRAINT "salesOrderShipment_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
+  CONSTRAINT "salesOrderShipment_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
+  CONSTRAINT "salesOrderShipment_assignee_fkey" FOREIGN KEY ("assignee") REFERENCES "user" ("id") ON DELETE SET NULL
 );
 
 CREATE TYPE "salesOrderTransactionType" AS ENUM (
@@ -254,8 +243,6 @@ CREATE POLICY "Users can delete their own sales order favorites" ON "salesOrderF
   FOR DELETE USING (
     auth.uid()::text = "userId"
   ); 
-
-ALTER TABLE "salesOrder" ADD COLUMN "assignee" TEXT REFERENCES "user" ("id") ON DELETE SET NULL;
 
 CREATE OR REPLACE VIEW "salesOrders" AS
   SELECT
