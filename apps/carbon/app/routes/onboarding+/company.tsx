@@ -103,6 +103,7 @@ export async function action({ request }: ActionFunctionArgs) {
       console.error(companyInsert.error);
       throw new Error("Fatal: failed to insert company");
     }
+
     if (locationInsert.error) {
       console.error(locationInsert.error);
       throw new Error("Fatal: failed to insert location");

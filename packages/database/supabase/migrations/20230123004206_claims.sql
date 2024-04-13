@@ -12,7 +12,12 @@ CREATE OR REPLACE FUNCTION is_claims_admin() RETURNS "bool"
       IF extract(epoch from now()) > coalesce((current_setting('request.jwt.claims', true)::jsonb)->>'exp', '0')::numeric THEN
         return false; -- jwt expired
       END IF; 
-      IF coalesce((current_setting('request.jwt.claims', true)::jsonb)->'app_metadata'->'users_update', 'false')::bool THEN
+      
+      IF EXISTS (
+          SELECT 1
+          FROM jsonb_array_elements_text((current_setting('request.jwt.claims', true)::jsonb)->'app_metadata'->'users_update') AS j
+          WHERE j::int = 0
+      ) THEN
         return true; -- user has user_update set to true
       ELSE
         return false; -- user does NOT have user_update set to true
@@ -27,16 +32,47 @@ CREATE OR REPLACE FUNCTION is_claims_admin() RETURNS "bool"
 $$;
 
 CREATE OR REPLACE FUNCTION get_my_claims() RETURNS "jsonb"
-    LANGUAGE "sql" STABLE
+    LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
     AS $$
-  select 
-  	coalesce(nullif(current_setting('request.jwt.claims', true), '')::jsonb -> 'app_metadata', '{}'::jsonb)::jsonb
+    DECLARE retval jsonb;
+    BEGIN
+      select raw_app_meta_data from auth.users into retval where id = auth.uid();
+        return retval;
+      
+    END;
 $$;
-CREATE OR REPLACE FUNCTION get_my_claim(claim TEXT) RETURNS "jsonb"
-    LANGUAGE "sql" STABLE
+
+CREATE OR REPLACE FUNCTION get_my_claim(claim text) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
     AS $$
-  select 
-  	coalesce(nullif(current_setting('request.jwt.claims', true), '')::jsonb -> 'app_metadata' -> claim, null)
+    DECLARE retval jsonb;
+    BEGIN
+      select coalesce(raw_app_meta_data->claim, null) from auth.users into retval where id = auth.uid();
+        return retval;
+      
+    END;
+$$;
+
+CREATE OR REPLACE FUNCTION has_company_permission(claim text, company integer) RETURNS "bool"
+    LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
+    AS $$
+    BEGIN
+     IF EXISTS (
+          SELECT 1
+          FROM jsonb_array_elements_text((current_setting('request.jwt.claims', true)::jsonb)->'app_metadata'->claim) AS j
+          WHERE j::int = 0
+      ) THEN
+        return true;
+      ELSIF EXISTS (
+          SELECT 1
+          FROM jsonb_array_elements_text((current_setting('request.jwt.claims', true)::jsonb)->'app_metadata'->claim) AS j
+          WHERE j::int = company
+      ) THEN
+        return true;
+      ELSE
+        return false; 
+      END IF;
+    END;
 $$;
 
 CREATE OR REPLACE FUNCTION get_claims(uid uuid) RETURNS "jsonb"

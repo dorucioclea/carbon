@@ -17759,6 +17759,13 @@ export type Database = {
           users: Json;
         }[];
       };
+      has_company_permission: {
+        Args: {
+          claim: string;
+          company: number;
+        };
+        Returns: boolean;
+      };
       is_claims_admin: {
         Args: Record<PropertyKey, never>;
         Returns: boolean;

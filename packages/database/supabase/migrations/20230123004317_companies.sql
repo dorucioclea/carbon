@@ -29,15 +29,20 @@ CREATE POLICY "Authenticated users can view company" ON "company"
 CREATE POLICY "Employees with settings_create can create company" ON "company"
   FOR INSERT
   WITH CHECK (
-    coalesce(get_my_claim('settings_create')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    is_claims_admin()
   );
 
 CREATE POLICY "Employees with settings_update can update company" ON "company"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('settings_update')::boolean, false) = true 
+    has_company_permission('settings_update', "id")       
     AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+  );
+
+CREATE POLICY "Employees with settings_delete can delete company" ON "company"
+  FOR DELETE
+  USING (
+    is_claims_admin()
   );
 
 CREATE TABLE "userToCompany" (

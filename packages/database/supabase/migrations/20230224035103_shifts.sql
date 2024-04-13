@@ -10,13 +10,15 @@ CREATE TABLE "location" (
   "timezone" TEXT NOT NULL,
   "latitude" NUMERIC,
   "longitude" NUMERIC,
+  "companyId" INTEGER NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP,
   "customFields" JSONB,
 
-  CONSTRAINT "location_pkey" PRIMARY KEY ("id")
+  CONSTRAINT "location_pkey" PRIMARY KEY ("id"),
+  CONSTRAINT "location_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
 );
 
 CREATE INDEX "location_name_idx" ON "location" ("name");
