@@ -1,12 +1,11 @@
 import { redirect, type ActionFunctionArgs } from "@remix-run/node";
-import type {
-  SalesOrderLine} from "~/modules/sales";
+import type { SalesOrderLine } from "~/modules/sales";
 import {
   getQuote,
   getQuoteLines,
   convertQuoteToOrder,
   upsertSalesOrder,
-  insertSalesOrderLines
+  insertSalesOrderLines,
 } from "~/modules/sales";
 import { getNextSequence, rollbackNextSequence } from "~/modules/settings";
 import { requirePermissions } from "~/services/auth";

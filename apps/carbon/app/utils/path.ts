@@ -57,8 +57,7 @@ export const path = {
       previewFile: (path: string) => generatePath(`${file}/preview/${path}`),
       purchaseOrder: (id: string) =>
         generatePath(`${file}/purchase-order/${id}.pdf`),
-      salesOrder: (id: string) => 
-        generatePath(`${file}/sales-order/${id}.pdf`),
+      salesOrder: (id: string) => generatePath(`${file}/sales-order/${id}.pdf`),
       quote: (id: string) => generatePath(`${file}/quote/${id}.pdf`),
     },
     onboarding: {
@@ -104,7 +103,8 @@ export const path = {
     contractor: (id: string) =>
       generatePath(`${x}/resources/contractors/${id}`),
     contractors: `${x}/resources/contractors`,
-    convertQuoteToOrder: (id: string) => generatePath(`${x}/quote/${id}/convertToOrder`),
+    convertQuoteToOrder: (id: string) =>
+      generatePath(`${x}/quote/${id}/convert-to-order`),
     currency: (id: string) => generatePath(`${x}/accounting/currencies/${id}`),
     currencies: `${x}/accounting/currencies`,
     customer: (id: string) => generatePath(`${x}/customer/${id}`),
