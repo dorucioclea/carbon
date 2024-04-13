@@ -1,17 +1,14 @@
 "use client";
 import {
   Button,
-  Form,
   FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
   Input,
   useForm,
   zodResolver,
 } from "@carbon/react";
 import { z } from "zod";
 import { supabase } from "~/lib/supabase";
+import { Form, FormField, FormItem, FormMessage } from "./ui/Form";
 
 export default function EmailForm() {
   const formSchema = z.object({
