@@ -56,7 +56,6 @@ const SalesOrderLines = () => {
     supabase,
     partOptions,
     serviceOptions,
-    accountOptions,
     onCellEdit,
   } = useSalesOrderLines();
   const [, setSalesOrderTotals] = useSalesOrderTotals();
@@ -121,12 +120,8 @@ const SalesOrderLines = () => {
               return <span>{row.original.partId}</span>;
             case "Service":
               return <span>{row.original.serviceId}</span>;
-            case "G/L Account":
-              return <span>{row.original.accountNumber}</span>;
             case "Comment":
               return null;
-            case "Fixed Asset":
-              return <span>{row.original.assetId}</span>;
             default:
               return null;
           }
@@ -271,7 +266,6 @@ const SalesOrderLines = () => {
         client: supabase,
         parts: partOptions,
         services: serviceOptions,
-        accounts: accountOptions,
         defaultLocationId: defaults.locationId,
         userId: userId,
       }),
@@ -281,7 +275,6 @@ const SalesOrderLines = () => {
       supabase,
       partOptions,
       serviceOptions,
-      accountOptions,
       defaults.locationId,
       userId,
     ]
