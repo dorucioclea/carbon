@@ -11295,6 +11295,7 @@ export type Database = {
       }
       salesOrderShipment: {
         Row: {
+          assignee: string | null
           customerId: string | null
           customerLocationId: string | null
           customFields: Json | null
@@ -11314,6 +11315,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
+          assignee?: string | null
           customerId?: string | null
           customerLocationId?: string | null
           customFields?: Json | null
@@ -11333,6 +11335,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
+          assignee?: string | null
           customerId?: string | null
           customerLocationId?: string | null
           customFields?: Json | null
@@ -11352,6 +11355,34 @@ export type Database = {
           updatedBy?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "salesOrderShipment_assignee_fkey"
+            columns: ["assignee"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrderShipment_assignee_fkey"
+            columns: ["assignee"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrderShipment_assignee_fkey"
+            columns: ["assignee"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salesOrderShipment_assignee_fkey"
+            columns: ["assignee"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
           {
             foreignKeyName: "salesOrderShipment_customerId_fkey"
             columns: ["customerId"]
@@ -17857,12 +17888,7 @@ export type Database = {
         | "Manufacturing Output"
       receiptStatus: "Draft" | "Pending" | "Posted"
       requestForQuoteStatus: "Draft" | "Sent" | "Expired" | "Closed"
-      salesOrderLineType:
-        | "Comment"
-        | "G/L Account"
-        | "Part"
-        | "Service"
-        | "Fixed Asset"
+      salesOrderLineType: "Comment" | "Part" | "Service"
       salesOrderStatus:
         | "Draft"
         | "Needs Approval"
