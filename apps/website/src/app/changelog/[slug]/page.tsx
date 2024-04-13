@@ -1,7 +1,16 @@
 import Link from "next/link";
 import { BsArrowLeft } from "react-icons/bs";
+import { getBlogPosts } from "~/lib/blog";
 
-export default function MdxLayout({ children }: { children: React.ReactNode }) {
+export default function Page({
+  params: { slug },
+}: {
+  params: { slug: string };
+}) {
+  const post = getBlogPosts().find((post) => post.slug === slug);
+  if (!post) {
+    alert("Post not found");
+  }
   return (
     <div className="container max-w-[900px] my-24 text-xl space-y-8">
       <div className="flex flex-col items-center space-y-8">
@@ -17,7 +26,7 @@ export default function MdxLayout({ children }: { children: React.ReactNode }) {
           <BsArrowLeft className="inline-block mr-2 " />
           All posts
         </Link>
-        <div className="">{children}</div>
+        <div className="">{post?.content}</div>
       </div>
     </div>
   );

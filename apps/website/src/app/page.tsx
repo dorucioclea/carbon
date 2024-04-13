@@ -3,11 +3,7 @@
 import Cal, { getCalApi } from "@calcom/embed-react";
 import {
   Button,
-  Form,
   FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
   Input,
   cn,
   useForm,
@@ -24,6 +20,7 @@ import { HiCode, HiFingerPrint } from "react-icons/hi";
 import { TbBuildingFactory2 } from "react-icons/tb";
 import { z } from "zod";
 import { Tabs } from "~/components/Tabs";
+import { Form, FormField, FormItem, FormMessage } from "~/components/ui/Form";
 import { supabase } from "~/lib/supabase";
 
 export default function Page() {
