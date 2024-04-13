@@ -1,16 +1,16 @@
 import { v4 as uuidv4 } from "uuid";
 import type { Feature } from "./features";
 
-export const possibleEmployees = ["Admin", "Project Manager", "Sales"] as const;
+export const initialEmployeeTypes = ["Admin"] as const;
 
-export type EmployeeType = (typeof possibleEmployees)[number];
+export type EmployeeType = (typeof initialEmployeeTypes)[number];
 
 const employeeTypes = {} as Record<
   EmployeeType,
   { id: string; name: string; protected?: boolean }
 >;
 
-possibleEmployees.forEach((type) => {
+initialEmployeeTypes.forEach((type) => {
   employeeTypes[type] = {
     id: uuidv4(),
     name: type,
@@ -18,270 +18,100 @@ possibleEmployees.forEach((type) => {
   };
 });
 
+export const ALL_TEAMS_ID = 0;
+
 export { employeeTypes };
 export const employeeTypePermissionsDefinitions: Record<
   EmployeeType,
   Record<
     Feature,
-    { create: boolean; update: boolean; delete: boolean; view: boolean }
+    { create: number[]; update: number[]; delete: number[]; view: number[] }
   >
 > = {
   Admin: {
     Accounting: {
-      create: true,
-      update: true,
-      delete: true,
-      view: true,
+      create: [ALL_TEAMS_ID],
+      update: [ALL_TEAMS_ID],
+      delete: [ALL_TEAMS_ID],
+      view: [ALL_TEAMS_ID],
     },
     Invoicing: {
-      create: true,
-      update: true,
-      delete: true,
-      view: true,
+      create: [ALL_TEAMS_ID],
+      update: [ALL_TEAMS_ID],
+      delete: [ALL_TEAMS_ID],
+      view: [ALL_TEAMS_ID],
     },
     Parts: {
-      create: true,
-      update: true,
-      delete: true,
-      view: true,
+      create: [ALL_TEAMS_ID],
+      update: [ALL_TEAMS_ID],
+      delete: [ALL_TEAMS_ID],
+      view: [ALL_TEAMS_ID],
     },
     // Jobs: {
-    //   create: true,
-    //   update: true,
-    //   delete: true,
-    //   view: true,
+    //   create: [ALL_TEAMS_ID],
+    //   update: [ALL_TEAMS_ID],
+    //   delete: [ALL_TEAMS_ID],
+    //   view: [ALL_TEAMS_ID],
     // },
     Inventory: {
-      create: true,
-      update: true,
-      delete: true,
-      view: true,
+      create: [ALL_TEAMS_ID],
+      update: [ALL_TEAMS_ID],
+      delete: [ALL_TEAMS_ID],
+      view: [ALL_TEAMS_ID],
     },
     // Scheduling: {
-    //   create: true,
-    //   update: true,
-    //   delete: true,
-    //   view: true,
+    //   create: [ALL_TEAMS_ID],
+    //   update: [ALL_TEAMS_ID],
+    //   delete: [ALL_TEAMS_ID],
+    //   view: [ALL_TEAMS_ID],
     // },
     Sales: {
-      create: true,
-      update: true,
-      delete: true,
-      view: true,
+      create: [ALL_TEAMS_ID],
+      update: [ALL_TEAMS_ID],
+      delete: [ALL_TEAMS_ID],
+      view: [ALL_TEAMS_ID],
     },
     Purchasing: {
-      create: true,
-      update: true,
-      delete: true,
-      view: true,
+      create: [ALL_TEAMS_ID],
+      update: [ALL_TEAMS_ID],
+      delete: [ALL_TEAMS_ID],
+      view: [ALL_TEAMS_ID],
     },
     Documents: {
-      create: true,
-      update: true,
-      delete: true,
-      view: true,
+      create: [ALL_TEAMS_ID],
+      update: [ALL_TEAMS_ID],
+      delete: [ALL_TEAMS_ID],
+      view: [ALL_TEAMS_ID],
     },
     // Messaging: {
-    //   create: true,
-    //   update: true,
-    //   delete: true,
-    //   view: true,
+    //   create: [ALL_TEAMS_ID],
+    //   update: [ALL_TEAMS_ID],
+    //   delete: [ALL_TEAMS_ID],
+    //   view: [ALL_TEAMS_ID],
     // },
     // Timecards: {
-    //   create: true,
-    //   update: true,
-    //   delete: true,
-    //   view: true,
+    //   create: [ALL_TEAMS_ID],
+    //   update: [ALL_TEAMS_ID],
+    //   delete: [ALL_TEAMS_ID],
+    //   view: [ALL_TEAMS_ID],
     // },
     Resources: {
-      create: true,
-      update: true,
-      delete: true,
-      view: true,
+      create: [ALL_TEAMS_ID],
+      update: [ALL_TEAMS_ID],
+      delete: [ALL_TEAMS_ID],
+      view: [ALL_TEAMS_ID],
     },
     Users: {
-      create: true,
-      update: true,
-      delete: true,
-      view: true,
+      create: [ALL_TEAMS_ID],
+      update: [ALL_TEAMS_ID],
+      delete: [ALL_TEAMS_ID],
+      view: [ALL_TEAMS_ID],
     },
     Settings: {
-      create: true,
-      update: true,
-      delete: true,
-      view: true,
-    },
-  },
-  "Project Manager": {
-    Accounting: {
-      create: false,
-      update: false,
-      delete: false,
-      view: false,
-    },
-    Invoicing: {
-      create: false,
-      update: false,
-      delete: false,
-      view: false,
-    },
-    Parts: {
-      create: true,
-      update: true,
-      delete: true,
-      view: true,
-    },
-    // Jobs: {
-    //   create: true,
-    //   update: true,
-    //   delete: true,
-    //   view: true,
-    // },
-    Inventory: {
-      create: false,
-      update: false,
-      delete: false,
-      view: true,
-    },
-    // Scheduling: {
-    //   create: true,
-    //   update: true,
-    //   delete: true,
-    //   view: true,
-    // },
-    Sales: {
-      create: false,
-      update: false,
-      delete: false,
-      view: false,
-    },
-    Purchasing: {
-      create: false,
-      update: false,
-      delete: false,
-      view: false,
-    },
-    Documents: {
-      create: true,
-      update: true,
-      delete: true,
-      view: true,
-    },
-    // Messaging: {
-    //   create: true,
-    //   update: true,
-    //   delete: true,
-    //   view: true,
-    // },
-    // Timecards: {
-    //   create: false,
-    //   update: false,
-    //   delete: false,
-    //   view: true,
-    // },
-    Resources: {
-      create: true,
-      update: true,
-      delete: true,
-      view: true,
-    },
-    Users: {
-      create: false,
-      update: false,
-      delete: false,
-      view: false,
-    },
-    Settings: {
-      create: false,
-      update: false,
-      delete: false,
-      view: false,
-    },
-  },
-  Sales: {
-    Accounting: {
-      create: false,
-      update: false,
-      delete: false,
-      view: false,
-    },
-    Invoicing: {
-      create: false,
-      update: false,
-      delete: false,
-      view: false,
-    },
-    Parts: {
-      create: false,
-      update: false,
-      delete: false,
-      view: true,
-    },
-    // Jobs: {
-    //   create: false,
-    //   update: false,
-    //   delete: false,
-    //   view: true,
-    // },
-    Inventory: {
-      create: false,
-      update: false,
-      delete: false,
-      view: true,
-    },
-    // Scheduling: {
-    //   create: false,
-    //   update: false,
-    //   delete: false,
-    //   view: true,
-    // },
-    Sales: {
-      create: true,
-      update: true,
-      delete: true,
-      view: true,
-    },
-    Purchasing: {
-      create: false,
-      update: false,
-      delete: false,
-      view: false,
-    },
-    Documents: {
-      create: true,
-      update: true,
-      delete: true,
-      view: true,
-    },
-    // Messaging: {
-    //   create: true,
-    //   update: true,
-    //   delete: true,
-    //   view: true,
-    // },
-    // Timecards: {
-    //   create: false,
-    //   update: false,
-    //   delete: false,
-    //   view: false,
-    // },
-    Resources: {
-      create: false,
-      update: false,
-      delete: false,
-      view: false,
-    },
-    Users: {
-      create: false,
-      update: false,
-      delete: false,
-      view: false,
-    },
-    Settings: {
-      create: false,
-      update: false,
-      delete: false,
-      view: false,
+      create: [ALL_TEAMS_ID],
+      update: [ALL_TEAMS_ID],
+      delete: [ALL_TEAMS_ID],
+      view: [ALL_TEAMS_ID],
     },
   },
 };

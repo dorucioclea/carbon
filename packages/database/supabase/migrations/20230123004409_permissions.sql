@@ -14,10 +14,10 @@ CREATE POLICY "Only claims admin can view/modify modules" ON "feature" FOR ALL U
 CREATE TABLE "employeeTypePermission" (
     "employeeTypeId" TEXT NOT NULL,
     "featureId" TEXT NOT NULL,
-    "create" BOOLEAN NOT NULL DEFAULT false,
-    "delete" BOOLEAN NOT NULL DEFAULT false,
-    "update" BOOLEAN NOT NULL DEFAULT false,
-    "view" BOOLEAN NOT NULL DEFAULT false,
+    "create" INTEGER[] NOT NULL DEFAULT '{}',
+    "delete" INTEGER[] NOT NULL DEFAULT '{}',
+    "update" INTEGER[] NOT NULL DEFAULT '{}',
+    "view" INTEGER[] NOT NULL DEFAULT '{}',
     "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     "updatedAt" TIMESTAMP WITH TIME ZONE,
 

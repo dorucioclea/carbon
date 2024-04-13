@@ -114,10 +114,10 @@ async function seed() {
   const employeeTypePermissions = [] as {
     employeeTypeId: string;
     featureId: string;
-    create: boolean;
-    update: boolean;
-    delete: boolean;
-    view: boolean;
+    create: number[];
+    update: number[];
+    delete: number[];
+    view: number[];
   }[];
 
   Object.entries(employeeTypePermissionsDefinitions).forEach(

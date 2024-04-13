@@ -63,6 +63,7 @@ CREATE TABLE "supplierType" (
     "id" TEXT NOT NULL DEFAULT uuid_generate_v4(),
     "name" TEXT NOT NULL,
     "protected" BOOLEAN NOT NULL DEFAULT false,
+    "companyId" INTEGER,
     "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     "createdBy" TEXT NOT NULL,
     "updatedBy" TEXT,
@@ -70,7 +71,8 @@ CREATE TABLE "supplierType" (
     "customFields" JSONB,
 
     CONSTRAINT "supplierType_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "supplierType_name_unique" UNIQUE ("name"),
+    CONSTRAINT "supplierType_name_unique" UNIQUE ("name", "companyId"),
+    CONSTRAINT "supplierType_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT "supplierType_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT "supplierType_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL
 );
@@ -83,6 +85,7 @@ CREATE TABLE "supplier" (
     "taxId" TEXT,
     "accountManagerId" TEXT,
     "logo" TEXT,
+    "companyId" INTEGER,
     "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     "createdBy" TEXT,
     "updatedAt" TIMESTAMP WITH TIME ZONE,
@@ -93,6 +96,7 @@ CREATE TABLE "supplier" (
     CONSTRAINT "supplier_supplierTypeId_fkey" FOREIGN KEY ("supplierTypeId") REFERENCES "supplierType"("id") ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT "supplier_supplierStatusId_fkey" FOREIGN KEY ("supplierStatusId") REFERENCES "supplierStatus"("id") ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT "supplier_accountManagerId_fkey" FOREIGN KEY ("accountManagerId") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL,
+    CONSTRAINT "supplier_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT "supplier_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE,
     CONSTRAINT "supplier_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE,
     CONSTRAINT "supplier_name_unique" UNIQUE ("name")
@@ -158,6 +162,7 @@ CREATE TABLE "customerType" (
     "id" TEXT NOT NULL DEFAULT uuid_generate_v4(),
     "name" TEXT NOT NULL,
     "protected" BOOLEAN NOT NULL DEFAULT false,
+    "companyId" INTEGER,
     "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     "createdBy" TEXT NOT NULL,
     "updatedBy" TEXT,
@@ -165,7 +170,7 @@ CREATE TABLE "customerType" (
     "customFields" JSONB,
 
     CONSTRAINT "customerType_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "customerType_name_unique" UNIQUE ("name"),
+    CONSTRAINT "customerType_name_unique" UNIQUE ("name", "companyId"),
     CONSTRAINT "customerType_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT "customerType_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL
 );
@@ -178,6 +183,7 @@ CREATE TABLE "customer" (
     "taxId" TEXT,
     "accountManagerId" TEXT,
     "logo" TEXT,
+    "companyId" INTEGER,
     "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     "createdBy" TEXT,
     "updatedAt" TIMESTAMP WITH TIME ZONE,
@@ -188,6 +194,7 @@ CREATE TABLE "customer" (
     CONSTRAINT "customer_customerTypeId_fkey" FOREIGN KEY ("customerTypeId") REFERENCES "customerType"("id") ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT "customer_customerStatusId_fkey" FOREIGN KEY ("customerStatusId") REFERENCES "customerStatus"("id") ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT "customer_accountManagerId_fkey" FOREIGN KEY ("accountManagerId") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL,
+    CONSTRAINT "customer_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT "customer_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT "customer_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT "customer_name_unique" UNIQUE ("name")

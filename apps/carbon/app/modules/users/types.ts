@@ -34,6 +34,7 @@ export type Feature = NonNullable<
 export type Group = {
   data: {
     id: string;
+    companyId: number;
     isEmployeeTypeGroup: boolean;
     isCustomerOrgGroup: boolean;
     isCustomerTypeGroup: boolean;
@@ -46,10 +47,10 @@ export type Group = {
 };
 
 export type Permission = {
-  view: boolean;
-  create: boolean;
-  update: boolean;
-  delete: boolean;
+  view: number[];
+  create: number[];
+  update: number[];
+  delete: number[];
 };
 
 export type Supplier = NonNullable<

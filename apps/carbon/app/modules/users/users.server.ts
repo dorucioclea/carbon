@@ -336,7 +336,6 @@ export async function getUserClaims(request: Request) {
     if (!claims) {
       // TODO: remove service role from here, and move it up a level
       const rawClaims = await getClaims(getSupabaseServiceRole(), userId);
-
       if (rawClaims.error || rawClaims.data === null) {
         throw redirect(
           path.to.authenticatedRoot,
@@ -425,14 +424,14 @@ function makeClaimsFromEmployeeType({
   data,
 }: {
   data: {
-    view: boolean;
-    create: boolean;
-    update: boolean;
-    delete: boolean;
+    view: number[];
+    create: number[];
+    update: number[];
+    delete: number[];
     feature: ListItem | ListItem[] | null;
   }[];
 }) {
-  const claims: Record<string, boolean> = {};
+  const claims: Record<string, number[]> = {};
 
   data.forEach((permission) => {
     if (permission.feature === null || Array.isArray(permission.feature)) {
@@ -461,7 +460,7 @@ function isClaimPermission(key: string, value: unknown) {
   return (
     action !== undefined &&
     ["view", "create", "update", "delete"].includes(action) &&
-    typeof value === "boolean"
+    Array.isArray(value)
   );
 }
 
@@ -483,10 +482,10 @@ export function makeEmptyPermissionsFromFeatures(data: Feature[]) {
       acc[module.name] = {
         id: module.id,
         permission: {
-          view: false,
-          create: false,
-          update: false,
-          delete: false,
+          view: [],
+          create: [],
+          update: [],
+          delete: [],
         },
       };
       return acc;
@@ -505,25 +504,25 @@ export function makePermissionsFromClaims(claims: Json[] | null) {
       const [module, action] = key.split("_");
       if (!(module in permissions)) {
         permissions[module] = {
-          view: false,
-          create: false,
-          update: false,
-          delete: false,
+          view: [],
+          create: [],
+          update: [],
+          delete: [],
         };
       }
 
       switch (action) {
         case "view":
-          permissions[module]["view"] = value as boolean;
+          permissions[module]["view"] = value as number[];
           break;
         case "create":
-          permissions[module]["create"] = value as boolean;
+          permissions[module]["create"] = value as number[];
           break;
         case "update":
-          permissions[module]["update"] = value as boolean;
+          permissions[module]["update"] = value as number[];
           break;
         case "delete":
-          permissions[module]["delete"] = value as boolean;
+          permissions[module]["delete"] = value as number[];
           break;
       }
     }
@@ -603,7 +602,7 @@ export async function resetPassword(userId: string, password: string) {
 
 async function setUserClaims(
   userId: string,
-  claims: Record<string, boolean | string>
+  claims: Record<string, number[] | string>
 ) {
   return getSupabaseServiceRole().auth.admin.updateUserById(userId, {
     app_metadata: claims,
@@ -652,7 +651,7 @@ export async function updatePermissions(
         ? {}
         : claims.data;
 
-    const newClaims: Record<string, boolean> = {};
+    const newClaims: Record<string, number[]> = {};
     Object.entries(permissions).forEach(([name, permission]) => {
       const module = name.toLowerCase();
       if (!addOnly || permission.view)
@@ -666,8 +665,8 @@ export async function updatePermissions(
     });
 
     const claimsUpdate = await setUserClaims(id, {
-      ...(currentClaims as Record<string, boolean>),
-      ...(newClaims as Record<string, boolean>),
+      ...(currentClaims as Record<string, number[]>),
+      ...(newClaims as Record<string, number[]>),
     });
     if (claimsUpdate.error)
       return error(claimsUpdate.error, "Failed to update claims");
