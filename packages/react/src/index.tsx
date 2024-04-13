@@ -96,7 +96,13 @@ import {
 import { Editor, useEditor } from "./Editor";
 import { Enumerable } from "./Enumerable";
 import { File } from "./File";
-import { Form, FormField, FormItem, FormControl, FormMessage } from "./Form";
+// import { Form, FormField, FormItem, FormControl, FormMessage } from "./Form";
+import {
+  FormControl,
+  FormErrorMessage,
+  FormHelperText,
+  FormLabel,
+} from "./Form";
 import { HStack } from "./HStack";
 import { HTML } from "./HTML";
 import { Heading } from "./Heading";
@@ -315,11 +321,10 @@ export {
   Editor,
   Enumerable,
   File,
-  Form,
   FormControl,
-  FormField,
-  FormMessage,
-  FormItem,
+  FormErrorMessage,
+  FormHelperText,
+  FormLabel,
   HStack,
   HTML,
   Heading,

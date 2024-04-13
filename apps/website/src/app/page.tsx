@@ -13,6 +13,7 @@ import {
   useForm,
   zodResolver,
 } from "@carbon/react";
+import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -187,7 +188,9 @@ function ProductViews() {
       title: "Documents",
       description: "Store and manage all your documents in one place.",
       value: "documents",
-      content: <ImageContainer imagePath={"/carbon-dark-mode-2.jpg"} />,
+      content: (
+        <ImageContainer imagePath={"/carbon-light-mode-documents.jpg"} />
+      ),
     },
   ];
 
@@ -285,20 +288,22 @@ function OpenCore() {
 }
 
 function Calendar() {
+  const { theme } = useTheme();
   useEffect(() => {
     (async function () {
       const cal = await getCalApi();
       cal("ui", {
-        theme: "light",
+        theme: (theme ?? "light") as "dark" | "light",
         styles: { branding: { brandColor: "#000000" } },
         hideEventTypeDetails: false,
         layout: "month_view",
       });
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <section className="flex flex-col items-center py-24 gap-8">
-      <div className="self-stretch text-center text-zinc-900 text-4xl font-semibold  leading-[44px]">
+      <div className="text-4xl font-semibold tracking-tight lg:text-5xl xl:text-6xl text-center text-foreground">
         Chat with us
       </div>
       <Cal
