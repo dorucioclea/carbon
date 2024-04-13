@@ -5,22 +5,22 @@ import { IoMdAdd } from "react-icons/io";
 import { useSupabase } from "~/lib/supabase";
 import { path } from "~/utils/path";
 
-type PurchaseOrderDocumentFormProps = {
+type SalesOrderDocumentFormProps = {
   orderId: string;
   isExternal: boolean;
 };
 
-const PurchaseOrderDocumentForm = ({
+const SalesOrderDocumentForm = ({
   orderId,
   isExternal,
-}: PurchaseOrderDocumentFormProps) => {
+}: SalesOrderDocumentFormProps) => {
   const submit = useSubmit();
   const { supabase } = useSupabase();
 
   const uploadFile = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && supabase) {
       const file = e.target.files[0];
-      const fileName = `purchasing/${
+      const fileName = `sales-order/${
         isExternal ? "external" : "internal"
       }/${orderId}/${file.name}`;
 
@@ -58,7 +58,7 @@ const PurchaseOrderDocumentForm = ({
     formData.append("path", filePath);
     formData.append("name", name);
     formData.append("size", Math.round(size / 1024).toString());
-    formData.append("sourceDocument", "Purchase Order");
+    formData.append("sourceDocument", "Sales Order");
     formData.append("sourceDocumentId", orderId);
 
     submit(formData, {
@@ -74,4 +74,4 @@ const PurchaseOrderDocumentForm = ({
   );
 };
 
-export default PurchaseOrderDocumentForm;
+export default SalesOrderDocumentForm;

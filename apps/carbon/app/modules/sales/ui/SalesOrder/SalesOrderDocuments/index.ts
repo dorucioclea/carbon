@@ -1,3 +1,3 @@
-import PurchaseOrderDocuments from "./PurchaseOrderDocuments";
+import SalesOrderDocuments from "./SalesOrderDocuments";
 
-export default PurchaseOrderDocuments;
+export default SalesOrderDocuments;

@@ -22,23 +22,23 @@ import { Outlet } from "@remix-run/react";
 import { MdMoreVert } from "react-icons/md";
 import { DocumentPreview, Hyperlink } from "~/components";
 import { DocumentIcon, getDocumentType } from "~/modules/documents";
-import type { PurchaseOrderAttachment } from "~/modules/purchasing";
-import PurchaseOrderDocumentForm from "./PurchaseOrderDocumentForm";
-import { usePurchaseOrderDocuments } from "./usePurchaseOrderDocuments";
+import type { SalesOrderAttachment } from "~/modules/sales";
+import SalesOrderDocumentForm from "./SalesOrderDocumentForm";
+import { useSalesOrderDocuments } from "./useSalesOrderDocuments";
 
-type PurchaseOrderDocumentsProps = {
-  attachments: PurchaseOrderAttachment[];
+type SalesOrderDocumentsProps = {
+  attachments: SalesOrderAttachment[];
   isExternal: boolean;
   orderId: string;
 };
 
-const PurchaseOrderDocuments = ({
+const SalesOrderDocuments = ({
   attachments,
   isExternal,
   orderId,
-}: PurchaseOrderDocumentsProps) => {
+}: SalesOrderDocumentsProps) => {
   const { canDelete, download, deleteAttachment, getPath } =
-    usePurchaseOrderDocuments({
+    useSalesOrderDocuments({
       isExternal,
       orderId,
     });
@@ -53,10 +53,7 @@ const PurchaseOrderDocuments = ({
             </CardTitle>
           </CardHeader>
           <CardAction>
-            <PurchaseOrderDocumentForm
-              isExternal={isExternal}
-              orderId={orderId}
-            />
+            <SalesOrderDocumentForm isExternal={isExternal} orderId={orderId} />
           </CardAction>
         </HStack>
         <CardContent>
@@ -147,4 +144,4 @@ const PurchaseOrderDocuments = ({
   );
 };
 
-export default PurchaseOrderDocuments;
+export default SalesOrderDocuments;

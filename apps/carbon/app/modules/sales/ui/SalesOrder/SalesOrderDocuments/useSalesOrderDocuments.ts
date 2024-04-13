@@ -3,19 +3,19 @@ import { useFetcher } from "@remix-run/react";
 import { useCallback } from "react";
 import { usePermissions } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
-import type { PurchaseOrderAttachment } from "~/modules/purchasing/types";
+import type { SalesOrderAttachment } from "~/modules/sales/types";
 
 type Props = {
   isExternal: boolean;
   orderId: string;
 };
 
-export const usePurchaseOrderDocuments = ({ isExternal, orderId }: Props) => {
+export const useSalesOrderDocuments = ({ isExternal, orderId }: Props) => {
   const fetcher = useFetcher();
   const permissions = usePermissions();
   const { supabase } = useSupabase();
 
-  const canDelete = permissions.can("delete", "purchasing"); // TODO: or is document owner
+  const canDelete = permissions.can("delete", "sales"); // TODO: or is document owner
 
   const refresh = useCallback(
     () => fetcher.submit(null, { method: "post" }),
@@ -23,8 +23,8 @@ export const usePurchaseOrderDocuments = ({ isExternal, orderId }: Props) => {
   );
 
   const getPath = useCallback(
-    (attachment: PurchaseOrderAttachment) => {
-      return `purchasing/${isExternal ? "external" : "internal"}/${orderId}/${
+    (attachment: SalesOrderAttachment) => {
+      return `sales/${isExternal ? "external" : "internal"}/${orderId}/${
         attachment.name
       }`;
     },
@@ -32,7 +32,7 @@ export const usePurchaseOrderDocuments = ({ isExternal, orderId }: Props) => {
   );
 
   const deleteAttachment = useCallback(
-    async (attachment: PurchaseOrderAttachment) => {
+    async (attachment: SalesOrderAttachment) => {
       const fileDelete = await supabase?.storage
         .from("private")
         .remove([getPath(attachment)]);
@@ -49,7 +49,7 @@ export const usePurchaseOrderDocuments = ({ isExternal, orderId }: Props) => {
   );
 
   const download = useCallback(
-    async (attachment: PurchaseOrderAttachment) => {
+    async (attachment: SalesOrderAttachment) => {
       const result = await supabase?.storage
         .from("private")
         .download(getPath(attachment));

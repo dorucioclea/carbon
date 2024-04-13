@@ -993,16 +993,14 @@ export async function deleteSalesOrderLine(
   return client.from("salesOrderLine").delete().eq("id", salesOrderLineId);
 }
 
-/*export async function getSalesOrderExternalDocuments(
+export async function getSalesOrderExternalDocuments(
   client: SupabaseClient<Database>,
   salesOrderId: string
 ) {
-  return client.storage
-    .from("private")
-    .list(`sales/external/${salesOrderId}`);
+  return client.storage.from("private").list(`sales/external/${salesOrderId}`);
 }
 
-export async function getSalesOrderInternalDocuments(
+/*export async function getSalesOrderInternalDocuments(
   client: SupabaseClient<Database>,
   salesOrderId: string
 ) {
