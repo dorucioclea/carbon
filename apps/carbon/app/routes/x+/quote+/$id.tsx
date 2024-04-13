@@ -212,12 +212,10 @@ export default function QuotationRoute() {
               >
                 Release
               </MenubarItem>
-              <MenubarItem
-                onClick={salesOrderDisclosure.onOpen}
-              >
-                Convert to Sales Order
+              <MenubarItem onClick={salesOrderDisclosure.onOpen}>
+                Convert
               </MenubarItem>
-              </Menubar>          
+            </Menubar>
             <Outlet />
           </VStack>
         </div>
