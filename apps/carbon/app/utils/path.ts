@@ -478,7 +478,7 @@ export const path = {
       generatePath(`${x}/sales-order/${id}/details`),
     salesOrderExternalDocuments: (id: string) =>
       generatePath(`${x}/sales-order/${id}/external`),
-    salesOrderFavorite: `${x}/sales/orders/favorite`,
+    salesOrderFavorite: `${x}/sales-order/orders/favorite`,
     salesOrderInternalDocuments: (id: string) =>
       generatePath(`${x}/sales-order/${id}/internal`),
     salesOrderLines: (orderId: string) =>
