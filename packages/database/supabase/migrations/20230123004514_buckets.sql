@@ -14,21 +14,21 @@ CREATE POLICY "Employees with settings_create can insert into the public bucket"
 ON storage.objects FOR INSERT WITH CHECK (
     bucket_id = 'public'
     AND (auth.role() = 'authenticated')
-    AND coalesce(get_my_claim('settings_create')::boolean,false)
+    -- AND has_company_permission('settings_create', (storage.foldername(name))[1])
 );
 
 CREATE POLICY "Employees with settings_update can update the public bucket"
 ON storage.objects FOR UPDATE USING (
     bucket_id = 'public'
     AND (auth.role() = 'authenticated')
-    AND coalesce(get_my_claim('settings_update')::boolean,false)
+    -- AND has_company_permission('settings_update', (storage.foldername(name))[1])
 );
 
 CREATE POLICY "Employees with settings_delete can delete from public bucket"
 ON storage.objects FOR DELETE USING (
     bucket_id = 'public'
     AND (auth.role() = 'authenticated')
-    AND coalesce(get_my_claim('settings_delete')::boolean,false)
+    -- AND has_company_permission('settings_delete', (storage.foldername(name))[1])
 );
 
 CREATE POLICY "Anyone can view avatars"

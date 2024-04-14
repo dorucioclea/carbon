@@ -7,7 +7,11 @@ CREATE TABLE search (
   description TEXT DEFAULT '',
   entity "searchEntity",
   uuid TEXT,
-  link TEXT NOT NULL
+  link TEXT NOT NULL,
+  "companyId" INTEGER,
+
+  CONSTRAINT search_uuid_unique UNIQUE (uuid),
+  CONSTRAINT search_companyId_fkey FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 ALTER TABLE
@@ -17,6 +21,7 @@ ADD COLUMN
 
 CREATE INDEX index_search_uuid ON public.search (uuid);
 CREATE INDEX index_search_fts ON public.search USING GIN (fts); 
+CREATE INDEX index_search_companyId ON public.search ("companyId");
 
 CREATE FUNCTION public.create_employee_search_result()
 RETURNS TRIGGER AS $$
@@ -24,14 +29,14 @@ DECLARE
   employee TEXT;
 BEGIN
   employee := (SELECT u."fullName" FROM public.user u WHERE u.id = new.id);
-  INSERT INTO public.search(name, entity, uuid, link)
-  VALUES (employee, 'Person', new.id, '/x/person/' || new.id);
+  INSERT INTO public.search(name, entity, uuid, link, "companyId")
+  VALUES (employee, 'Person', new.id, '/x/person/' || new.id, new."companyId");
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE TRIGGER create_employee_search_result
-  AFTER INSERT on public.user
+  AFTER INSERT on public.employee
   FOR EACH ROW EXECUTE PROCEDURE public.create_employee_search_result();
 
 CREATE FUNCTION public.update_employee_search_result()
@@ -57,8 +62,8 @@ CREATE TRIGGER update_employee_search_result
 CREATE FUNCTION public.create_customer_search_result()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.search(name, entity, uuid, link)
-  VALUES (new.name, 'Customer', new.id, '/x/customer/' || new.id);
+  INSERT INTO public.search(name, entity, uuid, link, "companyId")
+  VALUES (new.name, 'Customer', new.id, '/x/customer/' || new.id, new."companyId");
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -85,8 +90,8 @@ CREATE TRIGGER update_customer_search_result
 CREATE FUNCTION public.create_supplier_search_result()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.search(name, entity, uuid, link)
-  VALUES (new.name, 'Supplier', new.id, '/x/supplier/' || new.id);
+  INSERT INTO public.search(name, entity, uuid, link, "companyId")
+  VALUES (new.name, 'Supplier', new.id, '/x/supplier/' || new.id, new."companyId");
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -114,13 +119,13 @@ ALTER TABLE "search" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Employees with sales_view can search for customers and sales orders" ON "search"
   FOR SELECT
-  USING (coalesce(get_my_claim('sales_view')::boolean, false) = true AND entity IN ('Customer', 'Sales Order') AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (has_company_permission('sales_view', "companyId") AND entity IN ('Customer', 'Sales Order') AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
 
 -- TODO: customers should be able to search for their own sales orders
 -- CREATE POLICY "Customers with sales_view can search for their own sales orders" ON "search"
 --   FOR SELECT
 --   USING (
---     coalesce(get_my_claim('sales_view')::boolean, false) = true 
+--     has_company_permission('sales_view', "companyId") 
 --     AND entity = 'Sales Order' 
 --     AND (get_my_claim('role'::text)) = '"customer"'::jsonb
 --     AND uuid IN (
@@ -134,30 +139,30 @@ CREATE POLICY "Employees with sales_view can search for customers and sales orde
 
 CREATE POLICY "Employees with purchasing_view can search for suppliers and purchase orders" ON "search"
   FOR SELECT
-  USING (coalesce(get_my_claim('purchasing_view')::boolean, false) = true AND entity IN ('Supplier', 'Purchase Order') AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (has_company_permission('purchasing_view', "companyId") AND entity IN ('Supplier', 'Purchase Order') AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
 
 
 CREATE POLICY "Employees with resources_view can search for resources" ON "search"
   FOR SELECT
-  USING (coalesce(get_my_claim('resources_view')::boolean, false) = true AND entity = 'Resource');
+  USING (has_company_permission('resources_view', "companyId") AND entity = 'Resource');
 
 CREATE POLICY "Employees with resources_view can search for people" ON "search"
   FOR SELECT
-  USING (coalesce(get_my_claim('resources_view')::boolean, false) = true AND entity = 'Person');
+  USING (has_company_permission('resources_view', "companyId") AND entity = 'Person');
 
 -- TODO: documents should be filtered based on visibility
 CREATE POLICY "Employees with document_view can search for documents" ON "search"
   FOR SELECT
-  USING (coalesce(get_my_claim('document_view')::boolean, false) = true AND entity = 'Document' AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (has_company_permission('document_view', "companyId") AND entity = 'Document' AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
 
 CREATE POLICY "Employees with parts can search for parts" ON "search"
   FOR SELECT
-  USING (coalesce(get_my_claim('parts_view')::boolean, false) = true AND entity = 'Part' AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (has_company_permission('parts_view', "companyId") AND entity = 'Part' AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
 
 -- TODO: suppliers should be able to search for parts that they supply
 
 CREATE POLICY "Employees with jobs_view can search for jobs" ON "search"
   FOR SELECT
-  USING (coalesce(get_my_claim('jobs_view')::boolean, false) = true AND entity = 'Job' AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (has_company_permission('jobs_view', "companyId") AND entity = 'Job' AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
 
 -- TODO: customers should be able to search for their jobs

@@ -47,6 +47,7 @@ CREATE TABLE "address" (
 CREATE TABLE "supplierStatus" (
     "id" TEXT NOT NULL DEFAULT xid(),
     "name" TEXT NOT NULL,
+    "companyId" INTEGER,
     "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     "createdBy" TEXT NOT NULL,
     "updatedBy" TEXT,
@@ -54,10 +55,13 @@ CREATE TABLE "supplierStatus" (
     "customFields" JSONB,
 
     CONSTRAINT "supplierStatus_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "supplierStatus_name_unique" UNIQUE ("name"),
+    CONSTRAINT "supplierStatus_name_unique" UNIQUE ("name", "companyId"),
+    CONSTRAINT "supplierStatus_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT "supplierStatus_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT "supplierStatus_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL
 );
+
+CREATE INDEX "supplierStatus_companyId_fkey" ON "supplierStatus"("companyId");
 
 CREATE TABLE "supplierType" (
     "id" TEXT NOT NULL DEFAULT uuid_generate_v4(),
@@ -72,10 +76,12 @@ CREATE TABLE "supplierType" (
 
     CONSTRAINT "supplierType_pkey" PRIMARY KEY ("id"),
     CONSTRAINT "supplierType_name_unique" UNIQUE ("name", "companyId"),
-    CONSTRAINT "supplierType_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE SET NULL,
+    CONSTRAINT "supplierType_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT "supplierType_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT "supplierType_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL
 );
+
+CREATE INDEX "supplierType_companyId_fkey" ON "supplierType"("companyId");
 
 CREATE TABLE "supplier" (
     "id" TEXT NOT NULL DEFAULT uuid_generate_v4(),
@@ -96,11 +102,13 @@ CREATE TABLE "supplier" (
     CONSTRAINT "supplier_supplierTypeId_fkey" FOREIGN KEY ("supplierTypeId") REFERENCES "supplierType"("id") ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT "supplier_supplierStatusId_fkey" FOREIGN KEY ("supplierStatusId") REFERENCES "supplierStatus"("id") ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT "supplier_accountManagerId_fkey" FOREIGN KEY ("accountManagerId") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL,
-    CONSTRAINT "supplier_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE SET NULL,
+    CONSTRAINT "supplier_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT "supplier_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE,
     CONSTRAINT "supplier_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE,
-    CONSTRAINT "supplier_name_unique" UNIQUE ("name")
+    CONSTRAINT "supplier_name_unique" UNIQUE ("name", "companyId")
 );
+
+CREATE INDEX "supplier_companyId_fkey" ON "supplier"("companyId");
 
 ALTER publication supabase_realtime ADD TABLE "supplier";
 
@@ -146,6 +154,7 @@ CREATE INDEX "supplierAccount_supplierId_index" ON "supplierAccount"("supplierId
 CREATE TABLE "customerStatus" (
     "id" TEXT NOT NULL DEFAULT xid(),
     "name" TEXT NOT NULL,
+    "companyId" INTEGER,
     "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     "createdBy" TEXT NOT NULL,
     "updatedBy" TEXT,
@@ -153,10 +162,13 @@ CREATE TABLE "customerStatus" (
     "customFields" JSONB,
 
     CONSTRAINT "customerStatus_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "customerStatus_name_unique" UNIQUE ("name"),
+    CONSTRAINT "customerStatus_name_unique" UNIQUE ("name", "companyId"),
+    CONSTRAINT "customerStatus_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT "customerStatus_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT "customerStatus_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL
 );
+
+CREATE INDEX "customerStatus_companyId_fkey" ON "customerStatus"("companyId");
 
 CREATE TABLE "customerType" (
     "id" TEXT NOT NULL DEFAULT uuid_generate_v4(),
@@ -171,9 +183,12 @@ CREATE TABLE "customerType" (
 
     CONSTRAINT "customerType_pkey" PRIMARY KEY ("id"),
     CONSTRAINT "customerType_name_unique" UNIQUE ("name", "companyId"),
+    CONSTRAINT "customerType_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT "customerType_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT "customerType_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL
 );
+
+CREATE INDEX "customerType_companyId_fkey" ON "customerType"("companyId");
 
 CREATE TABLE "customer" (
     "id" TEXT NOT NULL DEFAULT uuid_generate_v4(),
@@ -194,11 +209,13 @@ CREATE TABLE "customer" (
     CONSTRAINT "customer_customerTypeId_fkey" FOREIGN KEY ("customerTypeId") REFERENCES "customerType"("id") ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT "customer_customerStatusId_fkey" FOREIGN KEY ("customerStatusId") REFERENCES "customerStatus"("id") ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT "customer_accountManagerId_fkey" FOREIGN KEY ("accountManagerId") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL,
-    CONSTRAINT "customer_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE SET NULL,
+    CONSTRAINT "customer_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT "customer_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT "customer_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL,
-    CONSTRAINT "customer_name_unique" UNIQUE ("name")
+    CONSTRAINT "customer_name_unique" UNIQUE ("name", "companyId")
 );
+
+CREATE INDEX "customer_companyId_fkey" ON "customer"("companyId");
 
 ALTER publication supabase_realtime ADD TABLE "customer";
 

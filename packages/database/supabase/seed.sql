@@ -148,13 +148,13 @@ VALUES
   ('User', false, false, false, false, false, true);
 
 
--- supplier status
+-- -- supplier status
+-- TODO:
+-- INSERT INTO "supplierStatus" ("name", "createdBy") VALUES ('Active', 'system'), ('Inactive', 'system'), ('Pending', 'system'), ('Rejected', 'system');
 
-INSERT INTO "supplierStatus" ("name", "createdBy") VALUES ('Active', 'system'), ('Inactive', 'system'), ('Pending', 'system'), ('Rejected', 'system');
-
--- customer status
-
-INSERT INTO "customerStatus" ("name", "createdBy") VALUES ('Active', 'system'), ('Inactive', 'system'), ('Lead', 'system'), ('On Hold', 'system'), ('Cancelled', 'system'), ('Archived', 'system');
+-- -- customer status
+-- TODO:
+-- INSERT INTO "customerStatus" ("name", "createdBy") VALUES ('Active', 'system'), ('Inactive', 'system'), ('Lead', 'system'), ('On Hold', 'system'), ('Cancelled', 'system'), ('Archived', 'system');
 
 -- unit of measure
 

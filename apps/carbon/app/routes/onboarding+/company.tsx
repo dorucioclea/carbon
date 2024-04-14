@@ -19,6 +19,7 @@ import { json, redirect, type ActionFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { Hidden, Input, Submit } from "~/components/Form";
 import { useOnboarding } from "~/hooks";
+import { getSupabaseServiceRole } from "~/lib/supabase";
 import {
   getLocationsList,
   insertEmployeeJob,
@@ -30,6 +31,7 @@ import {
   onboardingCompanyValidator,
   updateCompany,
 } from "~/modules/settings";
+import { addUserToCompany } from "~/modules/users/users.server";
 import { requirePermissions } from "~/services/auth/auth.server";
 import { assertIsPost } from "~/utils/http";
 
@@ -54,6 +56,10 @@ export async function action({ request }: ActionFunctionArgs) {
     update: "settings",
   });
 
+  // there are no entries in the userToCompany table which
+  // dictates RLS for the company table
+  const supabaseClient = getSupabaseServiceRole();
+
   const validation = await validator(onboardingCompanyValidator).validate(
     await request.formData()
   );
@@ -73,8 +79,8 @@ export async function action({ request }: ActionFunctionArgs) {
 
   if (company.data && location) {
     const [companyUpdate, locationUpdate] = await Promise.all([
-      updateCompany(client, { ...data, updatedBy: userId }),
-      upsertLocation(client, {
+      updateCompany(supabaseClient, { ...data, updatedBy: userId }),
+      upsertLocation(supabaseClient, {
         ...location,
         ...data,
         timezone: getLocalTimeZone(),
@@ -90,19 +96,24 @@ export async function action({ request }: ActionFunctionArgs) {
       throw new Error("Fatal: failed to update location");
     }
   } else {
-    const [companyInsert, locationInsert] = await Promise.all([
-      insertCompany(client, data),
-      upsertLocation(client, {
-        ...data,
-        name: "Headquarters",
-        timezone: getLocalTimeZone(),
-        createdBy: userId,
-      }),
-    ]);
+    const companyInsert = await insertCompany(supabaseClient, data);
     if (companyInsert.error) {
       console.error(companyInsert.error);
       throw new Error("Fatal: failed to insert company");
     }
+
+    const companyId = companyInsert.data?.id;
+    if (!companyId) {
+      throw new Error("Fatal: failed to get company ID");
+    }
+
+    const locationInsert = await upsertLocation(supabaseClient, {
+      ...data,
+      name: "Headquarters",
+      companyId,
+      timezone: getLocalTimeZone(),
+      createdBy: userId,
+    });
 
     if (locationInsert.error) {
       console.error(locationInsert.error);
@@ -114,10 +125,24 @@ export async function action({ request }: ActionFunctionArgs) {
       throw new Error("Fatal: failed to get location ID");
     }
 
-    await insertEmployeeJob(client, {
-      id: userId,
-      locationId,
-    });
+    const [userToCompany, job] = await Promise.all([
+      addUserToCompany(supabaseClient, userId, companyId),
+      insertEmployeeJob(supabaseClient, {
+        id: userId,
+        locationId,
+      }),
+      // TODO: seed company
+    ]);
+
+    if (userToCompany.error) {
+      console.error(userToCompany.error);
+      throw new Error("Fatal: failed to add user to company");
+    }
+
+    if (job.error) {
+      console.error(job.error);
+      throw new Error("Fatal: failed to insert job");
+    }
   }
 
   throw redirect(next);

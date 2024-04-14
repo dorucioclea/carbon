@@ -3,7 +3,6 @@ CREATE TABLE "feature" (
     "name" TEXT NOT NULL,
     "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     "updatedAt" TIMESTAMP WITH TIME ZONE,
-
     CONSTRAINT "feature_pkey" PRIMARY KEY ("id")
 );
 

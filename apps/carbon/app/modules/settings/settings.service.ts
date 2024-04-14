@@ -170,7 +170,7 @@ export async function insertCompany(
   client: SupabaseClient<Database>,
   company: z.infer<typeof companyValidator>
 ) {
-  return client.from("company").insert(company);
+  return client.from("company").insert(company).select("id").single();
 }
 
 export async function rollbackNextSequence(

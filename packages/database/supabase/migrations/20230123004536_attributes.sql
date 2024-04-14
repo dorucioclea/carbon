@@ -4,6 +4,7 @@ CREATE TABLE "userAttributeCategory" (
   "name" TEXT NOT NULL,
   "public" BOOLEAN DEFAULT FALSE,
   "protected" BOOLEAN DEFAULT FALSE,
+  "companyId" INTEGER,
   "active" BOOLEAN DEFAULT TRUE,
   "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   "createdBy" TEXT NOT NULL,
@@ -11,9 +12,12 @@ CREATE TABLE "userAttributeCategory" (
   "updatedBy" TEXT,
 
   CONSTRAINT "userAttributeCategory_pkey" PRIMARY KEY ("id"),
+  CONSTRAINT "userAttributeCategory_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "userAttributeCategory_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE,
   CONSTRAINT "userAttributeCategory_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE
 );
+
+CREATE INDEX "userAttributeCategory_companyId_index" ON "userAttributeCategory" ("companyId");
 
 -- ALTER TABLE "userAttributeCategory" ENABLE ROW LEVEL SECURITY;
 
@@ -104,6 +108,8 @@ CREATE TABLE "userAttribute" (
 
 );
 
+CREATE INDEX "userAttribute_userAttributeCategoryId_index" ON "userAttribute" ("userAttributeCategoryId");
+
 -- ALTER TABLE "userAttribute" ENABLE ROW LEVEL SECURITY;
 
 CREATE TABLE "userAttributeValue" (
@@ -172,16 +178,33 @@ CREATE INDEX "userAttributeValue_userAttributeId_index" ON "userAttributeValue" 
 CREATE INDEX "userAttributeValue_userId_index" ON "userAttributeValue" ("userId");
 
 ALTER TABLE "userAttributeValue" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Claims admin can view/modify user attribute values" ON "userAttributeValue" FOR ALL USING (is_claims_admin());
+CREATE POLICY "Users with resource update can view/modify user attribute values" ON "userAttributeValue" FOR ALL USING (
+  "userAttributeId" IN (
+    SELECT "id" FROM "userAttribute" WHERE "userAttributeCategoryId" IN (
+      SELECT "id" FROM "userAttributeCategory" WHERE
+      "companyId" = ANY(
+        coalesce(
+          get_permission_companies('resource_update')::integer[],
+          array[]::integer[]
+        )
+      )
+    )
+  )
+);
 CREATE POLICY "Users can insert attributes for themselves" ON "userAttributeValue" FOR UPDATE WITH CHECK (auth.uid() = "userId"::uuid);
 CREATE POLICY "Users can modify attributes for themselves" ON "userAttributeValue" FOR UPDATE WITH CHECK (auth.uid() = "userId"::uuid);
-CREATE POLICY "Users can view their own attribtues" ON "userAttributeValue" FOR SELECT USING (auth.uid() = "userId"::uuid);
+CREATE POLICY "Users can view their own attributes" ON "userAttributeValue" FOR SELECT USING (auth.uid() = "userId"::uuid);
 CREATE POLICY "Users can view other users attributes if the category is public" ON "userAttributeValue" FOR SELECT 
   USING (
     auth.role() = 'authenticated' AND
     "userAttributeValue"."userAttributeId" IN (
       SELECT "id" FROM "userAttribute" WHERE "userAttributeCategoryId" IN (
-        SELECT "id" FROM "userAttributeCategory" WHERE "public" = true
+        SELECT "id" FROM "userAttributeCategory" WHERE "public" = true AND "companyId" = ANY(
+          coalesce(
+            get_permission_companies('resource_view')::integer[],
+            array[]::integer[]
+          )
+        )
       )
     )
   );

@@ -23,6 +23,14 @@ import type { ListItem, Result } from "~/types";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
+export async function addUserToCompany(
+  client: SupabaseClient<Database>,
+  userId: string,
+  companyId: number
+) {
+  return client.from("userToCompany").insert({ companyId, userId });
+}
+
 export async function createCustomerAccount(
   client: SupabaseClient<Database>,
   {

@@ -15,6 +15,8 @@ CREATE TABLE "group" (
   CONSTRAINT "group_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE INDEX "group_companyId_idx" ON "group" ("companyId");
+
 CREATE TABLE "membership" (
   "id" SERIAL NOT NULL,
   "groupId" TEXT NOT NULL,
@@ -355,7 +357,7 @@ CREATE FUNCTION public.add_customer_account_to_customer_group()
 RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO public."membership" ("groupId", "memberUserId")
-  VALUES (new."companyId", new.id);
+  VALUES (new."customerId", new.id);
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

@@ -60,7 +60,7 @@ It is most important to use RLS. But server-side and client-side mechanisms can 
 
 ### Database Row-Level Security
 
-Here is an example of how to use RLS policies to limit a user's rights to modify a table using the `get_my_claim` function. This is SQL that's run against the database to create a security policy for the `customer` table. If you're not familiar with the `::bolean` and `::jsonb` syntax, that's just casting the value to a boolean or jsonb type. The `get_my_claim` function is a custom function that returns the value of a claim from the user's permissions record. The `auth.uid()` function returns the user's ID.
+Here is an example of how to use RLS policies to limit a user's rights to modify a table using the `get_my_claim` function. This is SQL that's run against the database to create a security policy for the `customer` table. If you're not familiar with the `::boolean` and `::jsonb` syntax, that's just casting the value to a boolean or jsonb type. The `get_my_claim` function is a custom function that returns the value of a claim from the user's permissions record. The `auth.uid()` function returns the user's ID.
 
 ```sql
 -- SQL

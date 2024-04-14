@@ -1111,6 +1111,7 @@ export async function upsertLocation(
   client: SupabaseClient<Database>,
   location:
     | (Omit<z.infer<typeof locationValidator>, "id"> & {
+        companyId: number;
         createdBy: string;
         customFields?: Json;
       })
