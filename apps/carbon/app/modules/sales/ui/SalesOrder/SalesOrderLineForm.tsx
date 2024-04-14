@@ -15,7 +15,6 @@ import { useFetcher, useNavigate, useParams } from "@remix-run/react";
 import { useEffect, useMemo, useState } from "react";
 import type { z } from "zod";
 import {
-  Account,
   ComboboxControlled,
   CustomFormFields,
   Hidden,
@@ -124,7 +123,7 @@ const SalesOrderLineForm = ({ initialValues }: SalesOrderLineFormProps) => {
 
   const onPartChange = async (partId: string) => {
     if (!supabase) return;
-    const [part, shelf, cost] = await Promise.all([
+    const [part, shelf, price] = await Promise.all([
       supabase
         .from("part")
         .select("name, unitOfMeasureCode")
@@ -137,8 +136,8 @@ const SalesOrderLineForm = ({ initialValues }: SalesOrderLineFormProps) => {
         .eq("locationId", locationId)
         .maybeSingle(),
       supabase
-        .from("partCost")
-        .select("unitCost")
+        .from("partUnitSalePrice")
+        .select("unitSalePrice")
         .eq("partId", partId)
         .single(),
     ]);
@@ -146,7 +145,7 @@ const SalesOrderLineForm = ({ initialValues }: SalesOrderLineFormProps) => {
     setPartData({
       partId,
       description: part.data?.name ?? "",
-      unitPrice: cost.data?.unitCost ?? 0,
+      unitPrice: price.data?.unitSalePrice ?? 0,
       uom: part.data?.unitOfMeasureCode ?? "EA",
       shelfId: shelf.data?.defaultShelfId ?? "",
     });
@@ -246,27 +245,6 @@ const SalesOrderLineForm = ({ initialValues }: SalesOrderLineFormProps) => {
                     onServiceChange(value?.value as string);
                   }}
                 />
-              )}
-
-              {type === "G/L Account" && (
-                <Account
-                  name="accountNumber"
-                  label="Account"
-                  classes={["Expense", "Asset"]}
-                  onChange={(value) => {
-                    setPartData({
-                      partId: "",
-                      description: value?.label ?? "",
-                      unitPrice: 0,
-                      uom: "EA",
-                      shelfId: "",
-                    });
-                  }}
-                />
-              )}
-              {type === "Fixed Asset" && (
-                // TODO: implement Fixed Asset
-                <Select name="assetId" label="Asset" options={[]} />
               )}
               <InputControlled
                 name="description"
