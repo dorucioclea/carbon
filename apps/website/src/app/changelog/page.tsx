@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { MDXRemote } from "next-mdx-remote/rsc";
 import Link from "next/link";
 import EmailForm from "~/components/EmailForm";
 import { getBlogPosts } from "~/lib/blog";
@@ -21,14 +22,15 @@ export default function Page() {
     ));
 
   return (
-    <div className="container max-w-[750px] my-24 text-xl space-y-8">
-      <div className="flex flex-col items-center space-y-8">
-        <h1 className="mx-auto text-3xl font-semibold tracking-tight leading-tighter sm:text-2xl lg:text-4xl xl:text-5xl ">
+    <div className="container text-xl space-y-8">
+      <div className="my-24 w-fit mx-auto flex flex-col items-start space-y-8">
+        <h1 className="text-3xl font-semibold sm:text-2xl lg:text-4xl xl:text-5xl">
           Changelog
         </h1>
-        <p>New updates and improvemets to Carbon</p>
+        <p className="text-muted-foreground">What&apos;s new in Carbon?</p>
         <EmailForm />
       </div>
+      <hr className="my-12 h-0.5 border-t-0 bg-muted-foreground/20 " />
       <div>{posts}</div>
     </div>
   );
@@ -42,30 +44,35 @@ type ArticleProps = {
       tag: string;
       title: string;
       image?: string;
+      publishedAt?: string;
     };
     content: string;
   };
 };
 
 export function Article({ data }: ArticleProps) {
+  const formattedDate = data?.metadata?.publishedAt
+    ? new Date(data.metadata.publishedAt).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+    : null;
   return (
     <article key={data.slug} className="pt-28 mb-20 -mt-28" id={data.slug}>
-      <Link className="mb-6 block" href={`/changelog/${data.slug}`}>
-        <h2 className="font-medium text-2xl mb-6">{data.metadata.title}</h2>
-      </Link>
-
-      <div className="updates">
-        {/* {data.metadata.image && (
-          <Image
-            src={data.metadata.image}
-            alt={data.metadata.title}
-            width={680}
-            height={442}
-            className="mb-12"
-          />
-        )} */}
-
-        {data.content}
+      <div className="flex gap-12 ">
+        <div className="text-muted-foreground">{formattedDate}</div>
+        <div className="max-w-[750px]">
+          <Link
+            className="mb-6 block hover:underline"
+            href={`/changelog/${data.slug}`}
+          >
+            <h2 className="font-medium text-3xl mb-6">{data.metadata.title}</h2>
+          </Link>
+          <div className="prose dark:prose-invert">
+            <MDXRemote source={data.content} />
+          </div>
+        </div>
       </div>
     </article>
   );
