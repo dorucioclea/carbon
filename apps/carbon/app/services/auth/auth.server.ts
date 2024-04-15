@@ -113,14 +113,20 @@ export async function requirePermissions(
           myClaims.permissions[permission][
             action as "view" | "create" | "update" | "delete"
           ];
-        return permissionForCompany.includes(0); // TODO: check if the user has access to the company
+        return (
+          permissionForCompany.includes(0) || // 0 is the wildcard for all companies
+          permissionForCompany.includes(companyId)
+        );
       } else if (Array.isArray(permission)) {
         return permission.every((p) => {
           const permissionForCompany =
             myClaims.permissions[p][
               action as "view" | "create" | "update" | "delete"
             ];
-          return permissionForCompany.includes(0); // TODO: check if the user has access to the company
+          return (
+            permissionForCompany.includes(0) || // 0 is the wildcard for all companies
+            permissionForCompany.includes(companyId)
+          );
         });
       } else {
         return false;
