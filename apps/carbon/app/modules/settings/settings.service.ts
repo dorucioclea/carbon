@@ -8,8 +8,15 @@ import { interpolateSequenceDate } from "~/utils/string";
 import { sanitize } from "~/utils/supabase";
 import type { companyValidator, sequenceValidator } from "./settings.models";
 
-export async function getCompany(client: SupabaseClient<Database>) {
-  const company = await client.from("company").select("*").single();
+export async function getCompany(
+  client: SupabaseClient<Database>,
+  companyId: number
+) {
+  const company = await client
+    .from("company")
+    .select("*")
+    .eq("id", companyId)
+    .single();
   if (company.error) {
     return company;
   }
@@ -195,11 +202,12 @@ export async function rollbackNextSequence(
 
 export async function updateCompany(
   client: SupabaseClient<Database>,
+  companyId: number,
   company: Partial<z.infer<typeof companyValidator>> & {
     updatedBy: string;
   }
 ) {
-  return client.from("company").update(sanitize(company)).eq("id", true);
+  return client.from("company").update(sanitize(company)).eq("id", companyId);
 }
 
 export async function updateIntegration(
@@ -217,6 +225,7 @@ export async function updateIntegration(
 
 export async function updateLogo(
   client: SupabaseClient<Database>,
+  companyId: number,
   logo: string | null
 ) {
   return client
@@ -226,7 +235,7 @@ export async function updateLogo(
         logo,
       })
     )
-    .eq("id", true);
+    .eq("id", companyId);
 }
 
 export async function updateSequence(

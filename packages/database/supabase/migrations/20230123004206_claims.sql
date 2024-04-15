@@ -67,21 +67,18 @@ $$;
 CREATE OR REPLACE FUNCTION has_company_permission(claim text, company integer) RETURNS "bool"
     LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
     AS $$
+    DECLARE
+      claim_value JSONB;
     BEGIN
-     IF EXISTS (
-          SELECT 1
-          FROM jsonb_array_elements_text((current_setting('request.jwt.claims', true)::jsonb)->'app_metadata'->claim) AS j
-          WHERE j::int = 0
-      ) THEN
+      SELECT coalesce(raw_app_meta_data->claim, null) INTO claim_value FROM auth.users WHERE id = auth.uid();
+      IF claim_value IS NULL THEN
+        return false;
+      ELSIF claim_value::text ~ '^[0-9]+$' AND claim_value::text::integer = 0 THEN
         return true;
-      ELSIF EXISTS (
-          SELECT 1
-          FROM jsonb_array_elements_text((current_setting('request.jwt.claims', true)::jsonb)->'app_metadata'->claim) AS j
-          WHERE j::int = company
-      ) THEN
+      ELSIF claim_value::text ~ '^[0-9]+$' AND claim_value::text::integer = company THEN
         return true;
       ELSE
-        return false; 
+        return false;
       END IF;
     END;
 $$;
@@ -107,6 +104,8 @@ CREATE OR REPLACE FUNCTION get_claim(uid uuid, claim text) RETURNS "jsonb"
       
     END;
 $$;
+
+
 
 CREATE OR REPLACE FUNCTION set_claim(uid uuid, claim text, value jsonb) RETURNS "text"
     LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public

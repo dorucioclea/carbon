@@ -1,5 +1,6 @@
 import type { Database } from "@carbon/database";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import logger from "~/lib/logger";
 import type { GenericQueryFilters } from "~/utils/query";
 import { setGenericQueryFilters } from "~/utils/query";
 import type { Permission } from "./types";
@@ -16,6 +17,23 @@ export async function deleteGroup(
   groupId: string
 ) {
   return client.from("group").delete().eq("id", groupId);
+}
+
+export async function getCompaniesForUser(
+  client: SupabaseClient<Database>,
+  userId: string
+) {
+  const { data, error } = await client
+    .from("userToCompany")
+    .select("companyId")
+    .eq("userId", userId);
+
+  if (error) {
+    logger.error(error, `Failed to get companies for user ${userId}`);
+    return [];
+  }
+
+  return data?.map((row) => row.companyId) ?? [];
 }
 
 export async function getCustomers(

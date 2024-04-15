@@ -50,7 +50,7 @@ export async function action({ request }: ActionFunctionArgs): FormActionData {
 
   const user = await getUserByEmail(authSession.email);
   if (user?.data) {
-    throw redirect(path.to.resetPassord, {
+    throw redirect(path.to.resetPassword, {
       headers: {
         "Set-Cookie": await commitAuthSession(request, {
           authSession,

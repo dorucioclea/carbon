@@ -38,7 +38,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { accessToken, expiresAt, expiresIn, userId } =
+  const { accessToken, companyId, expiresAt, expiresIn, userId } =
     await requireAuthSession(request, { verify: true });
 
   // share a client between requests
@@ -47,7 +47,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // parallelize the requests
   const [company, customFields, integrations, user, claims, groups, defaults] =
     await Promise.all([
-      getCompany(client),
+      getCompany(client, companyId),
       getCustomFieldsSchemas(client, {}),
       getIntegrations(client),
       getUser(client, userId),

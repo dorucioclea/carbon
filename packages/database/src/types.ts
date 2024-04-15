@@ -14871,6 +14871,7 @@ export type Database = {
           id: string | null;
           logo: string | null;
           name: string | null;
+          orderCount: number | null;
           status: string | null;
           taxId: string | null;
           type: string | null;

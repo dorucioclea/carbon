@@ -24,7 +24,7 @@ const CompanyLogoForm = ({ company }: CompanyLogoFormProps) => {
 
       const imageUpload = await supabase.storage
         .from("public")
-        .upload(`logo.${fileExtension}`, logo, {
+        .upload(`${company.id}/logo.${fileExtension}`, logo, {
           cacheControl: "0",
           upsert: true,
         });

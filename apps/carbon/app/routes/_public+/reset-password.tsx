@@ -70,7 +70,7 @@ export default function ResetPasswordRoute() {
       <div className="rounded-lg bg-background shadow-lg p-8 w-[380px]">
         <ValidatedForm
           method="post"
-          action={path.to.resetPassord}
+          action={path.to.resetPassword}
           validator={resetPasswordValidator}
         >
           <VStack spacing={4}>

@@ -25,7 +25,7 @@ export async function action(args: ActionFunctionArgs) {
   const { request, params } = args;
   assertIsPost(request);
 
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     create: "sales",
     role: "employee",
   });
@@ -126,7 +126,7 @@ export async function action(args: ActionFunctionArgs) {
 
         const [company, customer, customerContact, quoteLines, user] =
           await Promise.all([
-            getCompany(client),
+            getCompany(client, companyId),
             getCustomer(client, quote.data.customerId!),
             getCustomerContact(client, customerContactId),
             getQuoteLines(client, id),

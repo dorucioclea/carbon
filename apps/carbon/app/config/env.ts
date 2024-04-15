@@ -54,7 +54,8 @@ function getEnv(
  */
 export const SUPABASE_SERVICE_ROLE = getEnv("SUPABASE_SERVICE_ROLE");
 export const SESSION_SECRET = getEnv("SESSION_SECRET");
-export const SESSION_KEY = "authenticated";
+export const SESSION_KEY = "auth";
+export const SESSION_COMPANY_KEY = "company";
 export const SESSION_ERROR_KEY = "error";
 export const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days;
 export const REFRESH_ACCESS_TOKEN_THRESHOLD = 60 * 10; // 10 minutes left before token expires

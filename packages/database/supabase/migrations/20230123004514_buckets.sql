@@ -14,21 +14,42 @@ CREATE POLICY "Employees with settings_create can insert into the public bucket"
 ON storage.objects FOR INSERT WITH CHECK (
     bucket_id = 'public'
     AND (auth.role() = 'authenticated')
-    -- AND has_company_permission('settings_create', (storage.foldername(name))[1])
+    -- AND (
+    --     CAST((storage.foldername(name))[1] AS INTEGER) = ANY(
+    --         coalesce(
+    --             get_permission_companies('settings_create')::integer[],
+    --             array[]::integer[]
+    --         )
+    --     )
+    -- )
 );
 
 CREATE POLICY "Employees with settings_update can update the public bucket"
 ON storage.objects FOR UPDATE USING (
     bucket_id = 'public'
     AND (auth.role() = 'authenticated')
-    -- AND has_company_permission('settings_update', (storage.foldername(name))[1])
+    -- AND (
+    --     CAST((storage.foldername(name))[1] AS INTEGER) = ANY(
+    --         coalesce(
+    --             get_permission_companies('settings_update')::integer[],
+    --             array[]::integer[]
+    --         )
+    --     )
+    -- )
 );
 
 CREATE POLICY "Employees with settings_delete can delete from public bucket"
 ON storage.objects FOR DELETE USING (
     bucket_id = 'public'
     AND (auth.role() = 'authenticated')
-    -- AND has_company_permission('settings_delete', (storage.foldername(name))[1])
+    -- AND (
+    --     CAST((storage.foldername(name))[1] AS INTEGER) = ANY(
+    --         coalesce(
+    --             get_permission_companies('settings_delete')::integer[],
+    --             array[]::integer[]
+    --         )
+    --     )
+    -- )
 );
 
 CREATE POLICY "Anyone can view avatars"

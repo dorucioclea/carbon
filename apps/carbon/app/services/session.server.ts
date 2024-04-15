@@ -5,7 +5,7 @@ import { getCurrentPath, isGet, makeRedirectToFromHere } from "~/utils/http";
 import {
   NODE_ENV,
   REFRESH_ACCESS_TOKEN_THRESHOLD,
-  SESSION_ERROR_KEY,
+  SESSION_COMPANY_KEY,
   SESSION_KEY,
   SESSION_MAX_AGE,
   SESSION_SECRET,
@@ -46,10 +46,10 @@ export async function commitAuthSession(
   request: Request,
   {
     authSession,
-    flashErrorMessage,
+    company,
   }: {
     authSession?: AuthSession | null;
-    flashErrorMessage?: string | null;
+    company?: number;
   } = {}
 ) {
   const session = await getSession(request);
@@ -60,7 +60,9 @@ export async function commitAuthSession(
     session.set(SESSION_KEY, authSession);
   }
 
-  session.flash(SESSION_ERROR_KEY, flashErrorMessage);
+  if (company !== undefined) {
+    session.set(SESSION_COMPANY_KEY, company);
+  }
 
   return sessionStorage.commitSession(session, { maxAge: SESSION_MAX_AGE });
 }
@@ -85,6 +87,13 @@ export async function flash(request: Request, result: Result) {
   return {
     headers: { "Set-Cookie": await sessionStorage.commitSession(session) },
   };
+}
+
+export async function getCompanySession(
+  request: Request
+): Promise<number | null> {
+  const session = await getSession(request);
+  return session.get(SESSION_COMPANY_KEY);
 }
 
 export async function getAuthSession(
@@ -145,9 +154,11 @@ export async function refreshAuthSession(
   request: Request
 ): Promise<AuthSession> {
   const authSession = await getAuthSession(request);
+  const companyId = await getCompanySession(request);
 
   const refreshedAuthSession = await refreshAccessToken(
-    authSession?.refreshToken
+    authSession?.refreshToken,
+    companyId
   );
 
   if (!refreshedAuthSession) {
@@ -159,7 +170,6 @@ export async function refreshAuthSession(
       headers: {
         "Set-Cookie": await commitAuthSession(request, {
           authSession: null,
-          flashErrorMessage: "fail-refresh-auth-session",
         }),
       },
     });

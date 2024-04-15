@@ -6,6 +6,7 @@ import type {
 } from "@supabase/supabase-js";
 import { REFRESH_ACCESS_TOKEN_THRESHOLD, VERCEL_URL } from "~/config/env";
 import { getSupabase, getSupabaseServiceRole } from "~/lib/supabase";
+import { getCompaniesForUser } from "~/modules/users";
 import { getUserClaims } from "~/modules/users/users.server";
 import { flash, requireAuthSession } from "~/services/session.server";
 import { path } from "~/utils/path";
@@ -52,7 +53,8 @@ export async function getAuthAccountByAccessToken(accessToken: string) {
 }
 
 function makeAuthSession(
-  supabaseSession: SupabaseAuthSession | null
+  supabaseSession: SupabaseAuthSession | null,
+  companyId: number
 ): AuthSession | null {
   if (!supabaseSession) return null;
 
@@ -64,6 +66,7 @@ function makeAuthSession(
 
   return {
     accessToken: supabaseSession.access_token,
+    companyId,
     refreshToken: supabaseSession.refresh_token,
     userId: supabaseSession.user.id,
     email: supabaseSession.user.email,
@@ -84,15 +87,18 @@ export async function requirePermissions(
   }
 ): Promise<{
   client: SupabaseClient<Database>;
+  companyId: number;
   email: string;
   userId: string;
 }> {
-  const { accessToken, email, userId } = await requireAuthSession(request);
+  const { accessToken, companyId, email, userId } = await requireAuthSession(
+    request
+  );
 
   const client = getSupabase(accessToken);
   // early exit if no requiredPermissions are required
   if (Object.keys(requiredPermissions).length === 0)
-    return { client, email, userId };
+    return { client, companyId, email, userId };
 
   const myClaims = await getUserClaims(request);
 
@@ -132,7 +138,7 @@ export async function requirePermissions(
     );
   }
 
-  return { client, email, userId };
+  return { client, companyId, email, userId };
 }
 
 export async function resetPassword(accessToken: string, password: string) {
@@ -165,29 +171,39 @@ export async function sendMagicLink(email: string) {
 }
 
 export async function signInWithEmail(email: string, password: string) {
-  const { data, error } =
-    await getSupabaseServiceRole().auth.signInWithPassword({
-      email,
-      password,
-    });
+  const client = getSupabaseServiceRole();
+  const { data, error } = await client.auth.signInWithPassword({
+    email,
+    password,
+  });
 
   if (!data.session || error) return null;
+  const companies = await getCompaniesForUser(client, data.user.id);
 
-  return makeAuthSession(data.session);
+  return makeAuthSession(data.session, companies?.[0] ?? -1);
 }
 
 export async function refreshAccessToken(
-  refreshToken?: string
+  refreshToken?: string,
+  companyId?: number | null
 ): Promise<AuthSession | null> {
   if (!refreshToken) return null;
 
-  const { data, error } = await getSupabaseServiceRole().auth.refreshSession({
+  const client = getSupabaseServiceRole();
+
+  const { data, error } = await client.auth.refreshSession({
     refresh_token: refreshToken,
   });
 
   if (!data.session || error) return null;
 
-  return makeAuthSession(data.session);
+  let company = companyId;
+  if (!companyId) {
+    const companies = await getCompaniesForUser(client, data.user?.id!);
+    company = companies?.[0] ?? -1;
+  }
+
+  return makeAuthSession(data.session, company!);
 }
 
 export async function verifyAuthSession(authSession: AuthSession) {

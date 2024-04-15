@@ -36,11 +36,11 @@ import { requirePermissions } from "~/services/auth/auth.server";
 import { assertIsPost } from "~/utils/http";
 
 export async function loader({ request }: ActionFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     update: "settings",
   });
 
-  const company = await getCompany(client);
+  const company = await getCompany(client, companyId);
   if (company.error || !company.data) {
     return json({
       company: null,
@@ -71,7 +71,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const { next, ...data } = validation.data;
 
   const [company, locations] = await Promise.all([
-    getCompany(client),
+    getCompany(client, 1),
     getLocationsList(client),
   ]);
 
@@ -79,7 +79,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   if (company.data && location) {
     const [companyUpdate, locationUpdate] = await Promise.all([
-      updateCompany(supabaseClient, { ...data, updatedBy: userId }),
+      updateCompany(supabaseClient, 1, { ...data, updatedBy: userId }),
       upsertLocation(supabaseClient, {
         ...location,
         ...data,

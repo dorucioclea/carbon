@@ -466,7 +466,7 @@ export const path = {
     requestForQuoteFavorite: `${x}/purchasing/rfqs/favorite`,
     requestForQuotes: `${x}/purchasing/rfqs`,
     resendInvite: `${x}/users/resend-invite`,
-    resetPassord: "/reset-password",
+    resetPassword: "/reset-password",
     resources: `${x}/resources`,
     root: "/",
     routings: `${x}/parts/routing`,
