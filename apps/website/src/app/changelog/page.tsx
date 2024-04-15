@@ -8,6 +8,21 @@ export const metadata: Metadata = {
   title: "Carbon ERP | Story",
 };
 
+export function ChangelogHeader() {
+  return (
+    <>
+      <div className="my-24 w-fit mx-auto flex flex-col items-start space-y-8">
+        <h1 className="text-3xl font-semibold sm:text-2xl lg:text-4xl xl:text-5xl">
+          Changelog
+        </h1>
+        <p className="text-muted-foreground">What&apos;s new in Carbon?</p>
+        <EmailForm />
+      </div>
+      <hr className="my-12 h-0.5 border-t-0 bg-muted-foreground/20 " />
+    </>
+  );
+}
+
 export default function Page() {
   const data = getBlogPosts();
   const posts = data
@@ -23,14 +38,7 @@ export default function Page() {
 
   return (
     <div className="container text-xl space-y-8">
-      <div className="my-24 w-fit mx-auto flex flex-col items-start space-y-8">
-        <h1 className="text-3xl font-semibold sm:text-2xl lg:text-4xl xl:text-5xl">
-          Changelog
-        </h1>
-        <p className="text-muted-foreground">What&apos;s new in Carbon?</p>
-        <EmailForm />
-      </div>
-      <hr className="my-12 h-0.5 border-t-0 bg-muted-foreground/20 " />
+      <ChangelogHeader />
       <div>{posts}</div>
     </div>
   );
