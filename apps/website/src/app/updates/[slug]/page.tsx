@@ -17,7 +17,7 @@ export default function Page({
     <div className="container  my-12 text-xl space-y-8">
       <ChangelogHeader />
       <div className="flex gap-12 ">
-        <Link href={"/changelog"} className="text-muted-foreground">
+        <Link href={"/updates"} className="text-muted-foreground">
           <BsArrowLeft className="inline-block mr-2 " />
           All posts
         </Link>

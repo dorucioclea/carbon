@@ -13,7 +13,7 @@ export function ChangelogHeader() {
     <>
       <div className="my-24 w-fit mx-auto flex flex-col items-start space-y-8">
         <h1 className="text-3xl font-semibold sm:text-2xl lg:text-4xl xl:text-5xl">
-          Changelog
+          Updates
         </h1>
         <p className="text-muted-foreground">What&apos;s new in Carbon?</p>
         <EmailForm />
@@ -37,9 +37,11 @@ export default function Page() {
     ));
 
   return (
-    <div className="container text-xl space-y-8">
-      <ChangelogHeader />
-      <div>{posts}</div>
+    <div className="container flex justify-center scroll-smooth">
+      {/* <ChangelogHeader /> */}
+      <div className="max-w-[680px] pt-[80px] md:pt-[150px] w-full">
+        {posts}
+      </div>
     </div>
   );
 }
@@ -73,7 +75,7 @@ export function Article({ data }: ArticleProps) {
         <div className="max-w-[750px]">
           <Link
             className="mb-6 block hover:underline"
-            href={`/changelog/${data.slug}`}
+            href={`/updates/${data.slug}`}
           >
             <h2 className="font-medium text-3xl mb-6">{data.metadata.title}</h2>
           </Link>

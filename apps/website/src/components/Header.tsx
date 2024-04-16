@@ -13,8 +13,8 @@ const links = [
     path: "/why",
   },
   {
-    title: "Change log",
-    path: "/changelog",
+    title: "Updates",
+    path: "/updates",
   },
   // {
   //   title: "Product",

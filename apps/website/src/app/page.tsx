@@ -318,7 +318,7 @@ function Footer() {
       <div className="w-full justify-between flex">
         <div className="justify-center items-center gap-8 flex text-primary font-semibold">
           <Link href="/why">Overview</Link>
-          <Link href="/changelog">Updates</Link>
+          <Link href="/updates">Updates</Link>
           <Link href="https://github.com/barbinbrad/carbon">Github</Link>
         </div>
         <div className="text-primary text-base font-normal">© 2024 Carbon</div>
