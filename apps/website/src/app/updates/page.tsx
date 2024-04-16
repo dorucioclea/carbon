@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import Image from "next/image";
 import Link from "next/link";
 import EmailForm from "~/components/EmailForm";
+import { Tag } from "~/components/Tag";
 import { getBlogPosts } from "~/lib/blog";
-import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Carbon ERP | Story",
@@ -72,6 +73,7 @@ export function Article({ data }: ArticleProps) {
       className="flex max-w-[750px] flex-col items-start pt-28 mb-20 -mt-28"
       id={data.slug}
     >
+      <Tag status={data.metadata.tag} />
       <Link className="block " href={`/updates/${data.slug}`}>
         <h2 className="font-medium text-3xl ">{data.metadata.title}</h2>
         <div className="text-muted-foreground">{formattedDate}</div>

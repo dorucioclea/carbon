@@ -1,8 +1,9 @@
 import { MDXRemote } from "next-mdx-remote/rsc";
+import Image from "next/image";
 import Link from "next/link";
 import { BsArrowLeft } from "react-icons/bs";
+import { Tag } from "~/components/Tag";
 import { getBlogPosts } from "~/lib/blog";
-import Image from "next/image";
 
 export default function Page({
   params: { slug },
@@ -16,8 +17,11 @@ export default function Page({
   return (
     <div className="container my-24 flex gap-12 flex-col items-center">
       {post && (
-        <div className="prose dark:prose-invert">
-          <h2 className="font-medium text-3xl mb-6">{post.metadata.title}</h2>
+        <article className="prose dark:prose-invert">
+          <Tag status={post.metadata.tag} />
+          <h2 className="font-medium md:text-3xl text-2xl">
+            {post.metadata.title}
+          </h2>
           {post.metadata.image && (
             <Image
               src={post.metadata.image}
@@ -28,7 +32,7 @@ export default function Page({
             />
           )}
           <MDXRemote source={post.content} />
-        </div>
+        </article>
       )}
       <Link href={"/updates"} className="text-muted-foreground">
         <BsArrowLeft className="inline-block mr-2 " />

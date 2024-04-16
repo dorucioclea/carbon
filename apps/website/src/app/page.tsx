@@ -317,7 +317,7 @@ function Footer() {
     <div className="h-32 py-12 flex">
       <div className="w-full justify-between flex">
         <div className="justify-center items-center gap-8 flex text-primary font-semibold">
-          <Link href="/why">Overview</Link>
+          <Link href="/story">Story</Link>
           <Link href="/updates">Updates</Link>
           <Link href="https://github.com/barbinbrad/carbon">Github</Link>
         </div>

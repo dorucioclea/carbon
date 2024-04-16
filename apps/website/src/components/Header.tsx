@@ -1,6 +1,19 @@
 "use client";
 
-import { Button, cn, useDisclosure } from "@carbon/react";
+import {
+  Button,
+  Input,
+  Label,
+  Modal,
+  ModalContent,
+  ModalDescription,
+  ModalFooter,
+  ModalHeader,
+  ModalTitle,
+  ModalTrigger,
+  cn,
+  useDisclosure,
+} from "@carbon/react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -9,8 +22,8 @@ import { NavigationMenu } from "~/components/Navigation";
 
 const links = [
   {
-    title: "Why",
-    path: "/why",
+    title: "Story",
+    path: "/story",
   },
   {
     title: "Updates",
@@ -100,9 +113,30 @@ export function Header() {
           </svg>
         </button>
 
-        <Button className={cn("hidden md:inline-flex")} asChild>
-          <Link href="/get-started">Early Access</Link>
-        </Button>
+        <Modal>
+          <ModalTrigger asChild>
+            <Button>Early Access</Button>
+          </ModalTrigger>
+          <ModalContent className="sm:max-w-[425px]">
+            <ModalHeader>
+              <ModalTitle>Sign Up</ModalTitle>
+              <ModalDescription>
+                Enter your email address to sign up for early access.
+              </ModalDescription>
+            </ModalHeader>
+            <div className="grid py-4">
+              <div className="grid grid-cols-1 items-center">
+                <Label htmlFor="email" className="sr-only">
+                  Email
+                </Label>
+                <Input placeholder="Email" id="email" />
+              </div>
+            </div>
+            <ModalFooter>
+              <Button type="submit">Sign Up</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </nav>
 
       {mobileMenu.isOpen && (
