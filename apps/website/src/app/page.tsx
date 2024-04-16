@@ -315,13 +315,10 @@ function Calendar() {
 function Footer() {
   return (
     <div className="h-32 py-12 flex">
-      <div className="w-full justify-between flex">
-        <div className="justify-center items-center gap-8 flex text-primary font-semibold">
-          <Link href="/story">Story</Link>
-          <Link href="/updates">Updates</Link>
-          <Link href="https://github.com/barbinbrad/carbon">Github</Link>
-        </div>
-        <div className="text-primary text-base font-normal">© 2024 Carbon</div>
+      <div className="w-full justify-center items-center gap-8 flex text-primary font-semibold">
+        <Link href="/story">Story</Link>
+        <Link href="/updates">Updates</Link>
+        <Link href="https://github.com/barbinbrad/carbon">Github</Link>
       </div>
     </div>
   );
