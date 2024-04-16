@@ -1,16 +1,6 @@
 {
-  "index": {
-    "type": "page",
-    "title": "Home",
-    "display": "hidden",
-    "layout": "full"
-  },
-  "learn": {
-    "type": "page",
-    "title": "Learn"
-  },
-  "develop": {
-    "type": "page",
-    "title": "Develop"
-  }
+  "index": "Tech Stack",
+  "getting-started": "Getting Started",
+  "core-concepts": "Core Concepts",
+  "principles": "Principles"
 }

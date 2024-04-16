@@ -1,37 +1,152 @@
 ---
-title: Home
-description: Carbon ERP is a high-performance, open-source ERP
+title: Carbon ERP Tech Stack
+description: TypeScript, React, shadcn, Remix, Supabase
 ---
 
-import { Features } from "../components/Home/components";
+# Tech Stack
 
-# Carbon ERP
+Our tech stack aims to be as simple as possible, while still being powerful enough to build any web application. We use the following technologies:
 
-- [Customer Documentation](learn/introduction)
-- [Technical Documentation](/develop/tech-stack)
+- [TypeScript](https://www.typescriptlang.org) is the programming language
+- [React](https://reactjs.org) for the frontend
+- [Remix](https://remix.run) for the routing and compiling
+- [Supabase](https://supabase.io) for the database and authentication
+- [shadcn](https://ui.shadcn.com) (Tailwind, Radix, cva) for the UI components
 
-<Features />
+We also use [Redis](https://redis.io) for caching and queues and [Vercel](https://vercel.com) for hosting, though in most cases you probably won't interact with those.
 
-Carbon ERP is a high performance, [open-source](https://github.com/barbinbrad/carbon), single-tenant (incomplete) ERP written in Typescript with web standards. It allows customers, suppliers, and employees to share a common platform.
+In this page, we'll give you a basic overview of how the tech stack works together. If you want to learn more about any of the technologies, we recommend checking out their documentation.
 
-### High Performance
+## TypeScript
 
-We've tried to take the best of modern, open-source technology and combine it into a lightning-fast, easy-to-use ERP system. Our pages load quickly, tasks can be completed in seconds, and features can be added in hours instead of years. Our [serverless architecture](/develop/core-concepts/serverless) scales to support business of any size.
+[TypeScript](https://www.typescriptlang.org) is a programming language that builds on top of JavaScript. It adds a bunch of features that make it easier to write code, and it also makes it easier to catch bugs before you ship your code.
 
-### Open Source
+We chose TypeScript because it allows us to use a single, strongly-typed language across the entire application. Every time you run `npm run db:build`, we use Supabase to generate TypeScript types for your database schema.
 
-For us, open source means [honesty](/develop/principles#openness). We've seen too many companies get locked into expensive, proprietary software that doesn't meet their needs, after being promised that it would.
+## React
 
-We think being in business is hard enough, and we'd love it if we could help make it easier. That's why we've licensed Carbon ERP under the permissive [MIT](https://opensource.org/license/mit) license. This means that you can use Carbon ERP for free, and you can modify it to meet your needs.
+[React](https://reactjs.org) is a JavaScript library for building user interfaces. React in 2023 is like the Honda Accord of frontend frameworks:
 
-### Single Tenant
+- ✅ Proven
+- ✅ Popular
+- ✅ Flexible
+- ✅ Reliable
+- ✅ Well documented
+- ✅ Easy to find related components
+- ✅ Easy to find people to work on it
 
-Unlike most cloud-based ERP systems, Carbon ERP is designed to be a single-tenant system. This means that all of your data is stored in a single database, which is private to your company. This allows you to have complete control over your data, and to keep it secure.
+However:
 
-### Realtime
+- 🚫 It's not the simplest
+- 🚫 It's not the most modern
+- 🚫 It's not “cool”
 
-We have first-class [support for realtime](/develop/core-concepts/realtime) data updates on any data in the system. While realtime is not the default, it can be added anywhere.
+We have a package called [@carbon/react](https://github.com/barbinbrad/carbon/tree/main/packages/react/src) that has a bunch of React pre-built components that you can use to build your UI. You can also draw from a rich ecosystem of existing React component libraries.
 
-### Manufacturing
+## Remix
 
-Carbon has first-class support for American manufacturing.
+[Remix](https://remix.run) is a framework for building full-stack web applications. It's built on top of React, it is extremely cool. It allows us to co-locate server-side code and client-side code in the same files (routes). When combined with TypeScript and Supabase, this gives us type-safety from the database to the UI.
+
+Remix makes for a beautiful developer experience. It's use of nested routes, [loaders, actions and components](https://remix.run/blog/remix-data-flow) **minimizes the amount of code that needs written while maximzing performance**. To learn more about Remix, check out their documentation, and take a look at some files from our [routes](https://github.com/barbinbrad/carbon/tree/main/apps/carbon/app/routes) directory.
+
+Here's a slightly-simplified example of how a Remix route works:
+
+```tsx
+// File (route): /products/$productId/edit.tsx
+
+export async function loader({ params }) {
+  const product = await database.getProduct(params.productId);
+  return json(product);
+}
+
+export default function Route() {
+  const product = useLoaderData();
+  return (
+    <h2>Edit Product {product.id}</h2>
+    <Form method="post">
+      <input name="name" defaultValue={product.name} />
+      <input name="price" defaultValue={product.price} />
+      <button type="submit">Save</button>
+    </Form>
+  )
+}
+
+export async function action({params, request}) {
+  const form = await request.formData();
+  const name = form.get("name");
+  const price = form.get("price");
+  const product = await database.updateProduct({ id: params.productId, name, price });
+  throw redirect(`/products/${product.id}`);
+}
+```
+
+## Supabase
+
+[Supabase](https://supabase.io) is a database, authentication, and storage service that's built on top of Postgres. It allows us to provide a simple, unified authentication layer across many applications (even those that don't exist yet).
+
+Supabase provides a TypeScript client called [Supabase JS](https://supabase.com/docs/reference/javascript/typescript-support) that makes it incredibly easy to query/modify the database. It also makes it easy to use row-level security to restrict access to certain parts of the database on a per-user basis.
+
+Here's a look at how you can use Supabase JS to query the database from a Remix loader where `client` is the supabase client specific to the user making the request:
+
+```tsx
+export async function loader({request}) {
+  const { client } = requirePermissions(request, view: 'purchasing');
+  const { data, error } = await client
+    .from('purchaseOrder')
+    .select(`
+      id, name,
+      customer(id, name),
+      purchaseOrderItems(id, name, quantity, unitPrice, total)
+    `)
+    .order('createdAt', { ascending: false })
+    .limit(10);
+
+  if (error) {
+    throw redirect('/');
+  }
+
+  return json(data);
+}
+```
+
+This is similar to the following SQL query.
+
+```sql
+SELECT
+  id,
+  name,
+  customer.id,
+  customer,name
+  purchaseOrderItems.id,
+  purchaseOrderItems.name,
+  purchaseOrderItems.quantity,
+  purchaseOrderItems.unitPrice,
+  purchaseOrderItems.total
+FROM "purchaseOrder"
+INNER JOIN "customer" ON "customer"."id" = "purchaseOrder"."customerId"
+LEFT JOIN "purchaseOrderItem" ON "purchaseOrderItem"."purchaseOrderId" = "purchaseOrder"."id"
+ORDER BY "createdAt" DESC
+LIMIT 10
+```
+
+But unlike a raw SQL query, the data that we get back is strongly-typed, neatly-nested, with error handling built-in.
+
+{/* TODO: explain why this is actually a bad setup for joins -- recommend putting joins in SQL VIEWs and then using the supabase client to supabase.from("view").select("*") */}
+
+## shadcn
+
+[shadcn](https://ui.shadcn.com) is an open source starting point for a component library that combines [Radix UI](https://radix-ui.com) with [Tailwind](https://tailwindcss.com) to provide beautiful, accessibile primitives for our `@carbon/react` component package. While the underlying implementation details are [a little complex](https://cva.style/docs/getting-started/variants), the developer experience is extremely simple.
+
+Here's an example of a button:
+
+```jsx
+import { Button } from "@carbon/react";
+
+function App() {
+  return (
+    <Button size="lg" variant="secondary">
+      Click me
+    </Button>
+  );
+}
+```
