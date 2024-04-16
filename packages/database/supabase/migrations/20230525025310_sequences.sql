@@ -18,6 +18,7 @@ CREATE TABLE "sequence" (
   "next" INTEGER NOT NULL DEFAULT 1,
   "size" INTEGER NOT NULL DEFAULT 5,
   "step" INTEGER NOT NULL DEFAULT 1,
+  "companyId" INTEGER NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
 
@@ -25,6 +26,7 @@ CREATE TABLE "sequence" (
   CONSTRAINT "sequence_next_check" CHECK ("next" >= 0),
   CONSTRAINT "sequence_size_check" CHECK ("size" >= 1),
   CONSTRAINT "sequence_step_check" CHECK ("step" >= 1),
+  CONSTRAINT "sequence_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "sequence_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 

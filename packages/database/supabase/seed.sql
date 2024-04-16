@@ -16,7 +16,8 @@ INSERT INTO "theme" (
 -- currencies
 
 INSERT INTO "currency" ("name", "code", "symbol", "exchangeRate", "decimalPlaces", "isBaseCurrency", "createdBy") 
-VALUES ('US Dollar', 'USD', '$', 1, 2, TRUE, 'system'),
+VALUES 
+  ('US Dollar', 'USD', '$', 1, 2, TRUE, 'system'),
 	('Canadian Dollar', 'CAD', 'CA$', 1, 2, FALSE, 'system'),
 	('Euro', 'EUR', '€', 1, 2, FALSE, 'system'),
 	('United Arab Emirates Dirham', 'AED', 'AED', 1, 2, FALSE, 'system'),
@@ -149,44 +150,42 @@ VALUES
 
 
 -- -- supplier status
--- TODO:
 -- INSERT INTO "supplierStatus" ("name", "createdBy") VALUES ('Active', 'system'), ('Inactive', 'system'), ('Pending', 'system'), ('Rejected', 'system');
 
 -- -- customer status
--- TODO:
 -- INSERT INTO "customerStatus" ("name", "createdBy") VALUES ('Active', 'system'), ('Inactive', 'system'), ('Lead', 'system'), ('On Hold', 'system'), ('Cancelled', 'system'), ('Archived', 'system');
 
--- unit of measure
+-- -- unit of measure
 
-INSERT INTO "unitOfMeasure" ("code", "name", "createdBy")
-VALUES 
-( 'EA', 'Each', 'system'),
-( 'PCS', 'Pieces', 'system');
+-- INSERT INTO "unitOfMeasure" ("code", "name", "createdBy")
+-- VALUES 
+-- ( 'EA', 'Each', 'system'),
+-- ( 'PCS', 'Pieces', 'system');
 
--- payment terms
+-- -- payment terms
 
-INSERT INTO "paymentTerm" ("name", "daysDue", "calculationMethod", "daysDiscount", "discountPercentage", "createdBy") 
-VALUES 
-  ('Net 15', 15, 'Net', 0, 0, 'system'),
-  ('Net 30', 30, 'Net', 0, 0, 'system'),
-  ('Net 50', 50, 'Net', 0, 0, 'system'),
-  ('Net 60', 60, 'Net', 0, 0, 'system'),
-  ('Net 90', 90, 'Net', 0, 0, 'system'),
-  ('1% 10 Net 30', 30, 'Net', 10, 1, 'system'),
-  ('2% 10 Net 30', 30, 'Net', 10, 2, 'system'),
-  ('Due on Receipt', 0, 'Net', 0, 0, 'system'),
-  ('Net EOM 10', 10, 'End of Month', 0, 0, 'system');
+-- INSERT INTO "paymentTerm" ("name", "daysDue", "calculationMethod", "daysDiscount", "discountPercentage", "createdBy") 
+-- VALUES 
+--   ('Net 15', 15, 'Net', 0, 0, 'system'),
+--   ('Net 30', 30, 'Net', 0, 0, 'system'),
+--   ('Net 50', 50, 'Net', 0, 0, 'system'),
+--   ('Net 60', 60, 'Net', 0, 0, 'system'),
+--   ('Net 90', 90, 'Net', 0, 0, 'system'),
+--   ('1% 10 Net 30', 30, 'Net', 10, 1, 'system'),
+--   ('2% 10 Net 30', 30, 'Net', 10, 2, 'system'),
+--   ('Due on Receipt', 0, 'Net', 0, 0, 'system'),
+--   ('Net EOM 10', 10, 'End of Month', 0, 0, 'system');
 
--- sequences
+-- -- sequences
 
-INSERT INTO "sequence" ("table", "name", "prefix", "suffix", "next", "size", "step")
-VALUES 
-  ('purchaseOrder', 'Purchase Order', 'PO', NULL, 0, 6, 1),
-  ('purchaseInvoice', 'Purchase Invoice', 'AP', NULL, 0, 6, 1),
-  ('receipt', 'Receipt', 'RE', NULL, 0, 6, 1),
-  ('requestForQuote', 'Request For Quote', 'RFQ', NULL, 0, 6, 1),
-  ('quote', 'Quote', 'QUO', NULL, 0, 6, 1),
-  ('salesOrder', 'Sales Order', 'SO', NULL, 0, 6, 1);
+-- INSERT INTO "sequence" ("table", "name", "prefix", "suffix", "next", "size", "step")
+-- VALUES 
+--   ('purchaseOrder', 'Purchase Order', 'PO', NULL, 0, 6, 1),
+--   ('purchaseInvoice', 'Purchase Invoice', 'AP', NULL, 0, 6, 1),
+--   ('receipt', 'Receipt', 'RE', NULL, 0, 6, 1),
+--   ('requestForQuote', 'Request For Quote', 'RFQ', NULL, 0, 6, 1),
+--   ('quote', 'Quote', 'QUO', NULL, 0, 6, 1),
+--   ('salesOrder', 'Sales Order', 'SO', NULL, 0, 6, 1);
 
 -- account categories
 

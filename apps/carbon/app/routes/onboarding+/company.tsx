@@ -19,6 +19,7 @@ import { json, redirect, type ActionFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { Hidden, Input, Submit } from "~/components/Form";
 import { useOnboarding } from "~/hooks";
+import logger from "~/lib/logger";
 import { getSupabaseServiceRole } from "~/lib/supabase";
 import {
   getLocationsList,
@@ -29,10 +30,12 @@ import {
   getCompany,
   insertCompany,
   onboardingCompanyValidator,
+  seedCompany,
   updateCompany,
 } from "~/modules/settings";
 import { addUserToCompany } from "~/modules/users/users.server";
 import { requirePermissions } from "~/services/auth/auth.server";
+import { commitAuthSession } from "~/services/session.server";
 import { assertIsPost } from "~/utils/http";
 
 export async function loader({ request }: ActionFunctionArgs) {
@@ -40,7 +43,8 @@ export async function loader({ request }: ActionFunctionArgs) {
     update: "settings",
   });
 
-  const company = await getCompany(client, companyId);
+  const company = await getCompany(client, companyId ?? 1);
+  console.log({ company });
   if (company.error || !company.data) {
     return json({
       company: null,
@@ -70,6 +74,8 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const { next, ...data } = validation.data;
 
+  let companyId: number | undefined;
+
   const [company, locations] = await Promise.all([
     getCompany(client, 1),
     getLocationsList(client),
@@ -88,21 +94,21 @@ export async function action({ request }: ActionFunctionArgs) {
       }),
     ]);
     if (companyUpdate.error) {
-      console.error(companyUpdate.error);
+      logger.error(companyUpdate.error);
       throw new Error("Fatal: failed to update company");
     }
     if (locationUpdate.error) {
-      console.error(locationUpdate.error);
+      logger.error(locationUpdate.error);
       throw new Error("Fatal: failed to update location");
     }
   } else {
     const companyInsert = await insertCompany(supabaseClient, data);
     if (companyInsert.error) {
-      console.error(companyInsert.error);
+      logger.error(companyInsert.error);
       throw new Error("Fatal: failed to insert company");
     }
 
-    const companyId = companyInsert.data?.id;
+    companyId = companyInsert.data?.id;
     if (!companyId) {
       throw new Error("Fatal: failed to get company ID");
     }
@@ -116,7 +122,7 @@ export async function action({ request }: ActionFunctionArgs) {
     });
 
     if (locationInsert.error) {
-      console.error(locationInsert.error);
+      logger.error(locationInsert.error);
       throw new Error("Fatal: failed to insert location");
     }
 
@@ -125,27 +131,38 @@ export async function action({ request }: ActionFunctionArgs) {
       throw new Error("Fatal: failed to get location ID");
     }
 
-    const [userToCompany, job] = await Promise.all([
+    const [userToCompany, job, seed] = await Promise.all([
       addUserToCompany(supabaseClient, userId, companyId),
       insertEmployeeJob(supabaseClient, {
         id: userId,
         locationId,
       }),
-      // TODO: seed company
+      seedCompany(supabaseClient, companyId),
     ]);
 
     if (userToCompany.error) {
-      console.error(userToCompany.error);
+      logger.error(userToCompany.error);
       throw new Error("Fatal: failed to add user to company");
     }
 
     if (job.error) {
-      console.error(job.error);
+      logger.error(job.error);
       throw new Error("Fatal: failed to insert job");
+    }
+
+    if (seed.error) {
+      logger.error(seed.error);
+      throw new Error("Fatal: failed to seed company");
     }
   }
 
-  throw redirect(next);
+  throw redirect(next, {
+    headers: {
+      "Set-Cookie": await commitAuthSession(request, {
+        company: companyId ?? 1,
+      }),
+    },
+  });
 }
 
 export default function OnboardingCompany() {

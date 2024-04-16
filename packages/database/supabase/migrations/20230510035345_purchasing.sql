@@ -12,6 +12,7 @@ CREATE TABLE "paymentTerm" (
   "discountPercentage" NUMERIC(10,5) NOT NULL DEFAULT 0,
   "calculationMethod" "paymentTermCalculationMethod" NOT NULL DEFAULT 'Net',
   "active" BOOLEAN NOT NULL DEFAULT TRUE,
+  "companyId" INTEGER NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
@@ -19,22 +20,24 @@ CREATE TABLE "paymentTerm" (
   "customFields" JSONB,
 
   CONSTRAINT "paymentTerm_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "paymentTerm_name_key" UNIQUE ("name", "active"),
+  CONSTRAINT "paymentTerm_name_key" UNIQUE ("name", "companyId", "active"),
+  CONSTRAINT "paymentTerm_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT "paymentTerm_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "paymentTerm_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
 );
 
+CREATE INDEX "paymentTerm_name_idx" ON "paymentTerm" ("companyId");
 ALTER TABLE "paymentTerm" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Certain employees can view payment terms" ON "paymentTerm"
   FOR SELECT
   USING (
     (
-      coalesce(get_my_claim('accounting_view')::boolean, false) = true OR
-      coalesce(get_my_claim('parts_view')::boolean, false) = true OR
-      coalesce(get_my_claim('resources_view')::boolean, false) = true OR
-      coalesce(get_my_claim('sales_view')::boolean, false) = true OR
-      coalesce(get_my_claim('purchasing_view')::boolean, false) = true
+      has_company_permission('accounting_view', "companyId") = true OR
+      has_company_permission('parts_view', "companyId") = true OR
+      has_company_permission('resources_view', "companyId") = true OR
+      has_company_permission('sales_view', "companyId") = true OR
+      has_company_permission('purchasing_view', "companyId") = true
     )
     AND (get_my_claim('role'::text)) = '"employee"'::jsonb
   );
@@ -43,21 +46,21 @@ CREATE POLICY "Certain employees can view payment terms" ON "paymentTerm"
 CREATE POLICY "Employees with accounting_create can insert payment terms" ON "paymentTerm"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('accounting_create')::boolean,false) 
+    has_company_permission('accounting_create', "companyId") 
     AND (get_my_claim('role'::text)) = '"employee"'::jsonb
 );
 
 CREATE POLICY "Employees with accounting_update can update payment terms" ON "paymentTerm"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('accounting_update')::boolean, false) = true 
+    has_company_permission('accounting_update', "companyId") = true 
     AND (get_my_claim('role'::text)) = '"employee"'::jsonb
   );
 
 CREATE POLICY "Employees with accounting_delete can delete payment terms" ON "paymentTerm"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('accounting_delete')::boolean, false) = true 
+    has_company_permission('accounting_delete', "companyId") = true 
     AND (get_my_claim('role'::text)) = '"employee"'::jsonb
   );
   
@@ -231,13 +234,15 @@ CREATE TABLE "purchaseOrderLine" (
   "quantityToInvoice" NUMERIC(9,2) GENERATED ALWAYS AS (CASE WHEN "purchaseOrderLineType" = 'Comment' THEN 0 ELSE GREATEST(("purchaseQuantity" - "quantityInvoiced"), 0) END) STORED,
   "quantityInvoiced" NUMERIC(9,2) DEFAULT 0,
   "unitPrice" NUMERIC(9,2),
-  "unitOfMeasureCode" TEXT,
+  "inventoryUnitOfMeasureCode" TEXT,
+  "purchaseUnitOfMeasureCode" TEXT,
   "locationId" TEXT,
   "shelfId" TEXT,
   "setupPrice" NUMERIC(9,2),
   "receivedComplete" BOOLEAN NOT NULL DEFAULT FALSE,
   "invoicedComplete" BOOLEAN NOT NULL DEFAULT FALSE,
   "requiresInspection" BOOLEAN NOT NULL DEFAULT FALSE,
+  "companyId" INTEGER NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
@@ -291,7 +296,8 @@ CREATE TABLE "purchaseOrderLine" (
   CONSTRAINT "purchaseOrderLine_accountNumber_fkey" FOREIGN KEY ("accountNumber") REFERENCES "account" ("number") ON DELETE CASCADE ON UPDATE CASCADE,
   -- TODO: Add assetId foreign key
   CONSTRAINT "purchaseOrderLine_shelfId_fkey" FOREIGN KEY ("shelfId", "locationId") REFERENCES "shelf" ("id", "locationId") ON DELETE CASCADE,
-  CONSTRAINT "purchaseOrderLine_unitOfMeasureCode_fkey" FOREIGN KEY ("unitOfMeasureCode") REFERENCES "unitOfMeasure" ("code") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "purchaseOrderLine_inventoryUnitOfMeasureCode_fkey" FOREIGN KEY ("inventoryUnitOfMeasureCode", "companyId") REFERENCES "unitOfMeasure" ("code", "companyId") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "purchaseOrderLine_purchaseUnitOfMeasureCode_fkey" FOREIGN KEY ("purchaseUnitOfMeasureCode", "companyId") REFERENCES "unitOfMeasure" ("code", "companyId") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "purchaseOrderLine_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "purchaseOrderLine_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
 );

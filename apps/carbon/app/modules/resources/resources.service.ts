@@ -200,6 +200,7 @@ export async function getAttribute(
 
 async function getAttributes(
   client: SupabaseClient<Database>,
+  companyId: number,
   userIds: string[]
 ) {
   return client
@@ -213,6 +214,7 @@ async function getAttributes(
         )
       )`
     )
+    .eq("companyId", companyId)
     .eq("userAttribute.active", true)
     .in("userAttribute.userAttributeValue.userId", [userIds])
     .order("sortOrder", { foreignTable: "userAttribute", ascending: true });
@@ -220,6 +222,7 @@ async function getAttributes(
 
 export async function getAttributeCategories(
   client: SupabaseClient<Database>,
+  companyId: number,
   args?: { search: string | null } & GenericQueryFilters
 ) {
   let query = client
@@ -227,6 +230,7 @@ export async function getAttributeCategories(
     .select("*, userAttribute(id, name, attributeDataType(id))", {
       count: "exact",
     })
+    .eq("companyId", companyId)
     .eq("active", true)
     .eq("userAttribute.active", true);
 
@@ -557,11 +561,12 @@ type Person = Employee & {
 
 export async function getPeople(
   client: SupabaseClient<Database>,
+  companyId: number,
   args: GenericQueryFilters & {
     search: string | null;
   }
 ) {
-  const employees = await getEmployees(client, args);
+  const employees = await getEmployees(client, companyId, args);
   if (employees.error) return employees;
 
   if (!employees.data) throw new Error("Failed to get employee data");
@@ -573,7 +578,7 @@ export async function getPeople(
     return employee.user?.id;
   });
 
-  const attributeCategories = await getAttributes(client, userIds);
+  const attributeCategories = await getAttributes(client, companyId, userIds);
   if (attributeCategories.error) return attributeCategories;
 
   const people: Person[] = employees.data.map((employee) => {
@@ -1158,6 +1163,7 @@ export async function upsertShift(
   shift:
     | (Omit<z.infer<typeof shiftValidator>, "id"> & {
         createdBy: string;
+        companyId: number;
         customFields?: Json;
       })
     | (Omit<z.infer<typeof shiftValidator>, "id"> & {

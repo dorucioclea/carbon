@@ -4561,6 +4561,7 @@ export type Database = {
           approvedBy: string | null
           assignee: string | null
           blocked: boolean
+          companyId: number
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -4583,6 +4584,7 @@ export type Database = {
           approvedBy?: string | null
           assignee?: string | null
           blocked?: boolean
+          companyId: number
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -4605,6 +4607,7 @@ export type Database = {
           approvedBy?: string | null
           assignee?: string | null
           blocked?: boolean
+          companyId?: number
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -4679,6 +4682,13 @@ export type Database = {
             referencedColumns: ["userId"]
           },
           {
+            foreignKeyName: "part_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "part_createdBy_fkey"
             columns: ["createdBy"]
             isOneToOne: false
@@ -4715,10 +4725,10 @@ export type Database = {
           },
           {
             foreignKeyName: "part_unitOfMeasureCode_fkey"
-            columns: ["unitOfMeasureCode"]
+            columns: ["unitOfMeasureCode", "companyId"]
             isOneToOne: false
             referencedRelation: "unitOfMeasure"
-            referencedColumns: ["code"]
+            referencedColumns: ["code", "companyId"]
           },
           {
             foreignKeyName: "part_updatedBy_fkey"
@@ -5498,6 +5508,7 @@ export type Database = {
       }
       partReplenishment: {
         Row: {
+          companyId: number
           conversionFactor: number
           createdAt: string
           createdBy: string
@@ -5517,6 +5528,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
+          companyId: number
           conversionFactor?: number
           createdAt?: string
           createdBy: string
@@ -5536,6 +5548,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
+          companyId?: number
           conversionFactor?: number
           createdAt?: string
           createdBy?: string
@@ -5555,6 +5568,13 @@ export type Database = {
           updatedBy?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "partReplenishment_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "partReplenishment_createdBy_fkey"
             columns: ["createdBy"]
@@ -5641,10 +5661,10 @@ export type Database = {
           },
           {
             foreignKeyName: "partReplenishment_purchaseUnitOfMeasureCode_fkey"
-            columns: ["purchasingUnitOfMeasureCode"]
+            columns: ["purchasingUnitOfMeasureCode", "companyId"]
             isOneToOne: false
             referencedRelation: "unitOfMeasure"
-            referencedColumns: ["code"]
+            referencedColumns: ["code", "companyId"]
           },
           {
             foreignKeyName: "partReplenishment_updatedBy_fkey"
@@ -5843,6 +5863,7 @@ export type Database = {
       partUnitSalePrice: {
         Row: {
           allowInvoiceDiscount: boolean
+          companyId: number
           createdAt: string
           createdBy: string
           currencyCode: string
@@ -5857,6 +5878,7 @@ export type Database = {
         }
         Insert: {
           allowInvoiceDiscount?: boolean
+          companyId: number
           createdAt?: string
           createdBy: string
           currencyCode: string
@@ -5871,6 +5893,7 @@ export type Database = {
         }
         Update: {
           allowInvoiceDiscount?: boolean
+          companyId?: number
           createdAt?: string
           createdBy?: string
           currencyCode?: string
@@ -5884,6 +5907,13 @@ export type Database = {
           updatedBy?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "partUnitSalePrice_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "partUnitSalePrice_createdBy_fkey"
             columns: ["createdBy"]
@@ -5942,10 +5972,10 @@ export type Database = {
           },
           {
             foreignKeyName: "partUnitSalePrice_salesUnitOfMeasureId_fkey"
-            columns: ["salesUnitOfMeasureCode"]
+            columns: ["salesUnitOfMeasureCode", "companyId"]
             isOneToOne: false
             referencedRelation: "unitOfMeasure"
-            referencedColumns: ["code"]
+            referencedColumns: ["code", "companyId"]
           },
           {
             foreignKeyName: "partUnitSalePrice_updatedBy_fkey"
@@ -5981,6 +6011,7 @@ export type Database = {
         Row: {
           active: boolean
           calculationMethod: Database["public"]["Enums"]["paymentTermCalculationMethod"]
+          companyId: number
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -5995,6 +6026,7 @@ export type Database = {
         Insert: {
           active?: boolean
           calculationMethod?: Database["public"]["Enums"]["paymentTermCalculationMethod"]
+          companyId: number
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -6009,6 +6041,7 @@ export type Database = {
         Update: {
           active?: boolean
           calculationMethod?: Database["public"]["Enums"]["paymentTermCalculationMethod"]
+          companyId?: number
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -6021,6 +6054,13 @@ export type Database = {
           updatedBy?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "paymentTerm_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "paymentTerm_createdBy_fkey"
             columns: ["createdBy"]
@@ -7008,6 +7048,7 @@ export type Database = {
         Row: {
           accountNumber: string | null
           assetId: string | null
+          companyId: number
           conversionFactor: number | null
           createdAt: string
           createdBy: string
@@ -7035,6 +7076,7 @@ export type Database = {
         Insert: {
           accountNumber?: string | null
           assetId?: string | null
+          companyId: number
           conversionFactor?: number | null
           createdAt?: string
           createdBy: string
@@ -7062,6 +7104,7 @@ export type Database = {
         Update: {
           accountNumber?: string | null
           assetId?: string | null
+          companyId?: number
           conversionFactor?: number | null
           createdAt?: string
           createdBy?: string
@@ -7088,20 +7131,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "purchaseInvoiceLine_inventoryUnitOfMeasureCode_fkey"
-            columns: ["inventoryUnitOfMeasureCode"]
-            isOneToOne: false
-            referencedRelation: "unitOfMeasure"
-            referencedColumns: ["code"]
-          },
-          {
-            foreignKeyName: "purchaseInvoiceLine_purchaseUnitOfMeasureCode_fkey"
-            columns: ["purchaseUnitOfMeasureCode"]
-            isOneToOne: false
-            referencedRelation: "unitOfMeasure"
-            referencedColumns: ["code"]
-          },
-          {
             foreignKeyName: "purchaseInvoiceLines_accountNumber_fkey"
             columns: ["accountNumber"]
             isOneToOne: false
@@ -7114,6 +7143,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "accounts"
             referencedColumns: ["number"]
+          },
+          {
+            foreignKeyName: "purchaseInvoiceLines_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "purchaseInvoiceLines_createdBy_fkey"
@@ -7149,6 +7185,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "currency"
             referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "purchaseInvoiceLines_inventoryUnitOfMeasureCode_fkey"
+            columns: ["inventoryUnitOfMeasureCode", "companyId"]
+            isOneToOne: false
+            referencedRelation: "unitOfMeasure"
+            referencedColumns: ["code", "companyId"]
           },
           {
             foreignKeyName: "purchaseInvoiceLines_invoiceId_fkey"
@@ -7247,6 +7290,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "purchaseOrderLines"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchaseInvoiceLines_purchaseUnitOfMeasureCode_fkey"
+            columns: ["purchaseUnitOfMeasureCode", "companyId"]
+            isOneToOne: false
+            referencedRelation: "unitOfMeasure"
+            referencedColumns: ["code", "companyId"]
           },
           {
             foreignKeyName: "purchaseInvoiceLines_serviceId_fkey"
@@ -7929,6 +7979,7 @@ export type Database = {
         Row: {
           accountNumber: string | null
           assetId: string | null
+          companyId: number
           conversionFactor: number | null
           createdAt: string
           createdBy: string
@@ -7959,6 +8010,7 @@ export type Database = {
         Insert: {
           accountNumber?: string | null
           assetId?: string | null
+          companyId: number
           conversionFactor?: number | null
           createdAt?: string
           createdBy: string
@@ -7989,6 +8041,7 @@ export type Database = {
         Update: {
           accountNumber?: string | null
           assetId?: string | null
+          companyId?: number
           conversionFactor?: number | null
           createdAt?: string
           createdBy?: string
@@ -8061,10 +8114,10 @@ export type Database = {
           },
           {
             foreignKeyName: "purchaseOrderLine_inventoryUnitOfMeasureCode_fkey"
-            columns: ["inventoryUnitOfMeasureCode"]
+            columns: ["inventoryUnitOfMeasureCode", "companyId"]
             isOneToOne: false
             referencedRelation: "unitOfMeasure"
-            referencedColumns: ["code"]
+            referencedColumns: ["code", "companyId"]
           },
           {
             foreignKeyName: "purchaseOrderLine_partId_fkey"
@@ -8110,10 +8163,10 @@ export type Database = {
           },
           {
             foreignKeyName: "purchaseOrderLine_purchaseUnitOfMeasureCode_fkey"
-            columns: ["purchaseUnitOfMeasureCode"]
+            columns: ["purchaseUnitOfMeasureCode", "companyId"]
             isOneToOne: false
             referencedRelation: "unitOfMeasure"
-            referencedColumns: ["code"]
+            referencedColumns: ["code", "companyId"]
           },
           {
             foreignKeyName: "purchaseOrderLine_serviceId_fkey"
@@ -10277,6 +10330,7 @@ export type Database = {
       }
       requestForQuoteLine: {
         Row: {
+          companyId: number
           createdAt: string | null
           createdBy: string
           customFields: Json | null
@@ -10293,6 +10347,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
+          companyId: number
           createdAt?: string | null
           createdBy: string
           customFields?: Json | null
@@ -10309,6 +10364,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
+          companyId?: number
           createdAt?: string | null
           createdBy?: string
           customFields?: Json | null
@@ -10325,6 +10381,13 @@ export type Database = {
           updatedBy?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "requestForQuoteLine_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "requestForQuoteLine_createdBy_fkey"
             columns: ["createdBy"]
@@ -10425,10 +10488,10 @@ export type Database = {
           },
           {
             foreignKeyName: "requestForQuoteLine_unitOfMeasureCode_fkey"
-            columns: ["unitOfMeasureCode"]
+            columns: ["unitOfMeasureCode", "companyId"]
             isOneToOne: false
             referencedRelation: "unitOfMeasure"
-            referencedColumns: ["code"]
+            referencedColumns: ["code", "companyId"]
           },
           {
             foreignKeyName: "requestForQuoteLine_updatedBy_fkey"
@@ -11050,6 +11113,7 @@ export type Database = {
         Row: {
           accountNumber: string | null
           assetId: string | null
+          companyId: number
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -11078,6 +11142,7 @@ export type Database = {
         Insert: {
           accountNumber?: string | null
           assetId?: string | null
+          companyId: number
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -11106,6 +11171,7 @@ export type Database = {
         Update: {
           accountNumber?: string | null
           assetId?: string | null
+          companyId?: number
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -11232,10 +11298,10 @@ export type Database = {
           },
           {
             foreignKeyName: "salesOrderLine_unitOfMeasureCode_fkey"
-            columns: ["unitOfMeasureCode"]
+            columns: ["unitOfMeasureCode", "companyId"]
             isOneToOne: false
             referencedRelation: "unitOfMeasure"
-            referencedColumns: ["code"]
+            referencedColumns: ["code", "companyId"]
           },
           {
             foreignKeyName: "salesOrderLine_updatedBy_fkey"
@@ -11751,6 +11817,7 @@ export type Database = {
       }
       sequence: {
         Row: {
+          companyId: number
           id: string
           name: string
           next: number
@@ -11763,6 +11830,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
+          companyId: number
           id?: string
           name: string
           next?: number
@@ -11775,6 +11843,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
+          companyId?: number
           id?: string
           name?: string
           next?: number
@@ -11787,6 +11856,13 @@ export type Database = {
           updatedBy?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "sequence_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "sequence_updatedBy_fkey"
             columns: ["updatedBy"]
@@ -13709,6 +13785,7 @@ export type Database = {
         Row: {
           active: boolean
           code: string
+          companyId: number
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -13720,6 +13797,7 @@ export type Database = {
         Insert: {
           active?: boolean
           code: string
+          companyId: number
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -13731,6 +13809,7 @@ export type Database = {
         Update: {
           active?: boolean
           code?: string
+          companyId?: number
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -13740,6 +13819,13 @@ export type Database = {
           updatedBy?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "unitOfMeasure_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "unitOfMeasure_createdBy_fkey"
             columns: ["createdBy"]
@@ -15412,6 +15498,7 @@ export type Database = {
           approvedBy: string | null
           assignee: string | null
           blocked: boolean | null
+          companyId: number | null
           createdAt: string | null
           createdBy: string | null
           customFields: Json | null
@@ -15490,6 +15577,13 @@ export type Database = {
             referencedColumns: ["userId"]
           },
           {
+            foreignKeyName: "part_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "part_createdBy_fkey"
             columns: ["createdBy"]
             isOneToOne: false
@@ -15526,10 +15620,10 @@ export type Database = {
           },
           {
             foreignKeyName: "part_unitOfMeasureCode_fkey"
-            columns: ["unitOfMeasureCode"]
+            columns: ["unitOfMeasureCode", "companyId"]
             isOneToOne: false
             referencedRelation: "unitOfMeasure"
-            referencedColumns: ["code"]
+            referencedColumns: ["code", "companyId"]
           },
           {
             foreignKeyName: "part_updatedBy_fkey"
@@ -15764,6 +15858,7 @@ export type Database = {
         Row: {
           accountNumber: string | null
           assetId: string | null
+          companyId: number | null
           conversionFactor: number | null
           createdAt: string | null
           createdBy: string | null
@@ -15880,10 +15975,10 @@ export type Database = {
           },
           {
             foreignKeyName: "purchaseOrderLine_inventoryUnitOfMeasureCode_fkey"
-            columns: ["inventoryUnitOfMeasureCode"]
+            columns: ["inventoryUnitOfMeasureCode", "companyId"]
             isOneToOne: false
             referencedRelation: "unitOfMeasure"
-            referencedColumns: ["code"]
+            referencedColumns: ["code", "companyId"]
           },
           {
             foreignKeyName: "purchaseOrderLine_partId_fkey"
@@ -15929,10 +16024,10 @@ export type Database = {
           },
           {
             foreignKeyName: "purchaseOrderLine_purchaseUnitOfMeasureCode_fkey"
-            columns: ["purchaseUnitOfMeasureCode"]
+            columns: ["purchaseUnitOfMeasureCode", "companyId"]
             isOneToOne: false
             referencedRelation: "unitOfMeasure"
-            referencedColumns: ["code"]
+            referencedColumns: ["code", "companyId"]
           },
           {
             foreignKeyName: "purchaseOrderLine_serviceId_fkey"
@@ -16923,6 +17018,7 @@ export type Database = {
         Row: {
           accountNumber: string | null
           assetId: string | null
+          companyId: number | null
           createdAt: string | null
           createdBy: string | null
           customerId: string | null
@@ -17075,10 +17171,10 @@ export type Database = {
           },
           {
             foreignKeyName: "salesOrderLine_unitOfMeasureCode_fkey"
-            columns: ["unitOfMeasureCode"]
+            columns: ["unitOfMeasureCode", "companyId"]
             isOneToOne: false
             referencedRelation: "unitOfMeasure"
-            referencedColumns: ["code"]
+            referencedColumns: ["code", "companyId"]
           },
           {
             foreignKeyName: "salesOrderLine_updatedBy_fkey"

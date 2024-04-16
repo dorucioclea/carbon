@@ -12,6 +12,8 @@ export async function getCompany(
   client: SupabaseClient<Database>,
   companyId: number
 ) {
+  console.log(`getCompany: ${companyId}`);
+
   const company = await client
     .from("company")
     .select("*")
@@ -197,6 +199,17 @@ export async function rollbackNextSequence(
   return await updateSequence(client, table, {
     next: nextValue,
     updatedBy: userId,
+  });
+}
+
+export async function seedCompany(
+  client: SupabaseClient<Database>,
+  companyId: number
+) {
+  return client.functions.invoke("seed-company", {
+    body: {
+      id: companyId,
+    },
   });
 }
 

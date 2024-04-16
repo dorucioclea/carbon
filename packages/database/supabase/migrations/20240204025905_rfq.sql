@@ -34,6 +34,7 @@ CREATE TABLE "requestForQuoteLine" (
   "unitOfMeasureCode" TEXT,
   "locationId" TEXT,
   "shelfId" TEXT,
+  "companyId" INTEGER NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT now(),
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT now(),
@@ -43,9 +44,10 @@ CREATE TABLE "requestForQuoteLine" (
   CONSTRAINT "requestForQuoteLine_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "requestForQuoteLine_requestForQuoteId_fkey" FOREIGN KEY ("requestForQuoteId") REFERENCES "requestForQuote"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "requestForQuoteLine_partId_fkey" FOREIGN KEY ("partId") REFERENCES "part"("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT "requestForQuoteLine_unitOfMeasureCode_fkey" FOREIGN KEY ("unitOfMeasureCode") REFERENCES "unitOfMeasure"("code") ON UPDATE CASCADE ON DELETE SET NULL,
+  CONSTRAINT "requestForQuoteLine_unitOfMeasureCode_fkey" FOREIGN KEY ("unitOfMeasureCode", "companyId") REFERENCES "unitOfMeasure"("code", "companyId") ON UPDATE CASCADE ON DELETE SET NULL,
   CONSTRAINT "requestForQuoteLine_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "location"("id") ON UPDATE CASCADE ON DELETE SET NULL,
   CONSTRAINT "requestForQuoteLine_shelfId_fkey"  FOREIGN KEY ("shelfId", "locationId") REFERENCES "shelf" ("id", "locationId") ON DELETE CASCADE,
+  CONSTRAINT "requestForQuoteLine_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "requestForQuoteLine_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "requestForQuoteLine_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );

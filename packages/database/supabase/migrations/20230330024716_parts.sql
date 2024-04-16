@@ -82,6 +82,7 @@ CREATE TABLE "unitOfMeasure" (
   "code" TEXT NOT NULL,
   "name" TEXT NOT NULL,
   "active" BOOLEAN NOT NULL DEFAULT true,
+  "companyId" INTEGER NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
@@ -89,13 +90,17 @@ CREATE TABLE "unitOfMeasure" (
   "customFields" JSONB,
 
   CONSTRAINT "unitOfMeasure_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "unitOfMeasure_code_key" UNIQUE ("code"),
+  CONSTRAINT "unitOfMeasure_code_unique" UNIQUE ("code", "companyId"),
+  CONSTRAINT "unitOfMeasure_name_unique" UNIQUE ("name", "companyId"),
   CONSTRAINT "unitOfMeasure_code_check" CHECK (char_length("code") <= 6),
+  CONSTRAINT "unitOfMeasure_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "unitOfMeasure_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id"),
   CONSTRAINT "unitOfMeasure_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id")
 );
 
 CREATE INDEX "unitOfMeasure_code_index" ON "unitOfMeasure"("code");
+CREATE INDEX "unitOfMeasure_name_index" ON "unitOfMeasure"("name");
+CREATE INDEX "unitOfMeasure_companyId_index" ON "unitOfMeasure"("companyId");
 
 ALTER TABLE "unitOfMeasure" ENABLE ROW LEVEL SECURITY;
 
@@ -143,6 +148,7 @@ CREATE TABLE "part" (
   "approvedBy" TEXT,
   "fromDate" DATE,
   "toDate" DATE,
+  "companyId" INTEGER NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
@@ -150,9 +156,10 @@ CREATE TABLE "part" (
   "customFields" JSONB,
 
   CONSTRAINT "part_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "part_unitOfMeasureCode_fkey" FOREIGN KEY ("unitOfMeasureCode") REFERENCES "unitOfMeasure"("code") ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT "part_unitOfMeasureCode_fkey" FOREIGN KEY ("unitOfMeasureCode", "companyId") REFERENCES "unitOfMeasure"("code", "companyId") ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT "part_partGroupId_fkey" FOREIGN KEY ("partGroupId") REFERENCES "partGroup"("id"),
   CONSTRAINT "part_approvedBy_fkey" FOREIGN KEY ("approvedBy") REFERENCES "user"("id"),
+  CONSTRAINT "part_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "part_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id"),
   CONSTRAINT "part_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id")
 );
@@ -213,12 +220,12 @@ BEGIN
   INSERT INTO public."partCost"("partId", "costingMethod", "createdBy")
   VALUES (new.id, 'Standard', new."createdBy");
 
-  INSERT INTO public."partReplenishment"("partId", "createdBy")
-  VALUES (new.id, new."createdBy");
+  INSERT INTO public."partReplenishment"("partId", "companyId", "createdBy")
+  VALUES (new.id, new."companyId", new."createdBy");
 
-  INSERT INTO public."partUnitSalePrice"("partId", "currencyCode", "createdBy")
+  INSERT INTO public."partUnitSalePrice"("partId", "companyId", "currencyCode", "createdBy")
   -- TODO: get default currency
-  VALUES (new.id, 'USD', new."createdBy");
+  VALUES (new.id, new."companyId", 'USD', new."createdBy");
   
   RETURN new;
 END;
@@ -299,6 +306,7 @@ CREATE TABLE "partUnitSalePrice" (
   "salesBlocked" BOOLEAN NOT NULL DEFAULT false,
   "priceIncludesTax" BOOLEAN NOT NULL DEFAULT false,
   "allowInvoiceDiscount" BOOLEAN NOT NULL DEFAULT true,
+  "companyId" INTEGER NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
@@ -307,7 +315,8 @@ CREATE TABLE "partUnitSalePrice" (
 
   CONSTRAINT "partUnitSalePrice_partId_fkey" FOREIGN KEY ("partId") REFERENCES "part"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "partUnitSalePrice_currencyCode_fkey" FOREIGN KEY ("currencyCode") REFERENCES "currency"("code") ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT "partUnitSalePrice_salesUnitOfMeasureId_fkey" FOREIGN KEY ("salesUnitOfMeasureCode") REFERENCES "unitOfMeasure"("code") ON DELETE SET NULL,
+  CONSTRAINT "partUnitSalePrice_salesUnitOfMeasureId_fkey" FOREIGN KEY ("salesUnitOfMeasureCode", "companyId") REFERENCES "unitOfMeasure"("code", "companyId") ON DELETE SET NULL,
+  CONSTRAINT "partUnitSalePrice_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "partUnitSalePrice_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id"),
   CONSTRAINT "partUnitSalePrice_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id")
 );
@@ -422,6 +431,7 @@ CREATE TABLE "partReplenishment" (
   "requiresConfiguration" BOOLEAN NOT NULL DEFAULT false,
   "scrapPercentage" NUMERIC(15,5) NOT NULL DEFAULT 0,
   "lotSize" INTEGER,
+  "companyId" INTEGER NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
@@ -430,7 +440,8 @@ CREATE TABLE "partReplenishment" (
   
   CONSTRAINT "partReplenishment_partId_fkey" FOREIGN KEY ("partId") REFERENCES "part"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "partReplenishment_preferredSupplierId_fkey" FOREIGN KEY ("preferredSupplierId") REFERENCES "supplier"("id") ON DELETE SET NULL,
-  CONSTRAINT "partReplenishment_purchaseUnitOfMeasureCode_fkey" FOREIGN KEY ("purchasingUnitOfMeasureCode") REFERENCES "unitOfMeasure"("code") ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT "partReplenishment_purchaseUnitOfMeasureCode_fkey" FOREIGN KEY ("purchasingUnitOfMeasureCode", "companyId") REFERENCES "unitOfMeasure"("code", "companyId") ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT "partReplenishment_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "partReplenishment_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id"),
   CONSTRAINT "partReplenishment_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id")
 );
