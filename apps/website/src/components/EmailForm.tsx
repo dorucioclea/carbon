@@ -42,7 +42,10 @@ export default function EmailForm() {
   }
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex space-x-2">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex space-x-2 items-center"
+      >
         <FormField
           control={form.control}
           name="email"
@@ -55,8 +58,8 @@ export default function EmailForm() {
             </FormItem>
           )}
         />
-        <Button variant="link" size="lg" type="submit">
-          Subscribe to updates
+        <Button size="lg" variant="ghost" type="submit">
+          Subscribe
         </Button>
       </form>
     </Form>
