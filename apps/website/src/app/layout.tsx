@@ -4,6 +4,7 @@ import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import type { ReactElement } from "react";
+import { Footer } from "~/components/Footer";
 import { Header } from "~/components/Header";
 import "~/styles/tailwind.css";
 
@@ -26,6 +27,7 @@ export default function Layout({ children }: { children: ReactElement }) {
           <main className="container mx-auto px-4 overflow-hidden md:overflow-visible">
             {children}
           </main>
+          <Footer />
         </ThemeProvider>
         <Analytics />
       </body>

@@ -39,7 +39,7 @@ const links = [
   // },
   {
     title: "Docs",
-    path: "https://docs.carbon.us.org",
+    path: "https://docs.crbnerp.com",
   },
 ];
 

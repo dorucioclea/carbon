@@ -30,7 +30,6 @@ export default function Page() {
       <ProductViews />
       <OpenCore />
       <Calendar />
-      <Footer />
     </>
   );
 }
@@ -88,8 +87,8 @@ function Hero() {
         </h1>
         <div className="max-w-xl mx-auto text-center space-y-8">
           <p className="text-2xl font-medium leading-tight text-foreground/60 sm:text-lg md:text-xl lg:text-2xl">
-            Powerful, customizable and fast, Carbon makes it easy to build the
-            exact ERP your business needs.
+            Powerful, modern and open, Carbon makes it easy to build the system
+            your business needs.
           </p>
           {showForm && (
             <Form {...form}>
@@ -154,7 +153,7 @@ function ProductViews() {
         "Infinitely nestable, infinitely customizable bill of materials.",
       value: "manufacturing",
       content: (
-        <ImageContainer imagePath="/carbon-light-mode-manufacturing.jpg" />
+        <ImageContainer imagePath="/carbon-dark-mode-manufacturing.jpg" />
       ),
     },
     {
@@ -185,9 +184,7 @@ function ProductViews() {
       title: "Documents",
       description: "Store and manage all your documents in one place.",
       value: "documents",
-      content: (
-        <ImageContainer imagePath={"/carbon-light-mode-documents.jpg"} />
-      ),
+      content: <ImageContainer imagePath={"/carbon-dark-mode-documents.jpg"} />,
     },
   ];
 
@@ -309,17 +306,5 @@ function Calendar() {
         config={{ layout: "month_view" }}
       />
     </section>
-  );
-}
-
-function Footer() {
-  return (
-    <div className="h-32 py-12 flex">
-      <div className="w-full justify-center items-center gap-8 flex text-primary font-semibold">
-        <Link href="/story">Story</Link>
-        <Link href="/updates">Updates</Link>
-        <Link href="https://github.com/barbinbrad/carbon">Github</Link>
-      </div>
-    </div>
   );
 }
