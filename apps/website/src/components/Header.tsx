@@ -18,6 +18,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BsFillHexagonFill } from "react-icons/bs";
+import { GoArrowUpRight } from "react-icons/go";
 import { NavigationMenu } from "~/components/Navigation";
 
 const links = [
@@ -85,11 +86,13 @@ export function Header() {
           <ul className="space-x-2 font-medium text-sm hidden md:flex mx-2">
             {links.map(({ path, title }) => {
               const isActive = pathname.includes(path);
+              const isExternal = path.startsWith("http");
 
               return (
                 <Button
-                  variant={isActive ? "solid" : "ghost"}
                   key={path}
+                  variant={isActive ? "active" : "ghost"}
+                  rightIcon={isExternal ? <GoArrowUpRight /> : undefined}
                   asChild
                 >
                   <Link href={path}>{title}</Link>
@@ -119,7 +122,7 @@ export function Header() {
 
         <Modal>
           <ModalTrigger asChild>
-            <Button className="hidden sm:inline-flex">Subscribe</Button>
+            <Button className="hidden md:inline-flex">Subscribe</Button>
           </ModalTrigger>
           <ModalContent className="sm:max-w-[425px]">
             <ModalHeader>

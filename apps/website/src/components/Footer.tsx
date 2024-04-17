@@ -6,7 +6,8 @@ export function Footer() {
       <div className="w-full justify-center items-center gap-8 flex text-foreground font-semibold">
         <Link href="/story">Story</Link>
         <Link href="/updates">Updates</Link>
-        <Link href="https://github.com/barbinbrad/carbon">Github</Link>
+        <Link href="https://git.new/carbon">Github</Link>
+        <Link href="https://docs.crbnerp.com">Docs</Link>
       </div>
     </div>
   );

@@ -1,6 +1,5 @@
 "use client";
 
-import Cal, { getCalApi } from "@calcom/embed-react";
 import {
   Button,
   FormControl,
@@ -9,19 +8,18 @@ import {
   useForm,
   zodResolver,
 } from "@carbon/react";
-import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BsGithub, BsLightningCharge, BsPlay } from "react-icons/bs";
 import { GiSpeedometer } from "react-icons/gi";
 import { GoSync } from "react-icons/go";
 import { HiCode, HiFingerPrint } from "react-icons/hi";
 import { TbBuildingFactory2 } from "react-icons/tb";
 import { z } from "zod";
+import { MobileTabs } from "~/components/MobileTabs";
 import { Tabs } from "~/components/Tabs";
 import { Form, FormField, FormItem, FormMessage } from "~/components/ui/Form";
-import { MobileTabs } from "~/components/MobileTabs";
 import { supabase } from "~/lib/supabase";
 
 export default function Page() {
@@ -30,7 +28,7 @@ export default function Page() {
       <Hero />
       <ProductViews />
       <OpenCore />
-      <Calendar />
+      {/* <Calendar /> */}
     </>
   );
 }
@@ -315,30 +313,30 @@ function OpenCore() {
   );
 }
 
-function Calendar() {
-  const { theme } = useTheme();
-  useEffect(() => {
-    (async function () {
-      const cal = await getCalApi();
-      cal("ui", {
-        theme: (theme ?? "light") as "dark" | "light",
-        styles: { branding: { brandColor: "#000000" } },
-        hideEventTypeDetails: false,
-        layout: "month_view",
-      });
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  return (
-    <section className="flex flex-col items-center py-24 gap-8">
-      <div className="text-4xl font-semibold tracking-tight lg:text-5xl xl:text-6xl text-center text-foreground">
-        Chat with us
-      </div>
-      <Cal
-        calLink="neilkanakia/quickchat"
-        style={{ width: "100%", height: "100%", overflow: "scroll" }}
-        config={{ layout: "month_view" }}
-      />
-    </section>
-  );
-}
+// function Calendar() {
+//   const { theme } = useTheme();
+//   useEffect(() => {
+//     (async function () {
+//       const cal = await getCalApi();
+//       cal("ui", {
+//         theme: (theme ?? "light") as "dark" | "light",
+//         styles: { branding: { brandColor: "#000000" } },
+//         hideEventTypeDetails: false,
+//         layout: "month_view",
+//       });
+//     })();
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//   }, []);
+//   return (
+//     <section className="flex flex-col items-center py-24 gap-8">
+//       <div className="text-4xl font-semibold tracking-tight lg:text-5xl xl:text-6xl text-center text-foreground">
+//         Chat with us
+//       </div>
+//       <Cal
+//         calLink="bradbarbin/30min"
+//         style={{ width: "100%", height: "100%", overflow: "scroll" }}
+//         config={{ layout: "month_view" }}
+//       />
+//     </section>
+//   );
+// }
