@@ -122,7 +122,7 @@ const NavigationIconLink = forwardRef<
       "hover:bg-secondary active:",
       `${
         isActive
-          ? "dark:bg-primary/10 bg-primary/20 text-primary shadow-sm hover:text-primary hover:bg-primary/20 dark:shadow-inner"
+          ? "dark:bg-primary/10 bg-muted text-primary shadow-sm hover:text-primary hover:bg-primary/20 dark:shadow-inner"
           : "hover:text-foreground"
       }`,
       "group/item",

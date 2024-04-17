@@ -73,6 +73,7 @@ const DocumentsTable = memo(
       deleteLabel,
       download,
       edit,
+      view,
       favorite,
       label,
       setLabel,
@@ -179,7 +180,7 @@ const DocumentsTable = memo(
               )}
               <DocumentIcon type={row.original.type!} />
               <Hyperlink
-                onClick={() => download(row.original)}
+                onClick={() => view(row.original)}
                 className="max-w-[260px] truncate"
               >
                 {row.original.type &&
@@ -368,7 +369,6 @@ const DocumentsTable = memo(
         },
       ];
     }, [
-      download,
       extensions,
       labelOptions,
       onDeleteLabel,
@@ -377,6 +377,7 @@ const DocumentsTable = memo(
       people,
       revalidator,
       setLabel,
+      view,
     ]);
 
     const actions = useMemo(() => {
