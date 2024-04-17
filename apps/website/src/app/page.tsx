@@ -115,7 +115,7 @@ function Hero() {
                   )}
                 />
                 <Button size="lg" type="submit">
-                  Get early access
+                  Subscribe for updates
                 </Button>
               </form>
             </Form>

@@ -38,6 +38,10 @@ const links = [
   //   path: "/pricing",
   // },
   {
+    title: "Code",
+    path: "https://git.new/carbon",
+  },
+  {
     title: "Docs",
     path: "https://docs.crbnerp.com",
   },
@@ -115,7 +119,7 @@ export function Header() {
 
         <Modal>
           <ModalTrigger asChild>
-            <Button className="hidden sm:flex">Early Access</Button>
+            <Button className="hidden sm:inline-flex">Subscribe</Button>
           </ModalTrigger>
           <ModalContent className="sm:max-w-[425px]">
             <ModalHeader>
@@ -133,7 +137,9 @@ export function Header() {
               </div>
             </div>
             <ModalFooter>
-              <Button type="submit">Sign Up</Button>
+              <Button size="lg" type="submit">
+                Sign Up
+              </Button>
             </ModalFooter>
           </ModalContent>
         </Modal>
@@ -200,7 +206,7 @@ export function Header() {
 
               <motion.li variants={itemVariant}>
                 <Link className="text-xl text-primary" href="#">
-                  Early Access
+                  Subscribe
                 </Link>
               </motion.li>
             </motion.ul>
