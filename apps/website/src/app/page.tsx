@@ -21,6 +21,7 @@ import { TbBuildingFactory2 } from "react-icons/tb";
 import { z } from "zod";
 import { Tabs } from "~/components/Tabs";
 import { Form, FormField, FormItem, FormMessage } from "~/components/ui/Form";
+import { MobileTabs } from "~/components/MobileTabs";
 import { supabase } from "~/lib/supabase";
 
 export default function Page() {
@@ -94,7 +95,7 @@ function Hero() {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="flex w-full justify-center items-center space-x-2"
+                className="flex flex-col sm:flex-row w-full justify-center items-center space-y-4 sm:space-y-0 sm:space-x-2"
               >
                 <FormField
                   control={form.control}
@@ -187,11 +188,44 @@ function ProductViews() {
       content: <ImageContainer imagePath={"/carbon-dark-mode-documents.jpg"} />,
     },
   ];
+  const mobileTabs = [
+    {
+      id: 0,
+      title: "Manufacturing",
+      description:
+        "Infinitely nestable, infinitely customizable bill of materials.",
+      content: (
+        <Image
+          src="/carbon-dark-mode-manufacturing.jpg"
+          className="rounded"
+          width={1209}
+          height={903}
+          alt={""}
+        />
+      ),
+    },
+    {
+      id: 1,
+      content: (
+        <Image
+          src="/carbon-dark-mode-accounting.jpg"
+          width={1209}
+          height={903}
+          alt={""}
+        />
+      ),
+    },
+  ];
 
   return (
-    <div className="h-[20rem] md:h-[40rem] [perspective:1000px] relative b flex-col max-w-5xl mx-auto w-full  items-start justify-start my-40 hidden md:flex">
-      <Tabs tabs={tabs} />
-    </div>
+    <>
+      <div className="h-[20rem] md:h-[40rem] [perspective:1000px] relative b flex-col max-w-5xl mx-auto w-full  items-start justify-start my-40 hidden md:flex">
+        <Tabs tabs={tabs} />
+      </div>
+      <div className="flex sm:hidden mx-auto">
+        <MobileTabs items={mobileTabs} />
+      </div>
+    </>
   );
 }
 

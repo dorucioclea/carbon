@@ -115,7 +115,7 @@ export function Header() {
 
         <Modal>
           <ModalTrigger asChild>
-            <Button>Early Access</Button>
+            <Button className="hidden sm:flex">Early Access</Button>
           </ModalTrigger>
           <ModalContent className="sm:max-w-[425px]">
             <ModalHeader>

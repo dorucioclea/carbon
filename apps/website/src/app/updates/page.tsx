@@ -12,11 +12,11 @@ export const metadata: Metadata = {
 
 export function UpdatesHeader() {
   return (
-    <div className="-z-10 py-24  w-screen flex flex-col items-center space-y-8 ">
+    <div className="py-24  w-screen flex flex-col items-center space-y-8 ">
       <h1 className="text-3xl font-semibold sm:text-2xl lg:text-4xl xl:text-5xl">
         Updates
       </h1>
-      <p className="text-muted-foreground text-lg">
+      <p className="text-center text-muted-foreground text-lg">
         Subscribe to learn about new features, and updates in Carbon.
       </p>
       <EmailForm />
