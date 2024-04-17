@@ -167,14 +167,14 @@ function ProductViews() {
     },
     {
       title: "Search",
-      description: "Search across all your core or custom fields.",
+      description: "Search across all your core or custom fields",
       value: "search",
       content: <ImageContainer imagePath={"/carbon-dark-mode-search.jpg"} />,
     },
 
     {
       title: "Permissions",
-      description: "Fine-grained permissions for every user and every action.",
+      description: "Fine-grained permissions for every user and every action",
       value: "permission",
       content: (
         <ImageContainer imagePath={"/carbon-dark-mode-permissions.jpg"} />
@@ -182,7 +182,7 @@ function ProductViews() {
     },
     {
       title: "Documents",
-      description: "Store and manage all your documents in one place.",
+      description: "Store and manage all your documents in one place",
       value: "documents",
       content: <ImageContainer imagePath={"/carbon-dark-mode-documents.jpg"} />,
     },
