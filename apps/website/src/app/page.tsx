@@ -1,26 +1,16 @@
 "use client";
 
-import {
-  Button,
-  FormControl,
-  Input,
-  cn,
-  useForm,
-  zodResolver,
-} from "@carbon/react";
+import { Button, cn } from "@carbon/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
 import { BsGithub, BsLightningCharge, BsPlay } from "react-icons/bs";
 import { GiSpeedometer } from "react-icons/gi";
 import { GoSync } from "react-icons/go";
 import { HiCode, HiFingerPrint } from "react-icons/hi";
 import { TbBuildingFactory2 } from "react-icons/tb";
-import { z } from "zod";
+import ContactForm from "~/components/ContactForm";
 import { MobileTabs } from "~/components/MobileTabs";
 import { Tabs } from "~/components/Tabs";
-import { Form, FormField, FormItem, FormMessage } from "~/components/ui/Form";
-import { supabase } from "~/lib/supabase";
 
 export default function Page() {
   return (
@@ -34,39 +24,6 @@ export default function Page() {
 }
 
 function Hero() {
-  const [showForm, setShowForm] = useState(true);
-  const formSchema = z.object({
-    email: z.string().email(),
-  });
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-    },
-  });
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      const response = await supabase
-        .from("leads")
-        .insert({ email: values.email });
-
-      if (response.error) {
-        form.setError("email", {
-          type: "manual",
-          message: "Failed to insert email",
-        });
-        console.error(response.error.message);
-      } else {
-        form.reset();
-        form.clearErrors();
-        setShowForm(false);
-      }
-
-      // const data = await response.json();
-    } catch (error) {
-      console.error("Failed to submit email:", error);
-    }
-  }
   return (
     <>
       <div className="my-24 flex flex-col space-y-8 max-w-2xl mx-auto text-center">
@@ -84,40 +41,12 @@ function Hero() {
             ERP for the builders
           </span>
         </h1>
-        <div className="max-w-xl mx-auto text-center space-y-8">
+        <div className="max-w-xl mx-auto flex flex-col items-center text-center space-y-8">
           <p className="text-2xl font-medium leading-tight text-foreground/60 sm:text-lg md:text-xl lg:text-2xl">
             Powerful, modern and open, Carbon makes it easy to build the system
             your business needs.
           </p>
-          {showForm && (
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="flex flex-col sm:flex-row w-full justify-center items-center space-y-4 sm:space-y-0 sm:space-x-2"
-              >
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          className="w-60 border-primary"
-                          type="email"
-                          placeholder="Email"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button size="lg" type="submit">
-                  Subscribe for updates
-                </Button>
-              </form>
-            </Form>
-          )}
+          <ContactForm />
         </div>
       </div>
     </>
