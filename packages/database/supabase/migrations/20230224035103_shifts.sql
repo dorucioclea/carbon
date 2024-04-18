@@ -29,7 +29,7 @@ CREATE POLICY "Employees can view locations for their companies" ON "location"
   FOR SELECT
   USING (
     auth.role() = 'authenticated' 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb 
+    AND has_role('employee') 
     AND "companyId" = ANY(
       select "companyId" from "userToCompany" where "userId" = auth.uid()::text
     )
@@ -39,21 +39,21 @@ CREATE POLICY "Employees with resources_create can insert locations" ON "locatio
   FOR INSERT
   WITH CHECK (   
     has_company_permission('resources_create', "companyId")
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    AND has_role('employee')
 );
 
 CREATE POLICY "Employees with resources_update can update locations" ON "location"
   FOR UPDATE
   USING (
     has_company_permission('resources_update', "companyId")
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    AND has_role('employee')
   );
 
 CREATE POLICY "Employees with resources_delete can delete locations" ON "location"
   FOR DELETE
   USING (
     has_company_permission('resources_delete', "companyId")
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    AND has_role('employee')
   );
 
 
@@ -90,9 +90,8 @@ ALTER TABLE "shift" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees can view shifts" ON "shift"
   FOR SELECT
   USING (
-    auth.role() = 'authenticated' 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
-    AND "companyId" = ANY(
+    has_role('employee') AND
+    "companyId" = ANY(
       select "companyId" from "userToCompany" where "userId" = auth.uid()::text
     )
   );
@@ -100,22 +99,22 @@ CREATE POLICY "Employees can view shifts" ON "shift"
 CREATE POLICY "Employees with resources_create can insert shifts" ON "shift"
   FOR INSERT
   WITH CHECK (   
+    has_role('employee') AND
     has_company_permission('resources_create', "companyId")
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
 );
 
 CREATE POLICY "Employees with resources_update can update shifts" ON "shift"
   FOR UPDATE
   USING (
+    has_role('employee') AND
     has_company_permission('resources_update', "companyId")
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
   );
 
 CREATE POLICY "Employees with resources_delete can delete shifts" ON "shift"
   FOR DELETE
   USING (
+    has_role('employee') AND
     has_company_permission('resources_delete', "companyId")
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
   );
 
 
@@ -136,8 +135,7 @@ ALTER TABLE "employeeShift" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees can view employee shifts" ON "employeeShift"
   FOR SELECT
   USING (
-    auth.role() = 'authenticated' 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee')
     AND "shiftId" IN (
       SELECT "id" FROM "shift" WHERE "companyId" = ANY(
         select "companyId" from "userToCompany" where "userId" = auth.uid()::text
@@ -148,43 +146,49 @@ CREATE POLICY "Employees can view employee shifts" ON "employeeShift"
 CREATE POLICY "Employees with resources_create can insert employee shifts" ON "employeeShift"
   FOR INSERT
   WITH CHECK (   
-    "shiftId" IN (
-      SELECT "id" FROM "shift" WHERE "companyId" = ANY(
-        coalesce(
-          get_permission_companies('resource_create')::integer[],
-          array[]::integer[]
+    has_role('employee')
+    AND   (
+      0 = ANY(get_permission_companies('resources_create'))
+      OR (
+        "shiftId" IN (
+          SELECT "id" FROM "shift" WHERE "companyId" = ANY(
+            get_permission_companies('resources_create')
+          )
         )
       )
     )
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
 );
 
 CREATE POLICY "Employees with resources_update can update employee shifts" ON "employeeShift"
   FOR UPDATE
   USING (
-    "shiftId" IN (
-      SELECT "id" FROM "shift" WHERE "companyId" = ANY(
-        coalesce(
-          get_permission_companies('resource_update')::integer[],
-          array[]::integer[]
+    has_role('employee')
+    AND   (
+      0 = ANY(get_permission_companies('resources_update'))
+      OR (
+        "shiftId" IN (
+          SELECT "id" FROM "shift" WHERE "companyId" = ANY(
+            get_permission_companies('resources_update')
+          )
         )
       )
     )
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
   );
 
 CREATE POLICY "Employees with resources_delete can delete employee shifts" ON "employeeShift"
   FOR DELETE
   USING (
-    "shiftId" IN (
-      SELECT "id" FROM "shift" WHERE "companyId" = ANY(
-        coalesce(
-          get_permission_companies('resource_delete')::integer[],
-          array[]::integer[]
+    has_role('employee')
+    AND   (
+      0 = ANY(get_permission_companies('resources_delete'))
+      OR (
+        "shiftId" IN (
+          SELECT "id" FROM "shift" WHERE "companyId" = ANY(
+            get_permission_companies('resources_delete')
+          )
         )
       )
     )
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
   );
 
 
@@ -211,13 +215,13 @@ ALTER TABLE "employeeJob" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees can view employee jobs" ON "employeeJob"
   FOR SELECT
   USING (
-    auth.role() = 'authenticated' 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    auth.role() = 'authenticated'
+    AND has_role('employee')
     AND "id" IN (
       SELECT "id" FROM "shift" WHERE "companyId" = ANY(
         select "companyId" from "userToCompany" where "userId" = auth.uid()::text
       )
-    ) 
+    )
   );
 
 CREATE POLICY "Employees with resources_create can insert employee jobs" ON "employeeJob"
@@ -225,13 +229,10 @@ CREATE POLICY "Employees with resources_create can insert employee jobs" ON "emp
   WITH CHECK (   
     "shiftId" IN (
       SELECT "id" FROM "shift" WHERE "companyId" = ANY(
-        coalesce(
-          get_permission_companies('resource_create')::integer[],
-          array[]::integer[]
-        )
+        get_permission_companies('resources_create')
       )
     )
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    AND has_role('employee')
 );
 
 CREATE POLICY "Employees with resources_update can update employee jobs" ON "employeeJob"
@@ -239,13 +240,10 @@ CREATE POLICY "Employees with resources_update can update employee jobs" ON "emp
   USING (
     "shiftId" IN (
       SELECT "id" FROM "shift" WHERE "companyId" = ANY(
-        coalesce(
-          get_permission_companies('resource_update')::integer[],
-          array[]::integer[]
-        )
+        get_permission_companies('resources_update')
       )
     )
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    AND has_role('employee')
   );
 
 CREATE POLICY "Employees with resources_delete can delete employee jobs" ON "employeeJob"
@@ -253,13 +251,10 @@ CREATE POLICY "Employees with resources_delete can delete employee jobs" ON "emp
   USING (
     "shiftId" IN (
       SELECT "id" FROM "shift" WHERE "companyId" = ANY(
-        coalesce(
-          get_permission_companies('resource_delete')::integer[],
-          array[]::integer[]
-        )
+        get_permission_companies('resources_delete')
       )
     )
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    AND has_role('employee')
   );
 
 
