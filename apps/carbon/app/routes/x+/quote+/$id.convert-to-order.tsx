@@ -1,11 +1,10 @@
 import { redirect, type ActionFunctionArgs } from "@remix-run/node";
-import type { SalesOrderLine } from "~/modules/sales";
 import {
+  convertQuoteToOrder,
   getQuote,
   getQuoteLines,
-  convertQuoteToOrder,
-  upsertSalesOrder,
   insertSalesOrderLines,
+  upsertSalesOrder,
 } from "~/modules/sales";
 import { getNextSequence, rollbackNextSequence } from "~/modules/settings";
 import { requirePermissions } from "~/services/auth/auth.server";
@@ -18,7 +17,7 @@ export async function action(args: ActionFunctionArgs) {
   const { request, params } = args;
   assertIsPost(request);
 
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     create: "sales",
     role: "employee",
   });
@@ -64,8 +63,8 @@ export async function action(args: ActionFunctionArgs) {
     const createSalesOrder = await upsertSalesOrder(client, {
       salesOrderId: nextSequence.data,
       createdBy: userId,
-      quoteId: quote.data.id,
-      customerId: quote.data.customerId,
+      quoteId: quote.data.id!,
+      customerId: quote.data.customerId!,
       orderDate: new Date().toISOString(),
     });
 
@@ -87,22 +86,18 @@ export async function action(args: ActionFunctionArgs) {
     // construct and insert the sales order lines
     const quoteLines = await getQuoteLines(client, id);
     if (quoteLines.data) {
-      const constructedSalesOrderLines: SalesOrderLine[] = quoteLines?.data.map(
-        (quoteLine) => {
-          return {
-            salesOrderId: newSalesOrderId,
-            salesOrderLineType: "Part",
-            partId: quoteLine.partId,
-            description: quoteLine.description,
-            createdBy: userId,
-          };
-        }
-      );
+      const lines = quoteLines?.data.map((quoteLine) => {
+        return {
+          salesOrderId: newSalesOrderId,
+          salesOrderLineType: "Part" as "Part",
+          companyId,
+          partId: quoteLine.partId!,
+          description: quoteLine.description!,
+          createdBy: userId,
+        };
+      });
 
-      const salesOrderLines = await insertSalesOrderLines(
-        client,
-        constructedSalesOrderLines
-      );
+      const salesOrderLines = await insertSalesOrderLines(client, lines);
 
       if (salesOrderLines.error) {
         throw redirect(

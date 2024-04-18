@@ -17,7 +17,7 @@ import { error } from "~/utils/result";
 
 export async function action({ request, params }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     create: "sales",
   });
 
@@ -37,6 +37,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const createSalesOrderLine = await upsertSalesOrderLine(client, {
     ...data,
+    companyId,
     createdBy: userId,
     customFields: setCustomFields(formData),
   });

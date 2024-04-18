@@ -13,7 +13,7 @@ ON storage.objects FOR SELECT USING (
 CREATE POLICY "Employees with settings_create can insert into the public bucket"
 ON storage.objects FOR INSERT WITH CHECK (
     bucket_id = 'public'
-    AND (auth.role() = 'authenticated')
+    AND has_role('employee')
     AND (
         0 = ANY(
             get_permission_companies('settings_create')
@@ -27,7 +27,7 @@ ON storage.objects FOR INSERT WITH CHECK (
 CREATE POLICY "Employees with settings_update can update the public bucket"
 ON storage.objects FOR UPDATE USING (
     bucket_id = 'public'
-    AND (auth.role() = 'authenticated')
+    AND has_role('employee')
     AND (
         0 = ANY(
             get_permission_companies('settings_create')
@@ -41,7 +41,7 @@ ON storage.objects FOR UPDATE USING (
 CREATE POLICY "Employees with settings_delete can delete from public bucket"
 ON storage.objects FOR DELETE USING (
     bucket_id = 'public'
-    AND (auth.role() = 'authenticated')
+    AND has_role('employee')
     AND (
         0 = ANY(
             get_permission_companies('settings_create')

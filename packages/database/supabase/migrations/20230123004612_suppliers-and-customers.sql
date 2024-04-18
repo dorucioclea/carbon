@@ -23,9 +23,11 @@ CREATE TABLE "contact" (
   "countryCode" INTEGER,
   "birthday" DATE,
   "notes" TEXT,
+  "companyId" INTEGER,
 
   CONSTRAINT "contact_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "contact_countryCode_fkey" FOREIGN KEY ("countryCode") REFERENCES "country"("id") ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT "contact_countryCode_fkey" FOREIGN KEY ("countryCode") REFERENCES "country"("id") ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT "contact_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -39,9 +41,11 @@ CREATE TABLE "address" (
   "countryCode" INTEGER,
   "phone" TEXT,
   "fax" TEXT,
+  "companyId" INTEGER,
 
   CONSTRAINT "address_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "address_countryCode_fkey" FOREIGN KEY ("countryCode") REFERENCES "country"("id") ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT "address_countryCode_fkey" FOREIGN KEY ("countryCode") REFERENCES "country"("id") ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT "address_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE "supplierStatus" (
@@ -143,10 +147,12 @@ CREATE INDEX "supplierContact_supplierId_index" ON "supplierContact"("supplierId
 CREATE TABLE "supplierAccount" (
     "id" TEXT NOT NULL,
     "supplierId" TEXT NOT NULL,
+    "companyId" INTEGER NOT NULL,
 
-    CONSTRAINT "supplierAccount_pkey" PRIMARY KEY ("id"),
+    CONSTRAINT "supplierAccount_pkey" PRIMARY KEY ("id", "companyId"),
     CONSTRAINT "supplierAccount_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "supplier"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "supplierAccount_id_fkey" FOREIGN KEY ("id") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "supplierAccount_id_fkey" FOREIGN KEY ("id") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "supplierAccount_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE INDEX "supplierAccount_supplierId_index" ON "supplierAccount"("supplierId");
@@ -250,10 +256,12 @@ CREATE INDEX "customerContact_customerId_index" ON "customerContact"("customerId
 CREATE TABLE "customerAccount" (
     "id" TEXT NOT NULL,
     "customerId" TEXT NOT NULL,
+    "companyId" INTEGER NOT NULL,
 
-    CONSTRAINT "customerAccount_pkey" PRIMARY KEY ("id"),
+    CONSTRAINT "customerAccount_pkey" PRIMARY KEY ("id", "companyId"),
     CONSTRAINT "customerAccount_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "customer"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "customerAccount_id_fkey" FOREIGN KEY ("id") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "customerAccount_id_fkey" FOREIGN KEY ("id") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "customerAccount_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE INDEX "customerAccount_customerId_index" ON "customerAccount"("customerId");

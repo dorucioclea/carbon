@@ -87,6 +87,18 @@ CREATE OR REPLACE FUNCTION get_permission_companies_as_text(claim text) RETURNS 
     END;
 $$;
 
+CREATE OR REPLACE FUNCTION has_role(role text) RETURNS "bool"
+    LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
+    AS $$
+    BEGIN
+      IF (get_my_claim('role'::text)) = ('"' || role || '"'::text)::jsonb THEN
+        return true;
+      ELSE
+        return false;
+      END IF;
+    END;
+$$;
+
 CREATE OR REPLACE FUNCTION has_company_permission(claim text, company integer) RETURNS "bool"
     LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
     AS $$

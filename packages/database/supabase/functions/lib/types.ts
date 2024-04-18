@@ -1283,6 +1283,7 @@ export type Database = {
           addressLine1: string | null
           addressLine2: string | null
           city: string | null
+          companyId: number | null
           countryCode: number | null
           fax: string | null
           id: string
@@ -1294,6 +1295,7 @@ export type Database = {
           addressLine1?: string | null
           addressLine2?: string | null
           city?: string | null
+          companyId?: number | null
           countryCode?: number | null
           fax?: string | null
           id?: string
@@ -1305,6 +1307,7 @@ export type Database = {
           addressLine1?: string | null
           addressLine2?: string | null
           city?: string | null
+          companyId?: number | null
           countryCode?: number | null
           fax?: string | null
           id?: string
@@ -1313,6 +1316,13 @@ export type Database = {
           state?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "address_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "address_countryCode_fkey"
             columns: ["countryCode"]
@@ -1444,6 +1454,7 @@ export type Database = {
           addressLine2: string | null
           birthday: string | null
           city: string | null
+          companyId: number | null
           countryCode: number | null
           email: string
           fax: string | null
@@ -1464,6 +1475,7 @@ export type Database = {
           addressLine2?: string | null
           birthday?: string | null
           city?: string | null
+          companyId?: number | null
           countryCode?: number | null
           email: string
           fax?: string | null
@@ -1484,6 +1496,7 @@ export type Database = {
           addressLine2?: string | null
           birthday?: string | null
           city?: string | null
+          companyId?: number | null
           countryCode?: number | null
           email?: string
           fax?: string | null
@@ -1500,6 +1513,13 @@ export type Database = {
           workPhone?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "contact_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "contact_countryCode_fkey"
             columns: ["countryCode"]
@@ -2140,18 +2160,28 @@ export type Database = {
       }
       customerAccount: {
         Row: {
+          companyId: number
           customerId: string
           id: string
         }
         Insert: {
+          companyId: number
           customerId: string
           id: string
         }
         Update: {
+          companyId?: number
           customerId?: string
           id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "customerAccount_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "customerAccount_customerId_fkey"
             columns: ["customerId"]
@@ -2176,28 +2206,28 @@ export type Database = {
           {
             foreignKeyName: "customerAccount_id_fkey"
             columns: ["id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "customerAccount_id_fkey"
             columns: ["id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "employeeSummary"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "customerAccount_id_fkey"
             columns: ["id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "user"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "customerAccount_id_fkey"
             columns: ["id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "userDefaults"
             referencedColumns: ["userId"]
           },
@@ -12891,43 +12921,53 @@ export type Database = {
       }
       supplierAccount: {
         Row: {
+          companyId: number
           id: string
           supplierId: string
         }
         Insert: {
+          companyId: number
           id: string
           supplierId: string
         }
         Update: {
+          companyId?: number
           id?: string
           supplierId?: string
         }
         Relationships: [
           {
+            foreignKeyName: "supplierAccount_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "supplierAccount_id_fkey"
             columns: ["id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "supplierAccount_id_fkey"
             columns: ["id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "employeeSummary"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "supplierAccount_id_fkey"
             columns: ["id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "user"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "supplierAccount_id_fkey"
             columns: ["id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "userDefaults"
             referencedColumns: ["userId"]
           },
@@ -17951,6 +17991,12 @@ export type Database = {
         Args: {
           claim: string
           company: number
+        }
+        Returns: boolean
+      }
+      has_role: {
+        Args: {
+          role: string
         }
         Returns: boolean
       }

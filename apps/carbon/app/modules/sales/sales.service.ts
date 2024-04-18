@@ -2,10 +2,10 @@ import type { Database, Json } from "@carbon/database";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { z } from "zod";
+import { getEmployeeJob } from "~/modules/resources";
 import type { GenericQueryFilters } from "~/utils/query";
 import { setGenericQueryFilters } from "~/utils/query";
 import { sanitize } from "~/utils/supabase";
-import { getEmployeeJob } from "~/modules/resources";
 import type {
   customerContactValidator,
   customerPaymentValidator,
@@ -19,9 +19,9 @@ import type {
   quotationOperationValidator,
   quotationPricingValidator,
   quotationValidator,
-  salesOrderShipmentValidator,
   salesOrderLineValidator,
   salesOrderPaymentValidator,
+  salesOrderShipmentValidator,
   salesOrderValidator,
 } from "./sales.models";
 
@@ -449,13 +449,16 @@ export async function insertCustomerContact(
   client: SupabaseClient<Database>,
   customerContact: {
     customerId: string;
+    companyId: number;
     contact: z.infer<typeof customerContactValidator>;
     customFields?: Json;
   }
 ) {
   const insertContact = await client
     .from("contact")
-    .insert([customerContact.contact])
+    .insert([
+      { ...customerContact.contact, companyId: customerContact.companyId },
+    ])
     .select("id")
     .single();
   if (insertContact.error) {
@@ -1111,7 +1114,7 @@ export async function releaseSalesOrder(
   return client
     .from("salesOrder")
     .update({
-      status: "To Receive and Invoice",
+      status: "Confirmed",
       updatedAt: today(getLocalTimeZone()).toString(),
       updatedBy: userId,
     })
@@ -1258,6 +1261,7 @@ export async function upsertSalesOrderLine(
   client: SupabaseClient<Database>,
   salesOrderLine:
     | (Omit<z.infer<typeof salesOrderLineValidator>, "id"> & {
+        companyId: number;
         createdBy: string;
         customFields?: Json;
       })
@@ -1286,19 +1290,12 @@ export async function insertSalesOrderLines(
   client: SupabaseClient<Database>,
   salesOrderLines:
     | (Omit<z.infer<typeof salesOrderLineValidator>, "id"> & {
+        companyId: number;
         createdBy: string;
         customFields?: Json;
       })[]
-    | (Omit<z.infer<typeof salesOrderLineValidator>, "id"> & {
-        id: string;
-        updatedBy: string;
-        customFields?: Json;
-      })[]
 ) {
-  return client
-    .from("salesOrderLine")
-    .insert([...salesOrderLines])
-    .select("id");
+  return client.from("salesOrderLine").insert(salesOrderLines).select("id");
 }
 
 export async function upsertSalesOrderPayment(

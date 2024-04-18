@@ -445,13 +445,16 @@ export async function insertSupplierContact(
   client: SupabaseClient<Database>,
   supplierContact: {
     supplierId: string;
+    companyId: number;
     contact: z.infer<typeof supplierContactValidator>;
     customFields?: Json;
   }
 ) {
   const insertContact = await client
     .from("contact")
-    .insert([supplierContact.contact])
+    .insert([
+      { ...supplierContact.contact, companyId: supplierContact.companyId },
+    ])
     .select("id")
     .single();
 
@@ -836,6 +839,7 @@ export async function upsertPurchaseOrderLine(
   client: SupabaseClient<Database>,
   purchaseOrderLine:
     | (Omit<z.infer<typeof purchaseOrderLineValidator>, "id"> & {
+        companyId: number;
         createdBy: string;
         customFields?: Json;
       })
