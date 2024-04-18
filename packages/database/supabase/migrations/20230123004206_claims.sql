@@ -36,6 +36,7 @@ CREATE OR REPLACE FUNCTION get_my_claims() RETURNS "jsonb"
     AS $$
     DECLARE retval jsonb;
     BEGIN
+      -- TODO: we should be able to use (current_setting('request.jwt.claims', true)::jsonb)->'app_metadata'
       select raw_app_meta_data from auth.users into retval where id = auth.uid();
         return retval;
       
@@ -47,6 +48,7 @@ CREATE OR REPLACE FUNCTION get_my_claim(claim text) RETURNS "jsonb"
     AS $$
     DECLARE retval jsonb;
     BEGIN
+      -- TODO: we should be able to use (current_setting('request.jwt.claims', true)::jsonb)->'app_metadata'
       select coalesce(raw_app_meta_data->claim, null) from auth.users into retval where id = auth.uid();
         return retval;
       
@@ -70,6 +72,7 @@ CREATE OR REPLACE FUNCTION get_permission_companies(claim text) RETURNS integer[
     AS $$
     DECLARE retval integer[];
     BEGIN
+      -- TODO: (current_setting('request.jwt.claims', true)::jsonb)->'app_metadata'->
       select jsonb_to_integer_array(coalesce(raw_app_meta_data->claim, '[]')) from auth.users into retval where id = auth.uid();
         return retval;
       
@@ -81,6 +84,7 @@ CREATE OR REPLACE FUNCTION get_permission_companies_as_text(claim text) RETURNS 
     AS $$
     DECLARE retval text[];
     BEGIN
+      -- TODO: (current_setting('request.jwt.claims', true)::jsonb)->'app_metadata'->
       select jsonb_to_text_array(coalesce(raw_app_meta_data->claim, '[]')) from auth.users into retval where id = auth.uid();
         return retval;
       
@@ -105,7 +109,8 @@ CREATE OR REPLACE FUNCTION has_company_permission(claim text, company integer) R
     DECLARE
       claim_value integer[];
     BEGIN
-      SELECT jsonb_to_integer_array(coalesce(raw_app_meta_data->'settings_update', '[]')) INTO claim_value FROM auth.users WHERE id = auth.uid();
+      -- TODO: (current_setting('request.jwt.claims', true)::jsonb)->'app_metadata'->claim
+      SELECT jsonb_to_integer_array(coalesce(raw_app_meta_data->claim, '[]')) INTO claim_value FROM auth.users WHERE id = auth.uid();
       IF claim_value IS NULL THEN
         return false;
       ELSIF 0 = ANY(claim_value::integer[]) THEN
