@@ -53,12 +53,35 @@ CREATE OR REPLACE FUNCTION get_my_claim(claim text) RETURNS "jsonb"
     END;
 $$;
 
+CREATE OR REPLACE FUNCTION jsonb_to_integer_array(jsonb) RETURNS integer[]
+    LANGUAGE "sql" IMMUTABLE
+    AS $$
+    SELECT array_agg(value::int) FROM jsonb_array_elements_text($1) AS t(value);
+$$;
+
+CREATE OR REPLACE FUNCTION jsonb_to_text_array(jsonb) RETURNS text[]
+    LANGUAGE "sql" IMMUTABLE
+    AS $$
+    SELECT array_agg(value::text) FROM jsonb_array_elements_text($1) AS t(value);
+$$;
+
 CREATE OR REPLACE FUNCTION get_permission_companies(claim text) RETURNS integer[]
     LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
     AS $$
     DECLARE retval integer[];
     BEGIN
-      select coalesce(raw_app_meta_data->claim, null) from auth.users into retval where id = auth.uid();
+      select jsonb_to_integer_array(coalesce(raw_app_meta_data->claim, '[]')) from auth.users into retval where id = auth.uid();
+        return retval;
+      
+    END;
+$$;
+
+CREATE OR REPLACE FUNCTION get_permission_companies_as_text(claim text) RETURNS text[]
+    LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
+    AS $$
+    DECLARE retval text[];
+    BEGIN
+      select jsonb_to_text_array(coalesce(raw_app_meta_data->claim, '[]')) from auth.users into retval where id = auth.uid();
         return retval;
       
     END;
@@ -68,14 +91,14 @@ CREATE OR REPLACE FUNCTION has_company_permission(claim text, company integer) R
     LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
     AS $$
     DECLARE
-      claim_value JSONB;
+      claim_value integer[];
     BEGIN
-      SELECT coalesce(raw_app_meta_data->claim, null) INTO claim_value FROM auth.users WHERE id = auth.uid();
+      SELECT jsonb_to_integer_array(coalesce(raw_app_meta_data->'settings_update', '[]')) INTO claim_value FROM auth.users WHERE id = auth.uid();
       IF claim_value IS NULL THEN
         return false;
-      ELSIF claim_value::text ~ '^[0-9]+$' AND claim_value::text::integer = 0 THEN
+      ELSIF 0 = ANY(claim_value::integer[]) THEN
         return true;
-      ELSIF claim_value::text ~ '^[0-9]+$' AND claim_value::text::integer = company THEN
+      ELSIF company = ANY(claim_value::integer[]) THEN
         return true;
       ELSE
         return false;

@@ -44,7 +44,7 @@ export async function loader({ request }: ActionFunctionArgs) {
   });
 
   const company = await getCompany(client, companyId ?? 1);
-  console.log({ company });
+
   if (company.error || !company.data) {
     return json({
       company: null,

@@ -14,42 +14,42 @@ CREATE POLICY "Employees with settings_create can insert into the public bucket"
 ON storage.objects FOR INSERT WITH CHECK (
     bucket_id = 'public'
     AND (auth.role() = 'authenticated')
-    -- AND (
-    --     CAST((storage.foldername(name))[1] AS INTEGER) = ANY(
-    --         coalesce(
-    --             get_permission_companies('settings_create')::integer[],
-    --             array[]::integer[]
-    --         )
-    --     )
-    -- )
+    AND (
+        0 = ANY(
+            get_permission_companies('settings_create')
+        ) OR 
+        (storage.foldername(name))[1] = ANY(
+            get_permission_companies_as_text('settings_create')
+        )
+    )
 );
 
 CREATE POLICY "Employees with settings_update can update the public bucket"
 ON storage.objects FOR UPDATE USING (
     bucket_id = 'public'
     AND (auth.role() = 'authenticated')
-    -- AND (
-    --     CAST((storage.foldername(name))[1] AS INTEGER) = ANY(
-    --         coalesce(
-    --             get_permission_companies('settings_update')::integer[],
-    --             array[]::integer[]
-    --         )
-    --     )
-    -- )
+    AND (
+        0 = ANY(
+            get_permission_companies('settings_create')
+        ) OR
+        (storage.foldername(name))[1] = ANY(
+            get_permission_companies_as_text('settings_update')
+        )
+    )
 );
 
 CREATE POLICY "Employees with settings_delete can delete from public bucket"
 ON storage.objects FOR DELETE USING (
     bucket_id = 'public'
     AND (auth.role() = 'authenticated')
-    -- AND (
-    --     CAST((storage.foldername(name))[1] AS INTEGER) = ANY(
-    --         coalesce(
-    --             get_permission_companies('settings_delete')::integer[],
-    --             array[]::integer[]
-    --         )
-    --     )
-    -- )
+    AND (
+        0 = ANY(
+            get_permission_companies('settings_create')
+        ) OR
+        (storage.foldername(name))[1] = ANY(
+            get_permission_companies_as_text('settings_delete')
+        )
+    )
 );
 
 CREATE POLICY "Anyone can view avatars"

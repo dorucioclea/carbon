@@ -17917,6 +17917,12 @@ export type Database = {
         }
         Returns: unknown
       }
+      get_permission_companies_as_text: {
+        Args: {
+          claim: string
+        }
+        Returns: unknown
+      }
       groups_for_user: {
         Args: {
           uid: string
@@ -17963,6 +17969,18 @@ export type Database = {
           balanceAtDate: number
           netChange: number
         }[]
+      }
+      jsonb_to_integer_array: {
+        Args: {
+          "": Json
+        }
+        Returns: unknown
+      }
+      jsonb_to_text_array: {
+        Args: {
+          "": Json
+        }
+        Returns: unknown
       }
       set_claim: {
         Args: {

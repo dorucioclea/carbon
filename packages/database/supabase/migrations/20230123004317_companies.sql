@@ -35,8 +35,8 @@ CREATE POLICY "Employees with settings_create can create company" ON "company"
 CREATE POLICY "Employees with settings_update can update company" ON "company"
   FOR UPDATE
   USING (
-    has_company_permission('settings_update', "id")       
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_company_permission('settings_update', "id") AND 
+    (get_my_claim('role'::text)) = '"employee"'::jsonb
   );
 
 CREATE POLICY "Employees with settings_delete can delete company" ON "company"

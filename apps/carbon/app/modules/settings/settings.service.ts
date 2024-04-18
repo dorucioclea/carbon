@@ -12,8 +12,6 @@ export async function getCompany(
   client: SupabaseClient<Database>,
   companyId: number
 ) {
-  console.log(`getCompany: ${companyId}`);
-
   const company = await client
     .from("company")
     .select("*")
@@ -220,6 +218,10 @@ export async function updateCompany(
     updatedBy: string;
   }
 ) {
+  console.log({
+    company,
+    companyId,
+  });
   return client.from("company").update(sanitize(company)).eq("id", companyId);
 }
 
@@ -241,6 +243,10 @@ export async function updateLogo(
   companyId: number,
   logo: string | null
 ) {
+  console.log({
+    companyId,
+    logo,
+  });
   return client
     .from("company")
     .update(
