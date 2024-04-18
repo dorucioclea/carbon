@@ -22,6 +22,7 @@ CREATE TABLE "location" (
 );
 
 CREATE INDEX "location_name_idx" ON "location" ("name");
+CREATE INDEX "location_companyId_idx" ON "location" ("companyId");
 
 ALTER TABLE "location" ENABLE ROW LEVEL SECURITY;
 
@@ -84,6 +85,8 @@ CREATE TABLE "shift" (
   CONSTRAINT "shifts_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "shifts_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
+
+CREATE INDEX "shift_companyId_idx" ON "shift" ("companyId");
 
 ALTER TABLE "shift" ENABLE ROW LEVEL SECURITY;
 

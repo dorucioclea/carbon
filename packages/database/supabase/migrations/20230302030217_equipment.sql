@@ -29,6 +29,8 @@ CREATE TABLE "department" (
   CONSTRAINT "department_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE INDEX "department_companyId_idx" ON "department" ("companyId");
+
 ALTER TABLE "department" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Employees can view departments" ON "department"
@@ -84,6 +86,8 @@ CREATE TABLE "workCellType" (
   CONSTRAINT "workCellType_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "workCellType_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE INDEX "workCellType_companyId_idx" ON "workCellType" ("companyId");
 
 ALTER TABLE "workCellType" ENABLE ROW LEVEL SECURITY;
 
@@ -143,6 +147,8 @@ CREATE TABLE "workCell" (
   CONSTRAINT "workCell_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "workCell_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE INDEX "workCell_companyId_idx" ON "workCell" ("companyId");
 
 ALTER TABLE "workCell" ENABLE ROW LEVEL SECURITY;
 
@@ -332,6 +338,8 @@ CREATE TABLE "equipmentType" (
   CONSTRAINT "equipmentType_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE INDEX "equipmentType_companyId_idx" ON "equipmentType" ("companyId");
+
 ALTER TABLE "equipmentType" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Employees can view equipment types" ON "equipmentType"
@@ -386,9 +394,12 @@ CREATE TABLE "equipment" (
   CONSTRAINT "equipment_equipmentTypeId_fkey" FOREIGN KEY ("equipmentTypeId") REFERENCES "equipmentType"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "equipment_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "location"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "equipment_workCellId_fkey" FOREIGN KEY ("workCellId") REFERENCES "workCell"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "equipment_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "equipment_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "equipment_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE INDEX "equipment_companyId_idx" ON "equipment" ("companyId");
 
 ALTER TABLE "equipment" ENABLE ROW LEVEL SECURITY;
 

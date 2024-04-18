@@ -14,6 +14,8 @@ CREATE TABLE search (
   CONSTRAINT search_companyId_fkey FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE INDEX "search_companyId_idx" ON "search" ("companyId");
+
 ALTER TABLE
   public.search
 ADD COLUMN

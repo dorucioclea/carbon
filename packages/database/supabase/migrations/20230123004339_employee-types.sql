@@ -13,6 +13,8 @@ CREATE TABLE "employeeType" (
     CONSTRAINT "employeeType_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE INDEX "employeeType_companyId_idx" ON "employeeType" ("companyId");
+
 ALTER TABLE "employeeType" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Only claims admin can view/modify permissions for employee types" ON "employeeType" FOR ALL USING (

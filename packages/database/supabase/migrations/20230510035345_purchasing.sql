@@ -27,6 +27,7 @@ CREATE TABLE "paymentTerm" (
 );
 
 CREATE INDEX "paymentTerm_name_idx" ON "paymentTerm" ("companyId");
+
 ALTER TABLE "paymentTerm" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Certain employees can view payment terms" ON "paymentTerm"
@@ -301,6 +302,8 @@ CREATE TABLE "purchaseOrderLine" (
   CONSTRAINT "purchaseOrderLine_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "purchaseOrderLine_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
 );
+
+CREATE INDEX "purchaseOrderLine_purchaseOrderId_idx" ON "purchaseOrderLine" ("purchaseOrderId");
 
 ALTER publication supabase_realtime ADD TABLE "purchaseOrderLine";
 

@@ -16,6 +16,8 @@ CREATE TABLE "ability" (
   CONSTRAINT "abilities_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE INDEX "ability_companyId_idx" ON "ability" ("companyId");
+
 ALTER TABLE "ability" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Employees with resources_view can view abilities" ON "ability"

@@ -201,6 +201,8 @@ CREATE TABLE "purchaseInvoiceLine" (
   CONSTRAINT "purchaseInvoiceLines_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
+CREATE INDEX "purchaseInvoiceLine_invoiceId_idx" ON "purchaseInvoiceLine" ("invoiceId");
+
 ALTER publication supabase_realtime ADD TABLE "purchaseInvoiceLine";
 
 ALTER TABLE "purchaseInvoiceLine" ENABLE ROW LEVEL SECURITY;

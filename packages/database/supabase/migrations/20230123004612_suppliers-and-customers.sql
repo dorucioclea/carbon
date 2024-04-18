@@ -30,6 +30,7 @@ CREATE TABLE "contact" (
   CONSTRAINT "contact_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE INDEX "contact_companyId_idx" ON "contact" ("companyId");
 
 CREATE TABLE "address" (
   "id" TEXT NOT NULL DEFAULT xid(),
@@ -47,6 +48,8 @@ CREATE TABLE "address" (
   CONSTRAINT "address_countryCode_fkey" FOREIGN KEY ("countryCode") REFERENCES "country"("id") ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT "address_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE INDEX "address_companyId_idx" ON "address" ("companyId");
 
 CREATE TABLE "supplierStatus" (
     "id" TEXT NOT NULL DEFAULT xid(),
@@ -156,6 +159,7 @@ CREATE TABLE "supplierAccount" (
 );
 
 CREATE INDEX "supplierAccount_supplierId_index" ON "supplierAccount"("supplierId");
+CREATE INDEX "supplierAccount_companyId_idx" ON "supplierAccount" ("companyId");
 
 CREATE TABLE "customerStatus" (
     "id" TEXT NOT NULL DEFAULT xid(),
@@ -265,5 +269,6 @@ CREATE TABLE "customerAccount" (
 );
 
 CREATE INDEX "customerAccount_customerId_index" ON "customerAccount"("customerId");
+CREATE INDEX "customerAccount_companyId_idx" ON "customerAccount" ("companyId");
 
 

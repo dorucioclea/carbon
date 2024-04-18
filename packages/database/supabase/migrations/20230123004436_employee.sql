@@ -8,6 +8,8 @@ CREATE TABLE "employee" (
     CONSTRAINT "employee_employeeCompany_unique" UNIQUE ("id", "companyId")
 );
 
+CREATE INDEX "employee_companyId_idx" ON "employee" ("companyId");
+
 ALTER TABLE "employee" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Only claims admin can view/modify employees" ON "employee" FOR ALL USING (is_claims_admin());

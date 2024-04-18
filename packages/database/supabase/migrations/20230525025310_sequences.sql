@@ -30,3 +30,5 @@ CREATE TABLE "sequence" (
   CONSTRAINT "sequence_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
+CREATE INDEX "sequence_companyId_idx" ON "sequence" ("companyId");
+

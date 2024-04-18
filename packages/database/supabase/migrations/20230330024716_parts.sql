@@ -165,7 +165,7 @@ CREATE TABLE "part" (
 );
 
 CREATE INDEX "part_name_index" ON "part"("name");
-CREATE INDEX "part_description_index" ON "part"("description");
+CREATE INDEX "part_companyId_idx" ON "part" ("companyId");
 CREATE INDEX "part_partType_index" ON "part"("partType");
 CREATE INDEX "part_partGroupId_index" ON "part"("partGroupId");
 CREATE INDEX "part_replenishmentSystem_index" ON "part"("replenishmentSystem");
@@ -322,6 +322,7 @@ CREATE TABLE "partUnitSalePrice" (
 );
 
 CREATE INDEX "partUnitSalePrice_partId_index" ON "partUnitSalePrice"("partId");
+CREATE INDEX "partUnitSalePrice_companyId_idx" ON "partUnitSalePrice"("companyId");
 
 ALTER TABLE "partUnitSalePrice" ENABLE ROW LEVEL SECURITY;
 
@@ -447,6 +448,7 @@ CREATE TABLE "partReplenishment" (
 );
 
 CREATE INDEX "partReplenishment_partId_index" ON "partReplenishment" ("partId");
+CREATE INDEX "partReplenishment_companyId_idx" ON "partReplenishment" ("companyId");
 CREATE INDEX "partReplenishment_preferredSupplierId_index" ON "partReplenishment" ("preferredSupplierId");
 
 ALTER TABLE "partReplenishment" ENABLE ROW LEVEL SECURITY;

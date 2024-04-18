@@ -15,6 +15,7 @@ CREATE TABLE "note" (
 );
 
 CREATE INDEX "notes_documentId_index" ON "note"("documentId");
+CREATE INDEX "notes_companyId_idx" ON "note" ("companyId");
 
 ALTER TABLE "note" ENABLE ROW LEVEL SECURITY;
 
