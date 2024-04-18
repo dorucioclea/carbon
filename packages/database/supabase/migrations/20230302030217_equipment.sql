@@ -17,6 +17,7 @@ CREATE TABLE "department" (
   "id" TEXT NOT NULL DEFAULT xid(),
   "name" TEXT NOT NULL UNIQUE,
   "parentDepartmentId" TEXT,
+  "companyId" INTEGER NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
@@ -24,7 +25,8 @@ CREATE TABLE "department" (
   "customFields" JSONB,
 
   CONSTRAINT "department_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "department_parentDepartmentId_fkey" FOREIGN KEY ("parentDepartmentId") REFERENCES "department"("id") ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT "department_parentDepartmentId_fkey" FOREIGN KEY ("parentDepartmentId") REFERENCES "department"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "department_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 ALTER TABLE "department" ENABLE ROW LEVEL SECURITY;
@@ -32,29 +34,31 @@ ALTER TABLE "department" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees can view departments" ON "department"
   FOR SELECT
   USING (
-    auth.role() = 'authenticated' 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    "companyId" = ANY(
+      select "companyId" from "userToCompany" where "userId" = auth.uid()::text
+    )
   );
 
 CREATE POLICY "Employees with resources_create can insert departments" ON "department"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('resources_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_create', "companyId")
 );
 
 CREATE POLICY "Employees with resources_update can update departments" ON "department"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('resources_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_update', "companyId")
   );
 
 CREATE POLICY "Employees with resources_delete can delete departments" ON "department"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('resources_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_delete', "companyId")
   );
 
 CREATE TABLE "workCellType" (
@@ -67,6 +71,7 @@ CREATE TABLE "workCellType" (
   "overheadRate" NUMERIC NOT NULL DEFAULT 0,
   "defaultStandardFactor" factor NOT NULL DEFAULT 'Total Hours',
   "active" BOOLEAN NOT NULL DEFAULT true,
+  "companyId" INTEGER NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
@@ -75,6 +80,7 @@ CREATE TABLE "workCellType" (
 
   CONSTRAINT "workCellType_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "workCellType_requiredAbility_fkey" FOREIGN KEY ("requiredAbility") REFERENCES "ability"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "workCellType_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "workCellType_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "workCellType_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -84,29 +90,31 @@ ALTER TABLE "workCellType" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees can view work cell types" ON "workCellType"
   FOR SELECT
   USING (
-    auth.role() = 'authenticated' 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    "companyId" = ANY(
+      select "companyId" from "userToCompany" where "userId" = auth.uid()::text
+    )
   );
 
 CREATE POLICY "Employees with resources_create can insert work cell types" ON "workCellType"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('resources_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_create', "companyId")
 );
 
 CREATE POLICY "Employees with resources_update can update work cell types" ON "workCellType"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('resources_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_update', "companyId")
   );
 
 CREATE POLICY "Employees with resources_delete can delete work cell types" ON "workCellType"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('resources_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_delete', "companyId")
   );
 
 CREATE TABLE "workCell" (
@@ -118,6 +126,7 @@ CREATE TABLE "workCell" (
   "locationId" TEXT,
   "workCellTypeId" TEXT NOT NULL,
   "active" BOOLEAN NOT NULL DEFAULT true,
+  "companyId" INTEGER NOT NULL,
   "activeDate" DATE,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
@@ -129,7 +138,10 @@ CREATE TABLE "workCell" (
   CONSTRAINT "workCell_workCellTypeId_fkey" FOREIGN KEY ("workCellTypeId") REFERENCES "workCellType"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "workCell_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "location"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "workCell_departmentId_fkey" FOREIGN KEY ("departmentId") REFERENCES "department"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT "uq_workCell_name_departmentId" UNIQUE ("name", "departmentId")
+  CONSTRAINT "workCell_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "uq_workCell_name_departmentId" UNIQUE ("name", "departmentId"),
+  CONSTRAINT "workCell_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "workCell_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 ALTER TABLE "workCell" ENABLE ROW LEVEL SECURITY;
@@ -137,29 +149,31 @@ ALTER TABLE "workCell" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees can view work cells" ON "workCell"
   FOR SELECT
   USING (
-    auth.role() = 'authenticated' 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    "companyId" = ANY(
+      select "companyId" from "userToCompany" where "userId" = auth.uid()::text
+    )
   );
 
 CREATE POLICY "Employees with resources_create can insert work cells" ON "workCell"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('resources_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_create', "companyId")
 );
 
 CREATE POLICY "Employees with resources_update can update work cells" ON "workCell"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('resources_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_update', "companyId")
   );
 
 CREATE POLICY "Employees with resources_delete can delete work cells" ON "workCell"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('resources_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_delete', "companyId")
   );
 
 ALTER TABLE "employeeJob"
@@ -173,41 +187,51 @@ CREATE TABLE "crew" (
   "crewLeaderId" TEXT,
   "groupId" TEXT NOT NULL,
   "workCellId" TEXT,
+  "companyId" INTEGER NOT NULL,
+  "createdBy" TEXT NOT NULL,
+  "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
+  "updatedBy" TEXT,
+  "updatedAt" TIMESTAMP,
 
   CONSTRAINT "crew_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "crew_crewLeaderId_fkey" FOREIGN KEY ("crewLeaderId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "crew_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "group"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT "crew_workCellId_fkey" FOREIGN KEY ("workCellId") REFERENCES "workCell"("id") ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT "crew_workCellId_fkey" FOREIGN KEY ("workCellId") REFERENCES "workCell"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "crew_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "crew_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 ALTER TABLE "crew" ENABLE ROW LEVEL SECURITY;
 
+
 CREATE POLICY "Employees can view crews" ON "crew"
   FOR SELECT
   USING (
-    auth.role() = 'authenticated' 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    "companyId" = ANY(
+      select "companyId" from "userToCompany" where "userId" = auth.uid()::text
+    )
   );
 
 CREATE POLICY "Employees with resources_create can insert crews" ON "crew"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('resources_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_create', "companyId")
 );
 
 CREATE POLICY "Employees with resources_update can update crews" ON "crew"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('resources_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_update', "companyId")
   );
 
 CREATE POLICY "Employees with resources_delete can delete crews" ON "crew"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('resources_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_delete', "companyId")
   );
 
 CREATE TABLE "crewAbility" (
@@ -226,30 +250,65 @@ ALTER TABLE "crewAbility" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees with resources_view can view crew abilities" ON "crewAbility"
   FOR SELECT
   USING (
-    auth.role() = 'authenticated' 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
-    AND (get_my_claim('resources_view')::boolean) = true
+    has_role('employee')
+    AND (
+      0 = ANY(get_permission_companies('resources_view'))
+      OR (
+        "crewId" IN (
+          SELECT "id" FROM "crew" WHERE "companyId" = ANY(
+            get_permission_companies('resources_view')
+          )
+        )
+      )
+    )
   );
 
 CREATE POLICY "Employees with resources_create can insert crew abilities" ON "crewAbility"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('resources_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee')
+    AND (
+      0 = ANY(get_permission_companies('resources_create'))
+      OR (
+        "crewId" IN (
+          SELECT "id" FROM "crew" WHERE "companyId" = ANY(
+            get_permission_companies('resources_create')
+          )
+        )
+      )
+    )
 );
 
 CREATE POLICY "Employees with resources_update can update crew abilities" ON "crewAbility"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('resources_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee')
+    AND (
+      0 = ANY(get_permission_companies('resources_update'))
+      OR (
+        "crewId" IN (
+          SELECT "id" FROM "crew" WHERE "companyId" = ANY(
+            get_permission_companies('resources_update')
+          )
+        )
+      )
+    )
   );
 
 CREATE POLICY "Employees with resources_delete can delete crew abilities" ON "crewAbility"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('resources_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee')
+    AND (
+      0 = ANY(get_permission_companies('resources_delete'))
+      OR (
+        "crewId" IN (
+          SELECT "id" FROM "crew" WHERE "companyId" = ANY(
+            get_permission_companies('resources_delete')
+          )
+        )
+      )
+    )
   );
 
 CREATE TABLE "equipmentType" (
@@ -259,6 +318,7 @@ CREATE TABLE "equipmentType" (
   "requiredAbility" TEXT,
   "setupHours" NUMERIC NOT NULL DEFAULT 0,
   "active" BOOLEAN NOT NULL DEFAULT true,
+  "companyId" INTEGER NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
@@ -267,6 +327,7 @@ CREATE TABLE "equipmentType" (
 
   CONSTRAINT "equipmentType_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "equipmentType_requiredAbility_fkey" FOREIGN KEY ("requiredAbility") REFERENCES "ability"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "equipmentType_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "equipmentType_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "equipmentType_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -276,29 +337,31 @@ ALTER TABLE "equipmentType" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees can view equipment types" ON "equipmentType"
   FOR SELECT
   USING (
-    auth.role() = 'authenticated' 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    "companyId" = ANY(
+      select "companyId" from "userToCompany" where "userId" = auth.uid()::text
+    )
   );
 
 CREATE POLICY "Employees with resources_create can insert equipment types" ON "equipmentType"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('resources_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_create', "companyId")
 );
 
 CREATE POLICY "Employees with resources_update can update equipment types" ON "equipmentType"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('resources_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_update', "companyId")
   );
 
 CREATE POLICY "Employees with resources_delete can delete equipment types" ON "equipmentType"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('resources_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_update', "companyId")
   );
 
 CREATE TABLE "equipment" (
@@ -312,6 +375,7 @@ CREATE TABLE "equipment" (
   "workCellId" TEXT,
   "active" BOOLEAN NOT NULL DEFAULT true,
   "activeDate" DATE DEFAULT CURRENT_DATE,
+  "companyId" INTEGER NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
@@ -331,29 +395,31 @@ ALTER TABLE "equipment" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees can view equipment" ON "equipment"
   FOR SELECT
   USING (
-    auth.role() = 'authenticated' 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    "companyId" = ANY(
+      select "companyId" from "userToCompany" where "userId" = auth.uid()::text
+    )
   );
 
 CREATE POLICY "Employees with resources_create can insert equipment" ON "equipment"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('resources_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_create', "companyId")
 );
 
 CREATE POLICY "Employees with resources_update can update equipment" ON "equipment"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('resources_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_update', "companyId")
   );
 
 CREATE POLICY "Employees with resources_delete can delete equipment" ON "equipment"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('resources_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_update', "companyId")
   );
 
 CREATE FUNCTION public.create_equipment_search_result()
