@@ -31,6 +31,7 @@ CREATE TABLE "purchaseInvoice" (
   "totalAmount" NUMERIC(10, 2) NOT NULL DEFAULT 0,
   "totalTax" NUMERIC(10, 2) NOT NULL DEFAULT 0,
   "balance" NUMERIC(10, 2) NOT NULL DEFAULT 0,
+  "companyId" INTEGER NOT NULL,
   "customFields" JSONB,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
@@ -43,16 +44,16 @@ CREATE TABLE "purchaseInvoice" (
   CONSTRAINT "purchaseInvoice_invoiceSupplierLocationId_fkey" FOREIGN KEY ("invoiceSupplierLocationId") REFERENCES "supplierLocation" ("id"),
   CONSTRAINT "purchaseInvoice_invoiceSupplierContactId_fkey" FOREIGN KEY ("invoiceSupplierContactId") REFERENCES "supplierContact" ("id"),
   CONSTRAINT "purchaseInvoice_paymentTermId_fkey" FOREIGN KEY ("paymentTermId") REFERENCES "paymentTerm" ("id"),
-  CONSTRAINT "purchaseInvoice_currencyCode_fkey" FOREIGN KEY ("currencyCode") REFERENCES "currency" ("code"),
+  CONSTRAINT "purchaseInvoice_currencyCode_fkey" FOREIGN KEY ("currencyCode", "companyId") REFERENCES "currency" ("code", "companyId"),
+  CONSTRAINT "purchaseInvoice_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "purchaseInvoice_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id"),
   CONSTRAINT "purchaseInvoice_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id")
 );
 
-CREATE INDEX "purchaseInvoice_invoiceId_idx" ON "purchaseInvoice" ("invoiceId");
-CREATE INDEX "purchaseInvoice_status_idx" ON "purchaseInvoice" ("status");
-CREATE INDEX "purchaseInvoice_supplierId_idx" ON "purchaseInvoice" ("supplierId");
-CREATE INDEX "purchaseInvoice_dateDue_idx" ON "purchaseInvoice" ("dateDue");
-CREATE INDEX "purchaseInvoice_datePaid_idx" ON "purchaseInvoice" ("datePaid");
+CREATE INDEX "purchaseInvoice_invoiceId_idx" ON "purchaseInvoice" ("invoiceId", "companyId");
+CREATE INDEX "purchaseInvoice_status_idx" ON "purchaseInvoice" ("status", "companyId");
+CREATE INDEX "purchaseInvoice_supplierId_idx" ON "purchaseInvoice" ("supplierId", "companyId");
+CREATE INDEX "purchaseInvoice_companyId_idx" ON "purchaseInvoice" ("companyId");
 
 ALTER publication supabase_realtime ADD TABLE "purchaseInvoice";
 
@@ -193,7 +194,7 @@ CREATE TABLE "purchaseInvoiceLine" (
   CONSTRAINT "purchaseInvoiceLines_shelfId_fkey" FOREIGN KEY ("shelfId", "locationId") REFERENCES "shelf" ("id", "locationId") ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT "purchaseInvoiceLines_accountNumber_fkey" FOREIGN KEY ("accountNumber") REFERENCES "account" ("number") ON UPDATE CASCADE ON DELETE RESTRICT,
   -- CONSTRAINT "purchaseInvoiceLines_assetId_fkey" FOREIGN KEY ("assetId") REFERENCES "fixedAsset" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
-  CONSTRAINT "purchaseInvoiceLines_currencyCode_fkey" FOREIGN KEY ("currencyCode") REFERENCES "currency" ("code") ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT "purchaseInvoiceLines_currencyCode_fkey" FOREIGN KEY ("currencyCode", "companyId") REFERENCES "currency" ("code", "companyId") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "purchaseInvoiceLines_inventoryUnitOfMeasureCode_fkey" FOREIGN KEY ("inventoryUnitOfMeasureCode", "companyId") REFERENCES "unitOfMeasure" ("code", "companyId") ON UPDATE CASCADE ON DELETE SET NULL,
   CONSTRAINT "purchaseInvoiceLines_purchaseUnitOfMeasureCode_fkey" FOREIGN KEY ("purchaseUnitOfMeasureCode", "companyId") REFERENCES "unitOfMeasure" ("code", "companyId") ON UPDATE CASCADE ON DELETE SET NULL,
   CONSTRAINT "purchaseInvoiceLines_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
@@ -299,6 +300,7 @@ CREATE TABLE "purchasePayment" (
   "currencyCode" TEXT NOT NULL,
   "exchangeRate" NUMERIC(10, 4) NOT NULL DEFAULT 1,
   "totalAmount" NUMERIC(10, 2) NOT NULL DEFAULT 0,
+  "companyId" INTEGER NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
@@ -307,10 +309,13 @@ CREATE TABLE "purchasePayment" (
 
   CONSTRAINT "purchasePayment_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "purchasePayment_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "supplier" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
-  CONSTRAINT "purchasePayment_currencyCode_fkey" FOREIGN KEY ("currencyCode") REFERENCES "currency" ("code") ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT "purchasePayment_currencyCode_fkey" FOREIGN KEY ("currencyCode", "companyId") REFERENCES "currency" ("code", "companyId") ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT "purchasePayment_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT "purchasePayment_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "purchasePayment_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON UPDATE CASCADE ON DELETE RESTRICT
 );
+
+CREATE INDEX "purchasePayment_companyId_idx" ON "purchasePayment" ("companyId");
 
 ALTER TABLE "purchasePayment" ENABLE ROW LEVEL SECURITY;
 

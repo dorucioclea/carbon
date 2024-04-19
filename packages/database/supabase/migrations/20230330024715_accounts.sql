@@ -7,6 +7,7 @@ CREATE TABLE "currency" (
   "decimalPlaces" INTEGER NOT NULL DEFAULT 2,
   "isBaseCurrency" BOOLEAN NOT NULL DEFAULT false,
   "active" BOOLEAN NOT NULL DEFAULT true,
+  "companyId" INTEGER NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
@@ -14,12 +15,14 @@ CREATE TABLE "currency" (
   "customFields" JSONB,
 
   CONSTRAINT "currency_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "currency_code_key" UNIQUE ("code"),
+  CONSTRAINT "currency_code_key" UNIQUE ("code", "companyId"),
+  CONSTRAINT "currency_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "currency_exchangeRate_check" CHECK ("exchangeRate" > 0),
   CONSTRAINT "currency_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id")
 );
 
-CREATE INDEX "currency_code_index" ON "currency" ("code");
+CREATE INDEX "currency_code_idx" ON "currency" ("code");
+CREATE INDEX "currency_companyId_idx" ON "currency" ("companyId");
 
 ALTER TABLE "currency" ENABLE ROW LEVEL SECURITY;
 
@@ -32,22 +35,22 @@ CREATE POLICY "Authenticated users can view currencies" ON "currency"
 CREATE POLICY "Employees with accounting_create can insert currencies" ON "currency"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('accounting_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('accounting_create', "companyId")
 );
 
 CREATE POLICY "Employees with accounting_update can update currencies" ON "currency"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('accounting_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('accounting_update', "companyId")
   );
 
 CREATE POLICY "Employees with accounting_delete can delete currencies" ON "currency"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('accounting_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('accounting_delete', "companyId")
   );
 
 
@@ -97,6 +100,7 @@ CREATE TABLE "accountCategory" (
   "category" TEXT NOT NULL,
   "class" "glAccountClass" NOT NULL,
   "incomeBalance" "glIncomeBalance" NOT NULL,
+  "companyId" INTEGER NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
@@ -105,39 +109,42 @@ CREATE TABLE "accountCategory" (
 
   CONSTRAINT "accountCategory_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "accountCategory_unique_category" UNIQUE ("category"),
+  CONSTRAINT "accountCategory_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id"),
   CONSTRAINT "accountCategory_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id"),
   CONSTRAINT "accountCategory_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id")
 );
+
+CREATE INDEX "accountCategory_companyId_idx" ON "accountCategory" ("companyId");
 
 ALTER TABLE "accountCategory" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Employees with accounting_view can view account categories" ON "accountCategory"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('accounting_view')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('accounting_view', "companyId")
   );
   
 
 CREATE POLICY "Employees with accounting_create can insert account categories" ON "accountCategory"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('accounting_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('accounting_create', "companyId")
 );
 
 CREATE POLICY "Employees with accounting_update can update account categories" ON "accountCategory"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('accounting_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('accounting_update', "companyId")
   );
 
 CREATE POLICY "Employees with accounting_delete can delete account categories" ON "accountCategory"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('accounting_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('accounting_delete', "companyId")
   );
 
 CREATE TYPE "glConsolidatedRate" AS ENUM (
@@ -171,30 +178,66 @@ ALTER TABLE "accountSubcategory" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees with accounting_view can view account subcategories" ON "accountSubcategory"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('accounting_view')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee')
+    AND   (
+      0 = ANY(get_permission_companies('accounting_view'))
+      OR (
+        "accountCategoryId" IN (
+          SELECT "id" FROM "accountCategory" WHERE "companyId" = ANY(
+            get_permission_companies('accounting_view')
+          )
+        )
+      )
+    )
   );
   
 
 CREATE POLICY "Employees with accounting_create can insert account subcategories" ON "accountSubcategory"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('accounting_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee')
+    AND   (
+      0 = ANY(get_permission_companies('accounting_create'))
+      OR (
+        "accountCategoryId" IN (
+          SELECT "id" FROM "accountCategory" WHERE "companyId" = ANY(
+            get_permission_companies('accounting_create')
+          )
+        )
+      )
+    )
 );
 
 CREATE POLICY "Employees with accounting_update can update account subcategories" ON "accountSubcategory"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('accounting_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee')
+    AND   (
+      0 = ANY(get_permission_companies('accounting_update'))
+      OR (
+        "accountCategoryId" IN (
+          SELECT "id" FROM "accountCategory" WHERE "companyId" = ANY(
+            get_permission_companies('accounting_update')
+          )
+        )
+      )
+    )
   );
 
 CREATE POLICY "Employees with accounting_delete can delete account subcategories" ON "accountSubcategory"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('accounting_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee')
+    AND   (
+      0 = ANY(get_permission_companies('accounting_delete'))
+      OR (
+        "accountCategoryId" IN (
+          SELECT "id" FROM "accountCategory" WHERE "companyId" = ANY(
+            get_permission_companies('accounting_delete')
+          )
+        )
+      )
+    )
   );
 
 CREATE TABLE "account" (
@@ -209,6 +252,7 @@ CREATE TABLE "account" (
   "consolidatedRate" "glConsolidatedRate",
   "directPosting" BOOLEAN NOT NULL DEFAULT false,
   "active" BOOLEAN NOT NULL DEFAULT true,
+  "companyId" INTEGER NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
@@ -219,52 +263,54 @@ CREATE TABLE "account" (
   CONSTRAINT "account_number_key" UNIQUE ("number"),
   CONSTRAINT "account_name_key" UNIQUE ("name"),
   CONSTRAINT "account_accountCategoryId_fkey" FOREIGN KEY ("accountCategoryId") REFERENCES "accountCategory"("id"),
+  CONSTRAINT "account_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id"),
   CONSTRAINT "account_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id"),
   CONSTRAINT "account_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id")
 );
 
-CREATE INDEX "account_number_idx" ON "account" ("number");
-CREATE INDEX "account_type_idx" ON "account" ("type");
-CREATE INDEX "account_incomeBalance_idx" ON "account" ("incomeBalance");
-CREATE INDEX "account_accountCategoryId_idx" ON "account" ("accountCategoryId");
-CREATE INDEX "account_accountSubcategoryId_idx" ON "account" ("accountSubcategoryId");
+CREATE INDEX "account_number_idx" ON "account" ("number", "companyId");
+CREATE INDEX "account_type_idx" ON "account" ("type", "companyId");
+CREATE INDEX "account_incomeBalance_idx" ON "account" ("incomeBalance", "companyId");
+CREATE INDEX "account_accountCategoryId_idx" ON "account" ("accountCategoryId", "companyId");
+CREATE INDEX "account_class_idx" ON "account" ("class", "companyId");
 
+CREATE INDEX "account_companyId_idx" ON "account" ("companyId");
 
 ALTER TABLE "account" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Certain employees can view accounts" ON "account"
   FOR SELECT
   USING (
+    has_role('employee') AND
     (
-      coalesce(get_my_claim('accounting_view')::boolean, false) = true OR
-      coalesce(get_my_claim('parts_view')::boolean, false) = true OR
-      coalesce(get_my_claim('resources_view')::boolean, false) = true OR
-      coalesce(get_my_claim('sales_view')::boolean, false) = true OR
-      coalesce(get_my_claim('purchasing_view')::boolean, false) = true
+      has_company_permission('accounting_view', "companyId") OR
+      has_company_permission('parts_view', "companyId") OR
+      has_company_permission('resources_view', "companyId") OR
+      has_company_permission('sales_view', "companyId") OR
+      has_company_permission('purchasing_view', "companyId")
     )
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
   );
   
 
 CREATE POLICY "Employees with accounting_create can insert accounts" ON "account"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('accounting_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('accounting_create', "companyId")
 );
 
 CREATE POLICY "Employees with accounting_update can update accounts" ON "account"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('accounting_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('accounting_update', "companyId")
   );
 
 CREATE POLICY "Employees with accounting_delete can delete accounts" ON "account"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('accounting_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('accounting_delete', "companyId")
   );
 
 CREATE OR REPLACE VIEW "accountCategories" AS
@@ -273,6 +319,7 @@ CREATE OR REPLACE VIEW "accountCategories" AS
     "category",
     "class",
     "incomeBalance",
+    "companyId",
     "createdBy",
     "createdAt",
     "updatedBy",

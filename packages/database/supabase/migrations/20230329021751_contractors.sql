@@ -2,6 +2,7 @@ CREATE TABLE "contractor" (
   "id" TEXT NOT NULL,
   "hoursPerWeek" INTEGER NOT NULL DEFAULT 0,
   "active" BOOLEAN NOT NULL DEFAULT true,
+  "companyId" INTEGER NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
@@ -10,38 +11,41 @@ CREATE TABLE "contractor" (
 
   CONSTRAINT "contractor_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "contractor_id_fkey" FOREIGN KEY ("id") REFERENCES "supplierContact"("id"),
+  CONSTRAINT "contractor_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "contractor_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id"),
   CONSTRAINT "contractor_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id")
 );
+
+CREATE INDEX "contractor_companyId_idx" ON "contractor" ("companyId");
 
 ALTER TABLE "contractor" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Employees with resources_view can view contractors" ON "contractor"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('resources_view')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_view', "companyId")
   );
 
 CREATE POLICY "Employees with resources_create can insert contractors" ON "contractor"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('resources_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_create', "companyId")
 );
 
 CREATE POLICY "Employees with resources_update can update contractors" ON "contractor"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('resources_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_update', "companyId")
   );
 
 CREATE POLICY "Employees with resources_delete can delete contractors" ON "contractor"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('resources_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('resources_delete', "companyId")
   );
 
 
@@ -59,32 +63,68 @@ CREATE TABLE "contractorAbility" (
 
 ALTER TABLE "contractorAbility" ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Employees with resources_view can view contractorAbilities" ON "contractorAbility"
+CREATE POLICY "Employees with resources_view can view contractor abilities" ON "contractorAbility"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('resources_view')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee')
+    AND (
+      0 = ANY(get_permission_companies('resources_view'))
+      OR (
+        "contractorId" IN (
+          SELECT "id" FROM "contractor" WHERE "companyId" = ANY(
+            get_permission_companies('resources_view')
+          )
+        )
+      )
+    )
   );
 
-CREATE POLICY "Employees with resources_create can insert contractorAbilities" ON "contractorAbility"
+CREATE POLICY "Employees with resources_create can insert contractor abilities" ON "contractorAbility"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('resources_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee')
+    AND (
+      0 = ANY(get_permission_companies('resources_create'))
+      OR (
+        "contractorId" IN (
+          SELECT "id" FROM "contractor" WHERE "companyId" = ANY(
+            get_permission_companies('resources_create')
+          )
+        )
+      )
+    )
 );
 
-CREATE POLICY "Employees with resources_update can update contractorAbilities" ON "contractorAbility"
+CREATE POLICY "Employees with resources_update can update contractor abilities" ON "contractorAbility"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('resources_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee')
+    AND (
+      0 = ANY(get_permission_companies('resources_update'))
+      OR (
+        "contractorId" IN (
+          SELECT "id" FROM "contractor" WHERE "companyId" = ANY(
+            get_permission_companies('resources_update')
+          )
+        )
+      )
+    )
   );
 
-CREATE POLICY "Employees with resources_delete can delete contractorAbilities" ON "contractorAbility"
+CREATE POLICY "Employees with resources_delete can delete contractor abilities" ON "contractorAbility"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('resources_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee')
+    AND (
+      0 = ANY(get_permission_companies('resources_delete'))
+      OR (
+        "contractorId" IN (
+          SELECT "id" FROM "contractor" WHERE "companyId" = ANY(
+            get_permission_companies('resources_delete')
+          )
+        )
+      )
+    )
   );
 
 
@@ -93,6 +133,7 @@ CREATE OR REPLACE VIEW "contractors" AS
     p.id AS "supplierContactId", 
     p."active", 
     p."hoursPerWeek", 
+    p."companyId",
     p."customFields",
     s.id AS "supplierId", 
     s.name AS "supplierName", 
@@ -110,4 +151,4 @@ CREATE OR REPLACE VIEW "contractors" AS
     LEFT JOIN "contractorAbility" pa
       ON pa."contractorId" = p.id
   WHERE p."active" = true
-  GROUP BY p.id, p.active, p."hoursPerWeek", p."customFields", s.id, c.id, s.name, c."firstName", c."lastName", c."email";
+  GROUP BY p.id, p.active, p."hoursPerWeek", p."customFields", p."companyId", s.id, c.id, s.name, c."firstName", c."lastName", c."email";

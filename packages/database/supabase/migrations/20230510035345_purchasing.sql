@@ -176,6 +176,7 @@ CREATE TABLE "purchaseOrder" (
   "supplierLocationId" TEXT,
   "supplierContactId" TEXT,
   "supplierReference" TEXT,
+  "companyId" INTEGER NOT NULL,
   "closedAt" DATE,
   "closedBy" TEXT,
   "customFields" JSONB,
@@ -189,15 +190,17 @@ CREATE TABLE "purchaseOrder" (
   CONSTRAINT "purchaseOrder_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "supplier" ("id") ON DELETE CASCADE,
   CONSTRAINT "purchaseOrder_supplierLocationId_fkey" FOREIGN KEY ("supplierLocationId") REFERENCES "supplierLocation" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "purchaseOrder_supplierContactId_fkey" FOREIGN KEY ("supplierContactId") REFERENCES "supplierContact" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT "purchaseOrder_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT "purchaseOrder_closedBy_fkey" FOREIGN KEY ("closedBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "purchaseOrder_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "purchaseOrder_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
 );
 
-CREATE INDEX "purchaseOrder_purchaseOrderId_idx" ON "purchaseOrder" ("purchaseOrderId");
-CREATE INDEX "purchaseOrder_supplierId_idx" ON "purchaseOrder" ("supplierId");
-CREATE INDEX "purchaseOrder_supplierContactId_idx" ON "purchaseOrder" ("supplierContactId");
-CREATE INDEX "purchaseOrder_status_idx" ON "purchaseOrder" ("status");
+CREATE INDEX "purchaseOrder_purchaseOrderId_idx" ON "purchaseOrder" ("purchaseOrderId", "companyId");
+CREATE INDEX "purchaseOrder_supplierId_idx" ON "purchaseOrder" ("supplierId", "companyId");
+CREATE INDEX "purchaseOrder_supplierContactId_idx" ON "purchaseOrder" ("supplierContactId", "companyId");
+CREATE INDEX "purchaseOrder_status_idx" ON "purchaseOrder" ("status", "companyId");
+CREATE INDEX "purchaseOrder_companyId_idx" ON "purchaseOrder" ("companyId");
 
 CREATE TYPE "purchaseOrderLineType" AS ENUM (
   'Comment',
@@ -315,6 +318,7 @@ CREATE TABLE "purchaseOrderPayment" (
   "paymentTermId" TEXT,
   "paymentComplete" BOOLEAN NOT NULL DEFAULT FALSE,
   "currencyCode" TEXT NOT NULL DEFAULT 'USD',
+  "companyId" INTEGER NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
   "customFields" JSONB,
@@ -325,12 +329,11 @@ CREATE TABLE "purchaseOrderPayment" (
   CONSTRAINT "purchaseOrderPayment_invoiceSupplierLocationId_fkey" FOREIGN KEY ("invoiceSupplierLocationId") REFERENCES "supplierLocation" ("id") ON DELETE CASCADE,
   CONSTRAINT "purchaseOrderPayment_invoiceSupplierContactId_fkey" FOREIGN KEY ("invoiceSupplierContactId") REFERENCES "supplierContact" ("id") ON DELETE CASCADE,
   CONSTRAINT "purchaseOrderPayment_paymentTermId_fkey" FOREIGN KEY ("paymentTermId") REFERENCES "paymentTerm" ("id") ON DELETE CASCADE,
-  CONSTRAINT "purchaseOrderPayment_currencyCode_fkey" FOREIGN KEY ("currencyCode") REFERENCES "currency" ("code") ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT "purchaseOrderPayment_currencyCode_fkey" FOREIGN KEY ("currencyCode", "companyId") REFERENCES "currency" ("code", "companyId") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE INDEX "purchaseOrderPayment_invoiceSupplierId_idx" ON "purchaseOrderPayment" ("invoiceSupplierId");
-CREATE INDEX "purchaseOrderPayment_invoiceSupplierLocationId_idx" ON "purchaseOrderPayment" ("invoiceSupplierLocationId");
-CREATE INDEX "purchaseOrderPayment_invoiceSupplierContactId_idx" ON "purchaseOrderPayment" ("invoiceSupplierContactId");
+CREATE INDEX "purchaseOrderPayment_companyId_idx" ON "purchaseOrderPayment" ("companyId");
 
 CREATE TABLE "purchaseOrderDelivery" (
   "id" TEXT NOT NULL,
@@ -345,6 +348,7 @@ CREATE TABLE "purchaseOrderDelivery" (
   "dropShipment" BOOLEAN NOT NULL DEFAULT FALSE,
   "customerId" TEXT,
   "customerLocationId" TEXT,
+  "companyId" INTEGER NOT NULL,
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "customFields" JSONB,
@@ -358,6 +362,8 @@ CREATE TABLE "purchaseOrderDelivery" (
   CONSTRAINT "purchaseOrderDelivery_customerLocationId_fkey" FOREIGN KEY ("customerLocationId") REFERENCES "customerLocation" ("id") ON DELETE CASCADE,
   CONSTRAINT "purchaseOrderDelivery_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
 );
+
+CREATE INDEX "purchaseOrderDelivery_companyId_idx" ON "purchaseOrderDelivery" ("companyId");
 
 CREATE TYPE "purchaseOrderTransactionType" AS ENUM (
   'Edit',
@@ -447,7 +453,8 @@ CREATE OR REPLACE VIEW "purchaseOrders" AS
 CREATE OR REPLACE VIEW "purchaseOrderSuppliers" AS
   SELECT DISTINCT
     s."id",
-    s."name"
+    s."name",
+    s."companyId"
   FROM "supplier" s
   INNER JOIN "purchaseOrder" p ON p."supplierId" = s."id";
   

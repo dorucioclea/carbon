@@ -19,6 +19,7 @@ CREATE TABLE "salesOrder" (
   "customerLocationId" TEXT,
   "customerContactId" TEXT,
   "customerReference" TEXT,
+  "companyId" INTEGER NOT NULL,
   "closedAt" DATE,
   "closedBy" TEXT,
   "customFields" JSONB,
@@ -36,17 +37,18 @@ CREATE TABLE "salesOrder" (
   CONSTRAINT "salesOrder_customerLocationId_fkey" FOREIGN KEY ("customerLocationId") REFERENCES "customerLocation" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "salesOrder_customerContactId_fkey" FOREIGN KEY ("customerContactId") REFERENCES "customerContact" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "salesOrder_quoteId_fkey" FOREIGN KEY ("quoteId") REFERENCES "quote"("id") ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT "salesOrder_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "salesOrder_closedBy_fkey" FOREIGN KEY ("closedBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "salesOrder_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "salesOrder_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "salesOrder_assignee_fkey" FOREIGN KEY ("assignee") REFERENCES "user" ("id") ON DELETE SET NULL
 );
 
-CREATE INDEX "salesOrder_salesOrderId_idx" ON "salesOrder" ("salesOrderId");
-CREATE INDEX "salesOrder_customerId_idx" ON "salesOrder" ("customerId");
-CREATE INDEX "salesOrder_customerContactId_idx" ON "salesOrder" ("customerContactId");
-CREATE INDEX "salesOrder_status_idx" ON "salesOrder" ("status");
-CREATE INDEX "salesOrder_quoteId_idx" ON "salesOrder" ("quoteId");
+CREATE INDEX "salesOrder_salesOrderId_idx" ON "salesOrder" ("salesOrderId", "companyId");
+CREATE INDEX "salesOrder_customerId_idx" ON "salesOrder" ("customerId", "companyId");
+CREATE INDEX "salesOrder_status_idx" ON "salesOrder" ("status", "companyId");
+CREATE INDEX "salesOrder_quoteId_idx" ON "salesOrder" ("quoteId", "companyId");
+CREATE INDEX "salesOrder_companyId_idx" ON "salesOrder" ("companyId");
 
 CREATE TYPE "salesOrderLineType" AS ENUM (
   'Comment',
@@ -144,6 +146,7 @@ CREATE TABLE "salesOrderPayment" (
   "paymentTermId" TEXT,
   "paymentComplete" BOOLEAN NOT NULL DEFAULT FALSE,
   "currencyCode" TEXT NOT NULL DEFAULT 'USD',
+  "companyId" INTEGER NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
   "customFields" JSONB,
@@ -154,12 +157,14 @@ CREATE TABLE "salesOrderPayment" (
   CONSTRAINT "salesOrderPayment_invoiceCustomerLocationId_fkey" FOREIGN KEY ("invoiceCustomerLocationId") REFERENCES "customerLocation" ("id") ON DELETE CASCADE,
   CONSTRAINT "salesOrderPayment_invoiceCustomerContactId_fkey" FOREIGN KEY ("invoiceCustomerContactId") REFERENCES "customerContact" ("id") ON DELETE CASCADE,
   CONSTRAINT "salesOrderPayment_paymentTermId_fkey" FOREIGN KEY ("paymentTermId") REFERENCES "paymentTerm" ("id") ON DELETE CASCADE,
-  CONSTRAINT "salesOrderPayment_currencyCode_fkey" FOREIGN KEY ("currencyCode") REFERENCES "currency" ("code") ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT "salesOrderPayment_currencyCode_fkey" FOREIGN KEY ("currencyCode", "companyId") REFERENCES "currency" ("code", "companyId") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "salesOrderPayment_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE INDEX "salesOrderPayment_invoiceCustomerId_idx" ON "salesOrderPayment" ("invoiceCustomerId");
 CREATE INDEX "salesOrderPayment_invoiceCustomerLocationId_idx" ON "salesOrderPayment" ("invoiceCustomerLocationId");
 CREATE INDEX "salesOrderPayment_invoiceCustomerContactId_idx" ON "salesOrderPayment" ("invoiceCustomerContactId");
+CREATE INDEX "salesOrderPayment_companyId_idx" ON "salesOrderPayment" ("companyId");
 
 CREATE TABLE "salesOrderShipment" (
   "id" TEXT NOT NULL,
@@ -176,6 +181,7 @@ CREATE TABLE "salesOrderShipment" (
   "customerLocationId" TEXT,
   "supplierId" TEXT,
   "supplierLocationId" TEXT,
+  "companyId" INTEGER NOT NULL,
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "customFields" JSONB,
@@ -188,6 +194,7 @@ CREATE TABLE "salesOrderShipment" (
   CONSTRAINT "salesOrderShipment_shippingTermId_fkey" FOREIGN KEY ("shippingTermId") REFERENCES "shippingTerm" ("id") ON DELETE CASCADE,
   CONSTRAINT "salesOrderShipment_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "customer" ("id") ON DELETE CASCADE,
   CONSTRAINT "salesOrderShipment_customerLocationId_fkey" FOREIGN KEY ("customerLocationId") REFERENCES "customerLocation" ("id") ON DELETE CASCADE,
+  CONSTRAINT "salesOrderShipment_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "salesOrderShipment_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "salesOrderShipment_assignee_fkey" FOREIGN KEY ("assignee") REFERENCES "user" ("id") ON DELETE SET NULL
 );
@@ -280,7 +287,8 @@ CREATE OR REPLACE VIEW "salesOrders" AS
 CREATE OR REPLACE VIEW "salesOrderCustomers" AS
   SELECT DISTINCT
     c."id",
-    c."name"
+    c."name",
+    c."companyId"
   FROM "customer" c
   INNER JOIN "salesOrder" s ON s."customerId" = c."id";
   
