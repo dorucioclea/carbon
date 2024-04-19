@@ -25,8 +25,8 @@ CREATE TABLE "customFieldTable" (
   CONSTRAINT "customFieldTable_module_table_name_key" UNIQUE ("module", "table", "name")
 );
 
-CREATE INDEX "customFieldTable_module_index" ON "customFieldTable" ("module");
-CREATE INDEX "customFieldTable_table_index" ON "customFieldTable" ("table");
+CREATE INDEX "customFieldTable_module_idx" ON "customFieldTable" ("module");
+CREATE INDEX "customFieldTable_table_idx" ON "customFieldTable" ("table");
 
 ALTER TABLE "customFieldTable" ENABLE ROW LEVEL SECURITY;
 

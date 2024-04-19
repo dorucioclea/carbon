@@ -439,8 +439,8 @@ DECLARE
   equipment_type TEXT;
 BEGIN
   equipment_type := (SELECT et."name" FROM public."equipmentType" et WHERE et.id = new."equipmentTypeId");
-  INSERT INTO public.search(name, description, entity, uuid, link)
-  VALUES (new.name, COALESCE(new.description, '') || ' ' || equipment_type, 'Resource', new.id, '/x/resources/equipment/list/' || new."equipmentTypeId" || '/' || new.id);
+  INSERT INTO public.search(name, description, entity, uuid, link, "companyId")
+  VALUES (new.name, COALESCE(new.description, '') || ' ' || equipment_type, 'Resource', new.id, '/x/resources/equipment/list/' || new."equipmentTypeId" || '/' || new.id, new."companyId");
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

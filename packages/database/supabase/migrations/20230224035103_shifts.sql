@@ -29,8 +29,7 @@ ALTER TABLE "location" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees can view locations for their companies" ON "location"
   FOR SELECT
   USING (
-    auth.role() = 'authenticated' 
-    AND has_role('employee') 
+    has_role('employee') 
     AND "companyId" = ANY(
       select "companyId" from "userToCompany" where "userId" = auth.uid()::text
     )

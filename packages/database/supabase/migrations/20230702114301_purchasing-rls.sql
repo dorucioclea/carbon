@@ -63,8 +63,8 @@ CREATE POLICY "Suppliers with purchasing_view can search for their own purchase 
 CREATE FUNCTION public.create_purchase_order_search_result()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.search(name, entity, uuid, link)
-  VALUES (new."purchaseOrderId", 'Purchase Order', new.id, '/x/purchase-order/' || new.id);
+  INSERT INTO public.search(name, entity, uuid, link, "companyId")
+  VALUES (new."purchaseOrderId", 'Purchase Order', new.id, '/x/purchase-order/' || new.id, new."companyId");
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

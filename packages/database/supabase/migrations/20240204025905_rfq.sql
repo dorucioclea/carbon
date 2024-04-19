@@ -22,7 +22,7 @@ CREATE TABLE "requestForQuote" (
   CONSTRAINT "requestForQuote_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-CREATE INDEX "requestForQuote_locationId_index" ON "requestForQuote" ("locationId");
+CREATE INDEX "requestForQuote_locationId_idx" ON "requestForQuote" ("locationId");
 
 CREATE TABLE "requestForQuoteLine" (
   "id" TEXT NOT NULL DEFAULT xid(),
@@ -52,9 +52,9 @@ CREATE TABLE "requestForQuoteLine" (
   CONSTRAINT "requestForQuoteLine_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-CREATE INDEX "requestForQuoteLine_requestForQuoteId_index" ON "requestForQuoteLine" ("requestForQuoteId");
-CREATE INDEX "requestForQuoteLine_partId_index" ON "requestForQuoteLine" ("partId");
-CREATE INDEX "requestForQuoteLine_locationId_index" ON "requestForQuoteLine" ("locationId");
+CREATE INDEX "requestForQuoteLine_requestForQuoteId_idx" ON "requestForQuoteLine" ("requestForQuoteId");
+CREATE INDEX "requestForQuoteLine_partId_idx" ON "requestForQuoteLine" ("partId");
+CREATE INDEX "requestForQuoteLine_locationId_idx" ON "requestForQuoteLine" ("locationId");
 
 CREATE TABLE "requestForQuoteSupplier" (
   "id" TEXT NOT NULL DEFAULT xid(),
@@ -80,8 +80,8 @@ CREATE TABLE "requestForQuoteSupplier" (
   CONSTRAINT "requestForQuoteSupplier_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-CREATE INDEX "requestForQuoteSupplier_requestForQuoteId_index" ON "requestForQuoteSupplier" ("requestForQuoteId");
-CREATE INDEX "requestForQuoteSupplier_supplierId_index" ON "requestForQuoteSupplier" ("supplierId");
+CREATE INDEX "requestForQuoteSupplier_requestForQuoteId_idx" ON "requestForQuoteSupplier" ("requestForQuoteId");
+CREATE INDEX "requestForQuoteSupplier_supplierId_idx" ON "requestForQuoteSupplier" ("supplierId");
 
 CREATE TABLE "requestForQuoteSupplierLine" (
   "id" TEXT NOT NULL DEFAULT xid(),

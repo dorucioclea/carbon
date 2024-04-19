@@ -14,7 +14,7 @@ CREATE TABLE "note" (
   CONSTRAINT "notes_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE INDEX "notes_documentId_index" ON "note"("documentId");
+CREATE INDEX "notes_documentId_idx" ON "note"("documentId");
 CREATE INDEX "notes_companyId_idx" ON "note" ("companyId");
 
 ALTER TABLE "note" ENABLE ROW LEVEL SECURITY;

@@ -17,7 +17,7 @@ CREATE TABLE "userAttributeCategory" (
   CONSTRAINT "userAttributeCategory_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE
 );
 
-CREATE INDEX "userAttributeCategory_companyId_index" ON "userAttributeCategory" ("companyId");
+CREATE INDEX "userAttributeCategory_companyId_idx" ON "userAttributeCategory" ("companyId");
 
 -- ALTER TABLE "userAttributeCategory" ENABLE ROW LEVEL SECURITY;
 
@@ -108,7 +108,7 @@ CREATE TABLE "userAttribute" (
 
 );
 
-CREATE INDEX "userAttribute_userAttributeCategoryId_index" ON "userAttribute" ("userAttributeCategoryId");
+CREATE INDEX "userAttribute_userAttributeCategoryId_idx" ON "userAttribute" ("userAttributeCategoryId");
 
 -- ALTER TABLE "userAttribute" ENABLE ROW LEVEL SECURITY;
 
@@ -174,8 +174,8 @@ CREATE TABLE "userAttributeValue" (
     UNIQUE ( "userAttributeId", "userId")
 );
 
-CREATE INDEX "userAttributeValue_userAttributeId_index" ON "userAttributeValue" ("userAttributeId");
-CREATE INDEX "userAttributeValue_userId_index" ON "userAttributeValue" ("userId");
+CREATE INDEX "userAttributeValue_userAttributeId_idx" ON "userAttributeValue" ("userAttributeId");
+CREATE INDEX "userAttributeValue_userId_idx" ON "userAttributeValue" ("userId");
 
 ALTER TABLE "userAttributeValue" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users with resource update can view/modify user attribute values" ON "userAttributeValue" FOR ALL USING (

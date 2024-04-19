@@ -76,7 +76,7 @@ CREATE TABLE "serviceSupplier" (
   CONSTRAINT "serviceSupplier_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id")
 );
 
-CREATE INDEX "serviceSupplier_serviceId_index" ON "serviceSupplier"("serviceId");
+CREATE INDEX "serviceSupplier_serviceId_idx" ON "serviceSupplier"("serviceId");
 
 ALTER TABLE "serviceSupplier" ENABLE ROW LEVEL SECURITY;
 
