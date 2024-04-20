@@ -82,8 +82,8 @@ const PartsTable = memo(({ data, count, partGroups }: PartsTableProps) => {
         meta: {
           filter: {
             type: "static",
-            options: partGroups.map(({ id, name }) => ({
-              value: id,
+            options: partGroups.map(({ name }) => ({
+              value: name,
               label: <Enumerable value={name} />,
             })),
           },

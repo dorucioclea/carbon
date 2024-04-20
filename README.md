@@ -1,10 +1,11 @@
 <p align="center"><a href="https://carbon.us.org" target="_blank"><img src="https://raw.githubusercontent.com/barbinbrad/carbon/main/www/public/logo-full.png" width="500" alt="Carbon Logo"></a></p>
 
 <p align="center">
-<a href="https://www.loom.com/share/7b2dccab3d404b84aa8f08e5bfa21d16?sid=1c705b79-c6e0-4558-953a-a50fefff5788" target="_blank">
-  <img src="https://github.com/barbinbrad/carbon/assets/64510427/3659dc69-cb3a-45b6-944f-86dd1f513b67" width="70%" />
+<a href="https://www.loom.com/share/941bd11ab21c41e4a6c823914e001769?sid=fbadbb03-fc4e-4937-b93a-9add691267f9" target="_blank">
+  <img src="https://github.com/barbinbrad/carbon/assets/64510427/229985c9-44de-4b2b-afdd-7d1f4fd9dedd" width="70%" />
 </a>
 </p>
+
 
 
 # Carbon ERP
@@ -83,7 +84,7 @@ The monorepo follows the Turborepo convention of grouping packages into one of t
 
 Make sure that you have [Docker installed](https://docs.docker.com/desktop/install/mac-install/) on your system since this monorepo uses the Docker for local development.
 
-After running the steps below you should be able to access the following apps/containers locally:
+After installation you should be able to access the following apps/containers locally:
 
 | Application     | URL                                                                                                                |
 | --------------- | ------------------------------------------------------------------------------------------------------------------ |
@@ -91,8 +92,20 @@ After running the steps below you should be able to access the following apps/co
 | Postgres        | [postgresql://postgres:postgres@localhost:54322/postgres](postgresql://postgres:postgres@localhost:54322/postgres) |
 | Supabase Studio | [http://localhost:54323/project/default](http://localhost:54323/project/default)                                   |
 | Inbucket        | [http://localhost:54324/monitor](http://localhost:54324/monitor)                                                   |
-| Redis           | [redis://localhost:6379](redis://localhost:6379)                                                                   |
 | Edge Functions  | [http://localhost:54321/functions/v1/<function-name>](http://localhost:54321/functions/v1/<function-name>)         |
+
+In addition you must configure the following external services:
+
+| Service         | Purpose                    | URL                                                                                   |
+| --------------- | ---------------------------|-------------------------------------------------------------------------------------- |
+| Upstash         | Serverless Redis           | [https://console.upstash.com/login](https://console.upstash.com/login)                |
+| Trigger.dev     | Job runner                 | [https://cloud.trigger.dev/login](https://cloud.trigger.dev/login)                    |
+| Posthog         | Product analytics platform | [https://us.posthog.com/signup](https://us.posthog.com/signup)                        |
+
+
+Each of these services has a free tier which should be plenty to support local development.
+
+### Installation
 
 First download and initialize the repository dependencies.
 
@@ -105,21 +118,38 @@ $ npm run db:start  # pull and run the containers
 Create an `.env` file and copy the contents of `.env.example` file into it
 
 ```bash
-  cp ./.env.example ./.env
+$ cp ./.env.example ./.env
 ```
 
+Add your environment variables:
 
-Use the output of `npm run db:start` to set the following variables in `.env`:
+1. Use the output of `npm run db:start` to set the supabase entries:
 
 - SUPABASE_SERVICE_ROLE=[service_role key]
 - SUPABASE_ANON_PUBLIC=[anon key]
+
+2. [Create a Redis database in upstash](https://console.upstash.com/redis) and copy the following from the `REST API` section:
+
+- UPSTASH_REDIS_REST_URL=[UPSTASH_REDIS_REST_URL]
+- UPSTASH_REDIS_REST_TOKEN=[UPSTASH_REDIS_REST_TOKEN]]
+
+3. Navigate to the project you created in [https://cloud.trigger.dev/](Trigger.dev) and copy the following from the `Environments & API Keys` section:
+
+- TRIGGER_PUBLIC_API_KEY=[Public 'dev' API Key, starting 'pk_dev_']
+- TRIGGER_API_KEY=[Server 'dev' API Key, starting 'tr_dev_']
+
+4. In Posthog go to [https://[region].posthog.com/project/[project-id]/settings/project-details](https://[region].posthog.com/project/[project-id]/settings/project-details) to find your Project ID and Project API key:
+
+- POSTHOG_API_HOST=[https://[region].posthog.com]
+- POSTHOG_PROJECT_PUBLIC_KEY=[Project API Key starting 'phc_']
+
 
 Then you can run the following:
 
 
 ```bash
 $ npm run db:build     # run db migrations and seed script
-$ npm run build        # build the packages
+$ npm run build:app    # build the app
 ```
 
 Finally, start the apps and packages:
@@ -127,6 +157,15 @@ Finally, start the apps and packages:
 ```bash
 $ npm run dev         # npm run dev in all apps & packages
 ```
+
+You can now sign in with:
+
+username: admin@carbon.us.org
+password: carbon
+
+Go ahead and create your own user account
+
+### Notes
 
 To kill the database containers in a non-recoverable way, you can run:
 

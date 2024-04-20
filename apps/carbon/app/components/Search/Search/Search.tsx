@@ -12,6 +12,7 @@ import {
   Kbd,
   Modal,
   ModalContent,
+  VStack,
   useDebounce,
   useDisclosure,
   useKeyboardShortcuts,
@@ -207,8 +208,17 @@ const SearchModal = ({
                       })
                     }
                   >
-                    <ResultIcon entity={result.entity} />
-                    <span>{result.name}</span>
+                    <HStack>
+                      <ResultIcon entity={result.entity} />
+                      <VStack spacing={0}>
+                        <span>{result.name}</span>
+                        {result.description && (
+                          <span className="text-xs text-muted-foreground">
+                            {result.description}
+                          </span>
+                        )}
+                      </VStack>
+                    </HStack>
                   </CommandItem>
                 ))}
               </CommandGroup>
