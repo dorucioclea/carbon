@@ -9,7 +9,7 @@ import {
 } from "@carbon/react";
 import { z } from "zod";
 import { Form, FormField, FormItem, FormMessage } from "./ui/Form";
-import { submit } from "~/app/submit";
+import { createHubspotContact } from "~/app/submit";
 
 export default function ContactForm() {
   const formSchema = z.object({
@@ -24,14 +24,17 @@ export default function ContactForm() {
 
   return (
     <Form {...form}>
-      <form action={submit} className="flex space-x-2 items-center">
+      <form
+        action={createHubspotContact}
+        className="flex space-x-2 items-center"
+      >
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input type="email" placeholder="Email" {...field} />
+                <Input type="email" placeholder="Company email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

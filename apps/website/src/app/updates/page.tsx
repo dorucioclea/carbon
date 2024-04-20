@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Image from "next/image";
 import Link from "next/link";
-import EmailForm from "~/components/EmailForm";
+import ContactForm from "~/components/ContactForm";
 import { Tag } from "~/components/Tag";
 import { getBlogPosts } from "~/lib/blog";
 
@@ -19,7 +19,7 @@ export function UpdatesHeader() {
       <p className="text-center text-muted-foreground text-lg">
         Subscribe to learn about new features, and updates in Carbon.
       </p>
-      <EmailForm />
+      <ContactForm />
     </div>
   );
 }
