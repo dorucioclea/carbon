@@ -1,13 +1,5 @@
 import { redirect, type ActionFunctionArgs } from "@remix-run/node";
-import type { SalesOrderLine } from "~/modules/sales";
-import {
-  getQuote,
-  getQuoteLines,
-  convertQuoteToOrder,
-  upsertSalesOrder,
-  insertSalesOrderLines,
-} from "~/modules/sales";
-import { getNextSequence, rollbackNextSequence } from "~/modules/settings";
+import { createSalesOrderFromQuote } from "~/modules/sales/sales.server";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { assertIsPost } from "~/utils/http";
@@ -18,110 +10,36 @@ export async function action(args: ActionFunctionArgs) {
   const { request, params } = args;
   assertIsPost(request);
 
-  const { client, userId } = await requirePermissions(request, {
+  const { userId } = await requirePermissions(request, {
     create: "sales",
     role: "employee",
   });
 
   const { id } = params;
-  if (!id) throw new Error("Could not find id");
+  if (!id) throw new Error("Could not find quote id");
 
-  let newSalesOrderId: string;
-
-  const updateQuoteStatus = await convertQuoteToOrder(client, id, userId);
-  if (updateQuoteStatus.error) {
-    throw redirect(
-      path.to.quote(id),
-      await flash(
-        request,
-        error(
-          updateQuoteStatus.error,
-          "Failed to update quote status to Ordered"
-        )
-      )
-    );
-  }
-
-  const quote = await getQuote(client, id);
-  if (quote.error) {
-    throw redirect(
-      path.to.quote(id),
-      await flash(request, error(quote.error, "Failed to get quote"))
-    );
-  }
-
+  let salesOrderId = "";
   try {
-    const nextSequence = await getNextSequence(client, "salesOrder", userId);
-    if (nextSequence.error) {
+    const result = await createSalesOrderFromQuote(id, userId);
+    if (result.error || !result?.data) {
       throw redirect(
-        path.to.newSalesOrder,
+        request.headers.get("Referer") ?? path.to.quotes,
         await flash(
           request,
-          error(nextSequence.error, "Failed to get next sequence")
+          error(result.error, "Failed to create sales order")
         )
       );
     }
-    const createSalesOrder = await upsertSalesOrder(client, {
-      salesOrderId: nextSequence.data,
-      createdBy: userId,
-      quoteId: quote.data.id,
-      customerId: quote.data.customerId,
-      orderDate: new Date().toISOString(),
-    });
-
-    if (createSalesOrder.error || !createSalesOrder.data?.[0]) {
-      // TODO: this should be done as a transaction
-      await rollbackNextSequence(client, "salesOrder", userId);
-      throw redirect(
-        path.to.quotes,
-        await flash(
-          request,
-          error(createSalesOrder.error, "Failed to insert sales order")
-        )
-      );
-    }
-
-    const order = createSalesOrder.data?.[0];
-    newSalesOrderId = order.id;
-
-    // construct and insert the sales order lines
-    const quoteLines = await getQuoteLines(client, id);
-    if (quoteLines.data) {
-      const constructedSalesOrderLines: SalesOrderLine[] = quoteLines?.data.map(
-        (quoteLine) => {
-          return {
-            salesOrderId: newSalesOrderId,
-            salesOrderLineType: "Part",
-            partId: quoteLine.partId,
-            description: quoteLine.description,
-            createdBy: userId,
-          };
-        }
-      );
-
-      const salesOrderLines = await insertSalesOrderLines(
-        client,
-        constructedSalesOrderLines
-      );
-
-      if (salesOrderLines.error) {
-        throw redirect(
-          path.to.quote(id),
-          await flash(
-            request,
-            error(salesOrderLines.error, "Failed to create sales order lines")
-          )
-        );
-      }
-    }
+    salesOrderId = result.data?.id;
   } catch (err) {
+    console.log("YEET", err)
     throw redirect(
       path.to.quote(id),
       await flash(request, error(err, "Failed to create sales order"))
     );
   }
   throw redirect(
-    path.to.salesOrder(newSalesOrderId),
+    path.to.salesOrder(salesOrderId),
     await flash(request, success("Quote converted to sales order"))
   );
 }
