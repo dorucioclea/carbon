@@ -104,14 +104,17 @@ CREATE TABLE "journalLine" (
   "journalLineReference" TEXT NOT NULL,
   "documentLineReference" TEXT,
   "accrual" BOOLEAN NOT NULL DEFAULT false,
+  "companyId" INTEGER NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   "customFields" JSONB,
 
   CONSTRAINT "journalLine_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "journalLine_accountNumber_fkey" FOREIGN KEY ("accountNumber") REFERENCES "account"("number") ON UPDATE CASCADE ON DELETE SET NULL
+  CONSTRAINT "journalLine_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE   CASCADE,
+  CONSTRAINT "journalLine_accountNumber_fkey" FOREIGN KEY ("accountNumber", "companyId") REFERENCES "account"("number", "companyId") ON UPDATE CASCADE ON DELETE SET NULL
 );
 
-CREATE INDEX "journalLine_accountNumber_idx" ON "journalLine" ("accountNumber");
+CREATE INDEX "journalLine_accountNumber_idx" ON "journalLine" ("accountNumber", "companyId");
+CREATE INDEX "journalLine_companyId_idx" ON "journalLine" ("companyId");
 
 ALTER TABLE "journalLine" ENABLE ROW LEVEL SECURITY;
 

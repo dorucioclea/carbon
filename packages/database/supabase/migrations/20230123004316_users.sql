@@ -22,3 +22,6 @@ ALTER TABLE "user" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Claims admin can view/modify users" ON "user" FOR ALL USING (is_claims_admin());
 CREATE POLICY "Users can modify themselves" ON "user" FOR UPDATE WITH CHECK (auth.uid() = id::uuid);
 CREATE POLICY "Anyone that's authenticated can view users" ON "user" FOR SELECT USING (auth.role() = 'authenticated');
+
+INSERT INTO "user" ("id", "email", "firstName", "lastName")
+VALUES ('system', 'system@carbon.us.org', 'System', 'Operation');

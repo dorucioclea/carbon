@@ -192,7 +192,7 @@ CREATE TABLE "purchaseInvoiceLine" (
   CONSTRAINT "purchaseInvoiceLines_serviceId_fkey" FOREIGN KEY ("serviceId") REFERENCES "service" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "purchaseInvoiceLines_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "location" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "purchaseInvoiceLines_shelfId_fkey" FOREIGN KEY ("shelfId", "locationId") REFERENCES "shelf" ("id", "locationId") ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT "purchaseInvoiceLines_accountNumber_fkey" FOREIGN KEY ("accountNumber") REFERENCES "account" ("number") ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT "purchaseInvoiceLines_accountNumber_fkey" FOREIGN KEY ("accountNumber", "companyId") REFERENCES "account" ("number", "companyId") ON UPDATE CASCADE ON DELETE RESTRICT,
   -- CONSTRAINT "purchaseInvoiceLines_assetId_fkey" FOREIGN KEY ("assetId") REFERENCES "fixedAsset" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "purchaseInvoiceLines_currencyCode_fkey" FOREIGN KEY ("currencyCode", "companyId") REFERENCES "currency" ("code", "companyId") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "purchaseInvoiceLines_inventoryUnitOfMeasureCode_fkey" FOREIGN KEY ("inventoryUnitOfMeasureCode", "companyId") REFERENCES "unitOfMeasure" ("code", "companyId") ON UPDATE CASCADE ON DELETE SET NULL,

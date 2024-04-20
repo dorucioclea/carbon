@@ -22,7 +22,6 @@ CREATE TABLE "currency" (
 );
 
 CREATE INDEX "currency_code_idx" ON "currency" ("code");
-CREATE INDEX "currency_companyId_idx" ON "currency" ("companyId");
 
 ALTER TABLE "currency" ENABLE ROW LEVEL SECURITY;
 
@@ -260,8 +259,8 @@ CREATE TABLE "account" (
   "customFields" JSONB,
 
   CONSTRAINT "account_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "account_number_key" UNIQUE ("number"),
-  CONSTRAINT "account_name_key" UNIQUE ("name"),
+  CONSTRAINT "account_number_key" UNIQUE ("number", "companyId"),
+  CONSTRAINT "account_name_key" UNIQUE ("name", "companyId"),
   CONSTRAINT "account_accountCategoryId_fkey" FOREIGN KEY ("accountCategoryId") REFERENCES "accountCategory"("id"),
   CONSTRAINT "account_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id"),
   CONSTRAINT "account_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id"),

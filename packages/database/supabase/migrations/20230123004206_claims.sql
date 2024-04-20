@@ -123,6 +123,24 @@ CREATE OR REPLACE FUNCTION has_company_permission(claim text, company integer) R
     END;
 $$;
 
+CREATE OR REPLACE FUNCTION has_any_company_permission(claim text, company text) RETURNS "bool"
+    LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
+    AS $$
+    DECLARE
+      claim_value integer[];
+    BEGIN
+      
+      SELECT jsonb_to_integer_array(coalesce(raw_app_meta_data->claim, '[]')) INTO claim_value FROM auth.users WHERE id = auth.uid();
+      IF claim_value IS NULL THEN
+        return false;
+      ELSIF array_length(claim_value) > 0 THEN
+        return true;
+      ELSE
+        return false;
+      END IF;
+    END;
+$$;
+
 CREATE OR REPLACE FUNCTION get_claims(uid uuid) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
     AS $$

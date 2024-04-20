@@ -128,13 +128,15 @@ CREATE TABLE "salesOrderLine" (
   CONSTRAINT "salesOrderLine_salesOrderId_fkey" FOREIGN KEY ("salesOrderId") REFERENCES "salesOrder" ("id") ON DELETE CASCADE,
   CONSTRAINT "salesOrderLine_partId_fkey" FOREIGN KEY ("partId") REFERENCES "part" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "salesOrderLine_serviceId_fkey" FOREIGN KEY ("serviceId") REFERENCES "service" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT "salesOrderLine_accountNumber_fkey" FOREIGN KEY ("accountNumber") REFERENCES "account" ("number") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "salesOrderLine_accountNumber_fkey" FOREIGN KEY ("accountNumber", "companyId") REFERENCES "account" ("number", "companyId") ON DELETE CASCADE ON UPDATE CASCADE,
   -- TODO: Add assetId foreign key
   CONSTRAINT "salesOrderLine_shelfId_fkey" FOREIGN KEY ("shelfId", "locationId") REFERENCES "shelf" ("id", "locationId") ON DELETE CASCADE,
   CONSTRAINT "salesOrderLine_unitOfMeasureCode_fkey" FOREIGN KEY ("unitOfMeasureCode", "companyId") REFERENCES "unitOfMeasure" ("code", "companyId") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "salesOrderLine_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "salesOrderLine_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
 );
+
+CREATE INDEX "salesOrderLine_invoiceId_idx" ON "salesOrderLine" ("salesOrderId");
 
 ALTER publication supabase_realtime ADD TABLE "salesOrderLine";
 

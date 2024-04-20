@@ -113,6 +113,12 @@ export async function action({ request }: ActionFunctionArgs) {
       throw new Error("Fatal: failed to get company ID");
     }
 
+    const seed = await seedCompany(supabaseClient, companyId);
+    if (seed.error) {
+      logger.error(seed.error);
+      throw new Error("Fatal: failed to seed company");
+    }
+
     const locationInsert = await upsertLocation(supabaseClient, {
       ...data,
       name: "Headquarters",
@@ -131,13 +137,12 @@ export async function action({ request }: ActionFunctionArgs) {
       throw new Error("Fatal: failed to get location ID");
     }
 
-    const [userToCompany, job, seed] = await Promise.all([
+    const [userToCompany, job] = await Promise.all([
       addUserToCompany(supabaseClient, userId, companyId),
       insertEmployeeJob(supabaseClient, {
         id: userId,
         locationId,
       }),
-      seedCompany(supabaseClient, companyId),
     ]);
 
     if (userToCompany.error) {
@@ -148,11 +153,6 @@ export async function action({ request }: ActionFunctionArgs) {
     if (job.error) {
       logger.error(job.error);
       throw new Error("Fatal: failed to insert job");
-    }
-
-    if (seed.error) {
-      logger.error(seed.error);
-      throw new Error("Fatal: failed to seed company");
     }
   }
 

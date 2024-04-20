@@ -81,6 +81,7 @@ CREATE TABLE "shippingMethod" (
   "carrierAccountId" TEXT,
   "trackingUrl" TEXT,
   "active" BOOLEAN NOT NULL DEFAULT TRUE,
+  "companyId" INTEGER NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
@@ -89,13 +90,14 @@ CREATE TABLE "shippingMethod" (
 
   CONSTRAINT "shippingMethod_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "shippingMethod_name_key" UNIQUE ("name"),
-  CONSTRAINT "shippingMethod_carrierAccountId_fkey" FOREIGN KEY ("carrierAccountId") REFERENCES "account" ("number") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "shippingMethod_carrierAccountId_fkey" FOREIGN KEY ("carrierAccountId", "companyId") REFERENCES "account" ("number", "companyId") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "shippingMethod_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "shippingMethod_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "shippingMethod_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
 );
 
-CREATE INDEX "shippingMethod_name_idx" ON "shippingMethod" ("name");
-
+CREATE INDEX "shippingMethod_name_idx" ON "shippingMethod" ("name", "companyId");
+CREATE INDEX "shippingMethod_companyId_idx" ON "shippingMethod" ("companyId");
 
 CREATE POLICY "Certain employees can view shipping methods" ON "shippingMethod"
   FOR SELECT
@@ -297,7 +299,7 @@ CREATE TABLE "purchaseOrderLine" (
   CONSTRAINT "purchaseOrderLine_purchaseOrderId_fkey" FOREIGN KEY ("purchaseOrderId") REFERENCES "purchaseOrder" ("id") ON DELETE CASCADE,
   CONSTRAINT "purchaseOrderLine_partId_fkey" FOREIGN KEY ("partId") REFERENCES "part" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "purchaseOrderLine_serviceId_fkey" FOREIGN KEY ("serviceId") REFERENCES "service" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT "purchaseOrderLine_accountNumber_fkey" FOREIGN KEY ("accountNumber") REFERENCES "account" ("number") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "purchaseOrderLine_accountNumber_fkey" FOREIGN KEY ("accountNumber", "companyId") REFERENCES "account" ("number", "companyId") ON DELETE CASCADE ON UPDATE CASCADE,
   -- TODO: Add assetId foreign key
   CONSTRAINT "purchaseOrderLine_shelfId_fkey" FOREIGN KEY ("shelfId", "locationId") REFERENCES "shelf" ("id", "locationId") ON DELETE CASCADE,
   CONSTRAINT "purchaseOrderLine_inventoryUnitOfMeasureCode_fkey" FOREIGN KEY ("inventoryUnitOfMeasureCode", "companyId") REFERENCES "unitOfMeasure" ("code", "companyId") ON DELETE CASCADE ON UPDATE CASCADE,
@@ -307,6 +309,7 @@ CREATE TABLE "purchaseOrderLine" (
 );
 
 CREATE INDEX "purchaseOrderLine_purchaseOrderId_idx" ON "purchaseOrderLine" ("purchaseOrderId");
+CREATE INDEX "purchaseOrderLine_companyId_idx" ON "purchaseOrderLine" ("companyId");
 
 ALTER publication supabase_realtime ADD TABLE "purchaseOrderLine";
 
