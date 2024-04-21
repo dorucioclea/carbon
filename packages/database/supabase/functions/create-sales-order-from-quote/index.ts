@@ -9,6 +9,11 @@ import { getNextSequence } from "../shared/get-next-sequence.ts";
 const pool = getConnectionPool(1);
 const db = getDatabaseClient<DB>(pool);
 
+export type SalesOrderLineItem = Omit<
+  Database["public"]["Tables"]["salesOrderLine"]["Insert"],
+  "id" | "salesOrderId" | "updatedBy" | "createdAt" | "updatedAt"
+>;
+
 serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -36,6 +41,20 @@ serve(async (req: Request) => {
 
     if (!quote.data) throw new Error("Quote not found");
     if (quoteLines.error) throw new Error(quoteLines.error.message);
+
+    const salesOrderLines = quoteLines.data.reduce<SalesOrderLineItem[]>(
+      (acc, d) => {  
+        acc.push({
+          salesOrderLineType: "Part",
+          partId: d.partId,
+          description: d.description,
+          createdBy: userId,
+        });
+
+        return acc;
+      },
+      []
+    );
 
     let salesOrderId = "";
 
@@ -84,25 +103,16 @@ serve(async (req: Request) => {
       if (!salesOrder.id) throw new Error("Sales order not created");
       salesOrderId = salesOrder.id;
 
-      const constructedSalesOrderLines = quoteLines?.data.map(
-        (quoteLine) => {
-          return {
-            salesOrderId: salesOrderId,
-            salesOrderLineType: "Part",
-            partId: quoteLine.partId,
-            description: quoteLine.description,
-            createdBy: userId,
-          };
-        }
-      );
 
-
-      /*await trx
+      await trx
         .insertInto("salesOrderLine")
-        .values(constructedSalesOrderLines.map((line) => ({
-          ...line
-        })))
-        .execute();*/
+        .values(
+          salesOrderLines.map((line) => ({
+            ...line,
+            salesOrderId: salesOrderId
+          }))
+        )
+        .execute();
       
     });
 
