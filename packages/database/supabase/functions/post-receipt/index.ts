@@ -580,7 +580,11 @@ serve(async (req: Request) => {
           }
         }
 
-        const accountingPeriodId = await getCurrentAccountingPeriod(client, db);
+        const accountingPeriodId = await getCurrentAccountingPeriod(
+          client,
+          companyId,
+          db
+        );
 
         await db.transaction().execute(async (trx) => {
           for await (const [purchaseOrderLineId, update] of Object.entries(

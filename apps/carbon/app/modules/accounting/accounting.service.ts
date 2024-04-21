@@ -408,11 +408,13 @@ export async function getCurrenciesList(client: SupabaseClient<Database>) {
 
 export async function getCurrentAccountingPeriod(
   client: SupabaseClient<Database>,
+  companyId: number,
   date: string
 ) {
   return client
     .from("accountingPeriod")
     .select("*")
+    .eq("companyId", companyId)
     .lte("startDate", date)
     .gte("endDate", date)
     .single();

@@ -367,83 +367,82 @@ VALUES
 --     'system'
 --   );
 
--- TODO: resume here
 
 -- INSERT INTO "postingGroupInventory" (
---   "partGroupId",
---   "costOfGoodsSoldAccount",
---   "inventoryAccount",
---   "inventoryInterimAccrualAccount",
---   "inventoryReceivedNotInvoicedAccount",
---   "inventoryInvoicedNotReceivedAccount",
---   "inventoryShippedNotInvoicedAccount",
---   "workInProgressAccount",
---   "directCostAppliedAccount",
---   "overheadCostAppliedAccount",
---   "purchaseVarianceAccount",
---   "inventoryAdjustmentVarianceAccount",
---   "materialVarianceAccount",
---   "capacityVarianceAccount",
---   "overheadAccount"
+  -- "partGroupId",
+  -- "costOfGoodsSoldAccount",
+  -- "inventoryAccount",
+  -- "inventoryInterimAccrualAccount",
+  -- "inventoryReceivedNotInvoicedAccount",
+  -- "inventoryInvoicedNotReceivedAccount",
+  -- "inventoryShippedNotInvoicedAccount",
+  -- "workInProgressAccount",
+  -- "directCostAppliedAccount",
+  -- "overheadCostAppliedAccount",
+  -- "purchaseVarianceAccount",
+  -- "inventoryAdjustmentVarianceAccount",
+  -- "materialVarianceAccount",
+  -- "capacityVarianceAccount",
+  -- "overheadAccount"
 -- ) SELECT 
---   NULL,
---   "costOfGoodsSoldAccount",
---   "inventoryAccount",
---   "inventoryInterimAccrualAccount",
---   "inventoryReceivedNotInvoicedAccount",
---   "inventoryInvoicedNotReceivedAccount",
---   "inventoryShippedNotInvoicedAccount",
---   "workInProgressAccount",
---   "directCostAppliedAccount",
---   "overheadCostAppliedAccount",
---   "purchaseVarianceAccount",
---   "inventoryAdjustmentVarianceAccount",
---   "materialVarianceAccount",
---   "capacityVarianceAccount",
---   "overheadAccount"
+  -- NULL,
+  -- "costOfGoodsSoldAccount",
+  -- "inventoryAccount",
+  -- "inventoryInterimAccrualAccount",
+  -- "inventoryReceivedNotInvoicedAccount",
+  -- "inventoryInvoicedNotReceivedAccount",
+  -- "inventoryShippedNotInvoicedAccount",
+  -- "workInProgressAccount",
+  -- "directCostAppliedAccount",
+  -- "overheadCostAppliedAccount",
+  -- "purchaseVarianceAccount",
+  -- "inventoryAdjustmentVarianceAccount",
+  -- "materialVarianceAccount",
+  -- "capacityVarianceAccount",
+  -- "overheadAccount",
 -- FROM "accountDefault" WHERE "id" = true;
 
 -- INSERT INTO "postingGroupPurchasing" (
---   "partGroupId",
---   "supplierTypeId",
---   "payablesAccount",
---   "purchaseAccount",
---   "purchaseDiscountAccount",
---   "purchaseCreditAccount",
---   "purchasePrepaymentAccount",
---   "purchaseTaxPayableAccount",
---   "updatedBy"
+  -- "partGroupId",
+  -- "supplierTypeId",
+  -- "payablesAccount",
+  -- "purchaseAccount",
+  -- "purchaseDiscountAccount",
+  -- "purchaseCreditAccount",
+  -- "purchasePrepaymentAccount",
+  -- "purchaseTaxPayableAccount",
+  -- "updatedBy"
 -- ) SELECT 
 --   NULL,
 --   NULL,
---   "payablesAccount",
---   "purchaseAccount",
---   "purchaseAccount",
---   "purchaseAccount",
---   "prepaymentAccount",
---   "purchaseTaxPayableAccount",
+  -- "payablesAccount",
+  -- "purchaseAccount",
+  -- "purchaseAccount",
+  -- "purchaseAccount",
+  -- "prepaymentAccount",
+  -- "purchaseTaxPayableAccount",
 --   'system'
 -- FROM "accountDefault" WHERE "id" = true;
 
 -- INSERT INTO "postingGroupSales" (
 --   "partGroupId",
 --   "customerTypeId",
---   "receivablesAccount",
---   "salesAccount",
---   "salesDiscountAccount",
---   "salesCreditAccount",
---   "salesPrepaymentAccount",
---   "salesTaxPayableAccount",
+  -- "receivablesAccount",
+  -- "salesAccount",
+  -- "salesDiscountAccount",
+  -- "salesCreditAccount",
+  -- "salesPrepaymentAccount",
+  -- "salesTaxPayableAccount",
 --   "updatedBy"
 -- ) SELECT 
 --   NULL,
 --   NULL,
---   "receivablesAccount",
---   "salesAccount",
---   "salesDiscountAccount",
---   "salesAccount",
---   "prepaymentAccount",
---   "salesTaxPayableAccount",
+  -- "receivablesAccount",
+  -- "salesAccount",
+  -- "salesDiscountAccount",
+  -- "salesAccount",
+  -- "prepaymentAccount",
+  -- "salesTaxPayableAccount",
 --   'system'
 -- FROM "accountDefault" WHERE "id" = true;
 
@@ -456,6 +455,9 @@ VALUES
 --   'January',
 --   'system'
 -- );
+
+
+-- TODO: resume seed here
 
 -- -- custom fields
 

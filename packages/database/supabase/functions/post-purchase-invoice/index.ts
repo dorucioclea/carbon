@@ -1051,7 +1051,11 @@ serve(async (req: Request) => {
       }
     }
 
-    const accountingPeriodId = await getCurrentAccountingPeriod(client, db);
+    const accountingPeriodId = await getCurrentAccountingPeriod(
+      client,
+      companyId,
+      db
+    );
 
     await db.transaction().execute(async (trx) => {
       if (receiptLineInserts.length > 0) {

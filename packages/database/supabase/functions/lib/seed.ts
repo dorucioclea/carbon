@@ -2020,7 +2020,7 @@ export const accounts = [
   },
 ];
 
-const accountDefaults = {
+export const accountDefaults = {
   salesAccount: "11210",
   salesDiscountAccount: "11600",
   costOfGoodsSoldAccount: "21210",
@@ -2060,4 +2060,68 @@ const accountDefaults = {
   purchaseTaxPayableAccount: "94110",
   reverseChargeSalesTaxPayableAccount: "94115",
   retainedEarningsAccount: "95010",
+};
+
+export const postingGroupInventory = {
+  partGroupId: null,
+  locationId: null,
+  costOfGoodsSoldAccount: getDefaultAccount("costOfGoodsSoldAccount"),
+  inventoryAccount: getDefaultAccount("inventoryAccount"),
+  inventoryInterimAccrualAccount: getDefaultAccount(
+    "inventoryInterimAccrualAccount"
+  ),
+  inventoryReceivedNotInvoicedAccount: getDefaultAccount(
+    "inventoryReceivedNotInvoicedAccount"
+  ),
+  inventoryInvoicedNotReceivedAccount: getDefaultAccount(
+    "inventoryInvoicedNotReceivedAccount"
+  ),
+  inventoryShippedNotInvoicedAccount: getDefaultAccount(
+    "inventoryShippedNotInvoicedAccount"
+  ),
+  workInProgressAccount: getDefaultAccount("workInProgressAccount"),
+  directCostAppliedAccount: getDefaultAccount("directCostAppliedAccount"),
+  overheadCostAppliedAccount: getDefaultAccount("overheadCostAppliedAccount"),
+  purchaseVarianceAccount: getDefaultAccount("purchaseVarianceAccount"),
+  inventoryAdjustmentVarianceAccount: getDefaultAccount(
+    "inventoryAdjustmentVarianceAccount"
+  ),
+  materialVarianceAccount: getDefaultAccount("materialVarianceAccount"),
+  capacityVarianceAccount: getDefaultAccount("capacityVarianceAccount"),
+  overheadAccount: getDefaultAccount("overheadAccount"),
+  updatedBy: "system",
+};
+
+export const postingGroupPurchasing = {
+  partGroupId: null,
+  supplierTypeId: null,
+  payablesAccount: getDefaultAccount("payablesAccount"),
+  purchaseAccount: getDefaultAccount("purchaseAccount"),
+  purchaseDiscountAccount: getDefaultAccount("purchaseAccount"),
+  purchaseCreditAccount: getDefaultAccount("purchaseAccount"),
+  purchasePrepaymentAccount: getDefaultAccount("prepaymentAccount"),
+  purchaseTaxPayableAccount: getDefaultAccount("purchaseTaxPayableAccount"),
+  updatedBy: "system",
+};
+
+export const postingGroupSales = {
+  partGroupId: null,
+  customerTypeId: null,
+  receivablesAccount: getDefaultAccount("receivablesAccount"),
+  salesAccount: getDefaultAccount("salesAccount"),
+  salesDiscountAccount: getDefaultAccount("salesDiscountAccount"),
+  salesCreditAccount: getDefaultAccount("salesAccount"),
+  salesPrepaymentAccount: getDefaultAccount("prepaymentAccount"),
+  salesTaxPayableAccount: getDefaultAccount("salesTaxPayableAccount"),
+  updatedBy: "system",
+};
+
+function getDefaultAccount(key: string) {
+  return accountDefaults[key];
+}
+
+export const fiscalYearSettings = {
+  startMonth: "January",
+  taxStartMonth: "January",
+  updatedBy: "system",
 };

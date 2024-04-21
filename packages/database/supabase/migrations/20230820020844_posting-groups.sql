@@ -282,7 +282,7 @@ DECLARE
   part_group RECORD;
   account_defaults RECORD;
 BEGIN
-  SELECT * INTO account_defaults FROM "accountDefault" WHERE "id" = TRUE;
+  SELECT * INTO account_defaults FROM "accountDefault" WHERE "companyId" = new."companyId";
 
   FOR part_group IN SELECT "id" FROM "partGroup"
   LOOP
@@ -303,6 +303,7 @@ BEGIN
       "materialVarianceAccount",
       "capacityVarianceAccount",
       "overheadAccount",
+      "companyId",
       "updatedBy"
     ) VALUES (
       part_group."id",
@@ -321,6 +322,7 @@ BEGIN
       account_defaults."materialVarianceAccount",
       account_defaults."capacityVarianceAccount",
       account_defaults."overheadAccount",
+      new."companyId",
       new."createdBy"
     );
   END LOOP;
@@ -343,6 +345,7 @@ BEGIN
     "materialVarianceAccount",
     "capacityVarianceAccount",
     "overheadAccount",
+    "companyId",
     "updatedBy"
   ) VALUES (
     NULL,
@@ -361,6 +364,7 @@ BEGIN
     account_defaults."materialVarianceAccount",
     account_defaults."capacityVarianceAccount",
     account_defaults."overheadAccount",
+    new."companyId",
     new."createdBy"
   );
 
@@ -379,7 +383,7 @@ DECLARE
   rec RECORD;
   account_defaults RECORD;
 BEGIN
-  SELECT * INTO account_defaults FROM "accountDefault" WHERE "id" = TRUE;
+  SELECT * INTO account_defaults FROM "accountDefault" WHERE "companyId" = new."companyId";
 
   FOR rec IN SELECT "id" FROM "customerType"
   LOOP
@@ -392,6 +396,7 @@ BEGIN
       "salesCreditAccount",
       "salesPrepaymentAccount",
       "salesTaxPayableAccount",
+      "companyId",
       "updatedBy"
     ) VALUES (
       new."id",
@@ -402,6 +407,7 @@ BEGIN
       account_defaults."receivablesAccount",
       account_defaults."prepaymentAccount",
       account_defaults."salesTaxPayableAccount",
+      new."companyId",
       new."createdBy"
     );
   END LOOP;
@@ -416,6 +422,7 @@ BEGIN
     "salesCreditAccount",
     "salesPrepaymentAccount",
     "salesTaxPayableAccount",
+    "companyId",
     "updatedBy"
   ) VALUES (
     new."id",
@@ -426,6 +433,7 @@ BEGIN
     account_defaults."receivablesAccount",
     account_defaults."prepaymentAccount",
     account_defaults."salesTaxPayableAccount",
+    new."companyId",
     new."createdBy"
   );
 
@@ -440,6 +448,7 @@ BEGIN
       "purchaseCreditAccount",
       "purchasePrepaymentAccount",
       "purchaseTaxPayableAccount",
+      "companyId",
       "updatedBy"
     ) VALUES (
       new."id",
@@ -450,6 +459,7 @@ BEGIN
       account_defaults."payablesAccount",
       account_defaults."prepaymentAccount",
       account_defaults."purchaseTaxPayableAccount",
+      new."companyId",
       new."createdBy"
     );
   END LOOP;
@@ -464,6 +474,7 @@ BEGIN
     "purchaseCreditAccount",
     "purchasePrepaymentAccount",
     "purchaseTaxPayableAccount",
+    "companyId",
     "updatedBy"
   ) VALUES (
     new."id",
@@ -474,6 +485,7 @@ BEGIN
     account_defaults."payablesAccount",
     account_defaults."prepaymentAccount",
     account_defaults."purchaseTaxPayableAccount",
+    new."companyId",
     new."createdBy"
   );
 
@@ -496,6 +508,7 @@ BEGIN
       "materialVarianceAccount",
       "capacityVarianceAccount",
       "overheadAccount",
+      "companyId",
       "updatedBy"
     ) VALUES (
       new."id",
@@ -514,6 +527,7 @@ BEGIN
       account_defaults."materialVarianceAccount",
       account_defaults."capacityVarianceAccount",
       account_defaults."overheadAccount",
+      new."companyId",
       new."createdBy"
     );
   END LOOP;
@@ -536,6 +550,7 @@ BEGIN
     "materialVarianceAccount",
     "capacityVarianceAccount",
     "overheadAccount",
+    "companyId",
     "updatedBy"
   ) VALUES (
     new."id",
@@ -554,6 +569,7 @@ BEGIN
     account_defaults."materialVarianceAccount",
     account_defaults."capacityVarianceAccount",
     account_defaults."overheadAccount",
+    new."companyId",
     new."createdBy"
   );
 
@@ -572,7 +588,7 @@ DECLARE
   rec RECORD;
   account_defaults RECORD;
 BEGIN
-  SELECT * INTO account_defaults FROM "accountDefault" WHERE "id" = TRUE;
+  SELECT * INTO account_defaults FROM "accountDefault" WHERE "companyId" = new."companyId";
 
   FOR rec IN SELECT "id" FROM "partGroup"
   LOOP
@@ -585,6 +601,7 @@ BEGIN
       "salesCreditAccount",
       "salesPrepaymentAccount",
       "salesTaxPayableAccount",
+      "companyId",
       "updatedBy"
     ) VALUES (
       new."id",
@@ -595,6 +612,7 @@ BEGIN
       account_defaults."salesAccount",
       account_defaults."prepaymentAccount",
       account_defaults."salesTaxPayableAccount",
+      new."companyId",
       new."createdBy"
     );
   END LOOP;
@@ -609,6 +627,7 @@ BEGIN
     "salesCreditAccount",
     "salesPrepaymentAccount",
     "salesTaxPayableAccount",
+    "companyId",
     "updatedBy"
   ) VALUES (
     new."id",
@@ -619,6 +638,7 @@ BEGIN
     account_defaults."salesAccount",
     account_defaults."prepaymentAccount",
     account_defaults."salesTaxPayableAccount",
+    new."companyId",
     new."createdBy"
   );
 
@@ -637,7 +657,7 @@ DECLARE
   rec RECORD;
   account_defaults RECORD;
 BEGIN
-  SELECT * INTO account_defaults FROM "accountDefault" WHERE "id" = TRUE;
+  SELECT * INTO account_defaults FROM "accountDefault" WHERE "companyId" = new."companyId";
 
   FOR rec IN SELECT "id" FROM "partGroup"
   LOOP
@@ -650,6 +670,7 @@ BEGIN
       "purchaseCreditAccount",
       "purchasePrepaymentAccount",
       "purchaseTaxPayableAccount",
+      "companyId",
       "updatedBy"
     ) VALUES (
       new."id",
@@ -660,6 +681,7 @@ BEGIN
       account_defaults."purchaseAccount",
       account_defaults."prepaymentAccount",
       account_defaults."purchaseTaxPayableAccount",
+      new."companyId",
       new."createdBy"
     );
   END LOOP;
@@ -674,6 +696,7 @@ BEGIN
     "purchaseCreditAccount",
     "purchasePrepaymentAccount",
     "purchaseTaxPayableAccount",
+    "companyId",
     "updatedBy"
   ) VALUES (
     new."id",
@@ -684,6 +707,7 @@ BEGIN
     account_defaults."purchaseAccount",
     account_defaults."prepaymentAccount",
     account_defaults."purchaseTaxPayableAccount",
+    new."companyId",
     new."createdBy"
   );
 

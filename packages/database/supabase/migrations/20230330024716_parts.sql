@@ -678,7 +678,7 @@ CREATE POLICY "Employees with parts_delete can delete shelves" ON "shelf"
     has_company_permission('parts_delete', "companyId")
   );
 
--- TODO: resume here
+-- TODO: resume migrations here
 
 CREATE TABLE "partPlanning" (
   "partId" TEXT NOT NULL,

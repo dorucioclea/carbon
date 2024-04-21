@@ -1,8 +1,8 @@
 import { format } from "https://deno.land/std@0.160.0/datetime/mod.ts";
 import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.33.1";
 import { Kysely } from "https://esm.sh/kysely@0.26.3";
-import { Database } from "../lib/types.ts";
 import { DB } from "../lib/database.ts";
+import { Database } from "../lib/types.ts";
 
 // TODO: refactor to use @internationalized/date when npm:<package>@<version> is supported
 const isLeapYear = (year: number) => {
@@ -30,6 +30,7 @@ const daysInMonths: Record<number, number> = {
 
 export async function getCurrentAccountingPeriod<T>(
   client: SupabaseClient<Database>,
+  companyId: number,
   db: Kysely<DB>
 ) {
   // const d = today(getLocalTimeZone());
@@ -41,6 +42,7 @@ export async function getCurrentAccountingPeriod<T>(
     .select("*")
     // .gte("endDate", d.toString())
     // .lte("startDate", d.toString())
+    .eq("companyId", companyId)
     .gte("endDate", d)
     .lte("startDate", d)
     .single();
@@ -61,12 +63,14 @@ export async function getCurrentAccountingPeriod<T>(
         .updateTable("accountingPeriod")
         .set({ status: "Inactive" })
         .where("status", "=", "Active")
+        .where("companyId", "=", companyId)
         .execute();
 
       await trx
         .updateTable("accountingPeriod")
         .set({ status: "Active" })
         .where("id", "=", currentAccountingPeriod.data!.id)
+        .where("companyId", "=", companyId)
         .execute();
     });
 
@@ -89,6 +93,7 @@ export async function getCurrentAccountingPeriod<T>(
       .updateTable("accountingPeriod")
       .set({ status: "Inactive" })
       .where("status", "=", "Active")
+      .where("companyId", "=", companyId)
       .execute();
 
     await trx
@@ -96,6 +101,7 @@ export async function getCurrentAccountingPeriod<T>(
       .values({
         startDate,
         endDate,
+        companyId,
         status: "Active",
         createdBy: "system",
       })

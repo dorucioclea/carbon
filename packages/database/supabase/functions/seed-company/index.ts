@@ -4,10 +4,15 @@ import { DB, getConnectionPool, getDatabaseClient } from "../lib/database.ts";
 import { corsHeaders } from "../lib/headers.ts";
 import {
   accountCategories,
+  accountDefaults,
   accounts,
   currencies,
   customerStatuses,
+  fiscalYearSettings,
   paymentTerms,
+  postingGroupInventory,
+  postingGroupPurchasing,
+  postingGroupSales,
   sequences,
   supplierStauses,
   unitOfMeasures,
@@ -108,6 +113,26 @@ serve(async (req: Request) => {
             companyId,
           },
         ])
+        .execute();
+
+      await trx
+        .insertInto("postingGroupInventory")
+        .values([{ ...postingGroupInventory, companyId }])
+        .execute();
+
+      await trx
+        .insertInto("postingGroupPurchasing")
+        .values([{ ...postingGroupPurchasing, companyId }])
+        .execute();
+
+      await trx
+        .insertInto("postingGroupSales")
+        .values([{ ...postingGroupSales, companyId }])
+        .execute();
+
+      await trx
+        .insertInto("fiscalYearSettings")
+        .values([{ ...fiscalYearSettings, companyId }])
         .execute();
     });
 
