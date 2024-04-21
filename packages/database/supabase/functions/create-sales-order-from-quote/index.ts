@@ -1,4 +1,3 @@
-import { getLocalTimeZone, today } from "@internationalized/date";
 import { serve } from "https://deno.land/std@0.175.0/http/server.ts";
 import { DB, getConnectionPool, getDatabaseClient } from "../lib/database.ts";
 
@@ -41,27 +40,30 @@ serve(async (req: Request) => {
     let salesOrderId = "";
 
     await db.transaction().execute(async (trx) => {
-
+      const currentDate = new Date();
+      
       const quoteUpdate = await trx
-        .from("quote")
-        .update({
-          status: "Ordered",
-          quoteDate: today(getLocalTimeZone()).toString(),
-          updatedAt: today(getLocalTimeZone()).toString(),
-          updatedBy: userId,
-        })
-        .eq("id", quoteId);
+      .updateTable("quote")
+      .set({
+        status: "Ordered",
+        quoteDate: currentDate,
+        updatedAt: currentDate,
+        updatedBy: userId,
+      })
+      .where("id", "=", quoteId)
+      .execute();
   
       if (quoteUpdate.error) throw new Error("Sales order not created");
 
       const quoteLinesUpdate = await trx
-      .from("quoteLine")
-      .update({
+      .updateTable("quoteLine")
+      .set({
         status: "Complete",
-        updatedAt: today(getLocalTimeZone()).toString(),
+        updatedAt: currentDate,
         updatedBy: userId,
       })
-      .eq("quoteId", quoteId);
+      .where("quoteId", "=", quoteId)
+      .execute();
 
       if (quoteLinesUpdate.error) throw new Error("Sales order not created");
 
@@ -94,10 +96,14 @@ serve(async (req: Request) => {
         }
       );
 
-      await trx
+
+      /*await trx
         .insertInto("salesOrderLine")
-        .values(constructedSalesOrderLines)
-        .execute();
+        .values(constructedSalesOrderLines.map((line) => ({
+          ...line
+        })))
+        .execute();*/
+      
     });
 
     return new Response(
