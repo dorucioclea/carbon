@@ -67,3 +67,18 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+.padding-hack {
+  overflow: hidden;
+  padding-bottom: 56.25%;
+  position: relative;
+  height: 0;
+}
+
+.padding-hack iframe {
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}

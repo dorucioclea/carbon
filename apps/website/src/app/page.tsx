@@ -32,8 +32,11 @@ function Hero() {
             className="border-border rounded-full"
             variant="secondary"
             leftIcon={<BsPlay />}
+            asChild
           >
-            Watch the guided tour
+            <Link href="https://www.loom.com/share/941bd11ab21c41e4a6c823914e001769?sid=d1f505e0-8eab-4649-8000-5b8a70c9b1ec">
+              Watch the guided tour
+            </Link>
           </Button>
         </p>
         <h1 className="text-zinc-900 mx-auto text-5xl font-semibold tracking-tight leading-tighter sm:text-5xl lg:text-6xl xl:text-7xl">

@@ -12,7 +12,7 @@ export default function Page({
 }) {
   const post = getBlogPosts().find((post) => post.slug === slug);
   if (!post) {
-    alert("Post not found");
+    throw new Error("Post not found");
   }
   return (
     <div className="container my-24 flex gap-12 flex-col items-center">
@@ -22,15 +22,27 @@ export default function Page({
           <h2 className="font-medium md:text-3xl text-2xl">
             {post.metadata.title}
           </h2>
-          {post.metadata.image && (
-            <Image
-              src={post.metadata.image}
-              alt={post.metadata.title}
-              width={680}
-              height={442}
-              className="my-8"
-            />
-          )}
+          {post.metadata.image ? (
+            post.metadata.link ? (
+              <Link href={post.metadata.link}>
+                <Image
+                  src={post.metadata.image}
+                  alt={post.metadata.title}
+                  width={680}
+                  height={442}
+                  className="my-8"
+                />
+              </Link>
+            ) : (
+              <Image
+                src={post.metadata.image}
+                alt={post.metadata.title}
+                width={680}
+                height={442}
+                className="my-8"
+              />
+            )
+          ) : null}
           <MDXRemote source={post.content} />
         </article>
       )}
