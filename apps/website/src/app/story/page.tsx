@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <div className="prose dark:prose-invert container max-w-xl my-24 text-xl space-y-8">
+    <div className="prose dark:prose-invert container max-w-2xl my-24 text-xl space-y-8">
       <h1 className="text-3xl font-semibold sm:text-2xl lg:text-4xl xl:text-5xl text-center">
         Building Carbon
       </h1>
