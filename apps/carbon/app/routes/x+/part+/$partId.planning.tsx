@@ -20,7 +20,7 @@ import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     view: "parts",
   });
 
@@ -65,6 +65,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   if (partPlanning.error || !partPlanning.data) {
     const insertPartPlanning = await upsertPartPlanning(client, {
       partId,
+      companyId,
       locationId,
       createdBy: userId,
     });

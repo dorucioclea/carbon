@@ -22,6 +22,7 @@ CREATE TABLE "document" (
   "readGroups" TEXT[],
   "writeGroups" TEXT[],
   "active" BOOLEAN NOT NULL DEFAULT TRUE,
+  "companyId" INTEGER NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
@@ -39,33 +40,32 @@ ALTER TABLE "document" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users with documents can view documents where they are in the readGroups" ON "document" 
   FOR SELECT USING (
-    coalesce(get_my_claim('documents_view')::boolean, false) = true 
-    AND (groups_for_user(auth.uid()::text) && "readGroups") = true
+    has_company_permission('documents_view', "companyId") AND
+    (groups_for_user(auth.uid()::text) && "readGroups") = true
   );
 
 CREATE POLICY "Users with documents_create can create documents where they are in the writeGroups" ON "document" 
   FOR INSERT WITH CHECK (
-    coalesce(get_my_claim('documents_create')::boolean, false) = true 
-    AND (groups_for_user(auth.uid()::text) && "writeGroups") = true
+    has_company_permission('documents_create', "companyId") AND
+    (groups_for_user(auth.uid()::text) && "writeGroups") = true
   );
 
 CREATE POLICY "Users with documents_update can update documents where they are in the writeGroups" ON "document"
   FOR UPDATE USING (
-    coalesce(get_my_claim('documents_update')::boolean, false) = true 
-    AND (groups_for_user(auth.uid()::text) && "writeGroups") = true
+    has_company_permission('documents_update', "companyId") AND
+    (groups_for_user(auth.uid()::text) && "writeGroups") = true
   );
 
 CREATE POLICY "Users with documents_delete can delete documents where they are in the writeGroups" ON "document"
   FOR DELETE USING (
-    coalesce(get_my_claim('documents_delete')::boolean, false) = true 
-    AND (groups_for_user(auth.uid()::text) && "writeGroups") = true
+    has_company_permission('documents_delete', "companyId") AND
+    (groups_for_user(auth.uid()::text) && "writeGroups") = true
   );
 
 CREATE POLICY "Private buckets view requires ownership or document.readGroups" ON storage.objects 
 FOR SELECT USING (
     bucket_id = 'private'
     AND (auth.role() = 'authenticated')
-    AND coalesce(get_my_claim('documents_view')::boolean, false) = true
     AND (
         (storage.foldername(name))[1] = auth.uid()::text
         OR "name" IN (
@@ -78,7 +78,7 @@ CREATE POLICY "Private buckets insert requires ownership or document.writeGroups
 FOR INSERT WITH CHECK (
     bucket_id = 'private'
     AND (auth.role() = 'authenticated')
-    AND coalesce(get_my_claim('documents_create')::boolean, false) = true
+    AND has_any_company_permission('documents_create')
     AND (
         (storage.foldername(name))[1] = auth.uid()::text
         OR "name" IN (
@@ -91,7 +91,7 @@ CREATE POLICY "Private buckets update requires ownership or document.writeGroups
 FOR UPDATE USING (
     bucket_id = 'private'
     AND (auth.role() = 'authenticated')
-    AND coalesce(get_my_claim('documents_update')::boolean, false) = true
+    AND has_any_company_permission('documents_update')
     AND (
         (storage.foldername(name))[1] = auth.uid()::text
         OR "name" IN (
@@ -104,7 +104,7 @@ CREATE POLICY "Private buckets delete requires ownership or document.writeGroups
 FOR DELETE USING (
     bucket_id = 'private'
     AND (auth.role() = 'authenticated')
-    AND coalesce(get_my_claim('documents_delete')::boolean, false) = true
+    AND has_any_company_permission('documents_delete')
     AND (
         (storage.foldername(name))[1] = auth.uid()::text
         OR "name" IN (
@@ -136,6 +136,18 @@ CREATE TABLE "documentTransaction" (
 
 CREATE INDEX "documentTransaction_documentId_idx" ON "documentTransaction" ("documentId");
 CREATE INDEX "documentTransaction_userId_idx" ON "documentTransaction" ("userId");
+
+ALTER TABLE "documentTransaction" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users with documents_view can see document transactions" ON "documentTransaction" 
+  FOR SELECT USING (
+    has_company_permission('documents_view', (SELECT "companyId" FROM "document" WHERE "id" = "documentId"))
+  );
+
+CREATE POLICY "Users can insert document transactions" ON "documentTransaction" 
+  FOR INSERT WITH CHECK (
+    auth.uid()::text = "userId"
+  );
 
 CREATE TABLE "documentFavorite" (
   "documentId" TEXT NOT NULL,

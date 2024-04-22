@@ -3172,6 +3172,7 @@ export type Database = {
       document: {
         Row: {
           active: boolean
+          companyId: number
           createdAt: string
           createdBy: string
           description: string | null
@@ -3192,6 +3193,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
+          companyId: number
           createdAt?: string
           createdBy: string
           description?: string | null
@@ -3212,6 +3214,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
+          companyId?: number
           createdAt?: string
           createdBy?: string
           description?: string | null
@@ -5251,6 +5254,7 @@ export type Database = {
       }
       partInventory: {
         Row: {
+          companyId: number
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -5261,6 +5265,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
+          companyId: number
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -5271,6 +5276,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
+          companyId?: number
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -5281,6 +5287,13 @@ export type Database = {
           updatedBy?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "partInventory_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "partInventory_createdBy_fkey"
             columns: ["createdBy"]
@@ -5632,6 +5645,7 @@ export type Database = {
       }
       partPlanning: {
         Row: {
+          companyId: number
           createdAt: string
           createdBy: string
           critical: boolean
@@ -5654,6 +5668,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
+          companyId: number
           createdAt?: string
           createdBy: string
           critical?: boolean
@@ -5676,6 +5691,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
+          companyId?: number
           createdAt?: string
           createdBy?: string
           critical?: boolean
@@ -5698,6 +5714,13 @@ export type Database = {
           updatedBy?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "partPlanning_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "partPlanning_createdBy_fkey"
             columns: ["createdBy"]
@@ -12298,6 +12321,7 @@ export type Database = {
           approvedBy: string | null
           assignee: string | null
           blocked: boolean
+          companyId: number
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -12317,6 +12341,7 @@ export type Database = {
           approvedBy?: string | null
           assignee?: string | null
           blocked?: boolean
+          companyId: number
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -12336,6 +12361,7 @@ export type Database = {
           approvedBy?: string | null
           assignee?: string | null
           blocked?: boolean
+          companyId?: number
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -12407,6 +12433,13 @@ export type Database = {
             referencedColumns: ["userId"]
           },
           {
+            foreignKeyName: "service_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "service_createdBy_fkey"
             columns: ["createdBy"]
             isOneToOne: false
@@ -12474,6 +12507,7 @@ export type Database = {
       serviceSupplier: {
         Row: {
           active: boolean
+          companyId: number
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -12486,6 +12520,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
+          companyId: number
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -12498,6 +12533,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
+          companyId?: number
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -12509,6 +12545,13 @@ export type Database = {
           updatedBy?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "serviceSupplier_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "serviceSupplier_createdBy_fkey"
             columns: ["createdBy"]
@@ -13038,6 +13081,7 @@ export type Database = {
       shippingTerm: {
         Row: {
           active: boolean
+          companyId: number
           createdAt: string
           createdBy: string
           id: string
@@ -13047,6 +13091,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
+          companyId: number
           createdAt?: string
           createdBy: string
           id?: string
@@ -13056,6 +13101,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
+          companyId?: number
           createdAt?: string
           createdBy?: string
           id?: string
@@ -13064,6 +13110,13 @@ export type Database = {
           updatedBy?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "shippingTerm_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "shippingTerm_createdBy_fkey"
             columns: ["createdBy"]
@@ -15727,6 +15780,7 @@ export type Database = {
       documents: {
         Row: {
           active: boolean | null
+          companyId: number | null
           createdAt: string | null
           createdBy: string | null
           description: string | null
@@ -18009,6 +18063,7 @@ export type Database = {
           approvedBy: string | null
           assignee: string | null
           blocked: boolean | null
+          companyId: number | null
           createdAt: string | null
           createdBy: string | null
           customFields: Json | null
@@ -18080,6 +18135,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "userDefaults"
             referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "service_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "service_createdBy_fkey"
@@ -18537,7 +18599,6 @@ export type Database = {
       has_any_company_permission: {
         Args: {
           claim: string
-          company: string
         }
         Returns: boolean
       }

@@ -123,7 +123,7 @@ CREATE OR REPLACE FUNCTION has_company_permission(claim text, company integer) R
     END;
 $$;
 
-CREATE OR REPLACE FUNCTION has_any_company_permission(claim text, company text) RETURNS "bool"
+CREATE OR REPLACE FUNCTION has_any_company_permission(claim text) RETURNS "bool"
     LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
     AS $$
     DECLARE

@@ -426,6 +426,7 @@ export async function upsertPartPlanning(
   client: SupabaseClient<Database>,
   partPlanning:
     | {
+        companyId: number;
         partId: string;
         locationId: string;
         createdBy: string;
@@ -436,7 +437,7 @@ export async function upsertPartPlanning(
       })
 ) {
   if ("createdBy" in partPlanning) {
-    return client.from("partPlanning").insert(partPlanning);
+    return client.from("partPlanning").insert({ ...partPlanning, companyId });
   }
   return client
     .from("partPlanning")

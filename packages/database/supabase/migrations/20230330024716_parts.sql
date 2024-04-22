@@ -678,8 +678,6 @@ CREATE POLICY "Employees with parts_delete can delete shelves" ON "shelf"
     has_company_permission('parts_delete', "companyId")
   );
 
--- TODO: resume migrations here
-
 CREATE TABLE "partPlanning" (
   "partId" TEXT NOT NULL,
   "locationId" TEXT NOT NULL,
@@ -696,6 +694,7 @@ CREATE TABLE "partPlanning" (
   "minimumOrderQuantity" INTEGER NOT NULL DEFAULT 0,
   "maximumOrderQuantity" INTEGER NOT NULL DEFAULT 0,
   "orderMultiple" INTEGER NOT NULL DEFAULT 1,
+  "companyId" INTEGER NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
@@ -706,6 +705,7 @@ CREATE TABLE "partPlanning" (
   CONSTRAINT "partPlanning_partId_locationId_key" UNIQUE ("partId", "locationId"),
   CONSTRAINT "partPlanning_partId_fkey" FOREIGN KEY ("partId") REFERENCES "part"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "partPlanning_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "location"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "partPlanning_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "partPlanning_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id"),
   CONSTRAINT "partPlanning_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id")
 );
@@ -716,23 +716,23 @@ ALTER TABLE "partPlanning" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees with parts can view part planning" ON "partPlanning"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('parts_view')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('parts_view', "companyId")
   );
 
 -- these are records are created lazily when a user attempts to view them
 CREATE POLICY "Employees with parts can insert part planning" ON "partPlanning"
   FOR INSERT
   WITH CHECK (
-    coalesce(get_my_claim('parts_view')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('parts_view', "companyId")
   );
 
 CREATE POLICY "Employees with parts_update can update part planning" ON "partPlanning"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('parts_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('parts_update', "companyId")
   );
 
 
@@ -740,6 +740,7 @@ CREATE TABLE "partInventory" (
   "partId" TEXT NOT NULL,
   "locationId" TEXT NOT NULL,
   "defaultShelfId" TEXT,
+  "companyId" INTEGER NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
@@ -750,6 +751,7 @@ CREATE TABLE "partInventory" (
   CONSTRAINT "partInventory_partId_fkey" FOREIGN KEY ("partId") REFERENCES "part"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "partInventory_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "location"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "partInventory_shelfId_fkey" FOREIGN KEY ("defaultShelfId", "locationId") REFERENCES "shelf"("id", "locationId") ON DELETE SET NULL,
+  CONSTRAINT "partInventory_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "partInventory_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id"),
   CONSTRAINT "partInventory_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id")
 );
@@ -762,23 +764,23 @@ ALTER TABLE "partInventory" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees with part_view can view part planning" ON "partInventory"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('parts_view')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('parts_view', "companyId")
   );
 
 -- these are records are created lazily when a user attempts to view them
 CREATE POLICY "Employees with part_view can insert part planning" ON "partInventory"
   FOR INSERT
   WITH CHECK (
-    coalesce(get_my_claim('parts_view')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('parts_view', "companyId")
   );
 
 CREATE POLICY "Employees with parts_update can update part planning" ON "partInventory"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('parts_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('parts_update', "companyId")
   );
 
 

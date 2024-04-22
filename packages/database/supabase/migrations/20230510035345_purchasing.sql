@@ -40,7 +40,7 @@ CREATE POLICY "Certain employees can view payment terms" ON "paymentTerm"
       has_company_permission('sales_view', "companyId") = true OR
       has_company_permission('purchasing_view', "companyId") = true
     )
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    AND has_role('employee')
   );
   
 
@@ -48,21 +48,21 @@ CREATE POLICY "Employees with accounting_create can insert payment terms" ON "pa
   FOR INSERT
   WITH CHECK (   
     has_company_permission('accounting_create', "companyId") 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    AND has_role('employee')
 );
 
 CREATE POLICY "Employees with accounting_update can update payment terms" ON "paymentTerm"
   FOR UPDATE
   USING (
     has_company_permission('accounting_update', "companyId") = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    AND has_role('employee')
   );
 
 CREATE POLICY "Employees with accounting_delete can delete payment terms" ON "paymentTerm"
   FOR DELETE
   USING (
     has_company_permission('accounting_delete', "companyId") = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    AND has_role('employee')
   );
   
 
@@ -103,41 +103,42 @@ CREATE POLICY "Certain employees can view shipping methods" ON "shippingMethod"
   FOR SELECT
   USING (
     (
-      coalesce(get_my_claim('accounting_view')::boolean, false) = true OR
-      coalesce(get_my_claim('inventory_view')::boolean, false) = true OR
-      coalesce(get_my_claim('parts_view')::boolean, false) = true OR
-      coalesce(get_my_claim('purchasing_view')::boolean, false) = true OR
-      coalesce(get_my_claim('sales_view')::boolean, false) = true
+      has_company_permission('accounting_view', "companyId") OR
+      has_company_permission('inventory_view', "companyId") OR
+      has_company_permission('parts_view', "companyId") OR
+      has_company_permission('purchasing_view', "companyId") OR
+      has_company_permission('sales_view', "companyId")
     )
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    AND has_role('employee')
   );
   
 
 CREATE POLICY "Employees with inventory_create can insert shipping methods" ON "shippingMethod"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('inventory_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_company_permission('inventory_create', "companyId")
+    AND has_role('employee')
 );
 
 CREATE POLICY "Employees with inventory_update can update shipping methods" ON "shippingMethod"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('inventory_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_company_permission('inventory_update', "companyId")
+    AND has_role('employee')
   );
 
 CREATE POLICY "Employees with inventory_delete can delete shipping methods" ON "shippingMethod"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('inventory_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_company_permission('inventory_delete', "companyId")
+    AND has_role('employee')
   );
 
 CREATE TABLE "shippingTerm" (
   "id" TEXT NOT NULL DEFAULT xid(),
   "name" TEXT NOT NULL,
   "active" BOOLEAN NOT NULL DEFAULT TRUE,
+  "companyId" INTEGER NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
@@ -145,9 +146,46 @@ CREATE TABLE "shippingTerm" (
 
   CONSTRAINT "shippingTerm_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "shippingTerm_name_key" UNIQUE ("name"),
+  CONSTRAINT "shippingTerm_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "shippingTerm_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "shippingTerm_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
 );
+
+ALTER TABLE "shippingTerm" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Certain employees can view shipping terms" ON "shippingTerm"
+  FOR SELECT
+  USING (
+    (
+      has_company_permission('accounting_view', "companyId") OR
+      has_company_permission('inventory_view', "companyId") OR
+      has_company_permission('parts_view', "companyId") OR
+      has_company_permission('purchasing_view', "companyId") OR
+      has_company_permission('sales_view', "companyId")
+    )
+    AND has_role('employee')
+  );
+
+CREATE POLICY "Employees with inventory_create can insert shipping terms" ON "shippingTerm"
+  FOR INSERT
+  WITH CHECK (   
+    has_company_permission('inventory_create', "companyId")
+    AND has_role('employee')
+);
+
+CREATE POLICY "Employees with inventory_update can update shipping terms" ON "shippingTerm"
+  FOR UPDATE
+  USING (
+    has_company_permission('inventory_update', "companyId")
+    AND has_role('employee')
+  );
+
+CREATE POLICY "Employees with inventory_delete can delete shipping terms" ON "shippingTerm"
+  FOR DELETE
+  USING (
+    has_company_permission('inventory_delete', "companyId")
+    AND has_role('employee')
+  );
 
 
 CREATE TYPE "purchaseOrderType" AS ENUM (
@@ -223,6 +261,20 @@ CREATE TABLE "purchaseOrderStatusHistory" (
   CONSTRAINT "purchaseOrderStatusHistory_purchaseOrderId_fkey" FOREIGN KEY ("purchaseOrderId") REFERENCES "purchaseOrder" ("id") ON DELETE CASCADE,
   CONSTRAINT "purchaseOrderStatusHistory_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT
 );
+
+ALTER TABLE "purchaseOrderStatusHistory" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view purchase order status history" ON "purchaseOrderStatusHistory" 
+  FOR SELECT USING (
+    has_company_permission('purchasing_view', (SELECT "companyId" FROM "purchaseOrder" WHERE "id" = "purchaseOrderId"))
+  );
+
+CREATE POLICY "Users can insert purchase order status history" ON "purchaseOrderStatusHistory"
+  FOR INSERT WITH CHECK (
+    has_company_permission('purchasing_update', (SELECT "companyId" FROM "purchaseOrder" WHERE "id" = "purchaseOrderId"))
+  );
+
+
 
 
 CREATE TABLE "purchaseOrderLine" (
@@ -391,6 +443,19 @@ CREATE TABLE "purchaseOrderTransaction" (
 
 CREATE INDEX "purchaseOrderTransaction_purchaseOrderId_idx" ON "purchaseOrderTransaction" ("purchaseOrderId");
 CREATE INDEX "purchaseOrderTransaction_userId_idx" ON "purchaseOrderTransaction" ("userId");
+
+ALTER TABLE "purchaseOrderTransaction" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Employees with purchasing_view can view purchase order transactions" ON "purchaseOrderTransaction" 
+  FOR SELECT USING (
+    has_role('employee') AND
+    has_company_permission('purchasing_view', (SELECT "companyId" FROM "purchaseOrder" WHERE "id" = "purchaseOrderId"))
+  );
+
+CREATE POLICY "User with purchasing_update can insert purchase order transactions" ON "purchaseOrderTransaction" 
+  FOR INSERT WITH CHECK (
+    has_company_permission('purchasing_update', (SELECT "companyId" FROM "purchaseOrder" WHERE "id" = "purchaseOrderId"))
+  );
 
 CREATE TABLE "purchaseOrderFavorite" (
   "purchaseOrderId" TEXT NOT NULL,
