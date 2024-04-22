@@ -28,6 +28,10 @@
       "dependsOn": ["^build"],
       "cache": false
     },
+    "carbon#dev": {
+      "cache": false,
+      "persistent": true
+    },
     "clean": {
       "cache": false
     },

@@ -28,7 +28,6 @@
   "scripts": {
     "build": "turbo run build",
     "build:packages": "turbo run build --filter=./packages/*",
-    "build:app": "turbo run build --filter=!www",
     "clean": "turbo run clean && rimraf ./node_modules && rimraf ./package-lock.json",
     "db:build": "run-s db:kill db:start setup",
     "db:function:new": "npm run db:function:new -w @carbon/database",
@@ -44,8 +43,7 @@
     "db:stop": "npm run db:stop -w @carbon/database",
     "db:types": "npm run db:types -w @carbon/database",
     "deploy": "turbo run deploy",
-    "dev": "turbo run dev --filter=./apps/* --filter=./packages/*",
-    "dev:apps": "turbo run dev --filter=./apps/carbon",
+    "dev": "turbo run dev --filter=./apps/carbon --filter=./packages/*",
     "dev:docs": "turbo run dev --filter=./apps/docs",
     "dev:packages": "turbo run dev --filter=./packages/*",
     "dev:www": "turbo run dev --filter=./www",
