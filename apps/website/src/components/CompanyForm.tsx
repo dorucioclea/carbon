@@ -2,6 +2,10 @@
 
 import {
   Button,
+  Card,
+  CardContent,
+  CardFooter,
+  CardTitle,
   FormControl,
   Input,
   Label,
@@ -32,63 +36,70 @@ export default function CompanyForm() {
   return (
     <Form {...form}>
       <form action={createHubspotCompany}>
-        <div className="mt-10 grid grid-cols-2 space-x-4 space-y-8">
-          <FormField
-            control={form.control}
-            name="companyName"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Label>Company Name</Label>
-                  <Input type="string" placeholder="Company name" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="companySize"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Label>Company Size</Label>
-                  <Input type="string" placeholder="E.g. 20-50" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="jobTitle"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Label>Job title</Label>
-                  <Input type="string" placeholder="Job Title" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="erp"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Label>What ERP do you use</Label>
-                  <Input type="string" placeholder="Excel" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <Button className="" type="submit">
-          Submit
-        </Button>
+        <Card className="py-8 px-8">
+          <CardContent className="grid space-y-8">
+            <CardTitle>A few more questions</CardTitle>
+            <FormField
+              control={form.control}
+              name="companyName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Label>Company Name</Label>
+                    <Input
+                      type="string"
+                      placeholder="Company name"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="companySize"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Label>Company Size</Label>
+                    <Input type="string" placeholder="E.g. 20-50" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="jobTitle"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Label>Job title</Label>
+                    <Input type="string" placeholder="Job Title" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="erp"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Label>What ERP do you use</Label>
+                    <Input type="string" placeholder="Excel" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+          <CardFooter className="flex justify-end">
+            <Button type="submit">Submit</Button>
+          </CardFooter>
+        </Card>
       </form>
     </Form>
   );
