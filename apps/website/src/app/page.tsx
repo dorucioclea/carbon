@@ -136,9 +136,34 @@ function ProductViews() {
     },
     {
       id: 1,
+      title: "Manufacturing",
       content: (
         <Image
           src="/carbon-dark-mode-accounting.jpg"
+          width={1209}
+          height={903}
+          alt={""}
+        />
+      ),
+    },
+    {
+      id: 2,
+      title: "Search",
+      content: (
+        <Image
+          src="/carbon-dark-mode-search.jpg"
+          width={1209}
+          height={903}
+          alt={""}
+        />
+      ),
+    },
+    {
+      id: 3,
+      title: "Permissions",
+      content: (
+        <Image
+          src="/carbon-dark-mode-permissions.jpg"
           width={1209}
           height={903}
           alt={""}
