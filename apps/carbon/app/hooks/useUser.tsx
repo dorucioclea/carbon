@@ -9,6 +9,12 @@ type PersonalData = {
   avatarUrl: string | null;
 };
 
+type Company = {
+  id: number;
+  name: string;
+  logo: string | null;
+};
+
 type Groups = string[];
 
 type Defaults = {
@@ -16,17 +22,21 @@ type Defaults = {
 };
 
 type User = PersonalData & {
+  company: Company;
   groups: Groups;
   defaults: Defaults;
 };
 
 export function useUser(): User {
   const data = useRouteData<{
+    company: unknown;
     user: unknown;
     groups: unknown;
     defaults: unknown;
   }>(path.to.authenticatedRoot);
   if (
+    data?.company &&
+    isCompany(data.company) &&
     data?.user &&
     isUser(data.user) &&
     data?.groups &&
@@ -36,6 +46,7 @@ export function useUser(): User {
   ) {
     return {
       ...data.user,
+      company: data.company,
       groups: data.groups,
       defaults: data.defaults,
     };
@@ -43,6 +54,14 @@ export function useUser(): User {
   // TODO: force logout -- the likely cause is development changes
   throw new Error(
     "useUser must be used within an authenticated route. If you are seeing this error, you are likely in development and have changed the session variables. Try deleting the cookies."
+  );
+}
+
+function isCompany(value: any): value is Company {
+  return (
+    typeof value.id === "number" &&
+    typeof value.name === "string" &&
+    (typeof value.logo === "string" || value.logo === null)
   );
 }
 

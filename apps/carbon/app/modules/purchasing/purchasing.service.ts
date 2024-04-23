@@ -111,20 +111,22 @@ export async function deleteSupplierType(
 
 export async function getPurchaseOrderExternalDocuments(
   client: SupabaseClient<Database>,
+  companyId: number,
   purchaseOrderId: string
 ) {
   return client.storage
     .from("private")
-    .list(`purchasing/external/${purchaseOrderId}`);
+    .list(`${companyId}/purchasing/external/${purchaseOrderId}`);
 }
 
 export async function getPurchaseOrderInternalDocuments(
   client: SupabaseClient<Database>,
+  companyId: number,
   purchaseOrderId: string
 ) {
   return client.storage
     .from("private")
-    .list(`purchasing/internal/${purchaseOrderId}`);
+    .list(`${companyId}/purchasing/internal/${purchaseOrderId}`);
 }
 
 export async function getPurchaseOrder(
@@ -723,6 +725,7 @@ export async function upsertPurchaseOrder(
         "id" | "purchaseOrderId"
       > & {
         purchaseOrderId: string;
+        companyId: number;
         createdBy: string;
         customFields?: Json;
       })
@@ -781,6 +784,7 @@ export async function upsertPurchaseOrder(
         locationId: locationId,
         shippingMethodId: shippingMethodId,
         shippingTermId: shippingTermId,
+        companyId: purchaseOrder.companyId,
       },
     ]),
     client.from("purchaseOrderPayment").insert([
@@ -791,6 +795,7 @@ export async function upsertPurchaseOrder(
         invoiceSupplierContactId: invoiceSupplierContactId,
         invoiceSupplierLocationId: invoiceSupplierLocationId,
         paymentTermId: paymentTermId,
+        companyId: purchaseOrder.companyId,
       },
     ]),
   ]);

@@ -68,7 +68,7 @@ export async function action(args: ActionFunctionArgs) {
       .toISOString()
       .slice(0, -5)}.pdf`;
 
-    const documentFilePath = `purchasing/external/${orderId}/${fileName}`;
+    const documentFilePath = `${companyId}/purchasing/external/${orderId}/${fileName}`;
 
     const documentFileUpload = await client.storage
       .from("private")

@@ -4,16 +4,17 @@ CREATE POLICY "Employees with purchasing_view, inventory_view, or invoicing_view
   FOR SELECT
   USING (
     (
-      coalesce(get_my_claim('purchasing_view')::boolean, false) = true OR
-      coalesce(get_my_claim('inventory_view')::boolean, false) = true OR
-      coalesce(get_my_claim('invoicing_view')::boolean, false) = true
-    ) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+      has_company_permission('purchasing_view', "companyId") OR
+      has_company_permission('inventory_view', "companyId") OR
+      has_company_permission('invoicing_view', "companyId")
+    ) AND has_role('employee')
+  );
 
 CREATE POLICY "Suppliers with purchasing_view can their own purchase orders" ON "purchaseOrder"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('purchasing_view')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"supplier"'::jsonb 
+    has_company_permission('purchasing_view', "companyId") 
+    AND has_role('supplier') 
     AND "supplierId" IN (
       SELECT "supplierId" FROM "supplierAccount" WHERE id::uuid = auth.uid()
     )
@@ -21,18 +22,18 @@ CREATE POLICY "Suppliers with purchasing_view can their own purchase orders" ON 
 
 CREATE POLICY "Employees with purchasing_create can create purchase orders" ON "purchaseOrder"
   FOR INSERT
-  WITH CHECK (coalesce(get_my_claim('purchasing_create')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  WITH CHECK (has_company_permission('purchasing_create', "companyId") AND has_role('employee'));
 
 
 CREATE POLICY "Employees with purchasing_update can update purchase orders" ON "purchaseOrder"
   FOR UPDATE
-  USING (coalesce(get_my_claim('purchasing_update')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (has_company_permission('purchasing_update', "companyId") AND has_role('employee'));
 
 CREATE POLICY "Suppliers with purchasing_update can their own purchase orders" ON "purchaseOrder"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('purchasing_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"supplier"'::jsonb 
+    has_company_permission('purchasing_update', "companyId") 
+    AND has_role('supplier') 
     AND "supplierId" IN (
       SELECT "supplierId" FROM "supplierAccount" WHERE id::uuid = auth.uid()
     )
@@ -40,14 +41,14 @@ CREATE POLICY "Suppliers with purchasing_update can their own purchase orders" O
 
 CREATE POLICY "Employees with purchasing_delete can delete purchase orders" ON "purchaseOrder"
   FOR DELETE
-  USING (coalesce(get_my_claim('purchasing_delete')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (has_company_permission('purchasing_delete', "companyId") AND has_role('employee'));
 
 
 CREATE POLICY "Suppliers with purchasing_view can search for their own purchase orders" ON "search"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('purchasing_view')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"supplier"'::jsonb
+    has_company_permission('purchasing_view', "companyId") 
+    AND has_role('supplier')
     AND entity = 'Purchase Order' 
     AND uuid IN (
         SELECT id FROM "purchaseOrder" WHERE "supplierId" IN (
@@ -107,7 +108,10 @@ ALTER TABLE "purchaseOrderStatusHistory" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Anyone with purchasing_view can view purchase order status history" ON "purchaseOrderStatusHistory"
   FOR SELECT
-  USING (coalesce(get_my_claim('purchasing_view')::boolean, false) = true);
+  USING (
+    has_role('employee') AND
+    has_company_permission('purchasing_view', (SELECT "companyId" FROM "purchaseOrder" WHERE id = "purchaseOrderId")) 
+  );
 
 -- Purchase Order Lines
 
@@ -115,13 +119,13 @@ ALTER TABLE "purchaseOrderLine" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Employees with purchasing_view can view purchase order lines" ON "purchaseOrderLine"
   FOR SELECT
-  USING (coalesce(get_my_claim('purchasing_view')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (has_company_permission('purchasing_view', "companyId") AND has_role('employee'));
 
 CREATE POLICY "Suppliers with purchasing_view can their own purchase order lines" ON "purchaseOrderLine"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('purchasing_view')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"supplier"'::jsonb 
+    has_company_permission('purchasing_view', "companyId") 
+    AND has_role('supplier') 
     AND "purchaseOrderId" IN (
       SELECT id FROM "purchaseOrder" WHERE "supplierId" IN (
         SELECT "supplierId" FROM "purchaseOrder" WHERE "supplierId" IN (
@@ -133,13 +137,13 @@ CREATE POLICY "Suppliers with purchasing_view can their own purchase order lines
 
 CREATE POLICY "Employees with purchasing_create can create purchase order lines" ON "purchaseOrderLine"
   FOR INSERT
-  WITH CHECK (coalesce(get_my_claim('purchasing_create')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  WITH CHECK (has_company_permission('purchasing_create', "companyId") AND has_role('employee'));
 
 CREATE POLICY "Suppliers with purchasing_create can create lines on their own purchase order" ON "purchaseOrderLine"
   FOR INSERT
   WITH CHECK (
-    coalesce(get_my_claim('purchasing_create')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"supplier"'::jsonb 
+    has_company_permission('purchasing_create', "companyId") 
+    AND has_role('supplier') 
     AND "purchaseOrderId" IN (
       SELECT id FROM "purchaseOrder" WHERE "supplierId" IN (
         SELECT "supplierId" FROM "purchaseOrder" WHERE "supplierId" IN (
@@ -151,13 +155,13 @@ CREATE POLICY "Suppliers with purchasing_create can create lines on their own pu
 
 CREATE POLICY "Employees with purchasing_update can update purchase order lines" ON "purchaseOrderLine"
   FOR UPDATE
-  USING (coalesce(get_my_claim('purchasing_update')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (has_company_permission('purchasing_update', "companyId") AND has_role('employee'));
 
 CREATE POLICY "Suppliers with purchasing_update can their own purchase order lines" ON "purchaseOrderLine"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('purchasing_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"supplier"'::jsonb 
+    has_company_permission('purchasing_update', "companyId") 
+    AND has_role('supplier') 
     AND "purchaseOrderId" IN (
       SELECT id FROM "purchaseOrder" WHERE "supplierId" IN (
         SELECT "supplierId" FROM "purchaseOrder" WHERE "supplierId" IN (
@@ -169,13 +173,13 @@ CREATE POLICY "Suppliers with purchasing_update can their own purchase order lin
 
 CREATE POLICY "Employees with purchasing_delete can delete purchase order lines" ON "purchaseOrderLine"
   FOR DELETE
-  USING (coalesce(get_my_claim('purchasing_delete')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (has_company_permission('purchasing_delete', "companyId") AND has_role('employee'));
 
 CREATE POLICY "Suppliers with purchasing_delete can delete lines on their own purchase order" ON "purchaseOrderLine"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('purchasing_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"supplier"'::jsonb 
+    has_company_permission('purchasing_delete', "companyId") 
+    AND has_role('supplier') 
     AND "purchaseOrderId" IN (
       SELECT id FROM "purchaseOrder" WHERE "supplierId" IN (
         SELECT "supplierId" FROM "purchaseOrder" WHERE "supplierId" IN (
@@ -192,13 +196,13 @@ ALTER TABLE "purchaseOrderDelivery" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Employees with purchasing_view can view purchase order deliveries" ON "purchaseOrderDelivery"
   FOR SELECT
-  USING (coalesce(get_my_claim('purchasing_view')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (has_company_permission('purchasing_view', "companyId") AND has_role('employee'));
 
 CREATE POLICY "Suppliers with purchasing_view can their own purchase order deliveries" ON "purchaseOrderDelivery"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('purchasing_view')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"supplier"'::jsonb 
+    has_company_permission('purchasing_view', "companyId") 
+    AND has_role('supplier') 
     AND id IN (
       SELECT id FROM "purchaseOrder" WHERE "supplierId" IN (
         SELECT "supplierId" FROM "purchaseOrder" WHERE "supplierId" IN (
@@ -210,17 +214,17 @@ CREATE POLICY "Suppliers with purchasing_view can their own purchase order deliv
 
 CREATE POLICY "Employees with purchasing_create can create purchase order deliveries" ON "purchaseOrderDelivery"
   FOR INSERT
-  WITH CHECK (coalesce(get_my_claim('purchasing_create')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  WITH CHECK (has_company_permission('purchasing_create', "companyId") AND has_role('employee'));
 
 CREATE POLICY "Employees with purchasing_update can update purchase order deliveries" ON "purchaseOrderDelivery"
   FOR UPDATE
-  USING (coalesce(get_my_claim('purchasing_update')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (has_company_permission('purchasing_update', "companyId") AND has_role('employee'));
 
 CREATE POLICY "Suppliers with purchasing_update can their own purchase order deliveries" ON "purchaseOrderDelivery"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('purchasing_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"supplier"'::jsonb 
+    has_company_permission('purchasing_update', "companyId") 
+    AND has_role('supplier') 
     AND id IN (
       SELECT id FROM "purchaseOrder" WHERE "supplierId" IN (
         SELECT "supplierId" FROM "purchaseOrder" WHERE "supplierId" IN (
@@ -232,7 +236,7 @@ CREATE POLICY "Suppliers with purchasing_update can their own purchase order del
 
 CREATE POLICY "Employees with purchasing_delete can delete purchase order deliveries" ON "purchaseOrderDelivery"
   FOR DELETE
-  USING (coalesce(get_my_claim('purchasing_delete')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (has_company_permission('purchasing_delete', "companyId") AND has_role('employee'));
 
 
 -- Purchase Order Payments
@@ -241,16 +245,16 @@ ALTER TABLE "purchaseOrderPayment" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Employees with purchasing_view can view purchase order payments" ON "purchaseOrderPayment"
   FOR SELECT
-  USING (coalesce(get_my_claim('purchasing_view')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (has_company_permission('purchasing_view', "companyId") AND has_role('employee'));
 
 CREATE POLICY "Employees with purchasing_create can create purchase order payments" ON "purchaseOrderPayment"
   FOR INSERT
-  WITH CHECK (coalesce(get_my_claim('purchasing_create')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  WITH CHECK (has_company_permission('purchasing_create', "companyId") AND has_role('employee'));
 
 CREATE POLICY "Employees with purchasing_update can update purchase order payments" ON "purchaseOrderPayment"
   FOR UPDATE
-  USING (coalesce(get_my_claim('purchasing_update')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (has_company_permission('purchasing_update', "companyId") AND has_role('employee'));
 
 CREATE POLICY "Employees with purchasing_delete can delete purchase order payments" ON "purchaseOrderPayment"
   FOR DELETE
-  USING (coalesce(get_my_claim('purchasing_delete')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (has_company_permission('purchasing_delete', "companyId") AND has_role('employee'));

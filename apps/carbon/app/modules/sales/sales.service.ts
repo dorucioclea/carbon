@@ -331,16 +331,22 @@ export async function getQuoteAssemblies(
 
 export async function getQuoteExternalDocuments(
   client: SupabaseClient<Database>,
+  companyId: number,
   quoteId: string
 ) {
-  return client.storage.from("private").list(`quote/external/${quoteId}`);
+  return client.storage
+    .from("private")
+    .list(`${companyId}/quote/external/${quoteId}`);
 }
 
 export async function getQuoteInternalDocuments(
   client: SupabaseClient<Database>,
+  companyId: number,
   quoteId: string
 ) {
-  return client.storage.from("private").list(`quote/internal/${quoteId}`);
+  return client.storage
+    .from("private")
+    .list(`${companyId}/quote/internal/${quoteId}`);
 }
 
 export async function getQuoteLine(
@@ -998,18 +1004,22 @@ export async function deleteSalesOrderLine(
 
 export async function getSalesOrderExternalDocuments(
   client: SupabaseClient<Database>,
-  salesOrderId: string
-) {
-  return client.storage.from("private").list(`sales/external/${salesOrderId}`);
-}
-
-/*export async function getSalesOrderInternalDocuments(
-  client: SupabaseClient<Database>,
+  companyId: number,
   salesOrderId: string
 ) {
   return client.storage
     .from("private")
-    .list(`sales/internal/${salesOrderId}`);
+    .list(`${companyId}/sales/external/${salesOrderId}`);
+}
+
+/*export async function getSalesOrderInternalDocuments(
+  client: SupabaseClient<Database>,
+  companyId: number,
+  salesOrderId: string
+) {
+  return client.storage
+    .from("private")
+    .list(`${companyId}/sales/internal/${salesOrderId}`);
 }*/
 
 export async function getSalesOrder(
@@ -1148,6 +1158,7 @@ export async function upsertSalesOrder(
   salesOrder:
     | (Omit<z.infer<typeof salesOrderValidator>, "id" | "salesOrderId"> & {
         salesOrderId: string;
+        companyId: number;
         createdBy: string;
         customFields?: Json;
       })
@@ -1203,6 +1214,7 @@ export async function upsertSalesOrder(
         locationId: locationId,
         shippingMethodId: shippingMethodId,
         shippingTermId: shippingTermId,
+        companyId: salesOrder.companyId,
       },
     ]),
     client.from("salesOrderPayment").insert([
@@ -1213,6 +1225,7 @@ export async function upsertSalesOrder(
         invoiceCustomerContactId: invoiceCustomerContactId,
         invoiceCustomerLocationId: invoiceCustomerLocationId,
         paymentTermId: paymentTermId,
+        companyId: salesOrder.companyId,
       },
     ]),
   ]);

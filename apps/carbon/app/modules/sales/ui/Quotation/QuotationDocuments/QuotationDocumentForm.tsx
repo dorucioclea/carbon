@@ -2,6 +2,7 @@ import { File, toast } from "@carbon/react";
 import { useSubmit } from "@remix-run/react";
 import type { ChangeEvent } from "react";
 import { IoMdAdd } from "react-icons/io";
+import { useUser } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import { path } from "~/utils/path";
 
@@ -16,13 +17,14 @@ const QuotationDocumentForm = ({
 }: QuotationDocumentFormProps) => {
   const submit = useSubmit();
   const { supabase } = useSupabase();
+  const { id: companyId } = useUser();
 
   const uploadFile = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && supabase) {
       const file = e.target.files[0];
-      const fileName = `quote/${isExternal ? "external" : "internal"}/${id}/${
-        file.name
-      }`;
+      const fileName = `${companyId}/quote/${
+        isExternal ? "external" : "internal"
+      }/${id}/${file.name}`;
 
       const fileUpload = await supabase.storage
         .from("private")
