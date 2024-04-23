@@ -380,9 +380,15 @@ export async function getUserGroups(
 
 export async function getUserDefaults(
   client: SupabaseClient<Database>,
-  userId: string
+  userId: string,
+  companyId: number
 ) {
-  return client.from("userDefaults").select("*").eq("userId", userId).single();
+  return client
+    .from("userDefaults")
+    .select("*")
+    .eq("userId", userId)
+    .eq("companyId", companyId)
+    .maybeSingle();
 }
 
 async function insertCustomerAccount(

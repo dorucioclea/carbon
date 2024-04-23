@@ -482,28 +482,6 @@ export async function insertSupplierContact(
     .single();
 }
 
-export async function getUninvoicedReceipts(
-  client: SupabaseClient<Database>,
-  args?: GenericQueryFilters & {
-    supplier: string | null;
-  }
-) {
-  let query = client.from("receiptsPostedNotInvoiced").select("*");
-
-  if (args?.supplier) {
-    query = query.eq("supplierId", args.supplier);
-  }
-
-  if (args)
-    if (args) {
-      query = setGenericQueryFilters(query, args, [
-        { column: "name", ascending: true },
-      ]);
-    }
-
-  return query;
-}
-
 export async function insertSupplierLocation(
   client: SupabaseClient<Database>,
   supplierLocation: {

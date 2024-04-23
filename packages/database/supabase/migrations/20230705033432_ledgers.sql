@@ -142,7 +142,7 @@ CREATE POLICY "Employees with accounting_create can insert journal lines" ON "jo
     has_company_permission('accounting_create', "companyId")
 );
 
--- delete and update are not availble for journal lines
+-- delete and update are not available for journal lines
 
 CREATE TYPE "partLedgerType" AS ENUM (
   'Purchase',
@@ -214,24 +214,6 @@ CREATE POLICY "Employees with accounting_view can view the value ledger" ON "cos
     has_role('employee') AND
     has_company_permission('accounting_view', "companyId")
   );
-
--- CREATE TABLE "costLedgerJournalLineRelation" (
---   "costLedgerId" TEXT NOT NULL,
---   "journalLineId" TEXT NOT NULL,
-
---   CONSTRAINT "costLedgerJournalLineRelation_pkey" PRIMARY KEY ("costLedgerId", "journalLineId"),
---   CONSTRAINT "costLedgerJournalLineRelation_costLedgerId_fkey" FOREIGN KEY ("costLedgerId") REFERENCES "costLedger"("id"),
---   CONSTRAINT "costLedgerJournalLineRelation_journalLineId_fkey" FOREIGN KEY ("journalLineId") REFERENCES "journalLine"("id")
--- );
-
--- ALTER TABLE "costLedgerJournalLineRelation" ENABLE ROW LEVEL SECURITY;
-
--- CREATE POLICY "Employees with accounting_view can view the value ledger/general ledger relations" ON "costLedgerJournalLineRelation"
---   FOR SELECT
---   USING (
---     coalesce(get_my_claim('accounting_view')::boolean, false) = true AND
---     (get_my_claim('role'::text)) = '"employee"'::jsonb
---   );
 
 
 CREATE TABLE "partLedger" (
@@ -313,6 +295,7 @@ CREATE OR REPLACE FUNCTION "journalLinesByAccountNumber" (
 ) 
 RETURNS TABLE (
   "number" TEXT,
+  "companyId" INTEGER,
   "balance" NUMERIC(19, 4),
   "balanceAtDate" NUMERIC(19, 4),
   "netChange" NUMERIC(19, 4)
@@ -322,13 +305,14 @@ AS $$
     RETURN QUERY
       SELECT 
         a."number",
+        a."companyId",
         SUM(jl."amount") AS "balance",
         SUM(CASE WHEN j."postingDate" <= to_date THEN jl."amount" ELSE 0 END) AS "balanceAtDate",
         SUM(CASE WHEN j."postingDate" >= from_date AND j."postingDate" <= to_date THEN jl."amount" ELSE 0 END) AS "netChange"
       FROM "account" a
       LEFT JOIN "journalLine" jl ON jl."accountNumber" = a."number"
       INNER JOIN "journal" j ON j."id" = jl."journalId"
-      GROUP BY a."number";
+      GROUP BY a."number", a."companyId";
   END;
 $$;
 

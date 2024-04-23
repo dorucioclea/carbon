@@ -10092,6 +10092,7 @@ export type Database = {
       receipt: {
         Row: {
           assignee: string | null
+          companyId: number
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -10113,6 +10114,7 @@ export type Database = {
         }
         Insert: {
           assignee?: string | null
+          companyId: number
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -10134,6 +10136,7 @@ export type Database = {
         }
         Update: {
           assignee?: string | null
+          companyId?: number
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -10181,6 +10184,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "userDefaults"
             referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "receipt_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "receipt_createdBy_fkey"
@@ -10305,6 +10315,7 @@ export type Database = {
       }
       receiptLine: {
         Row: {
+          companyId: number
           conversionFactor: number | null
           createdAt: string
           createdBy: string
@@ -10323,6 +10334,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
+          companyId: number
           conversionFactor?: number | null
           createdAt?: string
           createdBy: string
@@ -10341,6 +10353,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
+          companyId?: number
           conversionFactor?: number | null
           createdAt?: string
           createdBy?: string
@@ -10448,13 +10461,6 @@ export type Database = {
             columns: ["receiptId"]
             isOneToOne: false
             referencedRelation: "receipts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "receiptLine_receiptId_fkey"
-            columns: ["receiptId"]
-            isOneToOne: false
-            referencedRelation: "receiptsPostedNotInvoiced"
             referencedColumns: ["id"]
           },
           {
@@ -17272,6 +17278,7 @@ export type Database = {
       receipts: {
         Row: {
           assignee: string | null
+          companyId: number | null
           createdAt: string | null
           createdBy: string | null
           customFields: Json | null
@@ -17320,6 +17327,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "userDefaults"
             referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "receipt_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "receipt_createdBy_fkey"
@@ -17439,58 +17453,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "userDefaults"
             referencedColumns: ["userId"]
-          },
-        ]
-      }
-      receiptsPostedNotInvoiced: {
-        Row: {
-          estimatedCost: number | null
-          id: string | null
-          postingDate: string | null
-          receiptId: string | null
-          sourceDocument:
-            | Database["public"]["Enums"]["receiptSourceDocument"]
-            | null
-          sourceDocumentId: string | null
-          sourceDocumentReadableId: string | null
-          supplierId: string | null
-          supplierName: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "receipt_supplierId_fkey"
-            columns: ["supplierId"]
-            isOneToOne: false
-            referencedRelation: "supplier"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "receipt_supplierId_fkey"
-            columns: ["supplierId"]
-            isOneToOne: false
-            referencedRelation: "contractors"
-            referencedColumns: ["supplierId"]
-          },
-          {
-            foreignKeyName: "receipt_supplierId_fkey"
-            columns: ["supplierId"]
-            isOneToOne: false
-            referencedRelation: "partners"
-            referencedColumns: ["supplierId"]
-          },
-          {
-            foreignKeyName: "receipt_supplierId_fkey"
-            columns: ["supplierId"]
-            isOneToOne: false
-            referencedRelation: "purchaseOrderSuppliers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "receipt_supplierId_fkey"
-            columns: ["supplierId"]
-            isOneToOne: false
-            referencedRelation: "suppliers"
-            referencedColumns: ["id"]
           },
         ]
       }
@@ -18482,14 +18444,9 @@ export type Database = {
           },
         ]
       }
-      totalReceiptsPostedNotInvoiced: {
-        Row: {
-          total: number | null
-        }
-        Relationships: []
-      }
       userDefaults: {
         Row: {
+          companyId: number | null
           locationId: string | null
           userId: string | null
         }
@@ -18521,6 +18478,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "salesOrders"
             referencedColumns: ["locationId"]
+          },
+          {
+            foreignKeyName: "location_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -18626,6 +18590,7 @@ export type Database = {
         }
         Returns: {
           number: string
+          companyId: number
           balance: number
           balanceAtDate: number
           netChange: number

@@ -8,7 +8,8 @@ CREATE OR REPLACE VIEW "suppliers" AS
     ss.name AS "status",
     po.count AS "orderCount",
     p.count AS "partCount",
-    s."customFields"
+    s."customFields",
+    s."companyId"
   FROM "supplier" s
   LEFT JOIN "supplierType" st ON st.id = s."supplierTypeId"
   LEFT JOIN "supplierStatus" ss ON ss.id = s."supplierStatusId"
@@ -35,7 +36,8 @@ CREATE OR REPLACE VIEW "customers" AS
     ct.name AS "type",
     c."customerStatusId",
     cs.name AS "status",
-    c."customFields"
+    c."customFields",
+    c."companyId"
     -- so.count AS "orderCount"
   FROM "customer" c
   LEFT JOIN "customerType" ct ON ct.id = c."customerTypeId"

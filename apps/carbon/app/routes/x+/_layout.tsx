@@ -53,7 +53,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       getUser(client, userId),
       getUserClaims(request),
       getUserGroups(client, userId),
-      getUserDefaults(client, userId),
+      getUserDefaults(client, userId, companyId),
     ]);
 
   if (!claims || user.error || !user.data || !groups.data) {

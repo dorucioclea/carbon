@@ -174,15 +174,15 @@ ALTER TABLE "postingGroupInventory" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees with accounting_view can view inventory posting groups" ON "postingGroupInventory"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('accounting_view')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('accounting_view', "companyId")
   );
 
 CREATE POLICY "Employees with accounting_update can update inventory posting groups" ON "postingGroupInventory"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('accounting_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('accounting_update', "companyId")
   );
 
 
@@ -221,15 +221,15 @@ ALTER TABLE "postingGroupPurchasing" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees with accounting_view can view purchasing posting groups" ON "postingGroupPurchasing"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('accounting_view')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('accounting_view', "companyId")
   );
 
 CREATE POLICY "Employees with accounting_update can update purchasing posting groups" ON "postingGroupPurchasing"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('accounting_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('accounting_update', "companyId")
   );
 
 CREATE TABLE "postingGroupSales" (
@@ -265,15 +265,15 @@ CREATE INDEX "postingGroupSales_companyId_idx" ON "postingGroupSales" ("companyI
 CREATE POLICY "Employees with accounting_view can view sales posting groups" ON "postingGroupSales"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('accounting_view')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('accounting_view', "companyId")
   );
 
 CREATE POLICY "Employees with accounting_update can update sales posting groups" ON "postingGroupSales"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('accounting_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('accounting_update', "companyId")
   );
 
 CREATE FUNCTION public.create_posting_groups_for_location()
