@@ -5,6 +5,7 @@ import {
   Card,
   CardContent,
   CardFooter,
+  CardHeader,
   CardTitle,
   FormControl,
   Input,
@@ -35,17 +36,21 @@ export default function CompanyForm() {
 
   return (
     <Form {...form}>
-      <form action={createHubspotCompany}>
-        <Card className="py-8 px-8">
+      <form action={createHubspotCompany} className="w-full max-w-2xl">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-center pb-8">
+              We have a few more questions
+            </CardTitle>
+          </CardHeader>
           <CardContent className="grid space-y-8">
-            <CardTitle>A few more questions</CardTitle>
             <FormField
               control={form.control}
               name="companyName"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Label>Company Name</Label>
+                    <Label>What is your company called?</Label>
                     <Input
                       type="string"
                       placeholder="Company name"
@@ -62,7 +67,7 @@ export default function CompanyForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Label>Company Size</Label>
+                    <Label>How big is your company?</Label>
                     <Input type="string" placeholder="E.g. 20-50" {...field} />
                   </FormControl>
                   <FormMessage />
@@ -75,7 +80,7 @@ export default function CompanyForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Label>Job title</Label>
+                    <Label>What is your job title?</Label>
                     <Input type="string" placeholder="Job Title" {...field} />
                   </FormControl>
                   <FormMessage />
@@ -88,7 +93,7 @@ export default function CompanyForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Label>What ERP do you use</Label>
+                    <Label>Which ERP do you use currently?</Label>
                     <Input type="string" placeholder="Excel" {...field} />
                   </FormControl>
                   <FormMessage />
@@ -96,7 +101,7 @@ export default function CompanyForm() {
               )}
             />
           </CardContent>
-          <CardFooter className="flex justify-end">
+          <CardFooter>
             <Button type="submit">Submit</Button>
           </CardFooter>
         </Card>
