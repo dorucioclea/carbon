@@ -34,7 +34,7 @@ function Hero() {
             leftIcon={<BsPlay />}
             asChild
           >
-            <Link href="https://www.loom.com/share/941bd11ab21c41e4a6c823914e001769?sid=d1f505e0-8eab-4649-8000-5b8a70c9b1ec">
+            <Link href="https://www.loom.com/share/7b2dccab3d404b84aa8f08e5bfa21d16?sid=251f4f0e-4d04-4ec2-bb60-7376454e3172">
               Watch the guided tour
             </Link>
           </Button>
