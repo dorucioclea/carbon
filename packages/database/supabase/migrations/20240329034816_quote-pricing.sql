@@ -1,6 +1,3 @@
-ALTER publication supabase_realtime DROP TABLE "quoteLineQuantity";
-DROP TABLE "quoteLineQuantity";
-
 CREATE TABLE "quoteLinePrice" (
   "id" TEXT NOT NULL DEFAULT xid(),
   "quoteId" TEXT NOT NULL,

@@ -844,6 +844,7 @@ export async function insertEmployeeJob(
   client: SupabaseClient<Database>,
   job: {
     id: string;
+    companyId: number;
     locationId: string;
   }
 ) {

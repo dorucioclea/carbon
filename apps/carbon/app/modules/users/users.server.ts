@@ -25,10 +25,12 @@ import { error, success } from "~/utils/result";
 
 export async function addUserToCompany(
   client: SupabaseClient<Database>,
-  userId: string,
-  companyId: number
+  userToCompany: {
+    userId: string;
+    companyId: number;
+  }
 ) {
-  return client.from("userToCompany").insert({ companyId, userId });
+  return client.from("userToCompany").insert(userToCompany);
 }
 
 export async function createCustomerAccount(

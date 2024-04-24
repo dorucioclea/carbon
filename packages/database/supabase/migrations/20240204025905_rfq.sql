@@ -11,6 +11,7 @@ CREATE TABLE "requestForQuote" (
   "expirationDate" DATE,
   "locationId" TEXT,
   "customFields" JSONB,
+  "companyId" INTEGER NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT now(),
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT now(),
@@ -18,11 +19,13 @@ CREATE TABLE "requestForQuote" (
 
   CONSTRAINT "requestForQuote_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "requestForQuote_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "location"("id"),
+  CONSTRAINT "requestForQuote_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "requestForQuote_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "requestForQuote_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-CREATE INDEX "requestForQuote_locationId_idx" ON "requestForQuote" ("locationId");
+CREATE INDEX "requestForQuote_companyId_idx" ON "requestForQuote" ("companyId");
+CREATE INDEX "requestForQuote_locationId_idx" ON "requestForQuote" ("locationId", "companyId");
 
 CREATE TABLE "requestForQuoteLine" (
   "id" TEXT NOT NULL DEFAULT xid(),
@@ -100,6 +103,7 @@ CREATE TABLE "requestForQuoteSupplierLine" (
   CONSTRAINT "requestForQuoteSupplierLine_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
+
 CREATE TABLE "requestForQuoteFavorite" (
   "requestForQuoteId" TEXT NOT NULL,
   "userId" TEXT NOT NULL,
@@ -140,6 +144,7 @@ CREATE OR REPLACE VIEW "requestForQuotes" WITH(SECURITY_INVOKER=true) AS
   r."expirationDate",
   r."locationId",
   r."customFields",
+  r."companyId",
   r."createdAt",
   r."createdBy",
   uc."fullName" AS "createdByFullName",

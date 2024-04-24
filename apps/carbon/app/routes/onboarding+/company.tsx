@@ -138,9 +138,13 @@ export async function action({ request }: ActionFunctionArgs) {
     }
 
     const [userToCompany, job] = await Promise.all([
-      addUserToCompany(supabaseClient, userId, companyId),
+      addUserToCompany(supabaseClient, {
+        userId,
+        companyId,
+      }),
       insertEmployeeJob(supabaseClient, {
         id: userId,
+        companyId,
         locationId,
       }),
     ]);

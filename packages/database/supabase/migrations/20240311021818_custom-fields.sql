@@ -33,8 +33,7 @@ ALTER TABLE "customFieldTable" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees can view custom field tables" ON "customFieldTable"
   FOR SELECT
   USING (
-    auth.role() = 'authenticated' 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee')
   );
 
 CREATE TABLE "customField" (
@@ -45,15 +44,17 @@ CREATE TABLE "customField" (
   "dataTypeId" INTEGER NOT NULL,
   "listOptions" TEXT ARRAY,
   "active" BOOLEAN DEFAULT TRUE,
+  "companyId" INTEGER NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
 
   CONSTRAINT "customField_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "customField_customFieldTableId_name_key" UNIQUE ("customFieldTableId", "name"),
+  CONSTRAINT "customField_customFieldTableId_name_key" UNIQUE ("customFieldTableId", "name", "companyId"),
   CONSTRAINT "customField_customFieldTableId_fkey" FOREIGN KEY ("customFieldTableId") REFERENCES "customFieldTable"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "customField_dataTypeId_fkey" FOREIGN KEY ("dataTypeId") REFERENCES "attributeDataType"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "customField_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "customField_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE,
   CONSTRAINT "customField_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE
 );
@@ -63,29 +64,28 @@ ALTER TABLE "customField" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees can view custom fields" ON "customField"
   FOR SELECT
   USING (
-    auth.role() = 'authenticated' 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee')
   );
 
 CREATE POLICY "Employees with settings_create can insert custom fields" ON "customField"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('settings_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('settings_create', "companyId")
   );
 
 CREATE POLICY "Employees with settings_update can update custom fields" ON "customField"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('settings_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('settings_update', "companyId")
   );
 
 CREATE POLICY "Employees with settings_delete can delete custom fields" ON "customField"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('settings_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('settings_delete', "companyId")
   );
 
 CREATE OR REPLACE VIEW "customFieldTables" WITH(SECURITY_INVOKER=true) AS
@@ -94,10 +94,13 @@ SELECT
   cft.module,
   cft.table,
   cft.name,
+  cf."companyId",
   cf.fields
 FROM "customFieldTable" cft
 LEFT JOIN (
-  SELECT cf."customFieldTableId", 
+  SELECT 
+    cf."customFieldTableId",
+    cf."companyId",
     COALESCE(json_agg(
       json_build_object(
         'id', id, 
@@ -109,6 +112,6 @@ LEFT JOIN (
       )
     ), '[]') AS fields 
   FROM "customField" cf
-  GROUP BY cf."customFieldTableId"
+  GROUP BY cf."customFieldTableId", cf."companyId"
 ) cf
 ON cf."customFieldTableId" = cft.id;

@@ -5,6 +5,7 @@ CREATE OR REPLACE VIEW "employeeSummary" WITH(SECURITY_INVOKER=true) AS
     u."avatarUrl",
     ej.title,
     ej."startDate",
+    ej."companyId",
     d.name AS "departmentName",
     l.name AS "locationName",
     m."fullName" AS "managerName"

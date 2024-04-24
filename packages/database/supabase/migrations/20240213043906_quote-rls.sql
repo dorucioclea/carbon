@@ -3,50 +3,60 @@ ALTER TABLE "quote" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees with sales_view can view quotes" ON "quote"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('sales_view')::boolean, false) = true
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+    has_role('employee') AND
+    has_company_permission('sales_view', "companyId")
+  );
 
 CREATE POLICY "Customers with sales_view can their own quotes" ON "quote"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('sales_view')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
-    AND "customerId" IN (
+    has_role('customer') AND
+    has_company_permission('sales_view', "companyId") AND
+    "customerId" IN (
       SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
     )
   );
 
 CREATE POLICY "Employees with sales_create can create quotes" ON "quote"
   FOR INSERT
-  WITH CHECK (coalesce(get_my_claim('sales_create')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  WITH CHECK (
+    has_role('employee') AND
+    has_company_permission('sales_create', "companyId")
+  );
 
 
 CREATE POLICY "Employees with sales_update can update quotes" ON "quote"
   FOR UPDATE
-  USING (coalesce(get_my_claim('sales_update')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_update', "companyId")
+  );
 
 CREATE POLICY "Customers with sales_update can their own quotes" ON "quote"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('sales_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
-    AND "customerId" IN (
+    has_role('employee') AND
+    has_company_permission('sales_update', "companyId") AND
+    "customerId" IN (
       SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
     )
   );
 
 CREATE POLICY "Employees with sales_delete can delete quotes" ON "quote"
   FOR DELETE
-  USING (coalesce(get_my_claim('sales_delete')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_delete', "companyId")
+  );
 
 
 CREATE POLICY "Customers with sales_view can search for their own quotes" ON "search"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('sales_view')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"customer"'::jsonb
-    AND entity = 'Quotation' 
-    AND uuid IN (
+    has_role('customer') AND
+    has_company_permission('sales_view', "companyId") AND
+    entity = 'Quotation'  AND
+    uuid IN (
         SELECT id FROM "quote" WHERE "customerId" IN (
           SELECT "customerId" FROM "quote" WHERE "customerId" IN (
             SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
@@ -61,14 +71,17 @@ ALTER TABLE "quoteLine" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Employees with sales_view can view quote lines" ON "quoteLine"
   FOR SELECT
-  USING (coalesce(get_my_claim('sales_view')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_view', "companyId")
+  );
 
 CREATE POLICY "Customers with sales_view can their own quote lines" ON "quoteLine"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('sales_view')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
-    AND "quoteId" IN (
+    has_role('customer') AND
+    has_company_permission('sales_view', "companyId") AND
+    "quoteId" IN (
       SELECT id FROM "quote" WHERE "customerId" IN (
         SELECT "customerId" FROM "quote" WHERE "customerId" IN (
           SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
@@ -79,14 +92,17 @@ CREATE POLICY "Customers with sales_view can their own quote lines" ON "quoteLin
 
 CREATE POLICY "Employees with sales_create can create quote lines" ON "quoteLine"
   FOR INSERT
-  WITH CHECK (coalesce(get_my_claim('sales_create')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  WITH CHECK (
+    has_role('employee') AND
+    has_company_permission('sales_create', "companyId")
+  );
 
 CREATE POLICY "Customers with sales_create can create lines on their own quote" ON "quoteLine"
   FOR INSERT
   WITH CHECK (
-    coalesce(get_my_claim('sales_create')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
-    AND "quoteId" IN (
+    has_role('customer') AND
+    has_company_permission('sales_create', "companyId") AND
+    "quoteId" IN (
       SELECT id FROM "quote" WHERE "customerId" IN (
         SELECT "customerId" FROM "quote" WHERE "customerId" IN (
           SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
@@ -97,14 +113,17 @@ CREATE POLICY "Customers with sales_create can create lines on their own quote" 
 
 CREATE POLICY "Employees with sales_update can update quote lines" ON "quoteLine"
   FOR UPDATE
-  USING (coalesce(get_my_claim('sales_update')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_update', "companyId")
+  );
 
 CREATE POLICY "Customers with sales_update can their own quote lines" ON "quoteLine"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('sales_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
-    AND "quoteId" IN (
+    has_role('customer') AND
+    has_company_permission('sales_update', "companyId") AND
+    "quoteId" IN (
       SELECT id FROM "quote" WHERE "customerId" IN (
         SELECT "customerId" FROM "quote" WHERE "customerId" IN (
           SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
@@ -115,14 +134,17 @@ CREATE POLICY "Customers with sales_update can their own quote lines" ON "quoteL
 
 CREATE POLICY "Employees with sales_delete can delete quote lines" ON "quoteLine"
   FOR DELETE
-  USING (coalesce(get_my_claim('sales_delete')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_delete', "companyId")
+  );
 
 CREATE POLICY "Customers with sales_delete can delete lines on their own quote" ON "quoteLine"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('sales_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
-    AND "quoteId" IN (
+    has_role('customer') AND
+    has_company_permission('sales_delete', "companyId") AND
+    "quoteId" IN (
       SELECT id FROM "quote" WHERE "customerId" IN (
         SELECT "customerId" FROM "quote" WHERE "customerId" IN (
           SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
@@ -131,14 +153,147 @@ CREATE POLICY "Customers with sales_delete can delete lines on their own quote" 
     )
   );
 
+ALTER TABLE "quoteAssembly" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Employees with sales_view can view quote assemblies" ON "quoteAssembly"
+  FOR SELECT
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_view', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+  );
+
+CREATE POLICY "Customers with sales_view can their own quote assemblies" ON "quoteAssembly"
+  FOR SELECT
+  USING (
+    has_role('customer') AND
+    has_company_permission('sales_view', (SELECT "companyId" FROM "quote" WHERE id = "quoteId")) AND
+    "quoteId" IN (
+      SELECT id FROM "quote" WHERE "customerId" IN (
+        SELECT "customerId" FROM "quote" WHERE "customerId" IN (
+          SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
+        )
+      )
+    )
+  );
+
+CREATE POLICY "Employees with sales_create can create quote assemblies" ON "quoteAssembly"
+  FOR INSERT
+  WITH CHECK (
+    has_role('employee') AND
+    has_company_permission('sales_create', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+  );
+
+CREATE POLICY "Employees with sales_update can update quote assemblies" ON "quoteAssembly"
+  FOR UPDATE
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_update', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+  );
+
+CREATE POLICY "Employees with sales_delete can delete quote assemblies" ON "quoteAssembly"
+  FOR DELETE
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_delete', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+  );
+
+ALTER TABLE "quoteOperation" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Employees with sales_view can view quote operations" ON "quoteOperation"
+  FOR SELECT
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_view', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+  );
+
+CREATE POLICY "Customers with sales_view can their own quote operations" ON "quoteOperation"
+  FOR SELECT
+  USING (
+    has_role('customer') AND
+    has_company_permission('sales_view', (SELECT "companyId" FROM "quote" WHERE id = "quoteId")) AND
+    "quoteId" IN (
+      SELECT id FROM "quote" WHERE "customerId" IN (
+        SELECT "customerId" FROM "quote" WHERE "customerId" IN (
+          SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
+        )
+      )
+    )
+  );
+
+CREATE POLICY "Employees with sales_create can create quote operations" ON "quoteOperation"
+  FOR INSERT
+  WITH CHECK (
+    has_role('employee') AND
+    has_company_permission('sales_create', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+  );
+
+CREATE POLICY "Employees with sales_update can update quote operations" ON "quoteOperation"
+  FOR UPDATE
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_update', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+  );
+
+CREATE POLICY "Employees with sales_delete can delete quote operations" ON "quoteOperation"
+  FOR DELETE
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_delete', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+  );
+
+ALTER TABLE "quoteMaterial" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Employees with sales_view can view quote materials" ON "quoteMaterial"
+  FOR SELECT
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_view', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+  );
+
+CREATE POLICY "Customers with sales_view can their own quote materials" ON "quoteMaterial"
+  FOR SELECT
+  USING (
+    has_role('customer') AND
+    has_company_permission('sales_view', (SELECT "companyId" FROM "quote" WHERE id = "quoteId")) AND
+    "quoteId" IN (
+      SELECT id FROM "quote" WHERE "customerId" IN (
+        SELECT "customerId" FROM "quote" WHERE "customerId" IN (
+          SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
+        )
+      )
+    )
+  );
+
+CREATE POLICY "Employees with sales_create can create quote materials" ON "quoteMaterial"
+  FOR INSERT
+  WITH CHECK (
+    has_role('employee') AND
+    has_company_permission('sales_create', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+  );
+
+CREATE POLICY "Employees with sales_update can update quote materials" ON "quoteMaterial"
+  FOR UPDATE
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_update', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+  );
+
+CREATE POLICY "Employees with sales_delete can delete quote materials" ON "quoteMaterial"
+  FOR DELETE
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_delete', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+  );
+
+
 
 -- Search
 
 CREATE FUNCTION public.create_quotation_search_result()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.search(name, description, entity, uuid, link)
-  VALUES (new."quoteId", new.name, 'Quotation', new.id, '/x/quote/' || new.id);
+  INSERT INTO public.search(name, description, entity, uuid, link, "companyId")
+  VALUES (new."quoteId", new.name, 'Quotation', new.id, '/x/quote/' || new.id, new."companyId");
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

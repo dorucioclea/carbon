@@ -2125,3 +2125,51 @@ export const fiscalYearSettings = {
   taxStartMonth: "January",
   updatedBy: "system",
 };
+
+export const integrations = [
+  {
+    id: "exchange-rates-v1",
+    title: "Exchange Rates",
+    description: "Pulls currency rates from exchange rates API",
+    logoPath: "/integrations/exchange-rates.png",
+    jsonschema: {
+      type: "object",
+      properties: {
+        apiKey: {
+          type: "string",
+        },
+      },
+      required: ["apiKey"],
+    },
+  },
+  {
+    id: "resend",
+    title: "Resend Emails",
+    description: "Sends Transactional Emails with Resend API",
+    logoPath: "/integrations/resend.png",
+    jsonschema: {
+      type: "object",
+      properties: {
+        apiKey: {
+          type: "string",
+        },
+      },
+      required: ["apiKey"],
+    },
+  },
+  // {
+  //   id: 'google-places-v2',
+  //   title: 'Google Places',
+  //   description: 'Autocomplete addresses with Google Places API',
+  //   logoPath: '/integrations/google-places.png',
+  //   jsonschema: {
+  //     type: 'object',
+  //     properties: {
+  //       apiKey: {
+  //         type: 'string',
+  //       },
+  //     },
+  //     required: ['apiKey'],
+  //   },
+  // },
+];

@@ -10,6 +10,7 @@ CREATE TABLE integration (
   "visible" BOOLEAN NOT NULL DEFAULT TRUE,
   "jsonschema" JSON NOT NULL,
   "metadata" JSON NOT NULL DEFAULT '{}',
+  "companyId" INTEGER NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
 
@@ -23,64 +24,13 @@ CREATE TABLE integration (
 
 CREATE POLICY "Employees with settings_view can view integrations." ON "integration"
   FOR SELECT USING (
-    coalesce(get_my_claim('settings_view')::boolean,false) AND 
-    (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('settings_view', "companyId")
   );
 
 CREATE POLICY "Employees with settings_update can update integrations." ON "integration"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('settings_update')::boolean,false) AND 
-    (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('settings_update', "companyId")
   );
-
-INSERT INTO "integration" ("id", "title", "description", "logoPath", "jsonschema") 
-VALUES (
-  'exchange-rates-v1', 
-  'Exchange Rates',
-  'Pulls currency rates from exchange rates API',
-  '/integrations/exchange-rates.png',
-  '{
-    "type": "object",
-    "properties": {
-      "apiKey": {
-        "type": "string"
-      }
-    },
-    "required": [
-      "apiKey"
-    ]
-  }'::json),
-  (
-  'resend', 
-  'Resend Emails',
-  'Sends Transactional Emails with Resend API',
-  '/integrations/resend.png',
-  '{
-    "type": "object",
-    "properties": {
-      "apiKey": {
-        "type": "string"
-      }
-    },
-    "required": [
-      "apiKey"
-    ]
-  }'::json);
-  -- (
-  -- 'google-places-v2', 
-  -- 'Google Places',
-  -- 'Autocomplete addresses with Google Places API',
-  -- '/integrations/google-places.png',
-  -- '{
-  --   "type": "object",
-  --   "properties": {
-  --     "apiKey": {
-  --       "type": "string"
-  --     }
-  --   },
-  --   "required": [
-  --     "apiKey"
-  --   ]
-  -- }'::json);
-

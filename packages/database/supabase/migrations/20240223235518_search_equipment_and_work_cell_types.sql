@@ -4,8 +4,8 @@
 CREATE FUNCTION public.create_work_cell_type_search_result()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.search(name, description, entity, uuid, link)
-  VALUES (new.name, COALESCE(new.description, ''), 'Resource', new.id, '/x/resources/work-cells/' || new.id);
+  INSERT INTO public.search(name, description, entity, uuid, link, "companyId")
+  VALUES (new.name, COALESCE(new.description, ''), 'Resource', new.id, '/x/resources/work-cells/' || new.id, new."companyId");
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -46,8 +46,8 @@ CREATE TRIGGER delete_work_cell_type_search_result
 CREATE FUNCTION public.create_equipment_type_search_result()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.search(name, description, entity, uuid, link)
-  VALUES (new.name,COALESCE(new.description, ''), 'Resource', new.id, '/x/resources/equipment/' || new.id);
+  INSERT INTO public.search(name, description, entity, uuid, link, "companyId")
+  VALUES (new.name,COALESCE(new.description, ''), 'Resource', new.id, '/x/resources/equipment/' || new.id, new."companyId");
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

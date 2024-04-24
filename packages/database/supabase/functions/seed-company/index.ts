@@ -9,6 +9,7 @@ import {
   currencies,
   customerStatuses,
   fiscalYearSettings,
+  integrations,
   paymentTerms,
   postingGroupInventory,
   postingGroupPurchasing,
@@ -133,6 +134,11 @@ serve(async (req: Request) => {
       await trx
         .insertInto("fiscalYearSettings")
         .values([{ ...fiscalYearSettings, companyId }])
+        .execute();
+
+      await trx
+        .insertInto("integration")
+        .values(integrations.map((i) => ({ ...i, companyId })))
         .execute();
     });
 
