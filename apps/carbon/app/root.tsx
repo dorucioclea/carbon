@@ -41,14 +41,7 @@ export function links() {
 export const meta: MetaFunction = () => {
   return [
     {
-      charset: "utf-8",
-    },
-    {
       title: "Carbon ERP",
-    },
-    {
-      name: "viewport",
-      content: "width=device-width",
     },
   ];
 };
@@ -111,6 +104,8 @@ function Document({
   return (
     <html lang="en" className={`${mode} h-full overflow-x-hidden`}>
       <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <title>{title}</title>
         <Links />
