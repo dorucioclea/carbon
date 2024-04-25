@@ -26,9 +26,6 @@
     },
     "dev": {
       "dependsOn": ["^build"],
-      "cache": false
-    },
-    "carbon#dev": {
       "cache": false,
       "persistent": true
     },
