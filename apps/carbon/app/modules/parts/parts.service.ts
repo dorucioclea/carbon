@@ -353,6 +353,7 @@ export async function upsertPart(
   client: SupabaseClient<Database>,
   part:
     | (z.infer<typeof partValidator> & {
+        companyId: number;
         createdBy: string;
         customFields?: Json;
       })
@@ -437,7 +438,7 @@ export async function upsertPartPlanning(
       })
 ) {
   if ("createdBy" in partPlanning) {
-    return client.from("partPlanning").insert({ ...partPlanning, companyId });
+    return client.from("partPlanning").insert(partPlanning);
   }
   return client
     .from("partPlanning")

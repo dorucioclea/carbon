@@ -152,6 +152,7 @@ CREATE TABLE "part" (
   "approvedBy" TEXT,
   "fromDate" DATE,
   "toDate" DATE,
+  "assignee" TEXT,
   "companyId" INTEGER NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
@@ -161,8 +162,9 @@ CREATE TABLE "part" (
 
   CONSTRAINT "part_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "part_unitOfMeasureCode_fkey" FOREIGN KEY ("unitOfMeasureCode", "companyId") REFERENCES "unitOfMeasure"("code", "companyId") ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT "part_partGroupId_fkey" FOREIGN KEY ("partGroupId") REFERENCES "partGroup"("id"),
+  CONSTRAINT "part_partGroupId_fkey" FOREIGN KEY ("partGroupId") REFERENCES "partGroup"("id") ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT "part_approvedBy_fkey" FOREIGN KEY ("approvedBy") REFERENCES "user"("id"),
+  CONSTRAINT "part_assignee_fkey" FOREIGN KEY ("assignee") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL,
   CONSTRAINT "part_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "part_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id"),
   CONSTRAINT "part_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id")
@@ -208,11 +210,11 @@ CREATE POLICY "Employees with parts_delete can delete parts" ON "part"
     has_company_permission('parts_delete', "companyId")
   );
 
-CREATE FUNCTION public.create_part_search_result()
+CREATE OR REPLACE FUNCTION public.create_part_search_result()
 RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO public.search(name, description, entity, uuid, link, "companyId")
-  VALUES (new.id, new.id || ' ' || new.name || ' ' || COALESCE(new.description, ''), 'Part', new.id, '/x/part/' || new.id, new."companyId");
+  VALUES (new.id, new.name || ' ' || COALESCE(new.description, ''), 'Part', new.id, '/x/part/' || new.id, new."companyId");
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -225,28 +227,29 @@ CREATE FUNCTION public.create_part_related_records()
 RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO public."partCost"("partId", "costingMethod", "createdBy", "companyId")
-  VALUES (new.id, 'Standard', new."createdBy", new."companyId");
+  VALUES (new.id, 'FIFO', new."createdBy", new."companyId");
 
-  INSERT INTO public."partReplenishment"("partId", "companyId", "createdBy", "companyId")
-  VALUES (new.id, new."companyId", new."createdBy", new."companyId");
+  INSERT INTO public."partReplenishment"("partId", "createdBy", "companyId")
+  VALUES (new.id, new."createdBy", new."companyId");
 
-  INSERT INTO public."partUnitSalePrice"("partId", "companyId", "currencyCode", "createdBy", "companyId")
+  INSERT INTO public."partUnitSalePrice"("partId", "currencyCode", "createdBy", "companyId")
   -- TODO: get default currency
-  VALUES (new.id, new."companyId", 'USD', new."createdBy", new."companyId");
+  VALUES (new.id, 'USD', new."createdBy", new."companyId");
   
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+
 CREATE TRIGGER create_part_related_records
   AFTER INSERT on public.part
   FOR EACH ROW EXECUTE PROCEDURE public.create_part_related_records();
 
-CREATE FUNCTION public.update_part_search_result()
+CREATE OR REPLACE FUNCTION public.update_part_search_result()
 RETURNS TRIGGER AS $$
 BEGIN
   IF (old.name <> new.name OR old.description <> new.description) THEN
-    UPDATE public.search SET name = new.name, description = new.id || ' ' || new.name || ' ' || COALESCE(new.description, '')
+    UPDATE public.search SET name = new.id, description = new.name || ' ' || COALESCE(new.description, '')
     WHERE entity = 'Part' AND uuid = new.id;
   END IF;
   RETURN new;
@@ -368,7 +371,7 @@ CREATE TABLE "partSupplier" (
   CONSTRAINT "partSupplier_id_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "partSupplier_partId_fkey" FOREIGN KEY ("partId") REFERENCES "part"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "partSupplier_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "supplier"("id") ON DELETE CASCADE,
-  CONSTRAINT "partSupplier_part_supplier_unique" UNIQUE ("partId", "supplierId"),
+  CONSTRAINT "partSupplier_part_supplier_unique" UNIQUE ("partId", "supplierId", "companyId"),
   CONSTRAINT "partSupplier_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "partSupplier_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id"),
   CONSTRAINT "partSupplier_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id")
@@ -611,7 +614,7 @@ CREATE TABLE "warehouse" (
   "updatedAt" TIMESTAMP WITH TIME ZONE,
 
   CONSTRAINT "warehouse_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "warehouse_name_key" UNIQUE ("name"),
+  CONSTRAINT "warehouse_name_key" UNIQUE ("name", "companyId"),
   CONSTRAINT "warehouse_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "location"("id"),
   CONSTRAINT "warehouse_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id"),
   CONSTRAINT "warehouse_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id"),

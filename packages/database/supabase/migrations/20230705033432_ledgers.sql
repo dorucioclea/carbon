@@ -206,6 +206,9 @@ CREATE TABLE "costLedger" (
   CONSTRAINT "costLedger_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE INDEX "costLedger_partId_idx" ON "costLedger" ("partId");
+CREATE INDEX "costLedger_companyId_idx" ON "costLedger" ("companyId");
+
 ALTER TABLE "costLedger" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Employees with accounting_view can view the value ledger" ON "costLedger"

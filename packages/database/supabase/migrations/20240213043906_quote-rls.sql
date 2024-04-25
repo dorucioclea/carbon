@@ -302,11 +302,11 @@ CREATE TRIGGER create_quotation_search_result
   AFTER INSERT on public."quote"
   FOR EACH ROW EXECUTE PROCEDURE public.create_quotation_search_result();
 
-CREATE FUNCTION public.update_quotation_search_result()
+CREATE OR REPLACE FUNCTION public.update_quotation_search_result()
 RETURNS TRIGGER AS $$
 BEGIN
   IF (old."quoteId" <> new."quoteId" OR old."name" <> new."name") THEN
-    UPDATE public.search SET name = new."quoteId", description = new.description
+    UPDATE public.search SET name = new."quoteId", description = new.name
     WHERE entity = 'Quotation' AND uuid = new.id;
   END IF;
   RETURN new;

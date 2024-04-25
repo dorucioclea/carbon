@@ -29,6 +29,7 @@ CREATE TABLE "receipt" (
   "status" "receiptStatus" NOT NULL DEFAULT 'Draft',
   "postingDate" DATE,
   "invoiced" BOOLEAN DEFAULT FALSE,
+  "assignee" TEXT,
   "companyId" INTEGER NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "createdBy" TEXT NOT NULL,
@@ -37,9 +38,10 @@ CREATE TABLE "receipt" (
   "customFields" JSONB,
 
   CONSTRAINT "receipt_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "receipt_receiptId_key" UNIQUE ("receiptId"),
+  CONSTRAINT "receipt_receiptId_key" UNIQUE ("receiptId", "companyId"),
   CONSTRAINT "receipt_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "location" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT "receipt_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "supplier" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "receipt_assignee_fkey" FOREIGN KEY ("assignee") REFERENCES "user" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT "receipt_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "receipt_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "receipt_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE

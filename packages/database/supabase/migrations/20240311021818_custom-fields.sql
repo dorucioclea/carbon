@@ -20,9 +20,11 @@ CREATE TABLE "customFieldTable" (
   "module" module NOT NULL,
   "table" TEXT NOT NULL,
   "name" TEXT NOT NULL,
+  "companyId" INTEGER NOT NULL,
 
   CONSTRAINT "customFieldTable_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "customFieldTable_module_table_name_key" UNIQUE ("module", "table", "name")
+  CONSTRAINT "customFieldTable_module_table_name_key" UNIQUE ("module", "table", "name", "companyId"),
+  CONSTRAINT "customFieldTable_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE INDEX "customFieldTable_module_idx" ON "customFieldTable" ("module");

@@ -3118,24 +3118,35 @@ export type Database = {
       }
       customFieldTable: {
         Row: {
+          companyId: number
           id: string
           module: Database["public"]["Enums"]["module"]
           name: string
           table: string
         }
         Insert: {
+          companyId: number
           id?: string
           module: Database["public"]["Enums"]["module"]
           name: string
           table: string
         }
         Update: {
+          companyId?: number
           id?: string
           module?: Database["public"]["Enums"]["module"]
           name?: string
           table?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "customFieldTable_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       department: {
         Row: {
@@ -11290,6 +11301,7 @@ export type Database = {
           companyId: number
           createdAt: string
           createdBy: string
+          currencyCode: string
           customerContactId: string | null
           customerId: string
           customerLocationId: string | null
@@ -11312,6 +11324,7 @@ export type Database = {
           companyId: number
           createdAt?: string
           createdBy: string
+          currencyCode?: string
           customerContactId?: string | null
           customerId: string
           customerLocationId?: string | null
@@ -11334,6 +11347,7 @@ export type Database = {
           companyId?: number
           createdAt?: string
           createdBy?: string
+          currencyCode?: string
           customerContactId?: string | null
           customerId?: string
           customerLocationId?: string | null
@@ -11440,6 +11454,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "userDefaults"
             referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "salesOrder_currencyCode_fkey"
+            columns: ["currencyCode", "companyId"]
+            isOneToOne: false
+            referencedRelation: "currency"
+            referencedColumns: ["code", "companyId"]
           },
           {
             foreignKeyName: "salesOrder_customerContactId_fkey"
@@ -15925,10 +15946,19 @@ export type Database = {
       employees: {
         Row: {
           avatarUrl: string | null
+          companyId: number | null
           id: string | null
           name: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "employee_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       employeeSummary: {
         Row: {
@@ -17908,6 +17938,7 @@ export type Database = {
           createdBy: string | null
           createdByAvatar: string | null
           createdByFullName: string | null
+          currencyCode: string | null
           customerContactId: string | null
           customerId: string | null
           customerLocationId: string | null
@@ -18026,6 +18057,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "userDefaults"
             referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "salesOrder_currencyCode_fkey"
+            columns: ["currencyCode", "companyId"]
+            isOneToOne: false
+            referencedRelation: "currency"
+            referencedColumns: ["code", "companyId"]
           },
           {
             foreignKeyName: "salesOrder_customerContactId_fkey"

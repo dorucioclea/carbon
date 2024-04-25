@@ -15,10 +15,13 @@ CREATE TABLE "salesOrder" (
   "status" "salesOrderStatus" NOT NULL DEFAULT 'Draft',
   "orderDate" DATE NOT NULL DEFAULT CURRENT_DATE,
   "notes" TEXT,
+  "currencyCode" TEXT NOT NULL DEFAULT 'USD',
   "customerId" TEXT NOT NULL,
   "customerLocationId" TEXT,
   "customerContactId" TEXT,
   "customerReference" TEXT,
+  "quoteId" TEXT,
+  "assignee" TEXT,
   "companyId" INTEGER NOT NULL,
   "closedAt" DATE,
   "closedBy" TEXT,
@@ -27,21 +30,20 @@ CREATE TABLE "salesOrder" (
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
-  "quoteId" TEXT,
-  "assignee" TEXT,
 
 
   CONSTRAINT "salesOrder_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "salesOrder_salesOrderId_key" UNIQUE ("salesOrderId"),
+  CONSTRAINT "salesOrder_salesOrderId_key" UNIQUE ("salesOrderId", "companyId"),
   CONSTRAINT "salesOrder_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "customer" ("id") ON DELETE CASCADE,
+  CONSTRAINT "salesOrder_currencyCode_fkey" FOREIGN KEY ("currencyCode", "companyId") REFERENCES "currency" ("code", "companyId") ON DELETE RESTRICT,
   CONSTRAINT "salesOrder_customerLocationId_fkey" FOREIGN KEY ("customerLocationId") REFERENCES "customerLocation" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "salesOrder_customerContactId_fkey" FOREIGN KEY ("customerContactId") REFERENCES "customerContact" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "salesOrder_quoteId_fkey" FOREIGN KEY ("quoteId") REFERENCES "quote"("id") ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT "salesOrder_assignee_fkey" FOREIGN KEY ("assignee") REFERENCES "user" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT "salesOrder_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "salesOrder_closedBy_fkey" FOREIGN KEY ("closedBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "salesOrder_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
-  CONSTRAINT "salesOrder_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
-  CONSTRAINT "salesOrder_assignee_fkey" FOREIGN KEY ("assignee") REFERENCES "user" ("id") ON DELETE SET NULL
+  CONSTRAINT "salesOrder_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
 );
 
 CREATE INDEX "salesOrder_salesOrderId_idx" ON "salesOrder" ("salesOrderId", "companyId");
@@ -300,35 +302,39 @@ CREATE POLICY "Employees with sales_view, inventory_view, or invoicing_view can 
   FOR SELECT
   USING (
     (
-      coalesce(get_my_claim('sales_view')::boolean, false) = true OR
-      coalesce(get_my_claim('inventory_view')::boolean, false) = true OR
-      coalesce(get_my_claim('invoicing_view')::boolean, false) = true
-    ) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+      has_company_permission('sales_view', "companyId") OR
+      has_company_permission('invoicing_view', "companyId")
+    ) AND has_role('employee')
+  );
 
 CREATE POLICY "Customers with sales_view can their own sales orders" ON "salesOrder"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('sales_view')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
-    AND "customerId" IN (
+    has_role('customer') AND
+    has_company_permission('sales_view', "companyId") AND
+    "customerId" IN (
       SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
     )
   );
 
 CREATE POLICY "Employees with sales_create can create sales orders" ON "salesOrder"
   FOR INSERT
-  WITH CHECK (coalesce(get_my_claim('sales_create')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  WITH CHECK (
+    has_company_permission('sales_create', "companyId") AND has_role('employee')
+  );
 
 
 CREATE POLICY "Employees with sales_update can update sales orders" ON "salesOrder"
   FOR UPDATE
-  USING (coalesce(get_my_claim('sales_update')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (
+    has_company_permission('sales_update', "companyId") AND has_role('employee')
+  );
 
 CREATE POLICY "Customers with sales_update can update their own sales orders" ON "salesOrder"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('sales_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
+    has_role('customer') AND
+    has_company_permission('sales_update', "companyId")
     AND "customerId" IN (
       SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
     )
@@ -336,16 +342,18 @@ CREATE POLICY "Customers with sales_update can update their own sales orders" ON
 
 CREATE POLICY "Employees with sales_delete can delete sales orders" ON "salesOrder"
   FOR DELETE
-  USING (coalesce(get_my_claim('sales_delete')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (
+    has_company_permission('sales_delete', "companyId") AND has_role('employee')
+  );
 
 
 CREATE POLICY "Customers with sales_view can search for their own sales orders" ON "search"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('sales_view')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"customer"'::jsonb
-    AND entity = 'Sales Order' 
-    AND uuid IN (
+    has_role('customer') AND
+    has_company_permission('sales_view', "companyId") AND
+    entity = 'Sales Order' AND
+    uuid IN (
         SELECT id FROM "salesOrder" WHERE "customerId" IN (
           SELECT "customerId" FROM "salesOrder" WHERE "customerId" IN (
             SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
@@ -359,8 +367,8 @@ CREATE POLICY "Customers with sales_view can search for their own sales orders" 
 CREATE FUNCTION public.create_sales_order_search_result()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.search(name, entity, uuid, link)
-  VALUES (new."salesOrderId", 'Sales Order', new.id, '/x/sales-order/' || new.id);
+  INSERT INTO public.search(name, entity, uuid, link, "companyId")
+  VALUES (new."salesOrderId", 'Sales Order', new.id, '/x/sales-order/' || new.id, new."companyId");
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -403,7 +411,9 @@ ALTER TABLE "salesOrderStatusHistory" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Anyone with sales_view can view sales order status history" ON "salesOrderStatusHistory"
   FOR SELECT
-  USING (coalesce(get_my_claim('sales_view')::boolean, false) = true);
+  USING (
+    has_company_permission('sales_view', (SELECT "companyId" FROM "salesOrder" WHERE id = "salesOrderId")) AND has_role('employee')
+  );
 
 -- Sales Order Lines
 
@@ -411,14 +421,17 @@ ALTER TABLE "salesOrderLine" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Employees with sales_view can view sales order lines" ON "salesOrderLine"
   FOR SELECT
-  USING (coalesce(get_my_claim('sales_view')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_view', "companyId")
+  );
 
 CREATE POLICY "Customers with sales_view can their own sales order lines" ON "salesOrderLine"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('sales_view')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
-    AND "salesOrderId" IN (
+    has_role('customer') AND
+    has_company_permission('sales_view', "companyId") AND
+    "salesOrderId" IN (
       SELECT id FROM "salesOrder" WHERE "customerId" IN (
         SELECT "customerId" FROM "salesOrder" WHERE "customerId" IN (
           SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
@@ -429,14 +442,17 @@ CREATE POLICY "Customers with sales_view can their own sales order lines" ON "sa
 
 CREATE POLICY "Employees with sales_create can create sales order lines" ON "salesOrderLine"
   FOR INSERT
-  WITH CHECK (coalesce(get_my_claim('sales_create')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  WITH CHECK (
+    has_role('employee') AND
+    has_company_permission('sales_create', "companyId")
+  );
 
 CREATE POLICY "Customers with sales_create can create lines on their own sales order" ON "salesOrderLine"
   FOR INSERT
   WITH CHECK (
-    coalesce(get_my_claim('sales_create')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
-    AND "salesOrderId" IN (
+    has_role('customer') AND
+    has_company_permission('sales_create', "companyId") AND
+    "salesOrderId" IN (
       SELECT id FROM "salesOrder" WHERE "customerId" IN (
         SELECT "customerId" FROM "salesOrder" WHERE "customerId" IN (
           SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
@@ -447,14 +463,17 @@ CREATE POLICY "Customers with sales_create can create lines on their own sales o
 
 CREATE POLICY "Employees with sales_update can update sales order lines" ON "salesOrderLine"
   FOR UPDATE
-  USING (coalesce(get_my_claim('sales_update')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_update', "companyId")
+  );
 
 CREATE POLICY "Customers with sales_update can update their own sales order lines" ON "salesOrderLine"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('sales_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
-    AND "salesOrderId" IN (
+    has_role('customer') AND
+    has_company_permission('sales_update', "companyId") AND
+    "salesOrderId" IN (
       SELECT id FROM "salesOrder" WHERE "customerId" IN (
         SELECT "customerId" FROM "salesOrder" WHERE "customerId" IN (
           SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
@@ -465,14 +484,17 @@ CREATE POLICY "Customers with sales_update can update their own sales order line
 
 CREATE POLICY "Employees with sales_delete can delete sales order lines" ON "salesOrderLine"
   FOR DELETE
-  USING (coalesce(get_my_claim('sales_delete')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_delete', "companyId")
+  );
 
 CREATE POLICY "Customers with sales_delete can delete lines on their own sales order" ON "salesOrderLine"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('sales_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
-    AND "salesOrderId" IN (
+    has_role('customer') AND
+    has_company_permission('sales_delete', "companyId") AND
+    "salesOrderId" IN (
       SELECT id FROM "salesOrder" WHERE "customerId" IN (
         SELECT "customerId" FROM "salesOrder" WHERE "customerId" IN (
           SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
@@ -488,14 +510,17 @@ ALTER TABLE "salesOrderShipment" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Employees with sales_view can view sales order shipments" ON "salesOrderShipment"
   FOR SELECT
-  USING (coalesce(get_my_claim('sales_view')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_view', "companyId")
+  );
 
 CREATE POLICY "Customers with sales_view can their own sales order shipments" ON "salesOrderShipment"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('sales_view')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
-    AND id IN (
+    has_role('customer') AND
+    has_company_permission('sales_view', "companyId") AND
+    id IN (
       SELECT id FROM "salesOrder" WHERE "customerId" IN (
         SELECT "customerId" FROM "salesOrder" WHERE "customerId" IN (
           SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
@@ -506,18 +531,24 @@ CREATE POLICY "Customers with sales_view can their own sales order shipments" ON
 
 CREATE POLICY "Employees with sales_create can create sales order shipments" ON "salesOrderShipment"
   FOR INSERT
-  WITH CHECK (coalesce(get_my_claim('sales_create')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  WITH CHECK (
+    has_role('employee') AND
+    has_company_permission('sales_create', "companyId")
+  );
 
 CREATE POLICY "Employees with sales_update can update sales order shipments" ON "salesOrderShipment"
   FOR UPDATE
-  USING (coalesce(get_my_claim('sales_update')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_update', "companyId")
+  );
 
 CREATE POLICY "Customers with sales_update can their own sales order shipments" ON "salesOrderShipment"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('sales_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"customer"'::jsonb 
-    AND id IN (
+    has_role('customer') AND
+    has_company_permission('sales_update', "companyId") AND
+    id IN (
       SELECT id FROM "salesOrder" WHERE "customerId" IN (
         SELECT "customerId" FROM "salesOrder" WHERE "customerId" IN (
           SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
@@ -528,7 +559,10 @@ CREATE POLICY "Customers with sales_update can their own sales order shipments" 
 
 CREATE POLICY "Employees with sales_delete can delete sales order shipments" ON "salesOrderShipment"
   FOR DELETE
-  USING (coalesce(get_my_claim('sales_delete')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_delete', "companyId")
+  );
 
 
 -- Sales Order Payments
@@ -537,19 +571,31 @@ ALTER TABLE "salesOrderPayment" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Employees with sales_view can view sales order payments" ON "salesOrderPayment"
   FOR SELECT
-  USING (coalesce(get_my_claim('sales_view')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_view', "companyId")
+  );
 
 CREATE POLICY "Employees with sales_create can create sales order payments" ON "salesOrderPayment"
   FOR INSERT
-  WITH CHECK (coalesce(get_my_claim('sales_create')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  WITH CHECK (
+    has_role('employee') AND
+    has_company_permission('sales_create', "companyId")
+  );
 
 CREATE POLICY "Employees with sales_update can update sales order payments" ON "salesOrderPayment"
   FOR UPDATE
-  USING (coalesce(get_my_claim('sales_update')::boolean,false) AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_update', "companyId")
+  );
 
 CREATE POLICY "Employees with sales_delete can delete sales order payments" ON "salesOrderPayment"
   FOR DELETE
-  USING (coalesce(get_my_claim('sales_delete')::boolean, false) = true AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_delete', "companyId")
+  );
 
 ALTER VIEW "salesOrders" SET (security_invoker = on);
 ALTER VIEW "salesOrderCustomers" SET (security_invoker = on);

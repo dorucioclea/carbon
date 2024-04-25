@@ -11,7 +11,7 @@ CREATE TABLE "holiday" (
   "customFields" JSONB,
 
   CONSTRAINT "holiday_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "uq_holiday_date" UNIQUE ("date"),
+  CONSTRAINT "uq_holiday_date" UNIQUE ("date", "companyId"),
   CONSTRAINT "holiday_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "holiday_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "holiday_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE

@@ -10,6 +10,7 @@ CREATE TABLE "requestForQuote" (
   "receiptDate" DATE NOT NULL,
   "expirationDate" DATE,
   "locationId" TEXT,
+  "assignee" TEXT,
   "customFields" JSONB,
   "companyId" INTEGER NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT now(),
@@ -19,6 +20,7 @@ CREATE TABLE "requestForQuote" (
 
   CONSTRAINT "requestForQuote_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "requestForQuote_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "location"("id"),
+  CONSTRAINT "requestForQuote_assignee_fkey" FOREIGN KEY ("assignee") REFERENCES "user"("id"),
   CONSTRAINT "requestForQuote_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "requestForQuote_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "requestForQuote_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE

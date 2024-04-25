@@ -46,6 +46,7 @@ const getUserId = async (): Promise<string> => {
 };
 
 async function seed() {
+  // TODO: this should all be moved to the migration or seed function
   const id = await getUserId();
 
   const upsertAdmin = await supabaseAdmin.from("user").upsert([

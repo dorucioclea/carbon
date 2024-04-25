@@ -107,7 +107,7 @@ CREATE TABLE "accountCategory" (
   "customFields" JSONB,
 
   CONSTRAINT "accountCategory_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "accountCategory_unique_category" UNIQUE ("category"),
+  CONSTRAINT "accountCategory_unique_category" UNIQUE ("category", "companyId"),
   CONSTRAINT "accountCategory_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id"),
   CONSTRAINT "accountCategory_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id"),
   CONSTRAINT "accountCategory_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id")
@@ -164,7 +164,7 @@ CREATE TABLE "accountSubcategory" (
   "customFields" JSONB,
 
   CONSTRAINT "accountSubcategory_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "accountSubcategory_name_key" UNIQUE ("name"),
+  CONSTRAINT "accountSubcategory_name_key" UNIQUE ("name", "accountCategoryId"),
   CONSTRAINT "accountSubcategory_accountCategoryId_fkey" FOREIGN KEY ("accountCategoryId") REFERENCES "accountCategory"("id"),
   CONSTRAINT "accountSubcategory_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id"),
   CONSTRAINT "accountSubcategory_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id")

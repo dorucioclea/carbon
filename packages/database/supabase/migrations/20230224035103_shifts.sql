@@ -18,7 +18,8 @@ CREATE TABLE "location" (
   "customFields" JSONB,
 
   CONSTRAINT "location_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "location_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT "location_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "location_name_unique" UNIQUE ("name", "companyId")
 );
 
 CREATE INDEX "location_name_idx" ON "location" ("name");

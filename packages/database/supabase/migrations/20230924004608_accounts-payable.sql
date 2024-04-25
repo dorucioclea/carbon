@@ -31,6 +31,7 @@ CREATE TABLE "purchaseInvoice" (
   "totalAmount" NUMERIC(10, 2) NOT NULL DEFAULT 0,
   "totalTax" NUMERIC(10, 2) NOT NULL DEFAULT 0,
   "balance" NUMERIC(10, 2) NOT NULL DEFAULT 0,
+  "assignee" TEXT,
   "companyId" INTEGER NOT NULL,
   "customFields" JSONB,
   "createdBy" TEXT NOT NULL,
@@ -45,6 +46,7 @@ CREATE TABLE "purchaseInvoice" (
   CONSTRAINT "purchaseInvoice_invoiceSupplierContactId_fkey" FOREIGN KEY ("invoiceSupplierContactId") REFERENCES "supplierContact" ("id"),
   CONSTRAINT "purchaseInvoice_paymentTermId_fkey" FOREIGN KEY ("paymentTermId") REFERENCES "paymentTerm" ("id"),
   CONSTRAINT "purchaseInvoice_currencyCode_fkey" FOREIGN KEY ("currencyCode", "companyId") REFERENCES "currency" ("code", "companyId"),
+  CONSTRAINT "purchaseInvoice_assignee_fkey" FOREIGN KEY ("assignee") REFERENCES "user" ("id") ON UPDATE CASCADE ON DELETE SET NULL,
   CONSTRAINT "purchaseInvoice_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "purchaseInvoice_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id"),
   CONSTRAINT "purchaseInvoice_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id")

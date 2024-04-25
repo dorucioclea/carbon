@@ -7,6 +7,7 @@ import {
   accountDefaults,
   accounts,
   currencies,
+  customFields,
   customerStatuses,
   fiscalYearSettings,
   integrations,
@@ -18,7 +19,6 @@ import {
   supplierStauses,
   unitOfMeasures,
 } from "../lib/seed.ts";
-import { getSupabaseServiceRole } from "../lib/supabase.ts";
 
 const pool = getConnectionPool(1);
 const db = getDatabaseClient<DB>(pool);
@@ -27,12 +27,12 @@ serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
-  const { id: companyId } = await req.json();
+  const { id } = await req.json();
 
   try {
-    if (!companyId) throw new Error("Payload is missing id");
+    if (!id) throw new Error("Payload is missing id");
+    const companyId = Number(id);
 
-    const client = getSupabaseServiceRole(req.headers.get("Authorization"));
     await db.transaction().execute(async (trx) => {
       // supplier status
       await trx
@@ -88,12 +88,16 @@ serve(async (req: Request) => {
       const accountCategoriesByName = accountCategoriesWithIds.reduce<
         Record<string, string>
       >((acc, { id, category }) => {
-        acc[category] = id;
+        if (id && category) {
+          acc[category] = id;
+        }
         return acc;
       }, {});
 
-      const getCategoryId = (category: string) =>
-        accountCategoriesByName[category];
+      const getCategoryId = (category: string | null) => {
+        if (!category) return null;
+        return accountCategoriesByName[category];
+      };
 
       await trx
         .insertInto("account")
@@ -101,7 +105,7 @@ serve(async (req: Request) => {
           accounts.map(({ accountCategory, ...a }) => ({
             ...a,
             companyId,
-            accountCategoryId: getCategoryId(a.category),
+            accountCategoryId: getCategoryId(accountCategory),
           }))
         )
         .execute();
@@ -139,6 +143,11 @@ serve(async (req: Request) => {
       await trx
         .insertInto("integration")
         .values(integrations.map((i) => ({ ...i, companyId })))
+        .execute();
+
+      await trx
+        .insertInto("customFieldTable")
+        .values(customFields.map((cf) => ({ ...cf, companyId })))
         .execute();
     });
 

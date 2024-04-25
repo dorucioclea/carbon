@@ -20,6 +20,8 @@ CREATE TABLE "quoteLinePrice" (
   CONSTRAINT "quoteLinePrice_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
+CREATE INDEX "quoteLinePrice_quoteId_idx" ON "quoteLinePrice" ("quoteId");
+
 CREATE OR REPLACE VIEW "quoteLines" WITH(SECURITY_INVOKER=true) AS (
   SELECT
     ql.*,
@@ -32,3 +34,33 @@ CREATE OR REPLACE VIEW "quoteLines" WITH(SECURITY_INVOKER=true) AS (
   FROM "quoteLine" ql
   LEFT JOIN "quoteLinePrice" qlp ON ql."id" = qlp."quoteLineId"
 );
+
+ALTER TABLE "quoteLinePrice" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Employees with sales_view can view quote line pricing" ON "quoteLinePrice"
+  FOR SELECT
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_view', (SELECT "companyId" FROM "quote" WHERE "id" = "quoteId"))
+  );
+
+CREATE POLICY "Employees with sales_create can insert quote line pricing" ON "quoteLinePrice"
+  FOR INSERT
+  WITH CHECK (
+    has_role('employee') AND
+    has_company_permission('sales_create', (SELECT "companyId" FROM "quote" WHERE "id" = "quoteId"))
+  );
+
+CREATE POLICY "Employees with sales_update can update quote line pricing" ON "quoteLinePrice"
+  FOR UPDATE
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_update', (SELECT "companyId" FROM "quote" WHERE "id" = "quoteId"))
+  );
+
+CREATE POLICY "Employees with sales_delete can delete quote line pricing" ON "quoteLinePrice"
+  FOR DELETE
+  USING (
+    has_role('employee') AND
+    has_company_permission('sales_delete', (SELECT "companyId" FROM "quote" WHERE "id" = "quoteId"))
+  );

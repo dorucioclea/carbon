@@ -89,7 +89,7 @@ CREATE TABLE "shippingMethod" (
   "customFields" JSONB,
 
   CONSTRAINT "shippingMethod_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "shippingMethod_name_key" UNIQUE ("name"),
+  CONSTRAINT "shippingMethod_name_key" UNIQUE ("name", "companyId"),
   CONSTRAINT "shippingMethod_carrierAccountId_fkey" FOREIGN KEY ("carrierAccountId", "companyId") REFERENCES "account" ("number", "companyId") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "shippingMethod_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "shippingMethod_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
@@ -145,7 +145,7 @@ CREATE TABLE "shippingTerm" (
   "updatedBy" TEXT,
 
   CONSTRAINT "shippingTerm_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "shippingTerm_name_key" UNIQUE ("name"),
+  CONSTRAINT "shippingTerm_name_key" UNIQUE ("name", "companyId"),
   CONSTRAINT "shippingTerm_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "shippingTerm_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "shippingTerm_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
@@ -216,6 +216,7 @@ CREATE TABLE "purchaseOrder" (
   "supplierLocationId" TEXT,
   "supplierContactId" TEXT,
   "supplierReference" TEXT,
+  "assignee" TEXT,
   "companyId" INTEGER NOT NULL,
   "closedAt" DATE,
   "closedBy" TEXT,
@@ -226,10 +227,11 @@ CREATE TABLE "purchaseOrder" (
   "updatedBy" TEXT,
 
   CONSTRAINT "purchaseOrder_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "purchaseOrder_purchaseOrderId_key" UNIQUE ("purchaseOrderId"),
+  CONSTRAINT "purchaseOrder_purchaseOrderId_key" UNIQUE ("purchaseOrderId", "companyId"),
   CONSTRAINT "purchaseOrder_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "supplier" ("id") ON DELETE CASCADE,
   CONSTRAINT "purchaseOrder_supplierLocationId_fkey" FOREIGN KEY ("supplierLocationId") REFERENCES "supplierLocation" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "purchaseOrder_supplierContactId_fkey" FOREIGN KEY ("supplierContactId") REFERENCES "supplierContact" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT "purchaseOrder_assignee_fkey" FOREIGN KEY ("assignee") REFERENCES "user" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT "purchaseOrder_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT "purchaseOrder_closedBy_fkey" FOREIGN KEY ("closedBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "purchaseOrder_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT,

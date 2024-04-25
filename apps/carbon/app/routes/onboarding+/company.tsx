@@ -119,13 +119,16 @@ export async function action({ request }: ActionFunctionArgs) {
       throw new Error("Fatal: failed to seed company");
     }
 
-    const locationInsert = await upsertLocation(supabaseClient, {
-      ...data,
-      name: "Headquarters",
-      companyId,
-      timezone: getLocalTimeZone(),
-      createdBy: userId,
-    });
+    // TODO: move all of this to transaction
+    const [locationInsert] = await Promise.all([
+      upsertLocation(supabaseClient, {
+        ...data,
+        name: "Headquarters",
+        companyId,
+        timezone: getLocalTimeZone(),
+        createdBy: userId,
+      }),
+    ]);
 
     if (locationInsert.error) {
       logger.error(locationInsert.error);
