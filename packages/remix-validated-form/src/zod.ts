@@ -15,7 +15,7 @@ const getIssuesForError = (err: z.ZodError<any>): z.ZodIssue[] => {
 };
 
 function pathToString(array: (string | number)[]): string {
-  return array.reduce(function (string: string, item: string | number) {
+  return array.reduce<string>(function (string: string, item: string | number) {
     const prefix = string === "" ? "" : ".";
     return string + (isNaN(Number(item)) ? prefix + item : "[" + item + "]");
   }, "");
