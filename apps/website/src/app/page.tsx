@@ -39,7 +39,7 @@ function Hero() {
             </Link>
           </Button>
         </p>
-        <h1 className="max-w-5xl mx-auto text-7xl font-semibold tracking-tighter leading-tighter sm:text-5xl lg:text-6xl xl:text-7xl">
+        <h1 className="max-w-5xl mx-auto text-5xl font-semibold tracking-tighter leading-tighter sm:text-6xl lg:text-7xl">
           <span className="dark:bg-clip-text dark:text-transparent dark:bg-gradient-to-b dark:from-white  dark:to-zinc-400">
             ERP for
           </span>{" "}
@@ -48,7 +48,7 @@ function Hero() {
           </span>
         </h1>
         <div className="max-w-xl mx-auto flex flex-col items-center text-center space-y-8">
-          <p className="text-2xl font-medium leading-tight text-foreground/60 sm:text-lg md:text-xl lg:text-2xl">
+          <p className="text-lg font-medium leading-tight text-foreground/60 md:text-xl lg:text-2xl">
             Powerful, modern and open, Carbon makes it easy to build the system
             your business needs.
           </p>
