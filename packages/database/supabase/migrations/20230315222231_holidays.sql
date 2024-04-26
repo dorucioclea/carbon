@@ -19,7 +19,7 @@ CREATE TABLE "holiday" (
 
 CREATE INDEX "holiday_companyId_idx" ON "holiday" ("companyId");
 
-CREATE OR REPLACE VIEW "holidayYears" AS SELECT DISTINCT "year" FROM "holiday";
+CREATE OR REPLACE VIEW "holidayYears" AS SELECT DISTINCT "year", "companyId" FROM "holiday";
 
 ALTER TABLE "holiday" ENABLE ROW LEVEL SECURITY;
 

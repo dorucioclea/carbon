@@ -33,11 +33,11 @@ export const handle: Handle = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client, userId } = await requirePermissions(request, {});
+  const { client, companyId, userId } = await requirePermissions(request, {});
 
   const [user, publicAttributes] = await Promise.all([
     getAccount(client, userId),
-    getPublicAttributes(client, userId),
+    getPublicAttributes(client, userId, companyId),
   ]);
 
   if (user.error || !user.data) {

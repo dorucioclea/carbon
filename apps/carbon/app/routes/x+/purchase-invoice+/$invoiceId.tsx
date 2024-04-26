@@ -22,7 +22,7 @@ export const handle: Handle = {
 };
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "parts",
   });
 
@@ -32,7 +32,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const [purchaseInvoice, purchaseInvoiceLines, locations] = await Promise.all([
     getPurchaseInvoice(client, invoiceId),
     getPurchaseInvoiceLines(client, invoiceId),
-    getLocationsList(client),
+    getLocationsList(client, companyId),
   ]);
 
   if (purchaseInvoice.error) {

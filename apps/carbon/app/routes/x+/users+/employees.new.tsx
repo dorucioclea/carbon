@@ -10,7 +10,7 @@ import { path } from "~/utils/path";
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     create: "users",
   });
 
@@ -28,6 +28,7 @@ export async function action({ request }: ActionFunctionArgs) {
     firstName,
     lastName,
     employeeType,
+    companyId,
   });
 
   throw redirect(path.to.employeeAccounts, await flash(request, result));

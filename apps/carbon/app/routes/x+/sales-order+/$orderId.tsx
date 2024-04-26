@@ -2,6 +2,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import { useEffect } from "react";
+import { getLocationsList } from "~/modules/resources";
 import {
   SalesOrderHeader,
   SalesOrderSidebar,
@@ -11,7 +12,6 @@ import {
   getSalesOrderLines,
   useSalesOrderTotals,
 } from "~/modules/sales";
-import { getLocationsList } from "~/modules/resources";
 import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";
@@ -24,7 +24,7 @@ export const handle: Handle = {
 };
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "sales",
   });
 
@@ -40,9 +40,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   ] = await Promise.all([
     getSalesOrder(client, orderId),
     getSalesOrderLines(client, orderId),
-    //getSalesOrderExternalDocuments(client, orderId),
-    //getSalesOrderInternalDocuments(client, orderId),
-    getLocationsList(client),
+    //getSalesOrderExternalDocuments(client, companyId, orderId),
+    //getSalesOrderInternalDocuments(client, companyId, orderId),
+    getLocationsList(client, companyId),
   ]);
 
   if (salesOrder.error) {
@@ -75,7 +75,7 @@ export default function SalesOrderRoute() {
   useEffect(() => {
     const totals = salesOrderLines.reduce(
       (acc, line) => {
-        acc.total += (line.salesQuantity ?? 0) * (line.unitPrice ?? 0);
+        acc.total += (line.saleQuantity ?? 0) * (line.unitPrice ?? 0);
 
         return acc;
       },

@@ -119,11 +119,13 @@ export async function createEmployeeAccount(
     firstName,
     lastName,
     employeeType,
+    companyId,
   }: {
     email: string;
     firstName: string;
     lastName: string;
     employeeType: string;
+    companyId: number;
   }
 ): Promise<Result> {
   const employeeTypePermissions = await getPermissionsByEmployeeType(
@@ -171,6 +173,7 @@ export async function createEmployeeAccount(
   const createEmployee = await insertEmployee(client, {
     id: insertUser.data[0].id,
     employeeTypeId: employeeType,
+    companyId,
   });
 
   if (createEmployee.error)

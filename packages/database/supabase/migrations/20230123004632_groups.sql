@@ -278,6 +278,7 @@ CREATE OR REPLACE FUNCTION groups_for_user(uid text) RETURNS TEXT[]
       SELECT g1."groupId", g1."memberGroupId", g1."memberUserId" FROM "membership" g1
       INNER JOIN "groupsForUser" g2 ON g2."groupId" = g1."memberGroupId"
     ) SELECT array_agg("groupId") INTO retval AS groups FROM "groupsForUser";
+    
     RETURN retval;
   END;
 $$;

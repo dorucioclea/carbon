@@ -99,10 +99,14 @@ export async function getIntegration(
     .single();
 }
 
-export async function getIntegrations(client: SupabaseClient<Database>) {
+export async function getIntegrations(
+  client: SupabaseClient<Database>,
+  companyId: number
+) {
   return client
     .from("integration")
     .select("*")
+    .eq("companyId", companyId)
     .eq("visible", true)
     .order("title");
 }

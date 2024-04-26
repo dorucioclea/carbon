@@ -13,22 +13,29 @@ export async function assign(
 ) {
   const { id, table, assignee } = args;
 
-  return client
-    .from(table)
-    .update({ assignee: assignee ? assignee : null })
-    .eq("id", id);
+  return (
+    client
+      // @ts-expect-error
+      .from(table)
+      .update({ assignee: assignee ? assignee : null })
+      .eq("id", id)
+  );
 }
 
-export async function getCustomFieldsCacheKey(args?: {
+export async function getCustomFieldsCacheKey(args: {
+  companyId?: number;
   module?: string;
   table?: string;
 }) {
-  return `customFields:${args?.module ?? ""}:${args?.table ?? ""}`;
+  return `customFields:${args?.companyId}:${args?.module ?? ""}:${
+    args?.table ?? ""
+  }`;
 }
 
 export async function getCustomFieldsSchemas(
   client: SupabaseClient<Database>,
-  args?: {
+  args: {
+    companyId: number;
     module?: string;
     table?: string;
   }
@@ -47,6 +54,10 @@ export async function getCustomFieldsSchemas(
     }
 
     const query = client.from("customFieldTables").select("*");
+
+    if (args?.companyId) {
+      query.eq("companyId", args.companyId);
+    }
 
     if (args?.module) {
       query.eq("module", args.module);

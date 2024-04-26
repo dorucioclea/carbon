@@ -20,7 +20,7 @@ export const handle: Handle = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "resources",
     role: "employee",
   });
@@ -32,7 +32,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getGenericQueryFilters(searchParams);
 
   const [categories, dataTypes] = await Promise.all([
-    getAttributeCategories(client, { search, limit, offset, sorts, filters }),
+    getAttributeCategories(client, companyId, {
+      search,
+      limit,
+      offset,
+      sorts,
+      filters,
+    }),
     getAttributeDataTypes(client),
   ]);
 

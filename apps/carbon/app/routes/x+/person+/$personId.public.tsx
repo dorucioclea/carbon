@@ -6,7 +6,7 @@ import { useLoaderData } from "@remix-run/react";
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { PublicAttributes } from "~/modules/account";
 import { UserAttributesForm, getPublicAttributes } from "~/modules/account";
-import { employeeJobValidator, upsertEmployeeJob } from "~/modules/resources";
+import { employeeJobValidator, updateEmployeeJob } from "~/modules/resources";
 import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { assertIsPost } from "~/utils/http";
@@ -14,14 +14,18 @@ import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "resources",
   });
 
   const { personId } = params;
   if (!personId) throw new Error("Could not find personId");
 
-  const publicAttributes = await getPublicAttributes(client, personId);
+  const publicAttributes = await getPublicAttributes(
+    client,
+    personId,
+    companyId
+  );
   if (publicAttributes.error) {
     throw redirect(
       path.to.people,
@@ -39,7 +43,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export async function action({ request, params }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client } = await requirePermissions(request, {
+  const { client, userId } = await requirePermissions(request, {
     update: "resources",
   });
   const { personId } = params;
@@ -53,7 +57,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
     return validationError(validation.error);
   }
 
-  const updateJob = await upsertEmployeeJob(client, personId, validation.data);
+  const updateJob = await updateEmployeeJob(client, personId, {
+    ...validation.data,
+    updatedBy: userId,
+  });
   if (updateJob.error) {
     throw redirect(
       path.to.personJob(personId),

@@ -17,7 +17,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const [company, locations] = await Promise.all([
     getCompany(client, companyId),
-    getLocationsList(client),
+    getLocationsList(client, companyId),
   ]);
   // we don't need to do onboarding if we have a company name or locations
   if (company.data?.name && locations.data?.length) {

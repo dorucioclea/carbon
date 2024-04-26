@@ -11,7 +11,7 @@ import {
   PersonJob,
   employeeJobValidator,
   getEmployeeJob,
-  upsertEmployeeJob,
+  updateEmployeeJob,
 } from "~/modules/resources";
 import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
@@ -52,7 +52,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     return validationError(validation.error);
   }
 
-  const updateJob = await upsertEmployeeJob(client, personId, {
+  const updateJob = await updateEmployeeJob(client, personId, {
     ...validation.data,
     updatedBy: userId,
     customFields: setCustomFields(formData),

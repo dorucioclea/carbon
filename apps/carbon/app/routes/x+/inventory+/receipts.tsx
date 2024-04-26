@@ -17,7 +17,7 @@ export const handle: Handle = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "inventory",
   });
 
@@ -35,7 +35,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       sorts,
       filters,
     }),
-    getLocationsList(client),
+    getLocationsList(client, companyId),
   ]);
 
   if (receipts.error) {

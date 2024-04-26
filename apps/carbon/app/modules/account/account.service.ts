@@ -25,12 +25,13 @@ export async function getAccount(client: SupabaseClient<Database>, id: string) {
 export async function getAttributes(
   client: SupabaseClient<Database>,
   userId: string,
+  companyId: number,
   isPublic: boolean
 ) {
   return client
     .from("userAttributeCategory")
     .select(
-      `id, name, id, 
+      `id, name, companyId, 
       userAttribute(id, name, listOptions, canSelfManage,
         attributeDataType(id, isBoolean, isDate, isNumeric, isText, isUser),
         userAttributeValue(
@@ -38,6 +39,7 @@ export async function getAttributes(
         )
       )`
     )
+    .eq("companyId", companyId)
     .eq("public", isPublic)
     .eq("active", true)
     .eq("userAttribute.active", true)
@@ -47,16 +49,18 @@ export async function getAttributes(
 
 export async function getPrivateAttributes(
   client: SupabaseClient<Database>,
-  userId: string
+  userId: string,
+  companyId: number
 ) {
-  return getAttributes(client, userId, false);
+  return getAttributes(client, userId, companyId, false);
 }
 
 export async function getPublicAttributes(
   client: SupabaseClient<Database>,
-  userId: string
+  userId: string,
+  companyId: number
 ) {
-  return getAttributes(client, userId, true);
+  return getAttributes(client, userId, companyId, true);
 }
 
 export async function updateAvatar(

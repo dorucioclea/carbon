@@ -39,7 +39,7 @@ function makeCurve(startingPoint: number, weeks: number) {
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     create: "resources",
   });
 
@@ -58,6 +58,7 @@ export async function action({ request }: ActionFunctionArgs) {
     name,
     curve: makeCurve(startingPoint, weeks),
     shadowWeeks,
+    companyId,
     createdBy: userId,
   });
   if (createAbility.error) {

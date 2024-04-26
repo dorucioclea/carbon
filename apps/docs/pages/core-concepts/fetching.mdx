@@ -28,7 +28,7 @@ Here's an example of simple route that fetches data from a service and displays 
 
 // loader is run on the server
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "resources",
     role: "employee",
   });
@@ -38,11 +38,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const name = searchParams.get("name");
   const { limit, offset, sorts } = getGenericQueryFilters(searchParams);
 
-  const partners = await getPartners(client, {
-    name,
+  const partners = await getPartners(client, companyId, {
+    search,
     limit,
     offset,
     sorts,
+    filters,
   });
 
   if (partners.error) {

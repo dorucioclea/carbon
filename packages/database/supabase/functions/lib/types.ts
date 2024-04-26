@@ -16083,9 +16083,18 @@ export type Database = {
       }
       holidayYears: {
         Row: {
+          companyId: number | null
           year: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "holiday_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       partners: {
         Row: {

@@ -78,7 +78,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const [company, locations] = await Promise.all([
     getCompany(client, 1),
-    getLocationsList(client),
+    getLocationsList(client, 1),
   ]);
 
   const location = locations?.data?.[0];

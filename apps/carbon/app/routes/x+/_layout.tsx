@@ -48,8 +48,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const [company, customFields, integrations, user, claims, groups, defaults] =
     await Promise.all([
       getCompany(client, companyId),
-      getCustomFieldsSchemas(client, {}),
-      getIntegrations(client),
+      getCustomFieldsSchemas(client, { companyId }),
+      getIntegrations(client, companyId),
       getUser(client, userId),
       getUserClaims(request),
       getUserGroups(client, userId),
@@ -84,6 +84,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function AuthenticatedRoute() {
   const { session } = useLoaderData<typeof loader>();
+
   const transition = useNavigation();
 
   /* NProgress */
