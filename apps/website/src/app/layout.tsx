@@ -1,12 +1,12 @@
+import { Footer } from "@/components/Footer";
+import { Header } from "@/components/Header";
+import "@/styles/tailwind.css";
 import { Analytics } from "@vercel/analytics/react";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import type { ReactElement } from "react";
-import { Footer } from "~/components/Footer";
-import { Header } from "~/components/Header";
-import "~/styles/tailwind.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://carbon.us.org"),

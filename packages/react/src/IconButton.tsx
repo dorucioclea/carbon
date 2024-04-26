@@ -1,8 +1,8 @@
 import type { ReactElement } from "react";
 import { cloneElement, forwardRef, isValidElement } from "react";
 
-import type { ButtonProps } from "~/Button";
-import { Button } from "~/Button";
+import type { ButtonProps } from "./Button";
+import { Button } from "./Button";
 
 export interface IconButtonProps
   extends Omit<ButtonProps, "leftIcon" | "rightIcon"> {

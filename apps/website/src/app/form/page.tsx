@@ -1,6 +1,6 @@
 "use client";
 
-import CompanyForm from "~/components/CompanyForm";
+import CompanyForm from "@/components/CompanyForm";
 
 export default function Form() {
   return (

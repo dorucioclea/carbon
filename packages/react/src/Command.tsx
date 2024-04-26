@@ -12,8 +12,8 @@ import type {
 import { forwardRef } from "react";
 import { RxMagnifyingGlass } from "react-icons/rx";
 
-import { Modal, ModalContent } from "~/Modal";
-import { cn } from "~/utils/cn";
+import { Modal, ModalContent } from "./Modal";
+import { cn } from "./utils/cn";
 
 const Command = forwardRef<
   ElementRef<typeof CommandPrimitive>,

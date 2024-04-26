@@ -1,4 +1,4 @@
-import { TooltipProvider } from "~/Tooltip";
+import { TooltipProvider } from "../../Tooltip";
 import type { EditorComponent } from "../types";
 import BlockQuote from "./BlockQuote";
 import Bold from "./Bold";

@@ -3,8 +3,12 @@ const withMDX = require("@next/mdx")();
 /** @type {import("next").NextConfig} */
 const config = {
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
-  reactStrictMode: true,
-  transpilePackages: ["@carbon/react", "@carbon/tailwind"],
+  transpilePackages: [
+    "@carbon/react",
+    "@carbon/tailwind",
+    "geist",
+    "react-icons",
+  ],
   eslint: {
     ignoreDuringBuilds: true,
   },

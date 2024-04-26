@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react";
 import { forwardRef } from "react";
-import { cn } from "~/utils/cn";
+import { cn } from "../utils/cn";
 import type { FormControlOptions } from "./FormControl";
 import { useFormControlContext } from "./FormControl";
 

@@ -4,14 +4,12 @@ import { useDatePickerState } from "@react-stately/datepicker";
 import type { DatePickerProps } from "@react-types/datepicker";
 import { useRef } from "react";
 import { MdOutlineCalendarToday, MdOutlineDoNotDisturb } from "react-icons/md";
-import { InputGroup, InputRightElement } from "~/Input";
-import { useOutsideClick } from "~/hooks";
-
+import { InputGroup, InputRightElement } from "../Input";
+import { useOutsideClick } from "../hooks";
 import { FieldButton } from "./components/Button";
 import { Calendar } from "./components/Calendar";
 import DateField from "./components/DateField";
 import { Popover } from "./components/Popover";
-
 const DatePicker = (props: DatePickerProps<CalendarDate>) => {
   const state = useDatePickerState({
     ...props,

@@ -1,5 +1,6 @@
 "use client";
 
+import { createHubspotCompany } from "@/app/submit";
 import {
   Button,
   Card,
@@ -14,7 +15,6 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { createHubspotCompany } from "~/app/submit";
 import { Form, FormField, FormItem, FormMessage } from "./ui/Form";
 
 export default function CompanyForm() {

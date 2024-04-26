@@ -36,10 +36,10 @@ export function formatTimeAgo(isoString: string) {
 
   for (let i = 0; i <= DIVISIONS.length; i++) {
     const division = DIVISIONS[i];
-    if (Math.abs(duration) < division.amount) {
-      return relativeFormatter.format(Math.round(duration), division.name);
+    if (Math.abs(duration) < division!.amount) {
+      return relativeFormatter.format(Math.round(duration), division!.name);
     }
-    duration /= division.amount;
+    duration /= division!.amount;
   }
 }
 

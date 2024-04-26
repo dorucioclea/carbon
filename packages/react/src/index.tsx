@@ -57,7 +57,6 @@ import {
   ContextMenuTrigger,
 } from "./Context";
 import { Count } from "./Count";
-import DataTable, { DataTableColumnHeader } from "./DataTable";
 import {
   DatePicker,
   DateRangePicker,
@@ -285,8 +284,6 @@ export {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
   Count,
-  DataTable,
-  DataTableColumnHeader,
   DatePicker,
   DateRangePicker,
   DateTimePicker,

@@ -7,9 +7,9 @@ import {
   useId,
   useState,
 } from "react";
-import { cn } from "~/utils/cn";
-import { dataAttr } from "~/utils/dom";
-import { mergeRefs } from "~/utils/react";
+import { cn } from "../utils/cn";
+import { dataAttr } from "../utils/dom";
+import { mergeRefs } from "../utils/react";
 
 export interface FormControlOptions {
   /**

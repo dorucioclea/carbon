@@ -1,7 +1,7 @@
 import type { ChangeEvent } from "react";
 import { useRef } from "react";
-import type { ButtonProps } from "~/Button";
-import { Button } from "~/Button";
+import type { ButtonProps } from "./Button";
+import { Button } from "./Button";
 
 type FileProps = Omit<ButtonProps, "onChange"> & {
   accept?: string;

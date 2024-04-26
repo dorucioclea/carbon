@@ -1,10 +1,10 @@
 "use client";
 
+import { createHubspotContact } from "@/app/submit";
 import { Button, FormControl, Input } from "@carbon/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { createHubspotContact } from "~/app/submit";
 import { Form, FormField, FormItem, FormMessage } from "./ui/Form";
 
 export default function ContactForm() {
@@ -30,7 +30,12 @@ export default function ContactForm() {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input type="email" placeholder="Company email" {...field} />
+                <Input
+                  size="lg"
+                  type="email"
+                  placeholder="Company email"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

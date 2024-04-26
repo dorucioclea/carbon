@@ -1,10 +1,10 @@
+import ContactForm from "@/components/ContactForm";
+import { Tag } from "@/components/Tag";
+import { getBlogPosts } from "@/lib/blog";
 import type { Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Image from "next/image";
 import Link from "next/link";
-import ContactForm from "~/components/ContactForm";
-import { Tag } from "~/components/Tag";
-import { getBlogPosts } from "~/lib/blog";
 
 export const metadata: Metadata = {
   title: "Carbon ERP | Updates",

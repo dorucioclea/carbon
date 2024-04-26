@@ -12,7 +12,7 @@ import {
   RxChevronUp,
 } from "react-icons/rx";
 
-import { cn } from "~/utils/cn";
+import { cn } from "./utils/cn";
 
 const Select = SelectPrimitive.Root;
 

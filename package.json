@@ -8,6 +8,7 @@
     "prettier": "^2.8.0",
     "rimraf": "^5.0.5",
     "supabase": "1.145.4",
+    "ts-morph": "^22.0.0",
     "tsx": "^3.12.1",
     "turbo": "^1.13.3"
   },
@@ -16,7 +17,7 @@
   },
   "license": "MIT",
   "lint-staged": {
-    "(apps|packages|shared|www)/**/*.{js,ts,jsx,tsx}": [
+    "(apps|packages)/**/*.{js,ts,jsx,tsx}": [
       "prettier --write",
       "eslint --fix --max-warnings=0"
     ],
@@ -57,7 +58,6 @@
   },
   "workspaces": [
     "apps/*",
-    "packages/*",
-    "www"
+    "packages/*"
   ]
 }

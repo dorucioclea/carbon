@@ -1,9 +1,10 @@
+import { Tag } from "@/components/Tag";
+import { getBlogPosts } from "@/lib/blog";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Image from "next/image";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { BsArrowLeft } from "react-icons/bs";
-import { Tag } from "~/components/Tag";
-import { getBlogPosts } from "~/lib/blog";
 
 export default function Page({
   params: { slug },
@@ -12,7 +13,7 @@ export default function Page({
 }) {
   const post = getBlogPosts().find((post) => post.slug === slug);
   if (!post) {
-    throw new Error("Post not found");
+    redirect("/updates");
   }
   return (
     <div className="container my-24 flex gap-12 flex-col items-center">

@@ -1,5 +1,8 @@
 "use client";
 
+import ContactForm from "@/components/ContactForm";
+import { MobileTabs } from "@/components/MobileTabs";
+import { Tabs } from "@/components/Tabs";
 import { Button, cn } from "@carbon/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,9 +11,6 @@ import { GiSpeedometer } from "react-icons/gi";
 import { GoSync } from "react-icons/go";
 import { HiCode, HiFingerPrint } from "react-icons/hi";
 import { TbBuildingFactory2 } from "react-icons/tb";
-import ContactForm from "~/components/ContactForm";
-import { MobileTabs } from "~/components/MobileTabs";
-import { Tabs } from "~/components/Tabs";
 
 export default function Page() {
   return (
@@ -244,7 +244,7 @@ function OpenCore() {
         <p className="mx-auto text-xl font-medium text-foreground/60 lg:max-w-3xl lg:text-2xl text-center">
           Carbon is the only ERP that gives you full ownership over your
           software stack. With Carbon{" "}
-          <span className="text-foreground">
+          <span className="underline underline-offset-2">
             you aren&apos;t a renter, you&apos;re an owner
           </span>
           .

@@ -1,5 +1,6 @@
 "use client";
 
+import { NavigationMenu } from "@/components/Navigation";
 import {
   Button,
   Input,
@@ -19,7 +20,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BsFillHexagonFill } from "react-icons/bs";
 import { GoArrowUpRight } from "react-icons/go";
-import { NavigationMenu } from "~/components/Navigation";
 
 const links = [
   {
