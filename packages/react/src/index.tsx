@@ -118,6 +118,7 @@ import {
   InputRightElement,
 } from "./Input";
 import { Kbd } from "./Kbd";
+import { Label } from "./Label";
 import {
   Menu,
   MenuCheckboxItem,
@@ -335,6 +336,7 @@ export {
   InputRightAddon,
   InputRightElement,
   Kbd,
+  Label,
   Menu,
   MenuCheckboxItem,
   MenuGroup,
