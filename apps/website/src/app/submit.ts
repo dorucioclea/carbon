@@ -1,6 +1,6 @@
 "use server";
 import { Client } from "@hubspot/api-client";
-import { redirect } from "next/navigation";
+import { z } from "zod";
 
 const hubspotClient = new Client({
   accessToken: process.env.HUBSPOT_ACCESS_TOKEN,
@@ -24,21 +24,28 @@ export async function createHubspotContact(formData: FormData) {
   }
 }
 
-export async function createHubspotCompany(formData: FormData) {
+export async function createHubspotCompany(email: string, formData: FormData) {
+  const schema = z.object({
+    companyName: z.string(),
+  });
+  const data = schema.parse({
+    companyName: formData.get("companyName"),
+  });
+
   try {
-    const companyName = formData.get("companyName");
-    if (typeof companyName !== "string") {
-      throw new Error("Company Name is missing or not string");
-    }
-    // const companyObj = {
-    //   properties: {
-    //     name: companyName,
-    //   },
-    //   associations: [],
-    // };
-    // await hubspotClient.crm.companies.basicApi.create(contactObj);
-    redirect("/form");
+    const companyObj = {
+      properties: {
+        name: data.companyName,
+      },
+      associations: [],
+    };
+
+    const createCompanyResponse =
+      await hubspotClient.crm.companies.basicApi.create(companyObj);
+    // revalidatePath("/form");
+
+    return { message: `Added ${createCompanyResponse}` };
   } catch (error) {
-    console.error("Failed to submit Company:", error);
+    return { message: `Failed to create company on Hubspot` };
   }
 }

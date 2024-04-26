@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form, FormField, FormItem, FormMessage } from "./ui/Form";
+import { useSearchParams } from "next/navigation";
 
 export default function CompanyForm() {
   const formSchema = z.object({
@@ -33,10 +34,14 @@ export default function CompanyForm() {
       erp: "",
     },
   });
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
+  // const [state, formAction] = useFormState(createHubspotCompany, initialState);
+  const createHubspotCompanyWithEmail = createHubspotCompany.bind(null, email);
 
   return (
     <Form {...form}>
-      <form action={createHubspotCompany} className="w-full max-w-2xl">
+      <form action={createHubspotCompanyWithEmail} className="w-full max-w-2xl">
         <Card>
           <CardHeader>
             <CardTitle className="text-center pb-8">
