@@ -1,5 +1,4 @@
-import { ALL_TEAMS_ID } from "./employee-types";
-import { possibleFeatures } from "./features";
+import { modules } from "./modules";
 
 const admin = {
   email: "admin@carbon.us.org",
@@ -8,11 +7,13 @@ const admin = {
   lastName: "Admin",
 };
 
+const ALL_TEAMS_ID = 0;
+
 const claims: Record<string, string | number[]> = {
   role: "employee",
 };
 
-possibleFeatures.forEach((name) => {
+modules.forEach((name) => {
   const moduleName = name.toLowerCase();
   claims[`${moduleName}_view`] = [ALL_TEAMS_ID];
   claims[`${moduleName}_create`] = [ALL_TEAMS_ID];

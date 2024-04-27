@@ -10,6 +10,8 @@ import {
   customFields,
   customerStatuses,
   fiscalYearSettings,
+  groupCompanyTemplate,
+  groups,
   integrations,
   paymentTerms,
   postingGroupInventory,
@@ -19,6 +21,8 @@ import {
   supplierStauses,
   unitOfMeasures,
 } from "../lib/seed.ts";
+import { getSupabaseServiceRole } from "../lib/supabase.ts";
+import { Database } from "../lib/types.ts";
 
 const pool = getConnectionPool(1);
 const db = getDatabaseClient<DB>(pool);
@@ -33,9 +37,72 @@ serve(async (req: Request) => {
     if (!id) throw new Error("Payload is missing id");
     if (!userId) throw new Error("Payload is missing userId");
     const companyId = Number(id);
+    const supabaseClient = getSupabaseServiceRole(
+      req.headers.get("Authorization")
+    );
 
     await db.transaction().execute(async (trx) => {
-      // TODO: insert employee types and groups
+      await trx
+        .insertInto("userToCompany")
+        .values([{ userId, companyId }])
+        .execute();
+
+      // high-order groups
+      await trx
+        .insertInto("group")
+        .values(
+          groups.map((g) => ({
+            ...g,
+            id: g.id.replace(
+              groupCompanyTemplate,
+              companyId.toString().padStart(12, "0")
+            ),
+            companyId,
+          }))
+        )
+        .execute();
+
+      const employeeTypes = await trx
+        .insertInto("employeeType")
+        .values([
+          {
+            name: "Admin",
+            companyId,
+            protected: true,
+          },
+        ])
+        .returning(["id"])
+        .execute();
+
+      const employeeTypeId = employeeTypes[0].id;
+      if (!employeeTypeId)
+        throw new Error("Failed to insert admin employee type");
+
+      // get the modules
+      const modules = await trx.selectFrom("modules").select("name").execute();
+
+      // create employee type permissions for admin
+      const employeeTypePermissions = modules.reduce<
+        Database["public"]["Tables"]["employeeTypePermission"]["Insert"][]
+      >((acc, module) => {
+        if (module.name) {
+          acc.push({
+            employeeTypeId: employeeTypeId,
+            module: module.name,
+            create: [companyId],
+            update: [companyId],
+            delete: [companyId],
+            view: [companyId],
+          });
+        }
+        return acc;
+      }, []);
+
+      // insert employee type permissions
+      await trx
+        .insertInto("employeeTypePermission")
+        .values(employeeTypePermissions)
+        .execute();
 
       // insert employee
       await trx
@@ -43,6 +110,7 @@ serve(async (req: Request) => {
         .values([
           {
             id: String(userId),
+            employeeTypeId,
             companyId,
           },
         ])
@@ -163,6 +231,43 @@ serve(async (req: Request) => {
         .insertInto("customFieldTable")
         .values(customFields.map((cf) => ({ ...cf, companyId })))
         .execute();
+
+      const user = await supabaseClient.auth.admin.getUserById(userId);
+      if (user.error) throw new Error(user.error.message);
+
+      const currentClaims = user.data?.user.app_metadata ?? {};
+      const newClaims = { ...currentClaims };
+      modules.forEach(({ name }) => {
+        const module = name?.toLowerCase();
+        if (`${module}_view` in newClaims) {
+          newClaims[`${module}_view`].push(companyId);
+        } else {
+          newClaims[`${module}_view`] = [companyId];
+        }
+
+        if (`${module}_create` in newClaims) {
+          newClaims[`${module}_create`].push(companyId);
+        } else {
+          newClaims[`${module}_create`] = [companyId];
+        }
+
+        if (`${module}_update` in newClaims) {
+          newClaims[`${module}_update`].push(companyId);
+        } else {
+          newClaims[`${module}_update`] = [companyId];
+        }
+
+        if (`${module}_delete` in newClaims) {
+          newClaims[`${module}_delete`].push(companyId);
+        } else {
+          newClaims[`${module}_delete`] = [companyId];
+        }
+      });
+
+      const { error } = await supabaseClient.auth.admin.updateUserById(userId, {
+        app_metadata: newClaims,
+      });
+      if (error) throw new Error(error.message);
     });
 
     return new Response(

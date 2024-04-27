@@ -129,8 +129,8 @@ export async function getEmployeeTypes(
   return query;
 }
 
-export async function getFeatures(client: SupabaseClient<Database>) {
-  return client.from("feature").select("id, name").order("name");
+export async function getModules(client: SupabaseClient<Database>) {
+  return client.from("modules").select("name").order("name");
 }
 
 export async function getGroup(
@@ -173,7 +173,7 @@ export async function getPermissionsByEmployeeType(
 ) {
   return client
     .from("employeeTypePermission")
-    .select("view, create, update, delete, feature (id, name)")
+    .select("view, create, update, delete, module (id, name)")
     .eq("employeeTypeId", employeeTypeId);
 }
 
@@ -244,7 +244,7 @@ export async function upsertEmployeeTypePermissions(
 ) {
   const employeeTypePermissions = permissions.map(({ id, permission }) => ({
     employeeTypeId,
-    featureId: id,
+    moduleId: id,
     view: permission.view,
     create: permission.create,
     update: permission.update,

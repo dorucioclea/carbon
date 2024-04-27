@@ -1,20 +1,4 @@
 
-CREATE TYPE module AS ENUM (
-  'Accounting',
-  'Documents',
-  'Invoicing',
-  'Inventory',
-  'Jobs',
-  'Messaging',
-  'Parts',
-  'Purchasing',
-  'Resources',
-  'Sales',
-  'Scheduling',
-  'Timecards',
-  'Users'
-);
-
 CREATE TABLE "customFieldTable" (
   "id" TEXT NOT NULL DEFAULT xid(),
   "module" module NOT NULL,

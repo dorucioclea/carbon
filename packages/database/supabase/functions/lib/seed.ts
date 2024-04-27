@@ -2196,6 +2196,31 @@ function getDefaultAccount(key: string) {
   return accountDefaults[key];
 }
 
+export const groupCompanyTemplate = "<%=12-digit-company-id=%>";
+export const groups = [
+  {
+    id: `00000000-0000-0000-0000-${groupCompanyTemplate}`,
+    name: "All Employees",
+    isCustomerTypeGroup: false,
+    isEmployeeTypeGroup: true,
+    isSupplierTypeGroup: false,
+  },
+  {
+    id: `11111111-1111-1111-1111-${groupCompanyTemplate}`,
+    name: "All Customers",
+    isCustomerTypeGroup: true,
+    isEmployeeTypeGroup: false,
+    isSupplierTypeGroup: false,
+  },
+  {
+    id: `22222222-2222-2222-2222-${groupCompanyTemplate}`,
+    name: "All Suppliers",
+    isCustomerTypeGroup: false,
+    isEmployeeTypeGroup: false,
+    isSupplierTypeGroup: true,
+  },
+];
+
 export const integrations = [
   {
     id: "exchange-rates-v1",

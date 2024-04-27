@@ -5,13 +5,16 @@ import {
   PostgresIntrospector,
   PostgresQueryCompiler,
 } from "https://esm.sh/kysely@0.26.3";
-import { Database } from "../lib/types.ts";
 import { PostgresDriver } from "../lib/driver.ts";
+import { Database } from "../lib/types.ts";
 
 type Tables = Database["public"]["Tables"];
+type Views = Database["public"]["Views"];
 
 export type DB = {
   [TableName in keyof Tables]: Tables[TableName]["Insert"];
+} & {
+  [ViewName in keyof Views]: Views[ViewName]["Row"];
 };
 
 export function getConnectionPool(connections: number) {

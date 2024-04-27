@@ -50,7 +50,7 @@ BEGIN
   VALUES (new.id, new.name, TRUE, new."companyId");
 
   INSERT INTO public."membership"("groupId", "memberGroupId")
-  VALUES ('00000000-0000-0000-0000-000000000000', new.id);
+  VALUES ('00000000-0000-0000-0000-' || lpad(new."companyId"::text, 12, '0'), new.id);
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -306,7 +306,7 @@ BEGIN
   VALUES (new.id, new.name, TRUE, new."companyId");
 
   INSERT INTO public."membership"("groupId", "memberGroupId")
-  VALUES ('11111111-1111-1111-1111-111111111111', new.id);
+  VALUES ('11111111-1111-1111-1111-' || lpad(new."companyId"::text, 12, '0'), new.id);
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -318,7 +318,7 @@ BEGIN
   VALUES (new.id, new.name, TRUE, new."companyId");
 
   INSERT INTO public."membership"("groupId", "memberGroupId")
-  VALUES ('22222222-2222-2222-2222-222222222222', new.id);
+  VALUES ('22222222-2222-2222-2222-' || lpad(new."companyId"::text, 12, '0'), new.id);
 
   RETURN new;
 END;

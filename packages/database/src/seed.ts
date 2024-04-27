@@ -1,13 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import * as dotenv from "dotenv";
-import type { EmployeeType, Feature } from "./seed/index";
-import {
-  admin,
-  claims,
-  employeeTypePermissionsDefinitions,
-  employeeTypes,
-  features,
-} from "./seed/index";
+import { admin, claims } from "./seed/index";
 import type { Database } from "./types";
 
 dotenv.config();
@@ -46,7 +39,6 @@ const getUserId = async (): Promise<string> => {
 };
 
 async function seed() {
-  // TODO: this should all be moved to the migration or seed function
   const id = await getUserId();
 
   const upsertAdmin = await supabaseAdmin.from("user").upsert([
@@ -64,83 +56,6 @@ async function seed() {
   await supabaseAdmin.auth.admin.updateUserById(id, {
     app_metadata: claims,
   });
-
-  const deleteFeatures = await supabaseAdmin
-    .from("feature")
-    .delete()
-    .neq("id", 0);
-  if (deleteFeatures.error) throw deleteFeatures.error;
-
-  const insertFeatures = await supabaseAdmin
-    .from("feature")
-    .insert([...Object.values(features)]);
-  if (insertFeatures.error) throw insertFeatures.error;
-
-  const deleteEmployeeTypes = await supabaseAdmin
-    .from("employeeType")
-    .delete()
-    .neq("id", 0);
-  if (deleteEmployeeTypes.error) throw deleteEmployeeTypes.error;
-
-  const insertGroups = await supabaseAdmin.from("group").insert([
-    {
-      id: "00000000-0000-0000-0000-000000000000",
-      name: "All Employees",
-      isCustomerTypeGroup: false,
-      isEmployeeTypeGroup: true,
-      isSupplierTypeGroup: false,
-    },
-    {
-      id: "11111111-1111-1111-1111-111111111111",
-      name: "All Customers",
-      isCustomerTypeGroup: true,
-      isEmployeeTypeGroup: false,
-      isSupplierTypeGroup: false,
-    },
-    {
-      id: "22222222-2222-2222-2222-222222222222",
-      name: "All Suppliers",
-      isCustomerTypeGroup: false,
-      isEmployeeTypeGroup: false,
-      isSupplierTypeGroup: true,
-    },
-  ]);
-  if (insertGroups.error) throw insertGroups.error;
-
-  const insertEmployeeTypes = await supabaseAdmin
-    .from("employeeType")
-    .insert([...Object.values(employeeTypes)]);
-  if (insertEmployeeTypes.error) throw insertEmployeeTypes.error;
-
-  const employeeTypePermissions = [] as {
-    employeeTypeId: string;
-    featureId: string;
-    create: number[];
-    update: number[];
-    delete: number[];
-    view: number[];
-  }[];
-
-  Object.entries(employeeTypePermissionsDefinitions).forEach(
-    ([empType, featurePermissions]) => {
-      const employeeTypeId = employeeTypes[empType as EmployeeType].id;
-      Object.keys(featurePermissions).forEach((feature) => {
-        const featureId = features[feature as Feature].id;
-        employeeTypePermissions.push({
-          employeeTypeId,
-          featureId,
-          ...featurePermissions[feature as Feature],
-        });
-      });
-    }
-  );
-
-  const insertEmployeeTypePermissions = await supabaseAdmin
-    .from("employeeTypePermission")
-    .insert(employeeTypePermissions);
-
-  if (insertEmployeeTypePermissions.error)
-    throw insertEmployeeTypePermissions.error;
 
   console.log(`Database has been seeded. 🌱\n`);
   console.log(

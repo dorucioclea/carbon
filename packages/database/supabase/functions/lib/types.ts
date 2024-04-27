@@ -3863,7 +3863,7 @@ export type Database = {
       }
       employeeType: {
         Row: {
-          companyId: number | null
+          companyId: number
           createdAt: string
           id: string
           name: string
@@ -3871,7 +3871,7 @@ export type Database = {
           updatedAt: string | null
         }
         Insert: {
-          companyId?: number | null
+          companyId: number
           createdAt?: string
           id?: string
           name: string
@@ -3879,7 +3879,7 @@ export type Database = {
           updatedAt?: string | null
         }
         Update: {
-          companyId?: number | null
+          companyId?: number
           createdAt?: string
           id?: string
           name?: string
@@ -3902,7 +3902,7 @@ export type Database = {
           createdAt: string
           delete: number[]
           employeeTypeId: string
-          featureId: string
+          module: Database["public"]["Enums"]["module"]
           update: number[]
           updatedAt: string | null
           view: number[]
@@ -3912,7 +3912,7 @@ export type Database = {
           createdAt?: string
           delete?: number[]
           employeeTypeId: string
-          featureId: string
+          module: Database["public"]["Enums"]["module"]
           update?: number[]
           updatedAt?: string | null
           view?: number[]
@@ -3922,7 +3922,7 @@ export type Database = {
           createdAt?: string
           delete?: number[]
           employeeTypeId?: string
-          featureId?: string
+          module?: Database["public"]["Enums"]["module"]
           update?: number[]
           updatedAt?: string | null
           view?: number[]
@@ -3933,13 +3933,6 @@ export type Database = {
             columns: ["employeeTypeId"]
             isOneToOne: false
             referencedRelation: "employeeType"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "employeeTypePermission_featureId_fkey"
-            columns: ["featureId"]
-            isOneToOne: false
-            referencedRelation: "feature"
             referencedColumns: ["id"]
           },
         ]
@@ -4222,27 +4215,6 @@ export type Database = {
             referencedColumns: ["userId"]
           },
         ]
-      }
-      feature: {
-        Row: {
-          createdAt: string
-          id: string
-          name: string
-          updatedAt: string | null
-        }
-        Insert: {
-          createdAt?: string
-          id?: string
-          name: string
-          updatedAt?: string | null
-        }
-        Update: {
-          createdAt?: string
-          id?: string
-          name?: string
-          updatedAt?: string | null
-        }
-        Relationships: []
       }
       fiscalYearSettings: {
         Row: {
@@ -16158,6 +16130,12 @@ export type Database = {
           },
         ]
       }
+      modules: {
+        Row: {
+          name: Database["public"]["Enums"]["module"] | null
+        }
+        Relationships: []
+      }
       partners: {
         Row: {
           abilityId: string | null
@@ -18971,6 +18949,7 @@ export type Database = {
         | "Purchasing"
         | "Resources"
         | "Sales"
+        | "Settings"
         | "Scheduling"
         | "Timecards"
         | "Users"
