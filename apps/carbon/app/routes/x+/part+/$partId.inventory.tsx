@@ -63,13 +63,14 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   }
 
   let [partInventory, shelves] = await Promise.all([
-    getPartInventory(client, partId, locationId),
+    getPartInventory(client, partId, companyId, locationId),
     getShelvesList(client, locationId),
   ]);
 
   if (partInventory.error || !partInventory.data) {
     const insertPartInventory = await upsertPartInventory(client, {
       partId,
+      companyId,
       locationId,
       customFields: {},
       createdBy: userId,
@@ -85,7 +86,12 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       );
     }
 
-    partInventory = await getPartInventory(client, partId, locationId);
+    partInventory = await getPartInventory(
+      client,
+      partId,
+      companyId,
+      locationId
+    );
     if (partInventory.error || !partInventory.data) {
       throw redirect(
         path.to.part(partId),
@@ -104,7 +110,12 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     );
   }
 
-  const quantities = await getPartQuantities(client, partId, locationId);
+  const quantities = await getPartQuantities(
+    client,
+    partId,
+    companyId,
+    locationId
+  );
   if (quantities.error || !quantities.data) {
     throw redirect(
       path.to.parts,

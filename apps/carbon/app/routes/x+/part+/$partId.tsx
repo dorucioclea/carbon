@@ -1,21 +1,21 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
-import { PartHeader, PartSidebar, getPartSummary } from "~/modules/parts";
+import { PartHeader, PartSidebar, getPart } from "~/modules/parts";
 import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "parts",
   });
 
   const { partId } = params;
   if (!partId) throw new Error("Could not find partId");
 
-  const [partSummary] = await Promise.all([getPartSummary(client, partId)]);
+  const [partSummary] = await Promise.all([getPart(client, partId, companyId)]);
 
   if (partSummary.error) {
     throw redirect(

@@ -5115,24 +5115,17 @@ export type Database = {
           },
           {
             foreignKeyName: "partCost_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "part"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "partCost_partId_fkey"
-            columns: ["partId"]
-            isOneToOne: false
-            referencedRelation: "partQuantities"
-            referencedColumns: ["partId"]
-          },
-          {
-            foreignKeyName: "partCost_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "parts"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "partGroup_createdBy_fkey"
@@ -5395,24 +5388,17 @@ export type Database = {
           },
           {
             foreignKeyName: "partInventory_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "part"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "partInventory_partId_fkey"
-            columns: ["partId"]
-            isOneToOne: false
-            referencedRelation: "partQuantities"
-            referencedColumns: ["partId"]
-          },
-          {
-            foreignKeyName: "partInventory_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "parts"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "partInventory_shelfId_fkey"
@@ -5534,24 +5520,17 @@ export type Database = {
           },
           {
             foreignKeyName: "partLedger_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "part"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "partLedger_partId_fkey"
-            columns: ["partId"]
-            isOneToOne: false
-            referencedRelation: "partQuantities"
-            referencedColumns: ["partId"]
-          },
-          {
-            foreignKeyName: "partLedger_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "parts"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "partLedger_shelfId_fkey"
@@ -5822,24 +5801,17 @@ export type Database = {
           },
           {
             foreignKeyName: "partPlanning_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "part"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "partPlanning_partId_fkey"
-            columns: ["partId"]
-            isOneToOne: false
-            referencedRelation: "partQuantities"
-            referencedColumns: ["partId"]
-          },
-          {
-            foreignKeyName: "partPlanning_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "parts"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "partPlanning_updatedBy_fkey"
@@ -5970,24 +5942,17 @@ export type Database = {
           },
           {
             foreignKeyName: "partReplenishment_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "part"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "partReplenishment_partId_fkey"
-            columns: ["partId"]
-            isOneToOne: false
-            referencedRelation: "partQuantities"
-            referencedColumns: ["partId"]
-          },
-          {
-            foreignKeyName: "partReplenishment_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "parts"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "partReplenishment_preferredSupplierId_fkey"
@@ -6151,24 +6116,17 @@ export type Database = {
           },
           {
             foreignKeyName: "partSupplier_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "part"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "partSupplier_partId_fkey"
-            columns: ["partId"]
-            isOneToOne: false
-            referencedRelation: "partQuantities"
-            referencedColumns: ["partId"]
-          },
-          {
-            foreignKeyName: "partSupplier_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "parts"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "partSupplier_supplierId_fkey"
@@ -6326,24 +6284,17 @@ export type Database = {
           },
           {
             foreignKeyName: "partUnitSalePrice_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "part"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "partUnitSalePrice_partId_fkey"
-            columns: ["partId"]
-            isOneToOne: false
-            referencedRelation: "partQuantities"
-            referencedColumns: ["partId"]
-          },
-          {
-            foreignKeyName: "partUnitSalePrice_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "parts"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "partUnitSalePrice_salesUnitOfMeasureId_fkey"
@@ -7645,24 +7596,17 @@ export type Database = {
           },
           {
             foreignKeyName: "purchaseInvoiceLines_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "part"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "purchaseInvoiceLines_partId_fkey"
-            columns: ["partId"]
-            isOneToOne: false
-            referencedRelation: "partQuantities"
-            referencedColumns: ["partId"]
-          },
-          {
-            foreignKeyName: "purchaseInvoiceLines_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "parts"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "purchaseInvoiceLines_purchaseOrderId_fkey"
@@ -7708,17 +7652,17 @@ export type Database = {
           },
           {
             foreignKeyName: "purchaseInvoiceLines_serviceId_fkey"
-            columns: ["serviceId"]
+            columns: ["serviceId", "companyId"]
             isOneToOne: false
             referencedRelation: "service"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "purchaseInvoiceLines_serviceId_fkey"
-            columns: ["serviceId"]
+            columns: ["serviceId", "companyId"]
             isOneToOne: false
             referencedRelation: "services"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "purchaseInvoiceLines_shelfId_fkey"
@@ -8542,24 +8486,17 @@ export type Database = {
           },
           {
             foreignKeyName: "purchaseOrderLine_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "part"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "purchaseOrderLine_partId_fkey"
-            columns: ["partId"]
-            isOneToOne: false
-            referencedRelation: "partQuantities"
-            referencedColumns: ["partId"]
-          },
-          {
-            foreignKeyName: "purchaseOrderLine_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "parts"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "purchaseOrderLine_purchaseOrderId_fkey"
@@ -8591,17 +8528,17 @@ export type Database = {
           },
           {
             foreignKeyName: "purchaseOrderLine_serviceId_fkey"
-            columns: ["serviceId"]
+            columns: ["serviceId", "companyId"]
             isOneToOne: false
             referencedRelation: "service"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "purchaseOrderLine_serviceId_fkey"
-            columns: ["serviceId"]
+            columns: ["serviceId", "companyId"]
             isOneToOne: false
             referencedRelation: "services"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "purchaseOrderLine_shelfId_fkey"
@@ -9295,6 +9232,7 @@ export type Database = {
       }
       quoteAssembly: {
         Row: {
+          companyId: number
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -9310,6 +9248,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
+          companyId: number
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -9325,6 +9264,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
+          companyId?: number
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -9340,6 +9280,13 @@ export type Database = {
           updatedBy?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "quoteAssembly_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "quoteAssembly_createdBy_fkey"
             columns: ["createdBy"]
@@ -9376,6 +9323,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "quoteAssembly_partId_fkey"
+            columns: ["partId", "companyId"]
+            isOneToOne: false
+            referencedRelation: "part"
+            referencedColumns: ["id", "companyId"]
+          },
+          {
+            foreignKeyName: "quoteAssembly_partId_fkey"
+            columns: ["partId", "companyId"]
+            isOneToOne: false
+            referencedRelation: "parts"
+            referencedColumns: ["id", "companyId"]
+          },
+          {
             foreignKeyName: "quoteAssembly_quoteId_fkey"
             columns: ["quoteId"]
             isOneToOne: false
@@ -9409,6 +9370,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "quoteLines"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quoteAssembly_unitOfMeasureCode_fkey"
+            columns: ["unitOfMeasureCode", "companyId"]
+            isOneToOne: false
+            referencedRelation: "unitOfMeasure"
+            referencedColumns: ["code", "companyId"]
           },
           {
             foreignKeyName: "quoteAssembly_updatedBy_fkey"
@@ -9595,24 +9563,17 @@ export type Database = {
           },
           {
             foreignKeyName: "quoteLine_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "part"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "quoteLine_partId_fkey"
-            columns: ["partId"]
-            isOneToOne: false
-            referencedRelation: "partQuantities"
-            referencedColumns: ["partId"]
-          },
-          {
-            foreignKeyName: "quoteLine_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "parts"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "quoteLine_quoteId_fkey"
@@ -9814,6 +9775,7 @@ export type Database = {
       }
       quoteMaterial: {
         Row: {
+          companyId: number
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -9830,6 +9792,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
+          companyId: number
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -9846,6 +9809,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
+          companyId?: number
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -9862,6 +9826,13 @@ export type Database = {
           updatedBy?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "quoteMaterial_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "quoteMaterial_createdBy_fkey"
             columns: ["createdBy"]
@@ -9892,24 +9863,17 @@ export type Database = {
           },
           {
             foreignKeyName: "quoteMaterial_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "part"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "quoteMaterial_partId_fkey"
-            columns: ["partId"]
-            isOneToOne: false
-            referencedRelation: "partQuantities"
-            referencedColumns: ["partId"]
-          },
-          {
-            foreignKeyName: "quoteMaterial_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "parts"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "quoteMaterial_quoteId_fkey"
@@ -9954,6 +9918,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "quoteMaterial_unitOfMeasureCode_fkey"
+            columns: ["unitOfMeasureCode", "companyId"]
+            isOneToOne: false
+            referencedRelation: "unitOfMeasure"
+            referencedColumns: ["code", "companyId"]
+          },
+          {
             foreignKeyName: "quoteMaterial_updatedBy_fkey"
             columns: ["updatedBy"]
             isOneToOne: false
@@ -9985,6 +9956,7 @@ export type Database = {
       }
       quoteOperation: {
         Row: {
+          companyId: number
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -10005,6 +9977,7 @@ export type Database = {
           workCellTypeId: string
         }
         Insert: {
+          companyId: number
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -10025,6 +9998,7 @@ export type Database = {
           workCellTypeId: string
         }
         Update: {
+          companyId?: number
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -10045,6 +10019,13 @@ export type Database = {
           workCellTypeId?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "quoteOperation_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "quoteOperation_createdBy_fkey"
             columns: ["createdBy"]
@@ -10500,24 +10481,17 @@ export type Database = {
           },
           {
             foreignKeyName: "receiptLine_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "part"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "receiptLine_partId_fkey"
-            columns: ["partId"]
-            isOneToOne: false
-            referencedRelation: "partQuantities"
-            referencedColumns: ["partId"]
-          },
-          {
-            foreignKeyName: "receiptLine_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "parts"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "receiptLine_receiptId_fkey"
@@ -10923,24 +10897,17 @@ export type Database = {
           },
           {
             foreignKeyName: "requestForQuoteLine_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "part"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "requestForQuoteLine_partId_fkey"
-            columns: ["partId"]
-            isOneToOne: false
-            referencedRelation: "partQuantities"
-            referencedColumns: ["partId"]
-          },
-          {
-            foreignKeyName: "requestForQuoteLine_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "parts"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "requestForQuoteLine_requestForQuoteId_fkey"
@@ -11739,24 +11706,17 @@ export type Database = {
           },
           {
             foreignKeyName: "salesOrderLine_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "part"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "salesOrderLine_partId_fkey"
-            columns: ["partId"]
-            isOneToOne: false
-            referencedRelation: "partQuantities"
-            referencedColumns: ["partId"]
-          },
-          {
-            foreignKeyName: "salesOrderLine_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "parts"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "salesOrderLine_salesOrderId_fkey"
@@ -11774,17 +11734,17 @@ export type Database = {
           },
           {
             foreignKeyName: "salesOrderLine_serviceId_fkey"
-            columns: ["serviceId"]
+            columns: ["serviceId", "companyId"]
             isOneToOne: false
             referencedRelation: "service"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "salesOrderLine_serviceId_fkey"
-            columns: ["serviceId"]
+            columns: ["serviceId", "companyId"]
             isOneToOne: false
             referencedRelation: "services"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "salesOrderLine_shelfId_fkey"
@@ -12678,17 +12638,17 @@ export type Database = {
           },
           {
             foreignKeyName: "serviceSupplier_serviceId_fkey"
-            columns: ["serviceId"]
+            columns: ["serviceId", "companyId"]
             isOneToOne: false
             referencedRelation: "service"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "serviceSupplier_serviceId_fkey"
-            columns: ["serviceId"]
+            columns: ["serviceId", "companyId"]
             isOneToOne: false
             referencedRelation: "services"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "serviceSupplier_supplierId_fkey"
@@ -16698,24 +16658,17 @@ export type Database = {
           },
           {
             foreignKeyName: "purchaseOrderLine_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "part"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "purchaseOrderLine_partId_fkey"
-            columns: ["partId"]
-            isOneToOne: false
-            referencedRelation: "partQuantities"
-            referencedColumns: ["partId"]
-          },
-          {
-            foreignKeyName: "purchaseOrderLine_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "parts"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "purchaseOrderLine_purchaseOrderId_fkey"
@@ -16747,17 +16700,17 @@ export type Database = {
           },
           {
             foreignKeyName: "purchaseOrderLine_serviceId_fkey"
-            columns: ["serviceId"]
+            columns: ["serviceId", "companyId"]
             isOneToOne: false
             referencedRelation: "service"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "purchaseOrderLine_serviceId_fkey"
-            columns: ["serviceId"]
+            columns: ["serviceId", "companyId"]
             isOneToOne: false
             referencedRelation: "services"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "purchaseOrderLine_shelfId_fkey"
@@ -17141,24 +17094,17 @@ export type Database = {
           },
           {
             foreignKeyName: "quoteLine_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "part"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "quoteLine_partId_fkey"
-            columns: ["partId"]
-            isOneToOne: false
-            referencedRelation: "partQuantities"
-            referencedColumns: ["partId"]
-          },
-          {
-            foreignKeyName: "quoteLine_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "parts"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "quoteLine_quoteId_fkey"
@@ -17844,24 +17790,17 @@ export type Database = {
           },
           {
             foreignKeyName: "salesOrderLine_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "part"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "salesOrderLine_partId_fkey"
-            columns: ["partId"]
-            isOneToOne: false
-            referencedRelation: "partQuantities"
-            referencedColumns: ["partId"]
-          },
-          {
-            foreignKeyName: "salesOrderLine_partId_fkey"
-            columns: ["partId"]
+            columns: ["partId", "companyId"]
             isOneToOne: false
             referencedRelation: "parts"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "salesOrderLine_salesOrderId_fkey"
@@ -17879,17 +17818,17 @@ export type Database = {
           },
           {
             foreignKeyName: "salesOrderLine_serviceId_fkey"
-            columns: ["serviceId"]
+            columns: ["serviceId", "companyId"]
             isOneToOne: false
             referencedRelation: "service"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "salesOrderLine_serviceId_fkey"
-            columns: ["serviceId"]
+            columns: ["serviceId", "companyId"]
             isOneToOne: false
             referencedRelation: "services"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "companyId"]
           },
           {
             foreignKeyName: "salesOrderLine_shelfId_fkey"

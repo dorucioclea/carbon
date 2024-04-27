@@ -23,7 +23,7 @@ CREATE TABLE "service" (
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
 
-  CONSTRAINT "service_pkey" PRIMARY KEY ("id"),
+  CONSTRAINT "service_pkey" PRIMARY KEY ("id", "companyId"),
   CONSTRAINT "service_partGroupId_fkey" FOREIGN KEY ("partGroupId") REFERENCES "partGroup"("id") ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT "service_assignee_fkey" FOREIGN KEY ("assignee") REFERENCES "user"("id") ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT "service_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id"),
@@ -79,7 +79,7 @@ CREATE TABLE "serviceSupplier" (
   "customFields" JSONB,
 
   CONSTRAINT "serviceSupplier_id_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "serviceSupplier_serviceId_fkey" FOREIGN KEY ("serviceId") REFERENCES "service"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "serviceSupplier_serviceId_fkey" FOREIGN KEY ("serviceId", "companyId") REFERENCES "service"("id", "companyId") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "serviceSupplier_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "supplier"("id") ON DELETE CASCADE,
   CONSTRAINT "serviceSupplier_service_supplier_unique" UNIQUE ("serviceId", "supplierId"),
   CONSTRAINT "serviceSupplier_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id"),

@@ -16,7 +16,7 @@ import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "parts",
   });
 
@@ -24,7 +24,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!partId) throw new Error("Could not find partId");
 
   const [partUnitSalePrice] = await Promise.all([
-    getPartUnitSalePrice(client, partId),
+    getPartUnitSalePrice(client, partId, companyId),
   ]);
 
   if (partUnitSalePrice.error) {

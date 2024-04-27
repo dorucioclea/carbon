@@ -60,7 +60,12 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     locationId = locations.data?.[0].id as string;
   }
 
-  let partPlanning = await getPartPlanning(client, partId, locationId);
+  let partPlanning = await getPartPlanning(
+    client,
+    partId,
+    companyId,
+    locationId
+  );
 
   if (partPlanning.error || !partPlanning.data) {
     const insertPartPlanning = await upsertPartPlanning(client, {
@@ -80,7 +85,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       );
     }
 
-    partPlanning = await getPartPlanning(client, partId, locationId);
+    partPlanning = await getPartPlanning(client, partId, companyId, locationId);
     if (partPlanning.error || !partPlanning.data) {
       throw redirect(
         path.to.part(partId),

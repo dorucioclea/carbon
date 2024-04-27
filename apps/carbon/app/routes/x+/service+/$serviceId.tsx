@@ -14,14 +14,16 @@ export const handle: Handle = {
 };
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "parts",
   });
 
   const { serviceId } = params;
   if (!serviceId) throw new Error("Could not find serviceId");
 
-  const [service] = await Promise.all([getService(client, serviceId)]);
+  const [service] = await Promise.all([
+    getService(client, serviceId, companyId),
+  ]);
 
   if (service.error) {
     throw redirect(

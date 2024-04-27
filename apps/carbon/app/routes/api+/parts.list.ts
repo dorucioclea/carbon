@@ -7,7 +7,7 @@ import { flash } from "~/services/session.server";
 import { error } from "~/utils/result";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const authorized = await requirePermissions(request, {});
+  const { client, companyId } = await requirePermissions(request, {});
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
@@ -15,7 +15,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     "replenishmentSystem"
   ) as PartReplenishmentSystem | null;
 
-  const parts = await getPartsList(authorized.client, replenishmentSystem);
+  const parts = await getPartsList(client, companyId, replenishmentSystem);
   if (parts.error) {
     return json(
       parts,

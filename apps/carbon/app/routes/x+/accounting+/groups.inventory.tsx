@@ -40,7 +40,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       sorts,
       filters,
     }),
-    getPartGroupsList(client),
+    getPartGroupsList(client, companyId),
     getLocationsList(client, companyId),
   ]);
   if (inventoryGroups.error) {

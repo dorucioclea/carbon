@@ -23,7 +23,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   });
 
   const [unitOfMeasures, locations] = await Promise.all([
-    getUnitOfMeasuresList(client),
+    getUnitOfMeasuresList(client, companyId),
     getLocationsList(client, companyId),
   ]);
 

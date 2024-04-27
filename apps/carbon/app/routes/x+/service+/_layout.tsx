@@ -23,7 +23,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   });
 
   const [partGroups, locations] = await Promise.all([
-    getPartGroupsList(client),
+    getPartGroupsList(client, companyId),
     getLocationsList(client, companyId),
   ]);
 
