@@ -25,18 +25,21 @@ export async function createHubspotContact(formData: FormData) {
   }
 }
 
-export async function createHubspotCompany(email: string, formData: FormData) {
+export async function createHubspotCompany(prevState: any, formData: FormData) {
   const schema = z.object({
     companyName: z.string(),
+    erp: z.string(),
   });
   const data = schema.parse({
     companyName: formData.get("companyName"),
+    erp: formData.get("erp"),
   });
 
   try {
     const companyObj = {
       properties: {
         name: data.companyName,
+        description: data.erp,
       },
       associations: [],
     };
@@ -44,7 +47,6 @@ export async function createHubspotCompany(email: string, formData: FormData) {
     const createCompanyResponse =
       await hubspotClient.crm.companies.basicApi.create(companyObj);
     revalidatePath("/form");
-
     return { message: `Added ${createCompanyResponse}` };
   } catch (error) {
     console.error("Error creating company:", error);
