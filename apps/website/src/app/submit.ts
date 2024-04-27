@@ -1,5 +1,6 @@
 "use server";
 import { Client } from "@hubspot/api-client";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 const hubspotClient = new Client({
@@ -42,10 +43,11 @@ export async function createHubspotCompany(email: string, formData: FormData) {
 
     const createCompanyResponse =
       await hubspotClient.crm.companies.basicApi.create(companyObj);
-    // revalidatePath("/form");
+    revalidatePath("/form");
 
     return { message: `Added ${createCompanyResponse}` };
   } catch (error) {
-    return { message: `Failed to create company on Hubspot` };
+    console.error("Error creating company:", error);
+    return { success: false, message: `Failed to create company on Hubspot` };
   }
 }

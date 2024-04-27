@@ -21,10 +21,11 @@ export default function ContactForm() {
     },
   });
 
-  //TODO: update type
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
-      await createHubspotContact(data);
+      const formData = new FormData();
+      formData.append("email", data.email);
+      await createHubspotContact(formData);
       const email = encodeURIComponent(data.email);
       router.push(`/form?email=${email}`);
     } catch (error) {
