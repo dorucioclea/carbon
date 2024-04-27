@@ -27,13 +27,27 @@ serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
-  const { id } = await req.json();
+  const { companyId: id, userId } = await req.json();
 
   try {
     if (!id) throw new Error("Payload is missing id");
+    if (!userId) throw new Error("Payload is missing userId");
     const companyId = Number(id);
 
     await db.transaction().execute(async (trx) => {
+      // TODO: insert employee types and groups
+
+      // insert employee
+      await trx
+        .insertInto("employee")
+        .values([
+          {
+            id: String(userId),
+            companyId,
+          },
+        ])
+        .execute();
+
       // supplier status
       await trx
         .insertInto("supplierStatus")

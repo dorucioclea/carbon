@@ -26,7 +26,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const [partCost, accounts] = await Promise.all([
     getPartCost(client, partId, companyId),
-    getAccountsList(client),
+    getAccountsList(client, companyId),
   ]);
 
   if (partCost.error) {

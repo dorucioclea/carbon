@@ -206,11 +206,13 @@ export async function rollbackNextSequence(
 
 export async function seedCompany(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: number,
+  userId: string
 ) {
   return client.functions.invoke("seed-company", {
     body: {
-      id: companyId,
+      companyId,
+      userId,
     },
   });
 }

@@ -17,7 +17,7 @@ import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "purchasing",
   });
 
@@ -26,7 +26,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const [purchaseOrderPayment, paymentTerms] = await Promise.all([
     getPurchaseOrderPayment(client, orderId),
-    getPaymentTermsList(client),
+    getPaymentTermsList(client, companyId),
   ]);
 
   if (purchaseOrderPayment.error) {

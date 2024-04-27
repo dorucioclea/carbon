@@ -113,7 +113,7 @@ export async function action({ request }: ActionFunctionArgs) {
       throw new Error("Fatal: failed to get company ID");
     }
 
-    const seed = await seedCompany(supabaseClient, companyId);
+    const seed = await seedCompany(supabaseClient, companyId, userId);
     if (seed.error) {
       logger.error(seed.error);
       throw new Error("Fatal: failed to seed company");

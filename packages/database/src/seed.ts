@@ -142,12 +142,6 @@ async function seed() {
   if (insertEmployeeTypePermissions.error)
     throw insertEmployeeTypePermissions.error;
 
-  const insertEmployee = await supabaseAdmin
-    .from("employee")
-    .upsert([{ id, employeeTypeId: employeeTypes.Admin.id }]);
-
-  if (insertEmployee.error) throw insertEmployee.error;
-
   console.log(`Database has been seeded. 🌱\n`);
   console.log(
     `Admin user is 👇 \n🆔: ${id}\n📧: ${admin.email}\n🔑: ${admin.password}`

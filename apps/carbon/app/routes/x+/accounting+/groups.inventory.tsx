@@ -34,7 +34,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getGenericQueryFilters(searchParams);
 
   const [inventoryGroups, partGroups, locations] = await Promise.all([
-    getInventoryPostingGroups(client, {
+    getInventoryPostingGroups(client, companyId, {
       limit,
       offset,
       sorts,

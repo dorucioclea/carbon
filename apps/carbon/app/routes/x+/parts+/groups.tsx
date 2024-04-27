@@ -36,7 +36,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       search,
       filters,
     }),
-    getAccountsList(client),
+    getAccountsList(client, companyId),
   ]);
 
   if (partGroups.error) {

@@ -14,13 +14,12 @@ CREATE TYPE "month" AS ENUM (
 );
 
 CREATE TABLE "fiscalYearSettings" (
-  "id" BOOLEAN NOT NULL DEFAULT TRUE,
+  "companyId" INTEGER NOT NULL,
   "startMonth" "month" NOT NULL DEFAULT 'January',
   "taxStartMonth" "month" NOT NULL DEFAULT 'January',
-  "companyId" INTEGER NOT NULL,
   "updatedBy" TEXT NOT NULL,
 
-  CONSTRAINT "fiscalYearSettings_pkey" PRIMARY KEY ("id"),
+  CONSTRAINT "fiscalYearSettings_pkey" PRIMARY KEY ("companyId"),
   CONSTRAINT "fiscalYearSettings_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "fiscalYearSettings_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "fiscalYear_id_unique" UNIQUE ("companyId")

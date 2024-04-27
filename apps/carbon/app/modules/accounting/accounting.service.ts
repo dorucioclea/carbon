@@ -12,7 +12,6 @@ import type {
   currencyValidator,
   defaultAcountValidator,
   fiscalYearSettingsValidator,
-  journalLineValidator,
   partLedgerValidator,
   paymentTermValidator,
 } from "./accounting.models";
@@ -70,9 +69,9 @@ export async function deleteAccount(
 
 export async function deleteAccountCategory(
   client: SupabaseClient<Database>,
-  accountSubcategoryId: string
+  accountCategoryId: string
 ) {
-  return client.from("accountCategory").delete().eq("id", accountSubcategoryId);
+  return client.from("accountCategory").delete().eq("id", accountCategoryId);
 }
 
 export async function deleteAccountSubcategory(
@@ -111,6 +110,7 @@ export async function getAccount(
 
 export async function getAccounts(
   client: SupabaseClient<Database>,
+  companyId: number,
   args: GenericQueryFilters & {
     search: string | null;
   }
@@ -120,6 +120,7 @@ export async function getAccounts(
     .select("*", {
       count: "exact",
     })
+    .eq("companyId", companyId)
     .eq("active", true);
 
   if (args.search) {
@@ -134,6 +135,7 @@ export async function getAccounts(
 
 export async function getAccountsList(
   client: SupabaseClient<Database>,
+  companyId: number,
   args?: {
     type?: string | null;
     incomeBalance?: string | null;
@@ -143,6 +145,7 @@ export async function getAccountsList(
   let query = client
     .from("account")
     .select("number, name, incomeBalance")
+    .eq("companyId", companyId)
     .eq("active", true);
 
   if (args?.type) {
@@ -163,13 +166,17 @@ export async function getAccountsList(
 
 export async function getAccountCategories(
   client: SupabaseClient<Database>,
+  companyId: number,
   args: GenericQueryFilters & {
     search: string | null;
   }
 ) {
-  let query = client.from("accountCategories").select("*", {
-    count: "exact",
-  });
+  let query = client
+    .from("accountCategories")
+    .select("*", {
+      count: "exact",
+    })
+    .eq("companyId", companyId);
 
   if (args.search) {
     query = query.ilike("category", `%${args.search}%`);
@@ -184,11 +191,13 @@ export async function getAccountCategories(
 }
 
 export async function getAccountCategoriesList(
-  client: SupabaseClient<Database>
+  client: SupabaseClient<Database>,
+  companyId: number
 ) {
   return client
     .from("accountCategory")
     .select("*")
+    .eq("companyId", companyId)
     .order("category", { ascending: true });
 }
 
@@ -205,6 +214,7 @@ export async function getAccountCategory(
 
 export async function getAccountSubcategories(
   client: SupabaseClient<Database>,
+  companyId: number,
   args: GenericQueryFilters & {
     search: string | null;
   }
@@ -214,6 +224,7 @@ export async function getAccountSubcategories(
     .select("*", {
       count: "exact",
     })
+    .eq("companyId", companyId)
     .eq("active", true);
 
   if (args.search) {
@@ -290,16 +301,21 @@ function getAccountTotal(
   return total;
 }
 
-export async function getBaseCurrency(client: SupabaseClient<Database>) {
+export async function getBaseCurrency(
+  client: SupabaseClient<Database>,
+  companyId: number
+) {
   return client
     .from("currency")
     .select("*")
+    .eq("companyId", companyId)
     .eq("isBaseCurrency", true)
     .single();
 }
 
 export async function getChartOfAccounts(
   client: SupabaseClient<Database>,
+  companyId: number,
   args: Omit<GenericQueryFilters, "limit" | "offset"> & {
     name: string | null;
     incomeBalance: string | null;
@@ -307,7 +323,11 @@ export async function getChartOfAccounts(
     endDate: string | null;
   }
 ) {
-  let accountsQuery = client.from("accounts").select("*").eq("active", true);
+  let accountsQuery = client
+    .from("accounts")
+    .select("*")
+    .eq("companyId", companyId)
+    .eq("active", true);
 
   if (args.incomeBalance) {
     accountsQuery = accountsQuery.eq("incomeBalance", args.incomeBalance);
@@ -378,6 +398,7 @@ export async function getCurrency(
 
 export async function getCurrencies(
   client: SupabaseClient<Database>,
+  companyId: number,
   args: GenericQueryFilters & {
     search: string | null;
   }
@@ -387,6 +408,7 @@ export async function getCurrencies(
     .select("*", {
       count: "exact",
     })
+    .eq("companyId", companyId)
     .eq("active", true);
 
   if (args.search) {
@@ -399,10 +421,14 @@ export async function getCurrencies(
   return query;
 }
 
-export async function getCurrenciesList(client: SupabaseClient<Database>) {
+export async function getCurrenciesList(
+  client: SupabaseClient<Database>,
+  companyId: number
+) {
   return client
     .from("currency")
     .select("code, name")
+    .eq("companyId", companyId)
     .order("name", { ascending: true });
 }
 
@@ -420,12 +446,26 @@ export async function getCurrentAccountingPeriod(
     .single();
 }
 
-export async function getDefaultAccounts(client: SupabaseClient<Database>) {
-  return client.from("accountDefault").select("*").eq("id", true).single();
+export async function getDefaultAccounts(
+  client: SupabaseClient<Database>,
+  companyId: number
+) {
+  return client
+    .from("accountDefault")
+    .select("*")
+    .eq("companyId", companyId)
+    .single();
 }
 
-export async function getFiscalYearSettings(client: SupabaseClient<Database>) {
-  return client.from("fiscalYearSettings").select("*").eq("id", true).single();
+export async function getFiscalYearSettings(
+  client: SupabaseClient<Database>,
+  companyId: number
+) {
+  return client
+    .from("fiscalYearSettings")
+    .select("*")
+    .eq("companyId", companyId)
+    .single();
 }
 
 export async function getInventoryPostingGroup(
@@ -454,11 +494,15 @@ export async function getInventoryPostingGroup(
 
 export async function getInventoryPostingGroups(
   client: SupabaseClient<Database>,
+  companyId: number,
   args: GenericQueryFilters
 ) {
-  let query = client.from("postingGroupInventory").select("*", {
-    count: "exact",
-  });
+  let query = client
+    .from("postingGroupInventory")
+    .select("*", {
+      count: "exact",
+    })
+    .eq("companyId", companyId);
 
   query = setGenericQueryFilters(query, args, [
     { column: "partGroupId", ascending: false },
@@ -479,6 +523,7 @@ export async function getPaymentTerm(
 
 export async function getPaymentTerms(
   client: SupabaseClient<Database>,
+  companyId: number,
   args: GenericQueryFilters & {
     search: string | null;
   }
@@ -488,6 +533,7 @@ export async function getPaymentTerms(
     .select("*", {
       count: "exact",
     })
+    .eq("companyId", companyId)
     .eq("active", true);
 
   if (args.search) {
@@ -500,10 +546,14 @@ export async function getPaymentTerms(
   return query;
 }
 
-export async function getPaymentTermsList(client: SupabaseClient<Database>) {
+export async function getPaymentTermsList(
+  client: SupabaseClient<Database>,
+  companyId: number
+) {
   return client
     .from("paymentTerm")
     .select("id, name")
+    .eq("companyId", companyId)
     .eq("active", true)
     .order("name", { ascending: true });
 }
@@ -534,11 +584,15 @@ export async function getPurchasingPostingGroup(
 
 export async function getPurchasingPostingGroups(
   client: SupabaseClient<Database>,
+  companyId: number,
   args: GenericQueryFilters
 ) {
-  let query = client.from("postingGroupPurchasing").select("*", {
-    count: "exact",
-  });
+  let query = client
+    .from("postingGroupPurchasing")
+    .select("*", {
+      count: "exact",
+    })
+    .eq("companyId", companyId);
 
   query = setGenericQueryFilters(query, args, [
     { column: "partGroupId", ascending: false },
@@ -572,11 +626,15 @@ export async function getPurchasingSalesGroup(
 
 export async function getSalesPostingGroups(
   client: SupabaseClient<Database>,
+  companyId: number,
   args: GenericQueryFilters
 ) {
-  let query = client.from("postingGroupSales").select("*", {
-    count: "exact",
-  });
+  let query = client
+    .from("postingGroupSales")
+    .select("*", {
+      count: "exact",
+    })
+    .eq("companyId", companyId);
 
   query = setGenericQueryFilters(query, args, [
     { column: "partGroupId", ascending: false },
@@ -584,30 +642,20 @@ export async function getSalesPostingGroups(
   return query;
 }
 
-export async function insertJournalLines(
-  client: SupabaseClient<Database>,
-  journalLines: z.infer<typeof journalLineValidator>[]
-) {
-  return client.from("journalLedger").insert(journalLines);
-}
-
-export async function insertJournalEntry(
-  client: SupabaseClient<Database>,
-  generalEntry: z.infer<typeof journalLineValidator>
-) {
-  return client.from("generalLedger").insert([generalEntry]);
-}
-
 export async function insertPartEntries(
   client: SupabaseClient<Database>,
-  partEntries: z.infer<typeof partLedgerValidator>[]
+  partEntries: (z.infer<typeof partLedgerValidator> & {
+    companyId: number;
+  })[]
 ) {
   return client.from("partLedger").insert(partEntries);
 }
 
 export async function insertPartLedger(
   client: SupabaseClient<Database>,
-  partEntry: z.infer<typeof partLedgerValidator>
+  partEntry: z.infer<typeof partLedgerValidator> & {
+    companyId: number;
+  }
 ) {
   return client.from("partLedger").insert([partEntry]);
 }
@@ -615,28 +663,34 @@ export async function insertPartLedger(
 export async function updateDefaultAccounts(
   client: SupabaseClient<Database>,
   defaultAccounts: z.infer<typeof defaultAcountValidator> & {
+    companyId: number;
     updatedBy: string;
   }
 ) {
-  return client.from("accountDefault").update(defaultAccounts).eq("id", true);
+  return client
+    .from("accountDefault")
+    .update(defaultAccounts)
+    .eq("companyId", defaultAccounts.companyId);
 }
 
 export async function updateFiscalYearSettings(
   client: SupabaseClient<Database>,
   fiscalYearSettings: z.infer<typeof fiscalYearSettingsValidator> & {
+    companyId: number;
     updatedBy: string;
   }
 ) {
   return client
     .from("fiscalYearSettings")
     .update(sanitize(fiscalYearSettings))
-    .eq("id", true);
+    .eq("id", fiscalYearSettings.companyId);
 }
 
 export async function upsertAccount(
   client: SupabaseClient<Database>,
   account:
     | (Omit<z.infer<typeof accountValidator>, "id"> & {
+        companyId: number;
         createdBy: string;
         customFields?: Json;
       })
@@ -661,6 +715,7 @@ export async function upsertAccountCategory(
   client: SupabaseClient<Database>,
   accountCategory:
     | (Omit<z.infer<typeof accountCategoryValidator>, "id"> & {
+        companyId: number;
         createdBy: string;
         customFields?: Json;
       })
@@ -689,6 +744,7 @@ export async function upsertAccountSubcategory(
   client: SupabaseClient<Database>,
   accountSubcategory:
     | (Omit<z.infer<typeof accountSubcategoryValidator>, "id"> & {
+        companyId: number;
         createdBy: string;
         customFields?: Json;
       })
@@ -717,11 +773,13 @@ export async function upsertCurrency(
   client: SupabaseClient<Database>,
   currency:
     | (Omit<z.infer<typeof currencyValidator>, "id"> & {
+        companyId: number;
         createdBy: string;
         customFields?: Json;
       })
     | (Omit<z.infer<typeof currencyValidator>, "id"> & {
         id: string;
+        companyId: number;
         updatedBy: string;
         customFields?: Json;
       })
@@ -730,7 +788,8 @@ export async function upsertCurrency(
     await client
       .from("currency")
       .update({ isBaseCurrency: false })
-      .eq("isBaseCurrency", true);
+      .eq("isBaseCurrency", true)
+      .eq("companyId", currency.companyId);
   }
 
   if ("createdBy" in currency) {
@@ -748,6 +807,7 @@ export async function upsertPaymentTerm(
   client: SupabaseClient<Database>,
   paymentTerm:
     | (Omit<z.infer<typeof paymentTermValidator>, "id"> & {
+        companyId: number;
         createdBy: string;
         customFields?: Json;
       })

@@ -24,11 +24,13 @@ export const handle: Handle = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "accounting",
   });
 
-  const [defaultAccounts] = await Promise.all([getDefaultAccounts(client)]);
+  const [defaultAccounts] = await Promise.all([
+    getDefaultAccounts(client, companyId),
+  ]);
 
   if (defaultAccounts.error || !defaultAccounts.data) {
     throw redirect(
@@ -47,7 +49,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     create: "accounting",
   });
 
@@ -61,6 +63,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const updateDefaults = await updateDefaultAccounts(client, {
     ...validation.data,
+    companyId,
     updatedBy: userId,
   });
   if (updateDefaults.error) {
