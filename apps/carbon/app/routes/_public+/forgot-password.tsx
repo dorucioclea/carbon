@@ -21,7 +21,8 @@ import { LuAlertCircle, LuCheckCircle } from "react-icons/lu";
 
 import { Input, Submit } from "~/components/Form";
 import { getUserByEmail } from "~/modules/users/users.server";
-import { forgotPasswordValidator, sendMagicLink } from "~/services/auth";
+import { forgotPasswordValidator } from "~/services/auth";
+import { sendMagicLink } from "~/services/auth/auth.server";
 import { getAuthSession } from "~/services/session.server";
 import type { FormActionData, Result } from "~/types";
 import { assertIsPost } from "~/utils/http";

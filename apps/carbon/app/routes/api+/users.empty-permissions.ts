@@ -2,7 +2,7 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { getFeatures } from "~/modules/users";
 import { makeEmptyPermissionsFromFeatures } from "~/modules/users/users.server";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { error } from "~/utils/result";
 

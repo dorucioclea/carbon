@@ -1,5 +1,5 @@
 import { type LoaderFunctionArgs } from "@remix-run/node";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 
 const supportedFileTypes: Record<string, string> = {
   pdf: "application/pdf",

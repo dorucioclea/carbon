@@ -8,7 +8,7 @@ import {
   getQuoteLines,
 } from "~/modules/sales";
 import { getCompany } from "~/modules/settings";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { client } = await requirePermissions(request, {

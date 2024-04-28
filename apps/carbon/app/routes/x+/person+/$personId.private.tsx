@@ -7,7 +7,7 @@ import { validationError, validator } from "@carbon/remix-validated-form";
 import type { PrivateAttributes } from "~/modules/account";
 import { UserAttributesForm, getPrivateAttributes } from "~/modules/account";
 import { employeeJobValidator, upsertEmployeeJob } from "~/modules/resources";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";

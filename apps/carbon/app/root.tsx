@@ -9,7 +9,6 @@ import type {
 import { json } from "@remix-run/node";
 import {
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,
@@ -22,9 +21,9 @@ import { Analytics } from "@vercel/analytics/react";
 import React, { useEffect } from "react";
 import { getBrowserEnv } from "~/config/env";
 import { getMode, setMode } from "~/services/mode.server";
-import Background from "~/styles/background.css";
-import NProgress from "~/styles/nprogress.css";
-import Tailwind from "~/styles/tailwind.css";
+import Background from "~/styles/background.css?url";
+import NProgress from "~/styles/nprogress.css?url";
+import Tailwind from "~/styles/tailwind.css?url";
 import { error } from "~/utils/result";
 import { useMode } from "./hooks/useMode";
 import { getSessionFlash } from "./services/session.server";
@@ -122,7 +121,6 @@ function Document({
         <ScrollRestoration />
         <Scripts />
         <Analytics />
-        {process.env.NODE_ENV === "development" && <LiveReload />}
       </body>
     </html>
   );

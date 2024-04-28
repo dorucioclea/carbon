@@ -5,7 +5,7 @@ import { ConfirmDelete } from "~/components/Modals";
 import { useRouteData } from "~/hooks";
 import type { QuotationAssembly } from "~/modules/sales";
 import { deleteQuoteAssembly } from "~/modules/sales";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";

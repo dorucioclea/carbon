@@ -12,6 +12,10 @@ import logger from "~/lib/logger";
 
 const ABORT_DELAY = 30000;
 
+// This code has the effect of registering jobs with trigger.dev
+// in a way that doesn't interfere with the vite compiler.
+export * from "~/jobs.server";
+
 export default function handleRequest(
   request: Request,
   responseStatusCode: number,

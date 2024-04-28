@@ -1,6 +1,15 @@
 import { redirect, type ActionFunctionArgs } from "@remix-run/node";
+import type { SalesOrderLine } from "~/modules/sales";
 import { createSalesOrderFromQuote } from "~/modules/sales/sales.server";
-import { requirePermissions } from "~/services/auth";
+import {
+  getQuote,
+  getQuoteLines,
+  convertQuoteToOrder,
+  upsertSalesOrder,
+  insertSalesOrderLines,
+} from "~/modules/sales";
+import { getNextSequence, rollbackNextSequence } from "~/modules/settings";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
@@ -32,7 +41,6 @@ export async function action(args: ActionFunctionArgs) {
     }
     salesOrderId = result.data?.id;
   } catch (err) {
-    console.log("YEET", err)
     throw redirect(
       path.to.quote(id),
       await flash(request, error(err, "Failed to create sales order"))

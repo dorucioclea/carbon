@@ -4,7 +4,7 @@ import { useLoaderData, useNavigate, useParams } from "@remix-run/react";
 import { useRouteData } from "~/hooks";
 import type { WorkCellType } from "~/modules/resources";
 import { WorkCellForm, getWorkCell } from "~/modules/resources";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { getCustomFields } from "~/utils/form";
 import { notFound } from "~/utils/http";

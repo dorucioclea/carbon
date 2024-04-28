@@ -41,7 +41,6 @@ import { Input } from "../../ui/input";
 const MacbookScroll = ({
   showGradient,
 }: {
-  src?: string;
   showGradient?: boolean;
   title?: string | React.ReactNode;
   badge?: React.ReactNode;

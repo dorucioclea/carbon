@@ -2,7 +2,7 @@ import { type LoaderFunctionArgs } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import { useIntegrations } from "~/hooks/useIntegrations";
 import { IntegrationsList } from "~/modules/settings";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   await requirePermissions(request, {

@@ -6,7 +6,7 @@ import type { userAdminSchema } from "~/jobs/user-admin.server";
 import { triggerClient } from "~/lib/trigger.server";
 import { deactivateUsersValidator } from "~/modules/users";
 import { deactivateUser } from "~/modules/users/users.server";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { safeRedirect } from "~/utils/http";
 import { error, success } from "~/utils/result";

@@ -1,7 +1,7 @@
 import { validationError, validator } from "@carbon/remix-validated-form";
 import { json, type ActionFunctionArgs } from "@remix-run/node";
 import { updatePurchaseOrderFavorite } from "~/modules/purchasing";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { favoriteSchema } from "~/types/validators";
 import { error } from "~/utils/result";

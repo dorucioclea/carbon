@@ -3,16 +3,14 @@ import { getLocalTimeZone, today } from "@internationalized/date";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { useUrlParams } from "~/hooks";
-import type {
-  SalesOrderStatus,
-} from "~/modules/sales";
+import type { SalesOrderStatus } from "~/modules/sales";
 import {
   SalesOrderForm,
   salesOrderValidator,
   upsertSalesOrder,
 } from "~/modules/sales";
 import { getNextSequence, rollbackNextSequence } from "~/modules/settings";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";

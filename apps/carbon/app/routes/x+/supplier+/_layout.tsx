@@ -8,7 +8,7 @@ import {
   getShippingTermsList,
 } from "~/modules/inventory";
 import { getSupplierStatuses, getSupplierTypes } from "~/modules/purchasing";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import type { Handle } from "~/utils/handle";
 import { path } from "~/utils/path";
 

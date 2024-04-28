@@ -3,7 +3,7 @@ import { json, redirect } from "@remix-run/node";
 import { useLoaderData, useNavigate } from "@remix-run/react";
 import { ConfirmDelete } from "~/components/Modals";
 import { deletePartner, getPartnerBySupplierId } from "~/modules/resources";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { notFound } from "~/utils/http";
 import { path } from "~/utils/path";

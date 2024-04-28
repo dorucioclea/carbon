@@ -17,7 +17,7 @@ import {
   deleteAuthAccount,
   sendInviteByEmail,
   sendMagicLink,
-} from "~/services/auth";
+} from "~/services/auth/auth.server";
 import { flash, requireAuthSession } from "~/services/session.server";
 import type { ListItem, Result } from "~/types";
 import { path } from "~/utils/path";

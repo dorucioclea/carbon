@@ -34,7 +34,7 @@ import {
 import QuotationReleaseModal from "~/modules/sales/ui/Quotation/QuotationReleaseModal";
 import ConvertToSalesOrderModal from "~/modules/sales/ui/Quotation/ConvertToSalesOrderModal";
 
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { useCustomers } from "~/stores";
 import type { Handle } from "~/utils/handle";

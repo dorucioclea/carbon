@@ -7,7 +7,7 @@ import {
   upsertRequestForQuote,
 } from "~/modules/purchasing";
 import { getNextSequence, rollbackNextSequence } from "~/modules/settings";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";

@@ -24,7 +24,7 @@ import {
   updatePublicAccount,
 } from "~/modules/account";
 import { getUser } from "~/modules/users/users.server";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { destroyAuthSession } from "~/services/session.server";
 import { assertIsPost } from "~/utils/http";
 

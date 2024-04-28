@@ -11,7 +11,7 @@ import ReactFlow, {
   useEdgesState,
   useNodesState,
 } from "reactflow";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Carbon | Parts" }];

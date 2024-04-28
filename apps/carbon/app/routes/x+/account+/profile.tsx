@@ -20,7 +20,7 @@ import {
   updateAvatar,
   updatePublicAccount,
 } from "~/modules/account";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";
 import { assertIsPost } from "~/utils/http";

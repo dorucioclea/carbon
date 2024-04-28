@@ -2,7 +2,7 @@ import { redirect, type LoaderFunctionArgs } from "@remix-run/node";
 import { getSupabaseServiceRole } from "~/lib/supabase";
 import type { ReceiptSourceDocument } from "~/modules/inventory";
 import { getUserDefaults } from "~/modules/users/users.server";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { path } from "~/utils/path";
 import { error } from "~/utils/result";

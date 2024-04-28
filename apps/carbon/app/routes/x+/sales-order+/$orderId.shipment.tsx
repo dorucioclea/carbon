@@ -12,7 +12,7 @@ import {
   salesOrderShipmentValidator,
   upsertSalesOrderShipment,
 } from "~/modules/sales";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
@@ -40,10 +40,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       path.to.salesOrder(orderId),
       await flash(
         request,
-        error(
-          salesOrderShipment.error,
-          "Failed to load sales order shipment"
-        )
+        error(salesOrderShipment.error, "Failed to load sales order shipment")
       )
     );
   }
@@ -93,15 +90,12 @@ export async function action({ request, params }: ActionFunctionArgs) {
     return validationError(validation.error);
   }
 
-  const updateSalesOrderShipment = await upsertSalesOrderShipment(
-    client,
-    {
-      ...validation.data,
-      id: orderId,
-      updatedBy: userId,
-      customFields: setCustomFields(formData),
-    }
-  );
+  const updateSalesOrderShipment = await upsertSalesOrderShipment(client, {
+    ...validation.data,
+    id: orderId,
+    updatedBy: userId,
+    customFields: setCustomFields(formData),
+  });
   if (updateSalesOrderShipment.error) {
     throw redirect(
       path.to.salesOrderShipment(orderId),

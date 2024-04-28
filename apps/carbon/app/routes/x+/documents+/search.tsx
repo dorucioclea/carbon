@@ -9,7 +9,7 @@ import {
   getDocumentLabels,
   getDocuments,
 } from "~/modules/documents";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { path } from "~/utils/path";
 import { getGenericQueryFilters } from "~/utils/query";

@@ -2,7 +2,7 @@ import { redirect, type LoaderFunctionArgs } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import { getLocationsList } from "~/modules/resources";
 import { getCompany } from "~/modules/settings";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { onboardingSequence, path } from "~/utils/path";
 
 import { VStack } from "@carbon/react";

@@ -4,7 +4,7 @@ import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import { getCustomerTypes } from "~/modules/sales";
 import { CustomerAccountsTable, getCustomers } from "~/modules/users";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";
 import { path } from "~/utils/path";
