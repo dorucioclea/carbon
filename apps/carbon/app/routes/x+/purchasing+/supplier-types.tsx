@@ -14,7 +14,7 @@ export const handle: Handle = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "purchasing",
     role: "employee",
   });
@@ -24,7 +24,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const search = searchParams.get("search");
   const { limit, offset, sorts } = getGenericQueryFilters(searchParams);
 
-  return json(await getSupplierTypes(client, { search, limit, offset, sorts }));
+  return json(
+    await getSupplierTypes(client, companyId, { search, limit, offset, sorts })
+  );
 }
 
 export default function SupplierTypesRoute() {

@@ -24,7 +24,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     create: "purchasing",
   });
 
@@ -41,6 +41,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const insertSupplierType = await upsertSupplierType(client, {
     ...data,
+    companyId,
     createdBy: userId,
     customFields: setCustomFields(formData),
   });

@@ -21,7 +21,7 @@ export const handle: Handle = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "purchasing",
   });
 
@@ -35,7 +35,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getGenericQueryFilters(searchParams);
 
   const [suppliers, supplierTypes, supplierStatuses] = await Promise.all([
-    getSuppliers(client, {
+    getSuppliers(client, companyId, {
       search,
       type,
       status,
@@ -44,8 +44,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
       sorts,
       filters,
     }),
-    getSupplierTypes(client),
-    getSupplierStatuses(client),
+    getSupplierTypes(client, companyId),
+    getSupplierStatuses(client, companyId),
   ]);
 
   if (suppliers.error) {

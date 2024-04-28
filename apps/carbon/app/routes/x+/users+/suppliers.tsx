@@ -17,7 +17,7 @@ export const handle: Handle = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "users",
   });
 
@@ -36,7 +36,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       sorts,
       filters,
     }),
-    getSupplierTypes(client),
+    getSupplierTypes(client, companyId),
   ]);
   if (suppliers.error) {
     throw redirect(

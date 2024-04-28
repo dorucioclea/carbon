@@ -34,8 +34,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
     shippingMethods,
     shippingTerms,
   ] = await Promise.all([
-    getSupplierTypes(client),
-    getSupplierStatuses(client),
+    getSupplierTypes(client, companyId),
+    getSupplierStatuses(client, companyId),
     getPaymentTermsList(client, companyId),
     getShippingMethodsList(client, companyId),
     getShippingTermsList(client, companyId),

@@ -40,7 +40,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       filters,
     }),
     getPartGroupsList(client, companyId),
-    getSupplierTypesList(client),
+    getSupplierTypesList(client, companyId),
   ]);
   if (purchasingGroups.error) {
     throw redirect(
