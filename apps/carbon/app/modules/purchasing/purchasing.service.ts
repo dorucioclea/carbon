@@ -843,6 +843,7 @@ export async function upsertPurchaseOrderDelivery(
   client: SupabaseClient<Database>,
   purchaseOrderDelivery:
     | (z.infer<typeof purchaseOrderDeliveryValidator> & {
+        companyId: number;
         createdBy: string;
         customFields?: Json;
       })

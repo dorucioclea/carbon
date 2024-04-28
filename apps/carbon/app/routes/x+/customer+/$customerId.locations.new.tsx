@@ -16,7 +16,7 @@ import { error, success } from "~/utils/result";
 
 export async function action({ request, params }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     create: "sales",
   });
 
@@ -38,6 +38,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const createCustomerLocation = await insertCustomerLocation(client, {
     customerId,
+    companyId,
     address,
     customFields: setCustomFields(formData),
   });

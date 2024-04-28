@@ -31,7 +31,10 @@ const getUserId = async (): Promise<string> => {
       password: admin.password,
       email_confirm: true,
     })
-    .then(({ data }) => data.user?.id);
+    .then(({ data }) => data.user?.id)
+    .catch((e) => {
+      throw e;
+    });
 
   if (newUserId) return newUserId;
 

@@ -4,9 +4,9 @@ import { getCustomerTypesList } from "~/modules/sales";
 import { requirePermissions } from "~/services/auth/auth.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const authorized = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "sales",
   });
 
-  return json(await getCustomerTypesList(authorized.client));
+  return json(await getCustomerTypesList(client, companyId));
 }

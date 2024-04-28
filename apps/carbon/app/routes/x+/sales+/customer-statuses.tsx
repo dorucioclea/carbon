@@ -14,7 +14,7 @@ export const handle: Handle = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "sales",
     role: "employee",
   });
@@ -26,7 +26,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getGenericQueryFilters(searchParams);
 
   return json(
-    await getCustomerStatuses(client, { search, limit, offset, sorts, filters })
+    await getCustomerStatuses(client, companyId, {
+      search,
+      limit,
+      offset,
+      sorts,
+      filters,
+    })
   );
 }
 
