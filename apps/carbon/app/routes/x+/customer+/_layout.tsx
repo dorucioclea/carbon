@@ -37,8 +37,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getCustomerTypes(client),
     getCustomerStatuses(client),
     getPaymentTermsList(client, companyId),
-    getShippingMethodsList(client),
-    getShippingTermsList(client),
+    getShippingMethodsList(client, companyId),
+    getShippingTermsList(client, companyId),
   ]);
 
   return json({

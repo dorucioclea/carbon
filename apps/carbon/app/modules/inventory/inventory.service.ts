@@ -29,6 +29,7 @@ export async function deleteShippingMethod(
 
 export async function getReceipts(
   client: SupabaseClient<Database>,
+  companyId: number,
   args: GenericQueryFilters & {
     search: string | null;
   }
@@ -38,6 +39,7 @@ export async function getReceipts(
     .select("*", {
       count: "exact",
     })
+    .eq("companyId", companyId)
     .neq("sourceDocumentId", "");
 
   if (args.search) {
@@ -79,6 +81,7 @@ export async function getShippingMethod(
 
 export async function getShippingMethods(
   client: SupabaseClient<Database>,
+  companyId: number,
   args: GenericQueryFilters & {
     search: string | null;
   }
@@ -88,6 +91,7 @@ export async function getShippingMethods(
     .select("*", {
       count: "exact",
     })
+    .eq("companyId", companyId)
     .eq("active", true);
 
   if (args.search) {
@@ -102,18 +106,26 @@ export async function getShippingMethods(
   return query;
 }
 
-export async function getShippingMethodsList(client: SupabaseClient<Database>) {
+export async function getShippingMethodsList(
+  client: SupabaseClient<Database>,
+  companyId: number
+) {
   return client
     .from("shippingMethod")
     .select("id, name")
+    .eq("companyId", companyId)
     .eq("active", true)
     .order("name", { ascending: true });
 }
 
-export async function getShippingTermsList(client: SupabaseClient<Database>) {
+export async function getShippingTermsList(
+  client: SupabaseClient<Database>,
+  companyId: number
+) {
   return client
     .from("shippingTerm")
     .select("id, name")
+    .eq("companyId", companyId)
     .eq("active", true)
     .order("name", { ascending: true });
 }
@@ -123,6 +135,7 @@ export async function upsertReceipt(
   receipt:
     | (Omit<z.infer<typeof receiptValidator>, "id" | "receiptId"> & {
         receiptId: string;
+        companyId: number;
         createdBy: string;
         customFields?: Json;
       })
@@ -151,6 +164,7 @@ export async function upsertShippingMethod(
   client: SupabaseClient<Database>,
   shippingMethod:
     | (Omit<z.infer<typeof shippingMethodValidator>, "id"> & {
+        companyId: number;
         createdBy: string;
         customFields?: Json;
       })

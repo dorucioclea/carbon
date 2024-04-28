@@ -29,7 +29,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getGenericQueryFilters(searchParams);
 
   const [shippingMethods] = await Promise.all([
-    getShippingMethods(client, {
+    getShippingMethods(client, companyId, {
       search,
       limit,
       offset,

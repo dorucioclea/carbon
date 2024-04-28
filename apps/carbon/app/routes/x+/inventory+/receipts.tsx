@@ -28,7 +28,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getGenericQueryFilters(searchParams);
 
   const [receipts, locations] = await Promise.all([
-    getReceipts(client, {
+    getReceipts(client, companyId, {
       search,
       limit,
       offset,

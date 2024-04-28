@@ -27,6 +27,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         id: string;
       }>("create-receipt-from-purchase-order", {
         body: {
+          companyId,
           locationId: defaults.data?.locationId,
           purchaseOrderId: sourceDocumentId,
           receiptId: undefined,
@@ -49,6 +50,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         id: string;
       }>("create-receipt-default", {
         body: {
+          companyId,
           locationId: defaults.data?.locationId,
           userId: userId,
         },
