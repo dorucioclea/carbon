@@ -44,12 +44,16 @@ export async function getPurchaseInvoice(
 
 export async function getPurchaseInvoices(
   client: SupabaseClient<Database>,
+  companyId: number,
   args: GenericQueryFilters & {
     search: string | null;
     supplierId: string | null;
   }
 ) {
-  let query = client.from("purchaseInvoices").select("*", { count: "exact" });
+  let query = client
+    .from("purchaseInvoices")
+    .select("*", { count: "exact" })
+    .eq("companyId", companyId);
 
   if (args.search) {
     query = query.ilike("invoiceId", `%${args.search}%`);
@@ -92,6 +96,7 @@ export async function upsertPurchaseInvoice(
   purchaseInvoice:
     | (Omit<z.infer<typeof purchaseInvoiceValidator>, "id" | "invoiceId"> & {
         invoiceId: string;
+        companyId: number;
         createdBy: string;
         customFields?: Json;
       })
@@ -141,6 +146,7 @@ export async function upsertPurchaseInvoiceLine(
   client: SupabaseClient<Database>,
   purchaseInvoiceLine:
     | (Omit<z.infer<typeof purchaseInvoiceLineValidator>, "id"> & {
+        companyId: number;
         createdBy: string;
         customFields?: Json;
       })

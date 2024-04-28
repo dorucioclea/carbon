@@ -94,9 +94,10 @@ export async function action(args: ActionFunctionArgs) {
       size: Math.round(file.byteLength / 1024),
       sourceDocument: "Purchase Order",
       sourceDocumentId: orderId,
-      createdBy: userId,
       readGroups: [userId],
       writeGroups: [userId],
+      createdBy: userId,
+      companyId,
     });
 
     if (createDocument.error) {

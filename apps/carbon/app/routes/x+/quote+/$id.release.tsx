@@ -88,9 +88,10 @@ export async function action(args: ActionFunctionArgs) {
       size: Math.round(file.byteLength / 1024),
       sourceDocument: "Quote",
       sourceDocumentId: id,
-      createdBy: userId,
       readGroups: [userId],
       writeGroups: [userId],
+      createdBy: userId,
+      companyId,
     });
 
     if (createDocument.error) {

@@ -16,7 +16,7 @@ import { getGenericQueryFilters } from "~/utils/query";
 import { error } from "~/utils/result";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     view: "documents",
   });
 
@@ -34,7 +34,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getGenericQueryFilters(searchParams);
 
   const [documents, labels, extensions] = await Promise.all([
-    getDocuments(client, {
+    getDocuments(client, companyId, {
       search,
       favorite,
       recent,

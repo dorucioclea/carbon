@@ -16,16 +16,6 @@ export async function deleteDocument(
   id: string,
   userId: string
 ) {
-  const deleteDocumentFavorites = await client
-    .from("documentFavorite")
-    .delete()
-    .eq("documentId", id)
-    .eq("userId", userId);
-
-  if (deleteDocumentFavorites.error) {
-    return deleteDocumentFavorites;
-  }
-
   return client
     .from("document")
     .update({
@@ -69,6 +59,7 @@ export async function getDocument(
 
 export async function getDocuments(
   client: SupabaseClient<Database>,
+  companyId: number,
   args: GenericQueryFilters & {
     search: string | null;
     favorite?: boolean;
@@ -82,6 +73,7 @@ export async function getDocuments(
     .select("*", {
       count: "exact",
     })
+    .eq("companyId", companyId)
     .eq("active", args.active);
 
   if (args?.search) {
@@ -202,6 +194,7 @@ export async function upsertDocument(
     | (Omit<z.infer<typeof documentValidator>, "id"> & {
         path: string;
         size: number;
+        companyId: number;
         createdBy: string;
       } & SourceDocumentData)
     | (Omit<z.infer<typeof documentValidator>, "id"> & {
