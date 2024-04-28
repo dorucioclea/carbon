@@ -22,7 +22,7 @@ import { error } from "~/utils/result";
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     create: "purchasing",
   });
 
@@ -33,7 +33,11 @@ export async function action({ request }: ActionFunctionArgs) {
     return validationError(validation.error);
   }
 
-  const nextSequence = await getNextSequence(client, "purchaseOrder", userId);
+  const nextSequence = await getNextSequence(
+    client,
+    "purchaseOrder",
+    companyId
+  );
   if (nextSequence.error) {
     throw redirect(
       path.to.newPurchaseOrder,
@@ -47,13 +51,14 @@ export async function action({ request }: ActionFunctionArgs) {
   const createPurchaseOrder = await upsertPurchaseOrder(client, {
     ...validation.data,
     purchaseOrderId: nextSequence.data,
+    companyId,
     createdBy: userId,
     customFields: setCustomFields(formData),
   });
 
   if (createPurchaseOrder.error || !createPurchaseOrder.data?.[0]) {
     // TODO: this should be done as a transaction
-    await rollbackNextSequence(client, "purchaseOrder", userId);
+    await rollbackNextSequence(client, "purchaseOrder", companyId);
     throw redirect(
       path.to.purchaseOrders,
       await flash(

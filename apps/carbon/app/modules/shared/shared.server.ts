@@ -15,14 +15,14 @@ export async function assign(
 
   return (
     client
-      // @ts-expect-error
+      // @ts-ignore
       .from(table)
       .update({ assignee: assignee ? assignee : null })
       .eq("id", id)
   );
 }
 
-export async function getCustomFieldsCacheKey(args: {
+export async function getCustomFieldsCacheKey(args?: {
   companyId?: number;
   module?: string;
   table?: string;
@@ -34,7 +34,7 @@ export async function getCustomFieldsCacheKey(args: {
 
 export async function getCustomFieldsSchemas(
   client: SupabaseClient<Database>,
-  args: {
+  args?: {
     companyId: number;
     module?: string;
     table?: string;

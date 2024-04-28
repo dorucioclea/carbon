@@ -29,7 +29,11 @@ export async function action({ request }: ActionFunctionArgs) {
     return validationError(validation.error);
   }
 
-  const nextSequence = await getNextSequence(client, "requestForQuote", userId);
+  const nextSequence = await getNextSequence(
+    client,
+    "requestForQuote",
+    companyId
+  );
   if (nextSequence.error) {
     throw redirect(
       path.to.newRequestForQuote,
@@ -50,7 +54,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   if (createRequestForQuote.error || !createRequestForQuote.data?.[0]) {
     // TODO: this should be done as a transaction
-    await rollbackNextSequence(client, "requestForQuote", userId);
+    await rollbackNextSequence(client, "requestForQuote", companyId);
     throw redirect(
       path.to.requestForQuotes,
       await flash(

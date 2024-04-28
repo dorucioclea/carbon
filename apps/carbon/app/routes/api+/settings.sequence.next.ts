@@ -6,7 +6,7 @@ import { flash } from "~/services/session.server";
 import { error } from "~/utils/result";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client, userId } = await requirePermissions(request, {});
+  const { client, companyId } = await requirePermissions(request, {});
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
@@ -18,7 +18,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       await flash(request, error(request, "Bad request for next sequence"))
     );
 
-  const nextSequence = await getNextSequence(client, table, userId);
+  const nextSequence = await getNextSequence(client, table, companyId);
   if (nextSequence.error) {
     return json(
       nextSequence,

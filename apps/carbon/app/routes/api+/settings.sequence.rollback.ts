@@ -8,7 +8,7 @@ import { error } from "~/utils/result";
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsDelete(request);
-  const { client, userId } = await requirePermissions(request, {});
+  const { client, companyId } = await requirePermissions(request, {});
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
@@ -29,7 +29,7 @@ export async function action({ request }: ActionFunctionArgs) {
       )
     );
 
-  const verifyCurrent = await getCurrentSequence(client, table);
+  const verifyCurrent = await getCurrentSequence(client, table, companyId);
   if (verifyCurrent.error) {
     return json(
       verifyCurrent,
@@ -50,7 +50,7 @@ export async function action({ request }: ActionFunctionArgs) {
     });
   }
 
-  const rollback = await rollbackNextSequence(client, table, userId);
+  const rollback = await rollbackNextSequence(client, table, companyId);
   if (rollback.error) {
     return json(
       rollback,

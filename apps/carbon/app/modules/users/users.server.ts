@@ -332,9 +332,7 @@ export async function getUserByEmail(email: string) {
     .single();
 }
 
-export async function getUserClaims(request: Request) {
-  const { userId } = await requireAuthSession(request);
-
+export async function getUserClaims(userId: string) {
   let claims: {
     permissions: Record<string, Permission>;
     role: string | null;
@@ -350,13 +348,7 @@ export async function getUserClaims(request: Request) {
       // TODO: remove service role from here, and move it up a level
       const rawClaims = await getClaims(getSupabaseServiceRole(), userId);
       if (rawClaims.error || rawClaims.data === null) {
-        throw redirect(
-          path.to.authenticatedRoot,
-          await flash(
-            request,
-            error(rawClaims.error, "Failed to get rawClaims")
-          )
-        );
+        throw new Error("Failed to get claims");
       }
       // convert rawClaims to permissions
       claims = makePermissionsFromClaims(rawClaims.data as Json[]);
@@ -365,10 +357,7 @@ export async function getUserClaims(request: Request) {
       await redis.set(getPermissionCacheKey(userId), JSON.stringify(claims));
 
       if (!claims) {
-        throw redirect(
-          path.to.authenticatedRoot,
-          await flash(request, error(rawClaims, "Failed to parse claims"))
-        );
+        throw new Error("Failed to get claims");
       }
     }
 

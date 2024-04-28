@@ -71,7 +71,11 @@ export async function action({ request }: ActionFunctionArgs) {
     return validationError(validation.error);
   }
 
-  const nextSequence = await getNextSequence(client, "purchaseInvoice", userId);
+  const nextSequence = await getNextSequence(
+    client,
+    "purchaseInvoice",
+    companyId
+  );
   if (nextSequence.error) {
     throw redirect(
       path.to.newPurchaseInvoice,
@@ -93,7 +97,7 @@ export async function action({ request }: ActionFunctionArgs) {
   });
 
   if (createPurchaseInvoice.error || !createPurchaseInvoice.data?.[0]) {
-    await rollbackNextSequence(client, "purchaseInvoice", userId);
+    await rollbackNextSequence(client, "purchaseInvoice", companyId);
     throw redirect(
       path.to.purchaseInvoices,
       await flash(

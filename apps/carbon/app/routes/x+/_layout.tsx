@@ -51,7 +51,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       getCustomFieldsSchemas(client, { companyId }),
       getIntegrations(client, companyId),
       getUser(client, userId),
-      getUserClaims(request),
+      getUserClaims(userId),
       getUserGroups(client, userId),
       getUserDefaults(client, userId, companyId),
     ]);

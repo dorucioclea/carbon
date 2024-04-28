@@ -15,7 +15,7 @@ import { error } from "~/utils/result";
 
 export async function action({ request, params }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     create: "settings",
   });
 
@@ -32,14 +32,15 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const { id, ...data } = validation.data;
 
-  const update = await upsertCustomField(client, {
+  const create = await upsertCustomField(client, {
     ...data,
+    companyId,
     createdBy: userId,
   });
-  if (update.error) {
+  if (create.error) {
     return json(
       {},
-      await flash(request, error(update.error, "Failed to insert custom field"))
+      await flash(request, error(create.error, "Failed to insert custom field"))
     );
   }
 

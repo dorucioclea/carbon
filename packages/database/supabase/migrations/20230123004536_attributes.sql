@@ -84,7 +84,17 @@ CREATE TABLE "attributeDataType" (
     )
 );
 
--- ALTER TABLE "attributeDataType" ENABLE ROW LEVEL SECURITY;
+INSERT INTO "attributeDataType" ("label", "isBoolean", "isDate", "isList", "isNumeric", "isText", "isUser")
+VALUES 
+  ('Yes/No', true, false, false, false, false, false),
+  ('Date', false, true, false, false, false, false),
+  ('List', false, false, true, false, false, false),
+  ('Numeric', false, false, false, true, false, false),
+  ('Text', false, false, false, false, true, false),
+  ('User', false, false, false, false, false, true);
+
+ALTER TABLE "attributeDataType" ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Authenticated users can view attribute data types" ON "attributeDataType" FOR SELECT USING (auth.role() = 'authenticated');
 
 CREATE TABLE "userAttribute" (
   "id" TEXT NOT NULL DEFAULT xid(),

@@ -50,7 +50,7 @@ export async function action(args: ActionFunctionArgs) {
   }
 
   try {
-    const nextSequence = await getNextSequence(client, "salesOrder", userId);
+    const nextSequence = await getNextSequence(client, "salesOrder", companyId);
     if (nextSequence.error) {
       throw redirect(
         path.to.newSalesOrder,
@@ -62,15 +62,16 @@ export async function action(args: ActionFunctionArgs) {
     }
     const createSalesOrder = await upsertSalesOrder(client, {
       salesOrderId: nextSequence.data,
-      createdBy: userId,
       quoteId: quote.data.id!,
       customerId: quote.data.customerId!,
+      companyId,
+      createdBy: userId,
       orderDate: new Date().toISOString(),
     });
 
     if (createSalesOrder.error || !createSalesOrder.data?.[0]) {
       // TODO: this should be done as a transaction
-      await rollbackNextSequence(client, "salesOrder", userId);
+      await rollbackNextSequence(client, "salesOrder", companyId);
       throw redirect(
         path.to.quotes,
         await flash(
