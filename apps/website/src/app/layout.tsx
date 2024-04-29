@@ -20,7 +20,7 @@ export default function Layout({ children }: { children: ReactElement }) {
     <html lang="en" suppressHydrationWarning>
       <head></head>
       <body
-        className={`${GeistSans.variable} ${GeistMono.variable} overflow-x-hidden`}
+        className={`${GeistSans.variable} ${GeistMono.variable} overflow-x-hidden radial-gradient`}
       >
         <ThemeProvider attribute="class">
           <Header />
