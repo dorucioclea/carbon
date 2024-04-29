@@ -179,3 +179,10 @@ For example, to run test command in the `@carbon/react` package you can run:
 ```
 $ npm run test -w @carbon/react
 ```
+
+### Or run with the `launcher.sh` script
+
+```
+chmod +x launcher.sh # make the file executable
+./launcher.sh
+```

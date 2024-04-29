@@ -27,7 +27,7 @@ function Gradient() {
 function Hero() {
   return (
     <section className="overflow-hidden">
-      <MacbookScroll src={`/linear.webp`} showGradient={true} />
+      <MacbookScroll showGradient={true} />
     </section>
   );
 }
@@ -36,7 +36,7 @@ function Overview() {
   return (
     <motion.section id="overview" className="relative" {...fadeIn}>
       <div className="px-4 py-16 mx-auto sm:pt-20 sm:pb-24 lg:max-w-7xl lg:pt-24">
-        <h2 className="nx-text-4xl font-extrabold tracking-tighter lg:nx-text-5xl xl:nx-text-6xl lg:text-center dark:text-white">
+        <h2 className="nx-text-4xl font-semibold tracking-tighter lg:nx-text-5xl xl:nx-text-6xl lg:text-center dark:text-white">
           The{" "}
           <span className="bg-gradient-to-r from-purple-600 to-pink-600 dark:from-white  dark:to-white bg-clip-text text-transparent">
             open core
@@ -60,7 +60,7 @@ function OpenSource() {
       <div className="relative mt-20 border-t border-zinc-200 dark:border-zinc-900 bg-white/10 dark:bg-black/10 py-20 shadow-[inset_10px_-50px_94px_0_rgb(199,199,199,0.2)] dark:shadow-[inset_10px_-50px_94px_0_rgb(50,50,50,0.2)] backdrop-blur">
         <div className="mx-auto w-full lg:max-w-7xl px-2.5">
           <div className="mx-auto text-center">
-            <h2 className="text-zinc-800 dark:text-white font-display text-4xl font-extrabold leading-tight  sm:text-5xl sm:leading-tight tracking-tighter">
+            <h2 className="text-zinc-800 dark:text-white font-display text-4xl font-semibold leading-tight  sm:text-5xl sm:leading-tight tracking-tighter">
               Proudly Open Source
             </h2>
             <p className="mt-5 text-zinc-600 dark:text-zinc-300 sm:text-lg font-medium">
