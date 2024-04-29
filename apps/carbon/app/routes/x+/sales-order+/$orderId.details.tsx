@@ -74,7 +74,6 @@ export default function SalesOrderBasicRoute() {
     customerLocationId: orderData?.salesOrder?.customerLocationId ?? "",
     customerReference: orderData?.salesOrder?.customerReference ?? "",
     orderDate: orderData?.salesOrder?.orderDate ?? "",
-    type: orderData?.salesOrder?.type ?? ("Sales" as "Sales"),
     status: orderData?.salesOrder?.status ?? ("Draft" as "Draft"),
     receiptRequestedDate: orderData?.salesOrder?.receiptRequestedDate ?? "",
     receiptPromisedDate: orderData?.salesOrder?.receiptPromisedDate ?? "",

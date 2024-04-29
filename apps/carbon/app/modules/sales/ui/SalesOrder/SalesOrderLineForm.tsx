@@ -256,7 +256,7 @@ const SalesOrderLineForm = ({ initialValues }: SalesOrderLineFormProps) => {
               />
               {type !== "Comment" && (
                 <>
-                  <Number name="salesQuantity" label="Quantity" />
+                  <Number name="saleQuantity" label="Quantity" />
                   {/* 
                 // TODO: implement this and replace the UoM in PartForm */}
                   {/* <UnitOfMeasure name="unitOfMeasureCode" label="Unit of Measure" value={uom} /> */}

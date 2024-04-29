@@ -67,8 +67,6 @@ export default function DeleteShiftRoute() {
   if (!shiftId) throw notFound("shiftId not found");
 
   const onCancel = () => navigate(path.to.shifts);
-  if (Array.isArray(shift.location))
-    throw new Error("Shift location is an array");
 
   return (
     <ConfirmDelete

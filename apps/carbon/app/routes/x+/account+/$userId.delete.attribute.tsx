@@ -11,7 +11,7 @@ import { error, success } from "~/utils/result";
 export async function action({ request, params }: ActionFunctionArgs) {
   assertIsPost(request);
 
-  const { client, userId } = await requirePermissions(request, {});
+  const { client, companyId, userId } = await requirePermissions(request, {});
   const { userId: targetUserId } = params;
 
   if (!targetUserId) {
@@ -26,9 +26,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const userAttributeValueId = formData.get("userAttributeValueId") as string;
   if (!userAttributeValueId) throw new Error("No attribute value id provided");
 
-  const clientClaims = await getUserClaims(request);
+  const clientClaims = await getUserClaims(userId);
   const canUpdateAnyUser =
-    clientClaims.permissions["resources"]?.update === true;
+    clientClaims.permissions["resources"]?.update?.includes(companyId);
 
   if (!canUpdateAnyUser && userId !== targetUserId) {
     return json(

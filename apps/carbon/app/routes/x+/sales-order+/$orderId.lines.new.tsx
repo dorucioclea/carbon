@@ -64,7 +64,7 @@ export default function NewSalesOrderLineRoute() {
     salesOrderId: orderId,
     salesOrderLineType: "Part" as SalesOrderLineType,
     partId: "",
-    salesQuantity: 1,
+    saleQuantity: 1,
     unitPrice: 0,
     setupPrice: 0,
     unitOfMeasureCode: "",

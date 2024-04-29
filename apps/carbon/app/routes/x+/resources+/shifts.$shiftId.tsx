@@ -76,10 +76,6 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function ShiftRoute() {
   const { shift } = useLoaderData<typeof loader>();
 
-  if (Array.isArray(shift?.location)) {
-    throw new Error("Shift location is an array");
-  }
-
   const initialValues = {
     id: shift.id,
     name: shift.name,

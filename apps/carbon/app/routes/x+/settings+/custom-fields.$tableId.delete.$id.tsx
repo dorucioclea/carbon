@@ -7,7 +7,7 @@ import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function action({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     delete: "settings",
   });
 
@@ -15,7 +15,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
   if (!tableId) throw new Error("tableId is not found");
   if (!id) throw new Error("id is not found");
 
-  const deleteField = await deleteCustomField(client, id);
+  const deleteField = await deleteCustomField(client, id, companyId);
   if (deleteField.error) {
     throw redirect(
       path.to.attributes,
