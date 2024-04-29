@@ -26,7 +26,7 @@ export default function Page() {
 function Hero() {
   return (
     <>
-      <div className="my-24 flex flex-col space-y-8 max-w-2xl mx-auto text-center">
+      <div className="my-12 flex flex-col space-y-8 max-w-2xl mx-auto text-center">
         <p className="text-center mb-4">
           <Button
             className="border-border rounded-full"
@@ -84,7 +84,7 @@ function ProductViews() {
     {
       title: "Manufacturing",
       description:
-        "Infinitely nestable, infinitely customizable bill of materials.",
+        "Infinitely nestable, infinitely customizable bill of materials",
       value: "manufacturing",
       content: (
         <ImageContainer imagePath="/carbon-dark-mode-manufacturing.jpg" />
@@ -126,7 +126,7 @@ function ProductViews() {
       id: 0,
       title: "Manufacturing",
       description:
-        "Infinitely nestable, infinitely customizable bill of materials.",
+        "Infinitely nestable, infinitely customizable bill of materials",
       content: (
         <Image
           src="/carbon-dark-mode-manufacturing.jpg"

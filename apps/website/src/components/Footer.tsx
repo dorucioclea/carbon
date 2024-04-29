@@ -1,3 +1,5 @@
+"use client";
+import { Toaster } from "@carbon/react";
 import Link from "next/link";
 
 export function Footer() {
@@ -9,6 +11,7 @@ export function Footer() {
         <Link href="https://git.new/carbon">Github</Link>
         <Link href="https://docs.crbnerp.com">Docs</Link>
       </div>
+      <Toaster position="bottom-right" />
     </div>
   );
 }

@@ -1,12 +1,12 @@
 "use client";
 
-import { Button, FormControl, Input } from "@carbon/react";
+import { createHubspotContact } from "@/app/submit";
+import { Button, FormControl, Input, Toaster, toast } from "@carbon/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form, FormField, FormItem, FormMessage } from "./ui/Form";
-import { useRouter } from "next/navigation";
-import { createHubspotContact } from "@/app/submit";
 
 export default function ContactForm() {
   const router = useRouter();
@@ -25,41 +25,50 @@ export default function ContactForm() {
     try {
       const formData = new FormData();
       formData.append("email", data.email);
-      await createHubspotContact(formData);
-      const email = encodeURIComponent(data.email);
-      router.push(`/form?email=${email}`);
+      const { success } = await createHubspotContact(formData);
+      if (success) {
+        const email = encodeURIComponent(data.email);
+        router.push(`/form?email=${email}`);
+      } else {
+        toast.error(
+          "Failed to create contact. It's possible that you've already subscribed."
+        );
+      }
     } catch (error) {
-      console.error("Submission error:", error);
+      toast.error("Failed to submit form. Please try again.");
     }
   };
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(handleSubmit)}
-        className="flex space-x-2 items-center"
-      >
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input
-                  size="lg"
-                  type="email"
-                  placeholder="Company email"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button size="lg" type="submit">
-          Subscribe
-        </Button>
-      </form>
-    </Form>
+    <>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="flex space-x-2 items-start"
+        >
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input
+                    size="lg"
+                    type="email"
+                    placeholder="Company email"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button size="lg" type="submit">
+            Subscribe
+          </Button>
+        </form>
+      </Form>
+      <Toaster richColors />
+    </>
   );
 }
