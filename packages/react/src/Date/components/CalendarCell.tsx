@@ -7,8 +7,8 @@ import type {
 } from "@react-stately/calendar";
 import clsx from "clsx";
 import { useRef } from "react";
-import { Button } from "~/Button";
-import { Td } from "~/Table";
+import { Button } from "../../Button";
+import { Td } from "../../Table";
 
 export const CalendarCell = ({
   state,

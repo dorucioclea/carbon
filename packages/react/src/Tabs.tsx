@@ -4,7 +4,7 @@ import * as TabsPrimitive from "@radix-ui/react-tabs";
 import type { ComponentPropsWithoutRef, ElementRef } from "react";
 import { forwardRef } from "react";
 
-import { cn } from "~/utils/cn";
+import { cn } from "./utils/cn";
 
 const Tabs = TabsPrimitive.Root;
 

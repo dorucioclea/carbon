@@ -11,7 +11,7 @@ import type {
 import { forwardRef } from "react";
 import { MdClose } from "react-icons/md";
 
-import { cn } from "~/utils/cn";
+import { cn } from "./utils/cn";
 
 const Modal = DialogPrimitive.Root;
 

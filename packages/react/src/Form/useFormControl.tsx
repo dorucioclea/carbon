@@ -1,5 +1,5 @@
-import { ariaAttr } from "~/utils/dom";
-import { callAllHandlers } from "~/utils/function";
+import { ariaAttr } from "../utils/dom";
+import { callAllHandlers } from "../utils/function";
 import type { FormControlOptions } from "./FormControl";
 import { useFormControlContext } from "./FormControl";
 

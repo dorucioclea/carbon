@@ -2,8 +2,8 @@
   "name": "@carbon/database",
   "devDependencies": {
     "@carbon/tsconfig": "*",
-    "@supabase/supabase-js": "^2.39.3",
-    "@types/node": "^18.15.1",
+    "@supabase/supabase-js": "^2.40.0",
+    "@types/node": "^20.12.5",
     "@types/uuid": "^8.3.4",
     "dotenv": "16.3.1",
     "eslint": "^8.23.1",
