@@ -9,7 +9,7 @@ import { error } from "~/utils/result";
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client, userId } = await requirePermissions(request, {});
+  const { client, companyId, userId } = await requirePermissions(request, {});
 
   const validation = await validator(noteValidator).validate(
     await request.formData()
@@ -23,6 +23,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const createNote = await insertNote(client, {
     documentId,
     note,
+    companyId,
     createdBy: userId,
   });
   if (createNote.error) {

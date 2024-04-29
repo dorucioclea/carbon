@@ -25,7 +25,7 @@ type EmployeeTypeFormProps = {
     permissions: Record<
       string,
       {
-        id: string;
+        name: string;
         permission: Permission;
       }
     >;
@@ -42,7 +42,7 @@ const EmployeeTypeForm = ({ initialValues }: EmployeeTypeFormProps) => {
     setPermissions((prevPermissions) => ({
       ...prevPermissions,
       [module]: {
-        id: prevPermissions[module].id,
+        name: prevPermissions[module].name,
         permission,
       },
     }));

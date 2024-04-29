@@ -3,6 +3,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import logger from "~/lib/logger";
 import type { GenericQueryFilters } from "~/utils/query";
 import { setGenericQueryFilters } from "~/utils/query";
+import { capitalize } from "~/utils/string";
+import { sanitize } from "~/utils/supabase";
 import type { Permission } from "./types";
 
 export async function deleteEmployeeType(
@@ -38,16 +40,20 @@ export async function getCompaniesForUser(
 
 export async function getCustomers(
   client: SupabaseClient<Database>,
+  companyId: number,
   args: GenericQueryFilters & {
     search: string | null;
   }
 ) {
   // TODO: this breaks on customerType filters -- convert to view
-  let query = client.from("customerAccount").select(
-    `user!inner(id, fullName, firstName, lastName, email, avatarUrl, active), 
+  let query = client
+    .from("customerAccount")
+    .select(
+      `user!inner(id, fullName, firstName, lastName, email, avatarUrl, active), 
       customer!inner(name, customerType!left(name))`,
-    { count: "exact" }
-  );
+      { count: "exact" }
+    )
+    .eq("companyId", companyId);
 
   if (args.search) {
     query = query.ilike("user.fullName", `%${args.search}%`);
@@ -77,13 +83,10 @@ export async function getEmployees(
     search: string | null;
   }
 ) {
-  // TODO: convert to view
   let query = client
-    .from("employee")
-    .select(
-      "user!inner(id, fullName, firstName, lastName, email, avatarUrl, active), employeeType!inner(name)",
-      { count: "exact" }
-    );
+    .from("employees")
+    .select("*", { count: "exact" })
+    .eq("companyId", companyId);
 
   if (args.search) {
     query = query.ilike("user.fullName", `%${args.search}%`);
@@ -152,15 +155,18 @@ export async function getGroupMembers(
 
 export async function getGroups(
   client: SupabaseClient<Database>,
+  companyId: number,
   args?: GenericQueryFilters & {
     search: string | null;
     uid: string | null;
   }
 ) {
-  let query = client.rpc("groups_query", {
-    _uid: args?.uid ?? "",
-    _name: args?.search ?? "",
-  });
+  let query = client
+    .rpc("groups_query", {
+      _uid: args?.uid ?? "",
+      _name: args?.search ?? "",
+    })
+    .eq("companyId", companyId);
 
   if (args) query = setGenericQueryFilters(query, args);
 
@@ -173,22 +179,26 @@ export async function getPermissionsByEmployeeType(
 ) {
   return client
     .from("employeeTypePermission")
-    .select("view, create, update, delete, module (id, name)")
+    .select("view, create, update, delete, module")
     .eq("employeeTypeId", employeeTypeId);
 }
 
 export async function getSuppliers(
   client: SupabaseClient<Database>,
+  companyId: number,
   args: GenericQueryFilters & {
     search: string | null;
   }
 ) {
   // TODO: this breaks on supplierType filters -- convert to view
-  let query = client.from("supplierAccount").select(
-    `user!inner(id, fullName, firstName, lastName, email, avatarUrl, active), 
+  let query = client
+    .from("supplierAccount")
+    .select(
+      `user!inner(id, fullName, firstName, lastName, email, avatarUrl, active), 
       supplier!inner(name, supplierType!left(name))`,
-    { count: "exact" }
-  );
+      { count: "exact" }
+    )
+    .eq("companyId", companyId);
 
   if (args.search) {
     query = query.ilike("user.fullName", `%${args.search}%`);
@@ -210,7 +220,7 @@ export async function getUsers(client: SupabaseClient<Database>) {
 
 export async function insertEmployeeType(
   client: SupabaseClient<Database>,
-  employeeType: { id?: string; name: string; color?: string }
+  employeeType: { id?: string; name: string; companyId: number }
 ) {
   return client
     .from("employeeType")
@@ -221,18 +231,27 @@ export async function insertEmployeeType(
 
 export async function insertGroup(
   client: SupabaseClient<Database>,
-  group: { name: string }
+  group: { name: string; companyId: number }
 ) {
   return client.from("group").insert(group).select("*").single();
 }
 
 export async function upsertEmployeeType(
   client: SupabaseClient<Database>,
-  employeeType: { id?: string; name: string; color?: string }
+  employeeType:
+    | { name: string; companyId: number }
+    | { id: string; name: string }
 ) {
+  if ("id" in employeeType) {
+    return client
+      .from("employeeType")
+      .update(sanitize(employeeType))
+      .select("id")
+      .single();
+  }
   return client
     .from("employeeType")
-    .upsert([employeeType])
+    .insert([employeeType])
     .select("id")
     .single();
 }
@@ -240,11 +259,11 @@ export async function upsertEmployeeType(
 export async function upsertEmployeeTypePermissions(
   client: SupabaseClient<Database>,
   employeeTypeId: string,
-  permissions: { id: string; permission: Permission }[]
+  permissions: { name: string; permission: Permission }[]
 ) {
-  const employeeTypePermissions = permissions.map(({ id, permission }) => ({
+  const employeeTypePermissions = permissions.map(({ name, permission }) => ({
     employeeTypeId,
-    moduleId: id,
+    module: capitalize(name) as "Accounting",
     view: permission.view,
     create: permission.create,
     update: permission.update,
@@ -259,12 +278,14 @@ export async function upsertGroup(
   {
     id,
     name,
+    companyId,
   }: {
     id: string;
     name: string;
+    companyId: number;
   }
 ) {
-  return client.from("group").upsert([{ id, name }]);
+  return client.from("group").upsert([{ id, name, companyId }]);
 }
 
 export async function upsertGroupMembers(

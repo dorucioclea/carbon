@@ -628,21 +628,16 @@ export async function getPeople(
 
   if (!employees.data) throw new Error("Failed to get employee data");
 
-  const userIds = employees.data.map((employee) => {
-    if (!employee.user || Array.isArray(employee.user))
-      throw new Error("employee.user is an array");
-    // @ts-ignore
-    return employee.user?.id;
-  });
+  const userIds = employees.data.reduce<string[]>((acc, employee) => {
+    if (employee.id) acc.push(employee.id);
+    return acc;
+  }, []);
 
   const attributeCategories = await getAttributes(client, companyId, userIds);
   if (attributeCategories.error) return attributeCategories;
 
   const people: Person[] = employees.data.map((employee) => {
-    if (!employee.user || Array.isArray(employee.user))
-      throw new Error("employee.user is an array");
-    // @ts-ignore
-    const userId = employee.user?.id;
+    const userId = employee.id;
 
     const employeeAttributes =
       attributeCategories.data.reduce<PersonAttributes>((acc, category) => {

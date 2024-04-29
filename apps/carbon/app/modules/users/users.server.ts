@@ -2,6 +2,7 @@ import type { Database, Json } from "@carbon/database";
 import { redis } from "@carbon/redis";
 import { redirect } from "@remix-run/node";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import crypto from "crypto";
 import { getSupabaseServiceRole } from "~/lib/supabase";
 import { getSupplierContact } from "~/modules/purchasing";
 import { getCustomerContact } from "~/modules/sales";
@@ -9,7 +10,7 @@ import {
   getPermissionsByEmployeeType,
   type EmployeeRow,
   type EmployeeTypePermission,
-  type Feature,
+  type Module,
   type Permission,
   type User,
 } from "~/modules/users";
@@ -19,7 +20,7 @@ import {
   sendMagicLink,
 } from "~/services/auth/auth.server";
 import { flash, requireAuthSession } from "~/services/session.server";
-import type { ListItem, Result } from "~/types";
+import type { Result } from "~/types";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
@@ -38,11 +39,14 @@ export async function createCustomerAccount(
   {
     id,
     customerId,
+    companyId,
   }: {
     id: string;
     customerId: string;
+    companyId: number;
   }
 ): Promise<Result> {
+  // TODO: convert to transaction and call this at the end of the transaction
   const customerContact = await getCustomerContact(client, id);
   if (
     customerContact.error ||
@@ -55,61 +59,75 @@ export async function createCustomerAccount(
 
   const { email, firstName, lastName } = customerContact.data.contact;
 
-  // TODO: convert to transaction and call this at the end of the transaction
-  const invitation = await sendInviteByEmail(email);
+  const user = await getUserByEmail(email);
+  if (user.data) {
+    // TODO: user already exists -- send company invite
+    await addUserToCompany(client, { userId: user.data.id, companyId });
+    return error(
+      null,
+      "User already exists. Adding to team not implemented yet."
+    );
+  } else {
+    // user does not exist -- create user
+    const invitation = await sendInviteByEmail(email);
 
-  if (invitation.error)
-    return error(invitation.error.message, "Failed to send invitation email");
+    if (invitation.error)
+      return error(invitation.error.message, "Failed to send invitation email");
 
-  const userId = invitation.data.user.id;
+    const userId = invitation.data.user.id;
+    const userToCompany = await addUserToCompany(client, { userId, companyId });
 
-  const claims = makeCustomerClaims();
-  const claimsUpdate = await setUserClaims(userId, {
-    role: "customer",
-    ...claims,
-  });
-  if (claimsUpdate.error) {
-    await deleteAuthAccount(userId);
-    return error(claimsUpdate.error, "Failed to set user claims");
+    const claims = makeCustomerClaims(companyId);
+    const claimsUpdate = await setUserClaims(userId, {
+      role: "customer",
+      ...claims,
+    });
+
+    if (claimsUpdate.error || userToCompany.error) {
+      await deleteAuthAccount(userId);
+      return error(claimsUpdate.error, "Failed to add user");
+    }
+
+    const insertUser = await createUser(client, {
+      id: userId,
+      email,
+      firstName,
+      lastName,
+      avatarUrl: null,
+    });
+
+    if (insertUser.error)
+      return error(insertUser.error, "Failed to create a new user");
+
+    if (!insertUser.data)
+      return error(insertUser, "No data returned from create user");
+
+    const updateContact = await client
+      .from("customerContact")
+      .update({ userId })
+      .eq("id", id);
+
+    if (updateContact.error) {
+      await deleteAuthAccount(userId);
+      return error(updateContact.error, "Failed to update customer contact");
+    }
+
+    const generatedId = Array.isArray(insertUser.data)
+      ? insertUser.data[0].id
+      : // @ts-ignore
+        insertUser.data?.id!;
+
+    const createCustomerAccount = await insertCustomerAccount(client, {
+      id: generatedId,
+      customerId,
+      companyId,
+    });
+
+    if (createCustomerAccount.error)
+      return error(createCustomerAccount.error, "Failed to create an employee");
+
+    return success("Customer account created");
   }
-
-  const insertUser = await createUser(client, {
-    id: userId,
-    email,
-    firstName,
-    lastName,
-    avatarUrl: null,
-  });
-
-  if (insertUser.error)
-    return error(insertUser.error, "Failed to create a new user");
-
-  if (!insertUser.data)
-    return error(insertUser, "No data returned from create user");
-
-  const updateContact = await client
-    .from("customerContact")
-    .update({ userId })
-    .eq("id", id);
-  if (updateContact.error) {
-    await deleteAuthAccount(userId);
-    return error(updateContact.error, "Failed to update customer contact");
-  }
-
-  const generatedId = Array.isArray(insertUser.data)
-    ? insertUser.data[0].id
-    : // @ts-ignore
-      insertUser.data?.id!;
-
-  const createCustomerAccount = await insertCustomerAccount(client, {
-    id: generatedId,
-    customerId,
-  });
-
-  if (createCustomerAccount.error)
-    return error(createCustomerAccount.error, "Failed to create an employee");
-
-  return success("Customer account created");
 }
 
 export async function createEmployeeAccount(
@@ -128,6 +146,7 @@ export async function createEmployeeAccount(
     companyId: number;
   }
 ): Promise<Result> {
+  // TODO: convert to transaction and call this at the end of the transaction
   const employeeTypePermissions = await getPermissionsByEmployeeType(
     client,
     employeeType
@@ -138,48 +157,58 @@ export async function createEmployeeAccount(
       "Failed to get employee type permissions"
     );
 
-  // TODO: convert to transaction and call this at the end of the transaction
-  const invitation = await sendInviteByEmail(email);
+  const user = await getUserByEmail(email);
+  if (user.data) {
+    // TODO: user already exists -- send company invite
+    await addUserToCompany(client, { userId: user.data.id, companyId });
+    return error(
+      null,
+      "User already exists. Adding to team not implemented yet."
+    );
+  } else {
+    const invitation = await sendInviteByEmail(email);
 
-  if (invitation.error)
-    return error(invitation.error.message, "Failed to send invitation email");
+    if (invitation.error)
+      return error(invitation.error.message, "Failed to send invitation email");
 
-  const userId = invitation.data.user.id;
+    const userId = invitation.data.user.id;
+    const userToCompany = await addUserToCompany(client, { userId, companyId });
 
-  const claims = makeClaimsFromEmployeeType(employeeTypePermissions);
-  const claimsUpdate = await setUserClaims(userId, {
-    role: "employee",
-    ...claims,
-  });
-  if (claimsUpdate.error) {
-    await deleteAuthAccount(userId);
-    return error(claimsUpdate.error, "Failed to set user claims");
+    const claims = makeClaimsFromEmployeeType(employeeTypePermissions);
+    const claimsUpdate = await setUserClaims(userId, {
+      role: "employee",
+      ...claims,
+    });
+    if (claimsUpdate.error || userToCompany.error) {
+      await deleteAuthAccount(userId);
+      return error(claimsUpdate.error, "Failed to create user");
+    }
+
+    const insertUser = await createUser(client, {
+      id: userId,
+      email,
+      firstName,
+      lastName,
+      avatarUrl: null,
+    });
+
+    if (insertUser.error)
+      return error(insertUser.error, "Failed to create a new user");
+
+    if (!insertUser.data)
+      return error(insertUser, "No data returned from create user");
+
+    const createEmployee = await insertEmployee(client, {
+      id: insertUser.data[0].id,
+      employeeTypeId: employeeType,
+      companyId,
+    });
+
+    if (createEmployee.error)
+      return error(createEmployee.error, "Failed to create an employee");
+
+    return success("Employee account created");
   }
-
-  const insertUser = await createUser(client, {
-    id: userId,
-    email,
-    firstName,
-    lastName,
-    avatarUrl: null,
-  });
-
-  if (insertUser.error)
-    return error(insertUser.error, "Failed to create a new user");
-
-  if (!insertUser.data)
-    return error(insertUser, "No data returned from create user");
-
-  const createEmployee = await insertEmployee(client, {
-    id: insertUser.data[0].id,
-    employeeTypeId: employeeType,
-    companyId,
-  });
-
-  if (createEmployee.error)
-    return error(createEmployee.error, "Failed to create an employee");
-
-  return success("Employee account created");
 }
 
 export async function createSupplierAccount(
@@ -187,11 +216,14 @@ export async function createSupplierAccount(
   {
     id,
     supplierId,
+    companyId,
   }: {
     id: string;
     supplierId: string;
+    companyId: number;
   }
 ): Promise<Result> {
+  // TODO: convert to transaction and call this at the end of the transaction
   const supplierContact = await getSupplierContact(client, id);
   if (
     supplierContact.error ||
@@ -204,56 +236,68 @@ export async function createSupplierAccount(
 
   const { email, firstName, lastName } = supplierContact.data.contact;
 
-  // TODO: convert to transaction and call this at the end of the transaction
-  const invitation = await sendInviteByEmail(email);
+  const user = await getUserByEmail(email);
+  if (user.data) {
+    // TODO: user already exists -- send company invite
+    await addUserToCompany(client, { userId: user.data.id, companyId });
+    return error(
+      null,
+      "User already exists. Adding to team not implemented yet."
+    );
+  } else {
+    // user does not exist -- create user
+    const invitation = await sendInviteByEmail(email);
 
-  if (invitation.error)
-    return error(invitation.error.message, "Failed to send invitation email");
+    if (invitation.error)
+      return error(invitation.error.message, "Failed to send invitation email");
 
-  const userId = invitation.data.user.id;
+    const userId = invitation.data.user.id;
+    const userToCompany = await addUserToCompany(client, { userId, companyId });
 
-  const claims = makeSupplierClaims();
-  const claimsUpdate = await setUserClaims(userId, {
-    role: "supplier",
-    ...claims,
-  });
-  if (claimsUpdate.error) {
-    await deleteAuthAccount(userId);
-    return error(claimsUpdate.error, "Failed to set user claims");
+    const claims = makeSupplierClaims(companyId);
+    const claimsUpdate = await setUserClaims(userId, {
+      role: "supplier",
+      ...claims,
+    });
+    if (claimsUpdate.error || userToCompany.error) {
+      await deleteAuthAccount(userId);
+      return error(claimsUpdate.error, "Failed to create user");
+    }
+
+    const insertUser = await createUser(client, {
+      id: userId,
+      email,
+      firstName,
+      lastName,
+      avatarUrl: null,
+    });
+
+    if (insertUser.error)
+      return error(insertUser.error, "Failed to create a new user");
+
+    if (!insertUser.data)
+      return error(insertUser, "No data returned from create user");
+
+    const updateContact = await client
+      .from("supplierContact")
+      .update({ userId })
+      .eq("id", id);
+    if (updateContact.error) {
+      await deleteAuthAccount(userId);
+      return error(updateContact.error, "Failed to update supplier contact");
+    }
+
+    const createSupplierAccount = await insertSupplierAccount(client, {
+      id: insertUser.data[0].id,
+      supplierId,
+      companyId,
+    });
+
+    if (createSupplierAccount.error)
+      return error(createSupplierAccount.error, "Failed to create an employee");
+
+    return success("Supplier account created");
   }
-
-  const insertUser = await createUser(client, {
-    id: userId,
-    email,
-    firstName,
-    lastName,
-    avatarUrl: null,
-  });
-
-  if (insertUser.error)
-    return error(insertUser.error, "Failed to create a new user");
-
-  if (!insertUser.data)
-    return error(insertUser, "No data returned from create user");
-
-  const updateContact = await client
-    .from("supplierContact")
-    .update({ userId })
-    .eq("id", id);
-  if (updateContact.error) {
-    await deleteAuthAccount(userId);
-    return error(updateContact.error, "Failed to update supplier contact");
-  }
-
-  const createSupplierAccount = await insertSupplierAccount(client, {
-    id: insertUser.data[0].id,
-    supplierId,
-  });
-
-  if (createSupplierAccount.error)
-    return error(createSupplierAccount.error, "Failed to create an employee");
-
-  return success("Supplier account created");
 }
 
 async function createUser(
@@ -275,12 +319,13 @@ export async function deactivateUser(
 ): Promise<Result> {
   const updateActiveStatus = await client
     .from("user")
-    .update({ active: false })
+    .update({ active: false, firstName: "Deactivate", lastName: "User" })
     .eq("id", userId);
   if (updateActiveStatus.error) {
     return error(updateActiveStatus.error, "Failed to deactivate user");
   }
-  const randomPassword = Math.random().toString(36).slice(-8);
+
+  const randomPassword = crypto.randomBytes(20).toString("hex");
   const updatePassword = await resetPassword(userId, randomPassword);
 
   if (updatePassword.error) {
@@ -329,7 +374,7 @@ export async function getUserByEmail(email: string) {
     .from("user")
     .select("*")
     .eq("email", email)
-    .single();
+    .maybeSingle();
 }
 
 export async function getUserClaims(userId: string) {
@@ -390,6 +435,7 @@ async function insertCustomerAccount(
   customerAccount: {
     id: string;
     customerId: string;
+    companyId: number;
   }
 ) {
   return client
@@ -411,6 +457,7 @@ async function insertSupplierAccount(
   supplierAccount: {
     id: string;
     supplierId: string;
+    companyId: number;
   }
 ) {
   return client
@@ -422,7 +469,6 @@ async function insertSupplierAccount(
 
 async function insertUser(
   client: SupabaseClient<Database>,
-  //TODO: fix this type
   user: Omit<User, "fullName" | "createdAt">
 ) {
   return client.from("user").insert([user]).select("*");
@@ -436,23 +482,19 @@ function makeClaimsFromEmployeeType({
     create: number[];
     update: number[];
     delete: number[];
-    feature: ListItem | ListItem[] | null;
+    module: string;
   }[];
 }) {
   const claims: Record<string, number[]> = {};
 
   data.forEach((permission) => {
-    if (permission.feature === null || Array.isArray(permission.feature)) {
+    if (!permission.module) {
       throw new Error(
-        `TODO: permission.feature is an array or null for permission ${JSON.stringify(
-          permission,
-          null,
-          2
-        )}`
+        `Permission module is missing for permission ${JSON.stringify(data)}`
       );
     }
 
-    const module = permission.feature.name.toLowerCase();
+    const module = permission.module.toLowerCase();
 
     claims[`${module}_view`] = permission.view;
     claims[`${module}_create`] = permission.create;
@@ -472,30 +514,32 @@ function isClaimPermission(key: string, value: unknown) {
   );
 }
 
-function makeCustomerClaims() {
+function makeCustomerClaims(companyId: number) {
   // TODO: this should be more dynamic
-  const claims: Record<string, boolean> = {
-    documents_view: true,
-    jobs_view: true,
-    sales_view: true,
-    parts_view: true,
+  const claims: Record<string, number[]> = {
+    documents_view: [companyId],
+    jobs_view: [companyId],
+    sales_view: [companyId],
+    parts_view: [companyId],
   };
 
   return claims;
 }
 
-export function makeEmptyPermissionsFromFeatures(data: Feature[]) {
-  return data.reduce<Record<string, { id: string; permission: Permission }>>(
-    (acc, module) => {
-      acc[module.name] = {
-        id: module.id,
-        permission: {
-          view: [],
-          create: [],
-          update: [],
-          delete: [],
-        },
-      };
+export function makeEmptyPermissionsFromModules(data: Module[]) {
+  return data.reduce<Record<string, { name: string; permission: Permission }>>(
+    (acc, m) => {
+      if (m.name) {
+        acc[m.name] = {
+          name: m.name.toLowerCase(),
+          permission: {
+            view: [],
+            create: [],
+            update: [],
+            delete: [],
+          },
+        };
+      }
       return acc;
     },
     {}
@@ -546,21 +590,16 @@ export function makePermissionsFromClaims(claims: Json[] | null) {
 export function makePermissionsFromEmployeeType(
   data: EmployeeTypePermission[]
 ) {
-  const result: Record<string, { id: string; permission: Permission }> = {};
+  const result: Record<string, { name: string; permission: Permission }> = {};
   if (!data) return result;
   data.forEach((permission) => {
-    if (Array.isArray(permission.feature) || !permission.feature) {
-      // hmm... TODO: handle this
+    if (!permission.module) {
       throw new Error(
-        `TODO: permission.Feature is an array or null for permission ${JSON.stringify(
-          permission,
-          null,
-          2
-        )}`
+        `Module is missing for permission ${JSON.stringify(permission)}`
       );
     } else {
-      result[permission.feature.name] = {
-        id: permission?.feature?.id!,
+      result[permission.module] = {
+        name: permission.module.toLowerCase(),
         permission: {
           view: permission.view,
           create: permission.create,
@@ -574,12 +613,12 @@ export function makePermissionsFromEmployeeType(
   return result;
 }
 
-function makeSupplierClaims() {
+function makeSupplierClaims(companyId: number) {
   // TODO: this should be more dynamic
-  const claims: Record<string, boolean> = {
-    documents_view: true,
-    purchasing_view: true,
-    parts_view: true,
+  const claims: Record<string, number[]> = {
+    documents_view: [companyId],
+    purchasing_view: [companyId],
+    parts_view: [companyId],
   };
 
   return claims;
@@ -612,8 +651,29 @@ async function setUserClaims(
   userId: string,
   claims: Record<string, number[] | string>
 ) {
-  return getSupabaseServiceRole().auth.admin.updateUserById(userId, {
-    app_metadata: claims,
+  const client = getSupabaseServiceRole();
+  const user = await client.auth.admin.getUserById(userId);
+  if (user.error) throw new Error(user.error.message);
+
+  const currentClaims = user.data?.user.app_metadata ?? {};
+  const newClaims = { ...currentClaims };
+
+  Object.entries(claims).forEach(([key, value]) => {
+    if (key === "role") {
+      newClaims["role"] = value;
+    }
+
+    if (isClaimPermission(key, value)) {
+      if (key in newClaims) {
+        newClaims[key] = [...newClaims[key], ...value];
+      } else {
+        newClaims[key] = value;
+      }
+    }
+  });
+
+  return client.auth.admin.updateUserById(userId, {
+    app_metadata: newClaims,
   });
 }
 

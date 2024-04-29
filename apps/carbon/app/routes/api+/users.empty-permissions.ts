@@ -1,28 +1,28 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { getFeatures } from "~/modules/users";
-import { makeEmptyPermissionsFromFeatures } from "~/modules/users/users.server";
+import { getModules } from "~/modules/users";
+import { makeEmptyPermissionsFromModules } from "~/modules/users/users.server";
 import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { error } from "~/utils/result";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const authorized = await requirePermissions(request, {
+  const { client } = await requirePermissions(request, {
     view: "users",
     role: "employee",
   });
 
-  const features = await getFeatures(authorized.client);
-  if (features.error || features.data === null) {
+  const modules = await getModules(client);
+  if (modules.error || modules.data === null) {
     return json(
       {
         permissions: {},
       },
-      await flash(request, error(features.error, "Failed to fetch features"))
+      await flash(request, error(modules.error, "Failed to fetch modules"))
     );
   }
 
   return json({
-    permissions: makeEmptyPermissionsFromFeatures(features.data),
+    permissions: makeEmptyPermissionsFromModules(modules.data),
   });
 }

@@ -45,7 +45,7 @@ const BulkEditPermissions = ({
     permissions: Record<
       string,
       {
-        id: string;
+        name: string;
         permission: Permission;
       }
     >;

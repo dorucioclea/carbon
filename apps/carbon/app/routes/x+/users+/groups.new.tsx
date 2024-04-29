@@ -16,7 +16,7 @@ import { error, success } from "~/utils/result";
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     create: "users",
   });
 
@@ -30,7 +30,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const { name, selections } = validation.data;
 
-  const createGroup = await insertGroup(client, { name });
+  const createGroup = await insertGroup(client, { name, companyId });
   if (createGroup.error) {
     return json(
       {},

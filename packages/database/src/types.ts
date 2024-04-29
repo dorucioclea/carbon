@@ -15981,7 +15981,10 @@ export type Database = {
         Row: {
           avatarUrl: string | null
           companyId: number | null
+          email: string | null
+          firstName: string | null
           id: string | null
+          lastName: string | null
           name: string | null
         }
         Relationships: [

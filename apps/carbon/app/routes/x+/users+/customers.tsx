@@ -29,7 +29,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getGenericQueryFilters(searchParams);
 
   const [customers, customerTypes] = await Promise.all([
-    getCustomers(client, { search, limit, offset, sorts, filters }),
+    getCustomers(client, companyId, { search, limit, offset, sorts, filters }),
     getCustomerTypes(client, companyId),
   ]);
 

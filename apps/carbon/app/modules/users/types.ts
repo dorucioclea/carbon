@@ -3,7 +3,7 @@ import type {
   getCustomers,
   getEmployees,
   getEmployeeTypes,
-  getFeatures,
+  getModules,
   getPermissionsByEmployeeType,
   getSuppliers,
   getUsers,
@@ -27,8 +27,8 @@ export type EmployeeType = NonNullable<
   Awaited<ReturnType<typeof getEmployeeTypes>>["data"]
 >[number];
 
-export type Feature = NonNullable<
-  Awaited<ReturnType<typeof getFeatures>>["data"]
+export type Module = NonNullable<
+  Awaited<ReturnType<typeof getModules>>["data"]
 >[number];
 
 export type Group = {

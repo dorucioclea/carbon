@@ -13,7 +13,7 @@ import { path } from "~/utils/path";
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "users",
   });
 
@@ -33,6 +33,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const result = await createCustomerAccount(client, {
     id,
     customerId: customer,
+    companyId,
   });
 
   if (customerRedirect) {
