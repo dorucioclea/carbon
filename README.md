@@ -60,9 +60,11 @@ The monorepo follows the Turborepo convention of grouping packages into one of t
 
 ### `/apps`
 
-| Package Name | Description     | Local Command |
-| ------------ | --------------- | ------------- |
-| `carbon`     | ERP Application | `npm run dev` |
+| Package Name | Description     | Local Command         |
+| ------------ | --------------- | --------------------- |
+| `carbon`     | ERP Application | `npm run dev`         |
+| `docs`       | Documentation   | `npm run dev:docs`    |
+| `website`    | Website         | `npm run dev:website` |
 
 ### `/packages`
 
