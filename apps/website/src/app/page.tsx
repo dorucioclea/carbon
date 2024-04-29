@@ -27,18 +27,20 @@ function Hero() {
   return (
     <>
       <div className="my-24 sm:my-12 flex flex-col space-y-8 max-w-2xl mx-auto text-center">
-        <p className="text-center mb-4">
-          <Button
-            className="border-border rounded-full"
-            variant="secondary"
-            leftIcon={<BsPlay />}
-            asChild
-          >
+        <div className="text-center mb-4">
+          <div className="fancy-button rounded-full w-fit mx-auto relative z-50 mb-6">
             <Link href="https://www.loom.com/share/7b2dccab3d404b84aa8f08e5bfa21d16?sid=251f4f0e-4d04-4ec2-bb60-7376454e3172">
-              Watch the guided tour
+              <Button
+                className="border-border rounded-full"
+                variant="secondary"
+                leftIcon={<BsPlay />}
+                asChild
+              >
+                <div>Watch the guided tour</div>
+              </Button>
             </Link>
-          </Button>
-        </p>
+          </div>
+        </div>
         <h1 className="max-w-5xl mx-auto text-5xl font-semibold tracking-tighter leading-tighter sm:text-6xl lg:text-7xl">
           <span className="dark:bg-clip-text dark:text-transparent dark:bg-gradient-to-b dark:from-white  dark:to-zinc-400">
             ERP for
@@ -66,7 +68,7 @@ const ImageContainer: React.FC<{ imagePath: string }> = ({ imagePath }) => {
         boxShadow:
           "0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042, 0 84px 50px #00000026, 0 149px 60px #0000000a, 0 233px 65px #00000003",
       }}
-      className="max-w-5xl -mt-12 mx-auto h-[30rem] md:h-[40rem] w-full border-4 border-[#6C6C6C] p-2 bg-[#222222] rounded-[30px] shadow-xl"
+      className="max-w-5xl -mt-12 mx-auto h-[30rem] md:h-[40rem] w-full border-4 border-[#6C6C6C] p-2 bg-[#222222] rounded-[30px] shadow-xl overflow-hidden"
     >
       <Image
         src={imagePath}
@@ -226,21 +228,25 @@ const features = [
 
 function OpenCore() {
   return (
-    <section className="relative bg-background py-24 sm:py-36 lg:py-48 ">
+    <section className="relative py-24 sm:py-36 lg:py-48 radial-gradient">
       <div className="flex flex-col space-y-8 px-4 mx-auto  lg:max-w-7xl">
         <h2 className="text-4xl font-semibold tracking-tight lg:text-5xl xl:text-6xl text-center text-foreground">
           Open Core
         </h2>
-        <p className="mt-8 w-full text-center">
-          <Button
-            className="border-border rounded-full"
-            variant="secondary"
-            leftIcon={<BsGithub />}
-            asChild
-          >
-            <Link href="https://git.new/carbon">Star us on GitHub</Link>
-          </Button>
-        </p>
+        <div className="mt-8 w-full text-center">
+          <Link href="https://git.new/carbon">
+            <div className="fancy-button rounded-full w-fit mx-auto relative z-50 mb-6">
+              <Button
+                className="border-border rounded-full"
+                variant="secondary"
+                leftIcon={<BsGithub />}
+                asChild
+              >
+                <div>Star us on GitHub</div>
+              </Button>
+            </div>
+          </Link>
+        </div>
         <p className="mx-auto text-xl font-medium text-foreground/60 lg:max-w-3xl lg:text-2xl text-center">
           Carbon is the only ERP that gives you full ownership over your
           software stack. With Carbon{" "}
