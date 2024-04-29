@@ -186,3 +186,10 @@ For example, to run test command in the `@carbon/react` package you can run:
 ```
 $ npm run test -w @carbon/react
 ```
+
+## Run with the Bash Lancher
+
+Make the file executable
+
+ ```chmod +x launcher.sh```  
+ ---
