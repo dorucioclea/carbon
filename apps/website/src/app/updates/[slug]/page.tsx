@@ -25,15 +25,15 @@ export default function Page({
           </h2>
           {post.metadata.image ? (
             post.metadata.link ? (
-              <iframe
-                width="640"
-                height="360"
-                src={post.metadata.link}
-                title="youtube video player"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
-              />
+              <Link href={post.metadata.link}>
+                <Image
+                  src={post.metadata.image}
+                  alt={post.metadata.title}
+                  width={680}
+                  height={442}
+                  className="my-8 cusor-pointer"
+                />
+              </Link>
             ) : (
               <Image
                 src={post.metadata.image}

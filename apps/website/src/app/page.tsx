@@ -26,7 +26,7 @@ export default function Page() {
 function Hero() {
   return (
     <>
-      <div className="my-12 flex flex-col space-y-8 max-w-2xl mx-auto text-center">
+      <div className="my-24 sm:my-12 flex flex-col space-y-8 max-w-2xl mx-auto text-center">
         <p className="text-center mb-4">
           <Button
             className="border-border rounded-full"
