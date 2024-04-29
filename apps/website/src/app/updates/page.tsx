@@ -54,6 +54,7 @@ type ArticleProps = {
       title: string;
       image?: string;
       publishedAt?: string;
+      link?: string;
     };
     content: string;
   };
@@ -78,15 +79,26 @@ export function Article({ data }: ArticleProps) {
         <h2 className="font-medium text-3xl ">{data.metadata.title}</h2>
         <div className="text-muted-foreground">{formattedDate}</div>
       </Link>
-      {data.metadata.image && (
-        <Image
-          src={data.metadata.image}
-          alt={data.metadata.title}
-          width={680}
-          height={442}
-          className="my-8"
-        />
-      )}
+      {data.metadata.image &&
+        (data.metadata.link ? (
+          <Link href={data.metadata.link}>
+            <Image
+              src={data.metadata.image}
+              alt={data.metadata.title}
+              width={680}
+              height={442}
+              className="my-8 cusor-pointer"
+            />
+          </Link>
+        ) : (
+          <Image
+            src={data.metadata.image}
+            alt={data.metadata.title}
+            width={680}
+            height={442}
+            className="my-8"
+          />
+        ))}
       <div>
         <div className="prose prose-lg dark:prose-invert">
           <MDXRemote source={data.content} />

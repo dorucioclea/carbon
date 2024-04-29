@@ -44,7 +44,7 @@ export default function ContactForm() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
-          className="flex space-x-2 items-start"
+          className="flex sm:flex-row flex-col space-x-2 space-y-2 items-center"
         >
           <FormField
             control={form.control}
