@@ -8,7 +8,7 @@ import {
   getDocument,
   upsertDocument,
 } from "~/modules/documents";
-import ViewDocument from "~/modules/documents/ui/Documents/ViewDocument";
+import ViewDocument from "~/modules/documents/ui/Documents/$bucket.$";
 import { requirePermissions } from "~/services/auth";
 import { flash } from "~/services/session.server";
 import { assertIsPost, notFound } from "~/utils/http";
