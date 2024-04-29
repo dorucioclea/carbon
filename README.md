@@ -1,4 +1,3 @@
-<p align="center"><a href="https://carbon.us.org" target="_blank"><img src="https://raw.githubusercontent.com/barbinbrad/carbon/main/www/public/logo-full.png" width="500" alt="Carbon Logo"></a></p>
 
 <p align="center">
 <a href="https://www.loom.com/share/7b2dccab3d404b84aa8f08e5bfa21d16?sid=56583b4c-2ae4-4b2a-b402-187a11b84922" target="_blank">
