@@ -16,12 +16,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form, FormField, FormItem, FormMessage } from "./ui/Form";
-import { useFormState } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
+import { useSearchParams } from "next/navigation";
 
 const initialState = {
-  email: "",
-  companyName: "",
+  success: null,
+  message: null,
 };
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Button type="submit" aria-disabled={pending}>
+      Submit
+    </Button>
+  );
+}
 
 export default function CompanyForm() {
   const formSchema = z.object({
@@ -39,16 +49,15 @@ export default function CompanyForm() {
       erp: "",
     },
   });
-  // TODO: Pass user id to createHubspotCompany
-  // const searchParams = useSearchParams();
-  // const userId = searchParams.get("userId");
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [state, formAction] = useFormState(createHubspotCompany, initialState);
 
   return (
     <Form {...form}>
       <form action={formAction} className="w-full max-w-2xl">
+        <input type="hidden" name="email" value={email} />
         <Card>
           <CardHeader>
             <CardTitle className="text-center pb-8">
@@ -114,7 +123,11 @@ export default function CompanyForm() {
             />
           </CardContent>
           <CardFooter>
-            <Button />
+            {state.success ? (
+              <span>Thank you for submitting</span>
+            ) : (
+              <SubmitButton />
+            )}
           </CardFooter>
         </Card>
       </form>
