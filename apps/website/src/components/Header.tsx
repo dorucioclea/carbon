@@ -2,6 +2,7 @@
 
 import { NavigationMenu } from "@/components/Navigation";
 import {
+  Badge,
   Button,
   Input,
   Label,
@@ -78,9 +79,16 @@ export function Header() {
     <header className="h-12 sticky mt-4 top-4 z-50 px-2 md:px-4 md:flex justify-center">
       <nav className="border border-border p-3 rounded-xl flex items-center backdrop-filter backdrop-blur-xl bg-[#FDFDFC] dark:bg-[#121212] bg-opacity-70">
         <NavigationMenu>
-          <Link href="/">
+          <Link href="/" className="flex space-x-2 items-center">
             <span className="sr-only">Carbon Logo</span>
             <BsFillHexagonFill />
+
+            <Badge
+              variant="secondary"
+              className="rounded-full border-border border text-xs cursor-progress"
+            >
+              Alpha
+            </Badge>
           </Link>
 
           <ul className="space-x-2 font-medium text-sm hidden md:flex mx-2">
