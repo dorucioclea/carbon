@@ -190,6 +190,11 @@ import {
 } from "./Popover";
 import { Progress } from "./Progress";
 import { RadioGroup, RadioGroupItem } from "./Radio";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "./Resizable";
 import { ScrollArea, ScrollBar } from "./ScrollArea";
 import {
   Select,
@@ -394,6 +399,9 @@ export {
   Progress,
   RadioGroup,
   RadioGroupItem,
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
   ScrollArea,
   ScrollBar,
   Select,

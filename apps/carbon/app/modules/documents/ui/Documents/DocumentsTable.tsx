@@ -26,12 +26,7 @@ import { IoMdAdd, IoMdTrash } from "react-icons/io";
 import { LuExternalLink } from "react-icons/lu";
 import { RxCheck } from "react-icons/rx";
 import { VscOpenPreview } from "react-icons/vsc";
-import {
-  DocumentPreview,
-  EmployeeAvatar,
-  Hyperlink,
-  Table,
-} from "~/components";
+import { EmployeeAvatar, Hyperlink, Table } from "~/components";
 import { Confirm, ConfirmDelete } from "~/components/Modals";
 import { useFilters } from "~/components/Table/components/Filter/useFilters";
 import { usePermissions, useUrlParams } from "~/hooks";
@@ -183,19 +178,7 @@ const DocumentsTable = memo(
                 onClick={() => view(row.original)}
                 className="max-w-[260px] truncate"
               >
-                {row.original.type &&
-                ["Image", "PDF"].includes(row.original.type) ? (
-                  <DocumentPreview
-                    bucket="private"
-                    pathToFile={row.original.path!}
-                    // @ts-ignore
-                    type={row.original.type}
-                  >
-                    {row.original.name}
-                  </DocumentPreview>
-                ) : (
-                  <>{row.original.name}</>
-                )}
+                <>{row.original.name}</>
               </Hyperlink>
             </HStack>
           ),

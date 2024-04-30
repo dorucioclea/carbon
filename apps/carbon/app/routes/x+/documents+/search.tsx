@@ -1,4 +1,10 @@
-import { HStack, VStack } from "@carbon/react";
+import {
+  HStack,
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+  VStack,
+} from "@carbon/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
@@ -71,13 +77,18 @@ export default function DocumentsAllRoute() {
   return (
     <VStack spacing={0} className="h-full">
       <HStack className="h-full w-full">
-        <DocumentsTable
-          data={documents}
-          count={count}
-          labels={labels}
-          extensions={extensions}
-        />
-        <Outlet />
+        <ResizablePanelGroup direction="horizontal">
+          <ResizablePanel>
+            <DocumentsTable
+              data={documents}
+              count={count}
+              labels={labels}
+              extensions={extensions}
+            />
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <Outlet />
+        </ResizablePanelGroup>
       </HStack>
     </VStack>
   );
