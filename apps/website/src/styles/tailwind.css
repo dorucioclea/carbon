@@ -111,7 +111,7 @@
     #02fcf1,
     #02defc,
     #0fc576,
-    #15c892,
+    #3ecf8e,
     #02fcb1
   );
   z-index: -1;
@@ -123,4 +123,8 @@
     hsla(0, 0%, 100%, 0.04) 0,
     transparent 200px
   );
+}
+
+.dark .glow-green {
+  box-shadow: 0 0 40px -3px #3ecf8e;
 }

@@ -44,7 +44,7 @@ export default function ContactForm() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
-          className="flex sm:flex-row flex-col space-x-2 items-start"
+          className="flex sm:flex-row flex-col gap-2 sm:items-start items-center"
         >
           <FormField
             control={form.control}
@@ -53,7 +53,7 @@ export default function ContactForm() {
               <FormItem>
                 <FormControl>
                   <Input
-                    className="border-border"
+                    className="border-border w-full sm:w-fit"
                     size="lg"
                     type="email"
                     placeholder="Company email"
@@ -64,7 +64,7 @@ export default function ContactForm() {
               </FormItem>
             )}
           />
-          <Button size="lg" type="submit">
+          <Button size="lg" className="w-full sm:w-fit" type="submit">
             Subscribe
           </Button>
         </form>

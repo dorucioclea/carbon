@@ -1,7 +1,6 @@
 "use client";
 
 import ContactForm from "@/components/ContactForm";
-import { MobileTabs } from "@/components/MobileTabs";
 import { Tabs } from "@/components/Tabs";
 import { Button, cn } from "@carbon/react";
 import Image from "next/image";
@@ -123,69 +122,11 @@ function ProductViews() {
       content: <ImageContainer imagePath={"/carbon-dark-mode-documents.jpg"} />,
     },
   ];
-  const mobileTabs = [
-    {
-      id: 0,
-      title: "Manufacturing",
-      description:
-        "Infinitely nestable, infinitely customizable bill of materials",
-      content: (
-        <Image
-          src="/carbon-dark-mode-manufacturing.jpg"
-          className="rounded"
-          width={1209}
-          height={903}
-          alt={""}
-        />
-      ),
-    },
-    {
-      id: 1,
-      title: "Manufacturing",
-      content: (
-        <Image
-          src="/carbon-dark-mode-accounting.jpg"
-          width={1209}
-          height={903}
-          alt={""}
-        />
-      ),
-    },
-    {
-      id: 2,
-      title: "Search",
-      content: (
-        <Image
-          src="/carbon-dark-mode-search.jpg"
-          width={1209}
-          height={903}
-          alt={""}
-        />
-      ),
-    },
-    {
-      id: 3,
-      title: "Permissions",
-      content: (
-        <Image
-          src="/carbon-dark-mode-permissions.jpg"
-          width={1209}
-          height={903}
-          alt={""}
-        />
-      ),
-    },
-  ];
 
   return (
-    <>
-      <div className="h-[20rem] md:h-[40rem] [perspective:1000px] relative b flex-col max-w-5xl mx-auto w-full  items-start justify-start my-40 hidden md:flex">
-        <Tabs tabs={tabs} />
-      </div>
-      <div className="flex sm:hidden mx-auto">
-        <MobileTabs items={mobileTabs} />
-      </div>
-    </>
+    <div className="h-[20rem] md:h-[40rem] [perspective:1000px] relative b flex-col max-w-5xl mx-auto w-full  items-start justify-start my-40 hidden md:flex">
+      <Tabs tabs={tabs} />
+    </div>
   );
 }
 
@@ -260,11 +201,14 @@ function OpenCore() {
           {features.map(({ icon: Icon, ...feature }, i) => (
             <div
               className={cn(
-                "row-span-1 group/bento items-start p-8 space-y-4 bg-black/[0.03] dark:bg-zinc-900 round transition-all duration-300 ease-in-out rounded-lg shadow group ring-2 ring-transparent hover:ring-white/10 cursor-pointer text-left"
+                "row-span-1 group/bento items-start p-8 space-y-4 bg-black/[0.03] dark:bg-zinc-900 round transition-all duration-300 ease-in-out rounded-lg shadow group ring-2 ring-transparent hover:ring-white/10 text-left"
               )}
               key={feature.name.split(" ").join("-")}
             >
-              <Icon className="text-primary w-10 h-10" aria-hidden="true" />
+              <Icon
+                className="text-primary dark:text-zinc-900 w-10 h-10 dark:p-2 dark:bg-[#3ECF8E] rounded-full glow-green"
+                aria-hidden="true"
+              />
               <h2 className="font-semibold text-foreground text-xl md:text-2xl lg:text-3xl tracking-tight">
                 {feature.name}
               </h2>
