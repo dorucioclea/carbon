@@ -1,4 +1,4 @@
-import { Button, ResizablePanel } from "@carbon/react";
+import { Button, ResizableHandle, ResizablePanel } from "@carbon/react";
 import { useNavigate } from "@remix-run/react";
 import { LuX } from "react-icons/lu";
 import { path } from "~/utils/path";
@@ -15,11 +15,11 @@ const DocumentView = ({
   pathToFile,
 }: DocumentPreviewProps) => {
   const navigate = useNavigate();
-  // TODO: redirect to table
-  const onClose = () => navigate(-1);
+  const onClose = () => navigate(path.to.documents);
 
   return (
     <>
+      <ResizableHandle withHandle />
       <ResizablePanel>
         <Button isIcon variant={"ghost"} onClick={onClose}>
           <LuX className="w-4 h-4" />
