@@ -3,12 +3,12 @@ import { Link, useMatches } from "@remix-run/react";
 import { noop } from "@tanstack/react-table";
 import { forwardRef, type AnchorHTMLAttributes } from "react";
 import { BsFillHexagonFill } from "react-icons/bs";
-import { CgProfile } from "react-icons/cg";
 import { z } from "zod";
 import { useOptimisticLocation } from "~/hooks";
 import type { Authenticated, NavItem } from "~/types";
 import { path } from "~/utils/path";
 import { useModules } from "./useModules";
+import { LuUserCircle } from "react-icons/lu";
 
 export const ModuleHandle = z.object({
   module: z.string(),
@@ -79,7 +79,7 @@ const IconSidebar = () => {
             <NavigationIconLink
               link={{
                 to: path.to.profile,
-                icon: CgProfile,
+                icon: LuUserCircle,
                 name: "Account",
               }}
               isActive={matchedModules.has(getModule(path.to.profile))}
@@ -109,7 +109,7 @@ const NavigationIconLink = forwardRef<
     ref
   ) => {
     const iconClasses = [
-      "absolute left-3 top-3 flex rounded-md items-center items-center justify-center", // Layout
+      "absolute left-3 top-3 flex rounded-md items-center items-center justify-center text-primary/80", // Layout
     ];
 
     const classes = [

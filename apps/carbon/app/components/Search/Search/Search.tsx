@@ -18,6 +18,7 @@ import {
   useKeyboardShortcuts,
   useMount,
 } from "@carbon/react";
+import { Search } from "lucide-react";
 import { useNavigate } from "@remix-run/react";
 import idb from "localforage";
 import { nanoid } from "nanoid";
@@ -267,7 +268,7 @@ const SearchButton = () => {
   return (
     <div className="hidden sm:block">
       <Button
-        leftIcon={<RxMagnifyingGlass />}
+        leftIcon={<Search />}
         variant="secondary"
         className="w-[200px] px-2 text-muted-foreground "
         onClick={searchModal.onOpen}

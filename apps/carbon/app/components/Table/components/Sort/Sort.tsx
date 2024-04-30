@@ -20,6 +20,7 @@ import { BsChevronDown, BsSortUp } from "react-icons/bs";
 import { IoMdClose } from "react-icons/io";
 import { MdOutlineDragIndicator } from "react-icons/md";
 import { useSort } from "./useSort";
+import { ArrowUpDown } from "lucide-react";
 
 type SortProps = {
   columnAccessors: Record<string, string>;
@@ -42,7 +43,7 @@ const Sort = ({ columnAccessors }: SortProps) => {
           aria-label="Sort"
           title="Sort"
           variant={hasNoSorts ? "ghost" : "secondary"}
-          icon={<BsSortUp />}
+          icon={<ArrowUpDown />}
           className={cn(hasNoSorts && "!border-dashed border-border")}
         />
       </PopoverTrigger>

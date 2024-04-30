@@ -20,12 +20,17 @@ import {
 import { convertKbToString, filterEmpty, formatDate } from "@carbon/utils";
 import { Link, useRevalidator } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
+import { Pin } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { BsFillPenFill, BsPin, BsPinFill } from "react-icons/bs";
-import { IoMdAdd, IoMdTrash } from "react-icons/io";
-import { LuExternalLink } from "react-icons/lu";
+import { IoMdAdd } from "react-icons/io";
+import {
+  LuDownload,
+  LuExternalLink,
+  LuPencil,
+  LuPin,
+  LuTrash,
+} from "react-icons/lu";
 import { RxCheck } from "react-icons/rx";
-import { VscOpenPreview } from "react-icons/vsc";
 import { EmployeeAvatar, Hyperlink, Table } from "~/components";
 import { Confirm, ConfirmDelete } from "~/components/Modals";
 import { useFilters } from "~/components/Table/components/Filter/useFilters";
@@ -163,12 +168,12 @@ const DocumentsTable = memo(
           cell: ({ row }) => (
             <HStack>
               {row.original.favorite ? (
-                <BsPinFill
-                  className="cursor-pointer w-4 h-4 text-yellow-400"
+                <Pin
+                  className="cursor-pointer w-4 h-4 outline-primary/50 fill-yellow-400"
                   onClick={() => onFavorite(row.original)}
                 />
               ) : (
-                <BsPin
+                <Pin
                   className="cursor-pointer w-4 h-4 text-muted-foreground"
                   onClick={() => onFavorite(row.original)}
                 />
@@ -416,11 +421,11 @@ const DocumentsTable = memo(
       return (row: Document) => (
         <>
           <MenuItem disabled={canUpdate(row)} onClick={() => edit(row)}>
-            <MenuIcon icon={<BsFillPenFill />} />
+            <MenuIcon icon={<LuPencil />} />
             Edit
           </MenuItem>
           <MenuItem onClick={() => download(row)}>
-            <MenuIcon icon={<VscOpenPreview />} />
+            <MenuIcon icon={<LuDownload />} />
             Download
           </MenuItem>
           <MenuItem
@@ -428,7 +433,7 @@ const DocumentsTable = memo(
               onFavorite(row);
             }}
           >
-            <MenuIcon icon={<BsPin />} />
+            <MenuIcon icon={<LuPin />} />
             Favorite
           </MenuItem>
           <MenuItem
@@ -438,7 +443,7 @@ const DocumentsTable = memo(
               deleteDocumentModal.onOpen();
             }}
           >
-            <MenuIcon icon={<IoMdTrash />} />
+            <MenuIcon icon={<LuTrash />} />
             {filter !== "trash" ? "Move to Trash" : "Restore from Trash"}
           </MenuItem>
         </>

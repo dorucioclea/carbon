@@ -1,8 +1,13 @@
+import {
+  Component,
+  Container,
+  Receipt,
+  ShoppingCart,
+  SquarePen,
+  SquareUser,
+  Users,
+} from "lucide-react";
 import { useMemo } from "react";
-import { AiOutlinePartition } from "react-icons/ai";
-import { BsCartCheck, BsCartDash, BsCartPlus, BsShieldLock } from "react-icons/bs";
-import { IoMdPeople } from "react-icons/io";
-import { PiShareNetworkFill } from "react-icons/pi";
 import { usePermissions } from "~/hooks";
 
 import type { Route } from "~/types";
@@ -17,7 +22,7 @@ export default function useCreate(): Route[] {
       links.push({
         name: "Part",
         to: path.to.newPart,
-        icon: <AiOutlinePartition />,
+        icon: <Component />,
       });
     }
 
@@ -25,7 +30,7 @@ export default function useCreate(): Route[] {
       links.push({
         name: "Purchase Order",
         to: path.to.newPurchaseOrder,
-        icon: <BsCartDash />,
+        icon: <ShoppingCart />,
       });
     }
 
@@ -33,7 +38,7 @@ export default function useCreate(): Route[] {
       links.push({
         name: "Supplier",
         to: path.to.newSupplier,
-        icon: <PiShareNetworkFill />,
+        icon: <Container />,
       });
     }
 
@@ -41,25 +46,25 @@ export default function useCreate(): Route[] {
       links.push({
         name: "Customer",
         to: path.to.newCustomer,
-        icon: <IoMdPeople />,
+        icon: <Users />,
       });
       links.push({
         name: "Quotation",
         to: path.to.newQuote,
-        icon: <BsCartPlus />,
+        icon: <SquarePen />,
       });
       links.push({
         name: "Sales Order",
         to: path.to.newSalesOrder,
-        icon: <BsCartCheck />,
-      })
+        icon: <Receipt />,
+      });
     }
 
     if (permissions.can("create", "users")) {
       links.push({
         name: "Employee",
         to: path.to.newEmployee,
-        icon: <BsShieldLock />,
+        icon: <SquareUser />,
       });
     }
 
