@@ -49,7 +49,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     update: "users",
   });
 
@@ -95,6 +95,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const updateEmployeeTypePermissions = await upsertEmployeeTypePermissions(
     client,
     id,
+    companyId,
     permissions
   );
 

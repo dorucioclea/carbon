@@ -47,25 +47,7 @@ const EmployeesTable = memo(
 
     const canEdit = permissions.can("update", "users");
 
-    const rows = useMemo(
-      () =>
-        data.map((d) => {
-          // we should have one user and employee per employee id
-          if (
-            d.user === null ||
-            d.employeeType === null ||
-            Array.isArray(d.user) ||
-            Array.isArray(d.employeeType)
-          ) {
-            throw new Error("Expected user and employee type to be objects");
-          }
-
-          return d;
-        }),
-      [data]
-    );
-
-    const columns = useMemo<ColumnDef<(typeof rows)[number]>[]>(() => {
+    const columns = useMemo<ColumnDef<(typeof data)[number]>[]>(() => {
       return [
         {
           header: "User",
@@ -73,52 +55,59 @@ const EmployeesTable = memo(
             <HStack>
               <Avatar
                 size="sm"
-                name={row.original.user?.fullName ?? undefined}
-                path={row.original.user?.avatarUrl ?? undefined}
+                name={row.original.name ?? undefined}
+                path={row.original.avatarUrl ?? undefined}
               />
 
               <Hyperlink
                 to={`${path.to.employeeAccount(
-                  row.original.user?.id!
+                  row.original.id!
                 )}?${params.toString()}`}
               >
-                {`${row.original.user?.firstName} ${row.original.user?.lastName}`}
+                {`${row.original.firstName} ${row.original.lastName}`}
               </Hyperlink>
             </HStack>
           ),
         },
 
         {
-          accessorKey: "user.firstName",
+          accessorKey: "firstName",
           header: "First Name",
           cell: (item) => item.getValue(),
         },
         {
-          accessorKey: "user.lastName",
+          accessorKey: "lastName",
           header: "Last Name",
           cell: (item) => item.getValue(),
         },
         {
-          accessorKey: "user.email",
+          accessorKey: "email",
           header: "Email",
           cell: (item) => item.getValue(),
         },
         {
-          accessorKey: "employeeType.name",
+          id: "employeeTypeId",
           header: "Employee Type",
-          cell: (item) => <Enumerable value={item.getValue<string>()} />,
+          cell: (item) => (
+            <Enumerable
+              value={
+                employeeTypes.find((et) => et.id === item.getValue<string>())
+                  ?.name ?? null
+              }
+            />
+          ),
           meta: {
             filter: {
               type: "static",
               options: employeeTypes.map((type) => ({
-                value: type.name,
+                value: type.id,
                 label: <Enumerable value={type.name} />,
               })),
             },
           },
         },
         {
-          accessorKey: "user.active",
+          accessorKey: "active",
           header: "Active",
           cell: (item) => <Checkbox isChecked={item.getValue<boolean>()} />,
           meta: {
@@ -147,15 +136,8 @@ const EmployeesTable = memo(
           label: "Edit Permissions",
           icon: <BsShieldLock />,
           disabled: !permissions.can("update", "users"),
-          onClick: (selected: typeof rows) => {
-            setSelectedUserIds(
-              selected.reduce<string[]>((acc, row) => {
-                if (row.user && !Array.isArray(row.user)) {
-                  acc.push(row.user.id);
-                }
-                return acc;
-              }, [])
-            );
+          onClick: (selected: typeof data) => {
+            setSelectedUserIds(selected.map((row) => row.id!));
             bulkEditDrawer.onOpen();
           },
         },
@@ -163,15 +145,8 @@ const EmployeesTable = memo(
           label: "Send Account Invite",
           icon: <BsEnvelope />,
           disabled: !permissions.can("create", "users"),
-          onClick: (selected: typeof rows) => {
-            setSelectedUserIds(
-              selected.reduce<string[]>((acc, row) => {
-                if (row.user && !Array.isArray(row.user)) {
-                  acc.push(row.user.id);
-                }
-                return acc;
-              }, [])
-            );
+          onClick: (selected: typeof data) => {
+            setSelectedUserIds(selected.map((row) => row.id!));
             resendInviteModal.onOpen();
           },
         },
@@ -179,15 +154,8 @@ const EmployeesTable = memo(
           label: "Deactivate Users",
           icon: <FaBan />,
           disabled: !permissions.can("delete", "users"),
-          onClick: (selected: typeof rows) => {
-            setSelectedUserIds(
-              selected.reduce<string[]>((acc, row) => {
-                if (row.user && !Array.isArray(row.user)) {
-                  acc.push(row.user.id);
-                }
-                return acc;
-              }, [])
-            );
+          onClick: (selected: typeof data) => {
+            setSelectedUserIds(selected.map((row) => row.id!));
             deactivateEmployeeModal.onOpen();
           },
         },
@@ -196,14 +164,13 @@ const EmployeesTable = memo(
     }, []);
 
     const renderContextMenu = useCallback(
-      ({ user }: (typeof rows)[number]) => {
-        if (Array.isArray(user) || user === null) return null;
+      (row: (typeof data)[number]) => {
         return (
           <>
             <MenuItem
               onClick={() =>
                 navigate(
-                  `${path.to.employeeAccount(user.id)}?${params.toString()}`
+                  `${path.to.employeeAccount(row.id!)}?${params.toString()}`
                 )
               }
             >
@@ -212,17 +179,17 @@ const EmployeesTable = memo(
             </MenuItem>
             <MenuItem
               onClick={() => {
-                setSelectedUserIds([user.id]);
+                setSelectedUserIds([row.id!]);
                 resendInviteModal.onOpen();
               }}
             >
               <MenuIcon icon={<BsEnvelope />} />
               Send Account Invite
             </MenuItem>
-            {user.active === true && (
+            {row.active === true && (
               <MenuItem
                 onClick={(e) => {
-                  setSelectedUserIds([user.id]);
+                  setSelectedUserIds([row.id!]);
                   deactivateEmployeeModal.onOpen();
                 }}
               >
@@ -238,11 +205,11 @@ const EmployeesTable = memo(
 
     return (
       <>
-        <Table<(typeof rows)[number]>
+        <Table<(typeof data)[number]>
           actions={actions}
           count={count}
           columns={columns}
-          data={rows}
+          data={data}
           defaultColumnVisibility={defaultColumnVisibility}
           primaryAction={
             permissions.can("create", "users") && (

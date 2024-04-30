@@ -9,6 +9,7 @@ import {
   HStack,
   VStack,
 } from "@carbon/react";
+import { redis } from "@carbon/redis";
 import {
   ValidatedForm,
   validationError,
@@ -33,7 +34,10 @@ import {
   seedCompany,
   updateCompany,
 } from "~/modules/settings";
-import { addUserToCompany } from "~/modules/users/users.server";
+import {
+  addUserToCompany,
+  getPermissionCacheKey,
+} from "~/modules/users/users.server";
 import { requirePermissions } from "~/services/auth/auth.server";
 import { commitAuthSession } from "~/services/session.server";
 import { assertIsPost } from "~/utils/http";
@@ -150,6 +154,7 @@ export async function action({ request }: ActionFunctionArgs) {
         companyId,
         locationId,
       }),
+      redis.del(getPermissionCacheKey(userId)),
     ]);
 
     if (userToCompany.error) {

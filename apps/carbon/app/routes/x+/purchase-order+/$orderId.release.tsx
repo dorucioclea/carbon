@@ -187,6 +187,7 @@ export async function action(args: ActionFunctionArgs) {
                 filename: fileName,
               },
             ],
+            companyId,
           },
         });
       } catch (err) {

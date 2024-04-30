@@ -1,7 +1,7 @@
 -- Enable the "pg_jsonschema" extension
 CREATE EXTENSION pg_jsonschema WITH SCHEMA extensions;
 
-CREATE TABLE integration (
+CREATE TABLE "integration" (
   "id" TEXT NOT NULL,
   "title" TEXT NOT NULL,
   "description" TEXT,

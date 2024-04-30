@@ -12,10 +12,10 @@ export const permissionsUpdateSchema = z.object({
   permissions: z.record(
     z.string(),
     z.object({
-      view: z.boolean(),
-      create: z.boolean(),
-      update: z.boolean(),
-      delete: z.boolean(),
+      view: z.array(z.number()),
+      create: z.array(z.number()),
+      update: z.array(z.number()),
+      delete: z.array(z.number()),
     })
   ),
 });

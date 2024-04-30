@@ -18,7 +18,7 @@ import { error, success } from "~/utils/result";
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  await requirePermissions(request, {
+  const { companyId } = await requirePermissions(request, {
     update: "users",
   });
 
@@ -32,7 +32,15 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const { editType, userIds, data } = validation.data;
   const addOnly = editType === "add";
-  const permissions: Record<string, Permission> = JSON.parse(data);
+  const permissions: Record<
+    string,
+    {
+      view: boolean;
+      create: boolean;
+      update: boolean;
+      delete: boolean;
+    }
+  > = JSON.parse(data);
 
   if (
     !Object.values(permissions).every(
@@ -45,6 +53,18 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
+  const updatedPermissions = Object.entries(permissions).reduce<
+    Record<string, Permission>
+  >((acc, [id, permission]) => {
+    acc[id] = {
+      view: permission.view ? [companyId] : [],
+      create: permission.create ? [companyId] : [],
+      update: permission.update ? [companyId] : [],
+      delete: permission.delete ? [companyId] : [],
+    };
+    return acc;
+  }, {});
+
   const jobs = userIds.map<{
     name: string;
     payload: z.infer<typeof permissionsUpdateSchema>;
@@ -52,7 +72,7 @@ export async function action({ request }: ActionFunctionArgs) {
     name: `update.permissions`,
     payload: {
       id,
-      permissions,
+      permissions: updatedPermissions,
       addOnly,
     },
   }));

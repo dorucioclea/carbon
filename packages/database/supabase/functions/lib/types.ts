@@ -15979,9 +15979,11 @@ export type Database = {
       }
       employees: {
         Row: {
+          active: boolean | null
           avatarUrl: string | null
           companyId: number | null
           email: string | null
+          employeeTypeId: string | null
           firstName: string | null
           id: string | null
           lastName: string | null
@@ -15993,6 +15995,13 @@ export type Database = {
             columns: ["companyId"]
             isOneToOne: false
             referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_employeeTypeId_fkey"
+            columns: ["employeeTypeId"]
+            isOneToOne: false
+            referencedRelation: "employeeType"
             referencedColumns: ["id"]
           },
         ]

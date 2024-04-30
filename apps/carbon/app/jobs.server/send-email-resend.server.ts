@@ -29,12 +29,14 @@ const job = triggerClient.defineJob({
         })
         .array()
         .optional(),
+      companyId: z.number(),
     }),
   }),
   run: async (payload, io, ctx) => {
     const integration = await supabaseClient
       .from("integration")
       .select("active, metadata")
+      .eq("companyId", payload.companyId)
       .eq("id", "resend")
       .maybeSingle();
 

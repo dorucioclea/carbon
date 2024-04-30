@@ -356,7 +356,7 @@ export async function getCurrentUser(
   return user.data;
 }
 
-function getPermissionCacheKey(userId: string) {
+export function getPermissionCacheKey(userId: string) {
   return `permissions:${userId}`;
 }
 
@@ -395,6 +395,7 @@ export async function getUserClaims(userId: string) {
       if (rawClaims.error || rawClaims.data === null) {
         throw new Error("Failed to get claims");
       }
+
       // convert rawClaims to permissions
       claims = makePermissionsFromClaims(rawClaims.data as Json[]);
 

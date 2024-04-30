@@ -89,11 +89,11 @@ export async function getEmployees(
     .eq("companyId", companyId);
 
   if (args.search) {
-    query = query.ilike("user.fullName", `%${args.search}%`);
+    query = query.ilike("fullName", `%${args.search}%`);
   }
 
   query = setGenericQueryFilters(query, args, [
-    { column: "user(lastName)", ascending: true },
+    { column: "lastName", ascending: true },
   ]);
   return query;
 }
@@ -259,15 +259,16 @@ export async function upsertEmployeeType(
 export async function upsertEmployeeTypePermissions(
   client: SupabaseClient<Database>,
   employeeTypeId: string,
+  companyId: number,
   permissions: { name: string; permission: Permission }[]
 ) {
   const employeeTypePermissions = permissions.map(({ name, permission }) => ({
     employeeTypeId,
     module: capitalize(name) as "Accounting",
-    view: permission.view,
-    create: permission.create,
-    update: permission.update,
-    delete: permission.delete,
+    view: permission.view ? [companyId] : [],
+    create: permission.create ? [companyId] : [],
+    update: permission.update ? [companyId] : [],
+    delete: permission.delete ? [companyId] : [],
   }));
 
   return client.from("employeeTypePermission").upsert(employeeTypePermissions);

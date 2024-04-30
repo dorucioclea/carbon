@@ -3,12 +3,17 @@ import type { Permission } from "~/modules/users";
 import type { Role } from "~/types";
 import { path } from "~/utils/path";
 import { useRouteData } from "./useRouteData";
+import { useUser } from "./useUser";
 
 export function usePermissions() {
   const data = useRouteData<{
     permissions: Record<string, Permission>;
     role: "employee" | "supplier" | "customer";
   }>(path.to.authenticatedRoot);
+
+  const {
+    company: { id: companyId },
+  } = useUser();
 
   if (!isPermissions(data?.permissions) || !isRole(data?.role)) {
     // TODO: force logout -- the likely cause is development changes
@@ -19,9 +24,12 @@ export function usePermissions() {
 
   const can = useCallback(
     (action: "view" | "create" | "update" | "delete", feature: string) => {
-      return data?.permissions[feature]?.[action] ?? false;
+      return (
+        data?.permissions[feature]?.[action].includes(0) ||
+        data?.permissions[feature]?.[action].includes(companyId)
+      );
     },
-    [data?.permissions]
+    [companyId, data?.permissions]
   );
 
   const has = useCallback(

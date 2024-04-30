@@ -15,58 +15,63 @@ const job = triggerClient.defineJob({
     seconds: 60 * 60 * 8, // thrice a day
   }),
   run: async (payload, io, ctx) => {
-    const integration = await supabaseClient
+    const integrations = await supabaseClient
       .from("integration")
       .select("active, metadata")
-      .eq("id", "exchange-rates-v1")
-      .maybeSingle();
+      .eq("id", "exchange-rates-v1");
 
-    const integrationMetadata = exchangeRatesFormValidator.safeParse(
-      integration?.data?.metadata
-    );
-
-    if (!integrationMetadata.success || integration?.data?.active !== true)
+    if (integrations.error) {
+      io.logger.error(JSON.stringify(integrations.error));
       return;
-    const exchangeRatesClient = getExchangeRatesClient(
-      integrationMetadata.data.apiKey
-    );
+    }
 
-    if (!exchangeRatesClient) return;
+    for await (const integration of integrations.data) {
+      const integrationMetadata = exchangeRatesFormValidator.safeParse(
+        integration?.metadata
+      );
 
-    await io.logger.info(`💵 Exchange Rates Job: ${payload.lastTimestamp}`);
-    await io.logger.info(JSON.stringify(exchangeRatesClient.getMetaData()));
+      if (!integrationMetadata.success || integration?.active !== true) return;
+      const exchangeRatesClient = getExchangeRatesClient(
+        integrationMetadata.data.apiKey
+      );
 
-    try {
-      const rates = await exchangeRatesClient.getExchangeRates();
-      const updatedAt = new Date().toISOString();
-      await io.logger.info(JSON.stringify(rates));
-      const { data } = await supabaseClient.from("currency").select("*");
-      if (!data) return;
+      if (!exchangeRatesClient) return;
 
-      const updates = data
-        .map((currency) => ({
-          ...currency,
-          exchangeRate: Number(
-            rates[currency.code as CurrencyCode]?.toFixed(
-              currency.decimalPlaces
-            )
-          ),
-          updatedAt,
-        }))
-        .filter((currency) => currency.exchangeRate);
+      await io.logger.info(`💵 Exchange Rates Job: ${payload.lastTimestamp}`);
+      await io.logger.info(JSON.stringify(exchangeRatesClient.getMetaData()));
 
-      if (updates?.length === 0) return;
+      try {
+        const rates = await exchangeRatesClient.getExchangeRates();
+        const updatedAt = new Date().toISOString();
+        await io.logger.info(JSON.stringify(rates));
+        const { data } = await supabaseClient.from("currency").select("*");
+        if (!data) return;
 
-      const { error } = await supabaseClient.from("currency").upsert(updates);
-      if (error) {
-        await io.logger.error(JSON.stringify(error));
-        return;
+        const updates = data
+          .map((currency) => ({
+            ...currency,
+            exchangeRate: Number(
+              rates[currency.code as CurrencyCode]?.toFixed(
+                currency.decimalPlaces
+              )
+            ),
+            updatedAt,
+          }))
+          .filter((currency) => currency.exchangeRate);
+
+        if (updates?.length === 0) return;
+
+        const { error } = await supabaseClient.from("currency").upsert(updates);
+        if (error) {
+          await io.logger.error(JSON.stringify(error));
+          return;
+        }
+
+        io.logger.log("Success");
+      } catch (err) {
+        // TODO: notify someone
+        await io.logger.error(JSON.stringify(err));
       }
-
-      io.logger.log("Success");
-    } catch (err) {
-      // TODO: notify someone
-      await io.logger.error(JSON.stringify(err));
     }
   },
 });
