@@ -176,7 +176,7 @@ function OpenCore() {
         </h2>
         <div className="mt-8 w-full text-center">
           <Link href="https://git.new/carbon">
-            <div className="fancy-button rounded-full w-fit mx-auto relative z-50 mb-6">
+            <div className="fancy-button rounded-full w-fit mx-auto relative mb-6">
               <Button
                 className="border-border rounded-full"
                 variant="secondary"
