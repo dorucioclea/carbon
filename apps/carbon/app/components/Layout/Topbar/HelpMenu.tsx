@@ -14,7 +14,7 @@ const HelpMenu = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <IconButton
-          className="hidden sm:block"
+          className="hidden sm:flex"
           aria-label="Help"
           icon={<BiHelpCircle />}
           variant="ghost"
