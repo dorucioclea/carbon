@@ -12,7 +12,7 @@ import {
 import type { Column, ColumnOrderState } from "@tanstack/react-table";
 import { Reorder } from "framer-motion";
 import { BsEyeFill, BsEyeSlash, BsPin, BsPinFill } from "react-icons/bs";
-import { Columns3 } from "lucide-react";
+import { LuColumns } from "react-icons/lu";
 import { MdOutlineDragIndicator } from "react-icons/md";
 
 type ColumnsProps<T> = {
@@ -35,7 +35,7 @@ const Columns = <T extends object>({
           aria-label="Columns"
           title="Columns"
           variant="ghost"
-          icon={<Columns3 />}
+          icon={<LuColumns />}
         />
       </DrawerTrigger>
       <DrawerContent>

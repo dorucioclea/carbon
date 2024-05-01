@@ -1,13 +1,13 @@
-import {
-  Component,
-  Container,
-  Receipt,
-  ShoppingCart,
-  SquarePen,
-  SquareUser,
-  Users,
-} from "lucide-react";
 import { useMemo } from "react";
+import {
+  LuComponent,
+  LuContainer,
+  LuPenSquare,
+  LuReceipt,
+  LuShoppingCart,
+  LuUserSquare,
+  LuUsers,
+} from "react-icons/lu";
 import { usePermissions } from "~/hooks";
 
 import type { Route } from "~/types";
@@ -22,7 +22,7 @@ export default function useCreate(): Route[] {
       links.push({
         name: "Part",
         to: path.to.newPart,
-        icon: <Component />,
+        icon: <LuComponent />,
       });
     }
 
@@ -30,7 +30,7 @@ export default function useCreate(): Route[] {
       links.push({
         name: "Purchase Order",
         to: path.to.newPurchaseOrder,
-        icon: <ShoppingCart />,
+        icon: <LuShoppingCart />,
       });
     }
 
@@ -38,7 +38,7 @@ export default function useCreate(): Route[] {
       links.push({
         name: "Supplier",
         to: path.to.newSupplier,
-        icon: <Container />,
+        icon: <LuContainer />,
       });
     }
 
@@ -46,17 +46,17 @@ export default function useCreate(): Route[] {
       links.push({
         name: "Customer",
         to: path.to.newCustomer,
-        icon: <Users />,
+        icon: <LuUsers />,
       });
       links.push({
         name: "Quotation",
         to: path.to.newQuote,
-        icon: <SquarePen />,
+        icon: <LuPenSquare />,
       });
       links.push({
         name: "Sales Order",
         to: path.to.newSalesOrder,
-        icon: <Receipt />,
+        icon: <LuReceipt />,
       });
     }
 
@@ -64,7 +64,7 @@ export default function useCreate(): Route[] {
       links.push({
         name: "Employee",
         to: path.to.newEmployee,
-        icon: <SquareUser />,
+        icon: <LuUserSquare />,
       });
     }
 

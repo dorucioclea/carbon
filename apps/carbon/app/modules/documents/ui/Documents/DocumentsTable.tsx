@@ -20,7 +20,6 @@ import {
 import { convertKbToString, filterEmpty, formatDate } from "@carbon/utils";
 import { Link, useRevalidator } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Pin } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import {
@@ -168,12 +167,12 @@ const DocumentsTable = memo(
           cell: ({ row }) => (
             <HStack>
               {row.original.favorite ? (
-                <Pin
+                <LuPin
                   className="cursor-pointer w-4 h-4 outline-primary/50 fill-yellow-400"
                   onClick={() => onFavorite(row.original)}
                 />
               ) : (
-                <Pin
+                <LuPin
                   className="cursor-pointer w-4 h-4 text-muted-foreground"
                   onClick={() => onFavorite(row.original)}
                 />

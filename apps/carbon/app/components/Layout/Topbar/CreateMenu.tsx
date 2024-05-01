@@ -7,8 +7,8 @@ import {
   IconButton,
 } from "@carbon/react";
 import { Link } from "@remix-run/react";
-import { Plus } from "lucide-react";
 import useCreate from "./useCreate";
+import { LuPlus } from "react-icons/lu";
 
 const CreateMenu = () => {
   const createLinks = useCreate();
@@ -20,7 +20,7 @@ const CreateMenu = () => {
       <DropdownMenuTrigger asChild>
         <IconButton
           aria-label="Create"
-          icon={<Plus />}
+          icon={<LuPlus />}
           variant="secondary"
           className={"!border-dashed border-border"}
         />

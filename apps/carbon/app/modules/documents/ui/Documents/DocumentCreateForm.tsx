@@ -1,7 +1,7 @@
 import { File, toast } from "@carbon/react";
 import { useSubmit } from "@remix-run/react";
 import type { ChangeEvent } from "react";
-import { Upload } from "lucide-react";
+import { LuUpload } from "react-icons/lu";
 import { useUser } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import { path } from "~/utils/path";
@@ -61,7 +61,7 @@ const DocumentCreateForm = () => {
   };
 
   return (
-    <File leftIcon={<Upload />} onChange={uploadFile}>
+    <File leftIcon={<LuUpload />} onChange={uploadFile}>
       Upload
     </File>
   );

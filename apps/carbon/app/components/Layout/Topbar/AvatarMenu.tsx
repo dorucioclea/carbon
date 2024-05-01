@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@carbon/react";
 import { Form, Link } from "@remix-run/react";
-import { CircleUser, LogOut } from "lucide-react";
+import { LuLogOut, LuUserCircle } from "react-icons/lu";
 import { Avatar } from "~/components";
 import { useUser } from "~/hooks";
 import { path } from "~/utils/path";
@@ -27,14 +27,14 @@ const AvatarMenu = () => {
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link to={path.to.profile}>
-            <DropdownMenuIcon icon={<CircleUser />} />
+            <DropdownMenuIcon icon={<LuUserCircle />} />
             My Profile
           </Link>
         </DropdownMenuItem>
         <Form method="post" action={path.to.logout}>
           <DropdownMenuItem asChild>
             <button type="submit" className="w-full">
-              <DropdownMenuIcon icon={<LogOut />} />
+              <DropdownMenuIcon icon={<LuLogOut />} />
               <span>Sign Out</span>
             </button>
           </DropdownMenuItem>

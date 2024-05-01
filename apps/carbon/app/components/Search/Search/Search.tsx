@@ -18,7 +18,6 @@ import {
   useKeyboardShortcuts,
   useMount,
 } from "@carbon/react";
-import { Search } from "lucide-react";
 import { useNavigate } from "@remix-run/react";
 import idb from "localforage";
 import { nanoid } from "nanoid";
@@ -28,6 +27,7 @@ import { BiListCheck } from "react-icons/bi";
 import { BsCartDash, BsCartPlus } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
 import { HiOutlineDocumentDuplicate } from "react-icons/hi";
+import { LuSearch } from "react-icons/lu";
 import { PiShareNetworkFill } from "react-icons/pi";
 import { RxMagnifyingGlass } from "react-icons/rx";
 import { useModules } from "~/components/Layout/Navigation/useModules";
@@ -268,7 +268,7 @@ const SearchButton = () => {
   return (
     <div className="hidden sm:block">
       <Button
-        leftIcon={<Search />}
+        leftIcon={<LuSearch />}
         variant="secondary"
         className="w-[200px] px-2 text-muted-foreground "
         onClick={searchModal.onOpen}
