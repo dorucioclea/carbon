@@ -7,7 +7,7 @@
   "devDependencies": {
     "@carbon/logger": "*",
     "@carbon/tsconfig": "*",
-    "@types/node": "^18.15.1",
+    "@types/node": "^20.12.5",
     "dotenv": "16.3.1",
     "eslint": "^8.23.1",
     "eslint-config-carbon": "*",

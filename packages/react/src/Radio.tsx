@@ -5,7 +5,7 @@ import type { ComponentPropsWithoutRef, ElementRef } from "react";
 import { forwardRef } from "react";
 import { LuCircle } from "react-icons/lu";
 
-import { cn } from "~/utils/cn";
+import { cn } from "./utils/cn";
 
 const RadioGroup = forwardRef<
   ElementRef<typeof RadioGroupPrimitive.Root>,

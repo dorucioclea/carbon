@@ -3,7 +3,7 @@ import { cva } from "class-variance-authority";
 import type { ComponentProps, ElementType } from "react";
 import { forwardRef } from "react";
 
-import { cn } from "~/utils/cn";
+import { cn } from "./utils/cn";
 
 const headingVariants = cva(
   "font-semibold leading-none tracking-tight text-foreground",

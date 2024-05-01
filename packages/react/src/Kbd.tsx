@@ -1,6 +1,6 @@
 import type { ComponentPropsWithoutRef, ElementRef } from "react";
 import { forwardRef } from "react";
-import { cn } from "~/utils/cn";
+import { cn } from "./utils/cn";
 
 const Kbd = forwardRef<ElementRef<"kbd">, ComponentPropsWithoutRef<"kbd">>(
   ({ className, ...props }, ref) => {

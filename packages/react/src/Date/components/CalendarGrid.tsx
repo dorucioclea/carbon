@@ -5,7 +5,7 @@ import type {
   CalendarState,
   RangeCalendarState,
 } from "@react-stately/calendar";
-import { Table, Tbody, Td, Th, Thead, Tr } from "~/Table";
+import { Table, Tbody, Td, Th, Thead, Tr } from "../../Table";
 import { CalendarCell } from "./CalendarCell";
 
 const locale = "en-US"; // TODO use user's locale

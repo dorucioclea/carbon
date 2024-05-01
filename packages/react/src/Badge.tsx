@@ -7,7 +7,7 @@ import type {
 import { forwardRef } from "react";
 import { MdClose } from "react-icons/md";
 
-import { cn } from "~/utils/cn";
+import { cn } from "./utils/cn";
 
 const badgeVariants = cva(
   "inline-flex items-center rounded-md border px-2.5 py-0.5 h-6 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",

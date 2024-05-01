@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react";
 import { RxDotFilled } from "react-icons/rx";
-import { cn } from "~/utils/cn";
 import { Badge } from "./Badge";
+import { cn } from "./utils/cn";
 
 type StatusProps = ComponentProps<"div"> & {
   color?: "green" | "orange" | "red" | "yellow" | "blue" | "gray";

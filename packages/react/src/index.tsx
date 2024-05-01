@@ -57,7 +57,6 @@ import {
   ContextMenuTrigger,
 } from "./Context";
 import { Count } from "./Count";
-import DataTable, { DataTableColumnHeader } from "./DataTable";
 import {
   DatePicker,
   DateRangePicker,
@@ -118,6 +117,7 @@ import {
   InputRightElement,
 } from "./Input";
 import { Kbd } from "./Kbd";
+import { Label } from "./Label";
 import {
   Menu,
   MenuCheckboxItem,
@@ -284,8 +284,6 @@ export {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
   Count,
-  DataTable,
-  DataTableColumnHeader,
   DatePicker,
   DateRangePicker,
   DateTimePicker,
@@ -335,6 +333,7 @@ export {
   InputRightAddon,
   InputRightElement,
   Kbd,
+  Label,
   Menu,
   MenuCheckboxItem,
   MenuGroup,

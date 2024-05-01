@@ -5,7 +5,7 @@ import { forwardRef } from "react";
 import { LuCheck } from "react-icons/lu";
 import { MdOutlineHorizontalRule } from "react-icons/md";
 
-import { cn } from "~/utils/cn";
+import { cn } from "./utils/cn";
 
 export interface CheckboxProps
   extends ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root> {

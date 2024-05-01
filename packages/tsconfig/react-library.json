@@ -3,9 +3,14 @@
   "display": "React Library",
   "extends": "./base.json",
   "compilerOptions": {
+    "esModuleInterop": true,
+    "isolatedModules": true,
     "jsx": "react-jsx",
     "lib": ["ES2015"],
     "module": "ESNext",
-    "target": "es6"
+    "moduleResolution": "Bundler",
+    "preserveWatchOutput": true,
+    "noEmit": true,
+    "skipLibCheck": true
   }
 }
