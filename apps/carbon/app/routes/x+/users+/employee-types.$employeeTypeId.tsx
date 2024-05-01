@@ -11,7 +11,7 @@ import {
   upsertEmployeeType,
   upsertEmployeeTypePermissions,
 } from "~/modules/users";
-import { makePermissionsFromEmployeeType } from "~/modules/users/users.server";
+import { makeCompanyPermissionsFromEmployeeType } from "~/modules/users/users.server";
 import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { assertIsPost, notFound } from "~/utils/http";
@@ -19,7 +19,7 @@ import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "users",
     role: "employee",
   });
@@ -41,8 +41,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   return json({
     employeeType: employeeType?.data,
-    employeeTypePermissions: makePermissionsFromEmployeeType(
-      employeeTypePermissions.data ?? []
+    employeeTypePermissions: makeCompanyPermissionsFromEmployeeType(
+      employeeTypePermissions.data ?? [],
+      companyId
     ),
   });
 }

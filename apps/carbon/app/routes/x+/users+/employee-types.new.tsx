@@ -2,6 +2,7 @@ import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import type { CompanyPermission } from "~/modules/users";
 import {
   EmployeeTypeForm,
   employeeTypePermissionsValidator,
@@ -51,7 +52,10 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const { name, data } = validation.data;
 
-  const permissions = JSON.parse(data);
+  const permissions = JSON.parse(data) as {
+    name: string;
+    permission: CompanyPermission;
+  }[];
   const jsonValidation =
     employeeTypePermissionsValidator.safeParse(permissions);
   if (jsonValidation.success === false) {
@@ -91,6 +95,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const insertEmployeeTypePermissions = await upsertEmployeeTypePermissions(
     client,
     employeeTypeId,
+    companyId,
     permissions
   );
 

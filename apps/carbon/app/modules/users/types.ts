@@ -46,6 +46,13 @@ export type Group = {
   children: Group[];
 };
 
+export type CompanyPermission = {
+  view: boolean;
+  create: boolean;
+  update: boolean;
+  delete: boolean;
+};
+
 export type Permission = {
   view: number[];
   create: number[];

@@ -1,5 +1,3 @@
-import { modules } from "./modules";
-
 const admin = {
   email: "admin@carbon.us.org",
   password: "carbon",
@@ -11,14 +9,8 @@ const ALL_TEAMS_ID = 0;
 
 const claims: Record<string, string | number[]> = {
   role: "employee",
+  settings_update: [ALL_TEAMS_ID],
+  users_update: [ALL_TEAMS_ID],
 };
-
-modules.forEach((name) => {
-  const moduleName = name.toLowerCase();
-  claims[`${moduleName}_view`] = [ALL_TEAMS_ID];
-  claims[`${moduleName}_create`] = [ALL_TEAMS_ID];
-  claims[`${moduleName}_update`] = [ALL_TEAMS_ID];
-  claims[`${moduleName}_delete`] = [ALL_TEAMS_ID];
-});
 
 export { admin, claims };

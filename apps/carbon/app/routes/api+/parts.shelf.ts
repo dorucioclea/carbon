@@ -4,7 +4,7 @@ import { getShelvesList } from "~/modules/parts";
 import { requirePermissions } from "~/services/auth/auth.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const authorized = await requirePermissions(request, {
+  const { client } = await requirePermissions(request, {
     view: "parts",
   });
 
@@ -17,5 +17,5 @@ export async function loader({ request }: LoaderFunctionArgs) {
     });
   }
 
-  return json(await getShelvesList(authorized.client, locationId));
+  return json(await getShelvesList(client, locationId));
 }

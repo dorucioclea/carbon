@@ -61,7 +61,7 @@ export async function action({ request }: ActionFunctionArgs) {
     const logoPath = formData.get("path");
     if (logoPath === null || typeof logoPath === "string") {
       const logoUpdate = await updateLogo(client, companyId, logoPath);
-      console.log({ logoUpdate });
+
       if (logoUpdate.error) {
         throw redirect(
           path.to.company,

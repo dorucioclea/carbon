@@ -6,14 +6,15 @@ import crypto from "crypto";
 import { getSupabaseServiceRole } from "~/lib/supabase";
 import { getSupplierContact } from "~/modules/purchasing";
 import { getCustomerContact } from "~/modules/sales";
-import {
-  getPermissionsByEmployeeType,
-  type EmployeeRow,
-  type EmployeeTypePermission,
-  type Module,
-  type Permission,
-  type User,
+import type {
+  CompanyPermission,
+  EmployeeRow,
+  EmployeeTypePermission,
+  Module,
+  Permission,
+  User,
 } from "~/modules/users";
+import { getPermissionsByEmployeeType } from "~/modules/users";
 import {
   deleteAuthAccount,
   sendInviteByEmail,
@@ -528,23 +529,79 @@ function makeCustomerClaims(companyId: number) {
 }
 
 export function makeEmptyPermissionsFromModules(data: Module[]) {
-  return data.reduce<Record<string, { name: string; permission: Permission }>>(
-    (acc, m) => {
-      if (m.name) {
-        acc[m.name] = {
-          name: m.name.toLowerCase(),
-          permission: {
-            view: [],
-            create: [],
-            update: [],
-            delete: [],
-          },
+  return data.reduce<
+    Record<string, { name: string; permission: CompanyPermission }>
+  >((acc, m) => {
+    if (m.name) {
+      acc[m.name] = {
+        name: m.name.toLowerCase(),
+        permission: {
+          view: false,
+          create: false,
+          update: false,
+          delete: false,
+        },
+      };
+    }
+    return acc;
+  }, {});
+}
+
+export function makeCompanyPermissionsFromClaims(
+  claims: Json[] | null,
+  companyId: number
+) {
+  if (typeof claims !== "object" || claims === null) return null;
+  let permissions: Record<string, CompanyPermission> = {};
+  let role: string | null = null;
+
+  Object.entries(claims).forEach(([key, value]) => {
+    if (isClaimPermission(key, value)) {
+      const [module, action] = key.split("_");
+      if (!(module in permissions)) {
+        permissions[module] = {
+          view: false,
+          create: false,
+          update: false,
+          delete: false,
         };
       }
-      return acc;
-    },
-    {}
-  );
+
+      if (!Array.isArray(value)) {
+        permissions[module] = {
+          view: false,
+          create: false,
+          update: false,
+          delete: false,
+        };
+      } else {
+        switch (action) {
+          case "view":
+            permissions[module]["view"] =
+              value.includes(0) || value.includes(companyId);
+            break;
+          case "create":
+            permissions[module]["create"] =
+              value.includes(0) || value.includes(companyId);
+            break;
+          case "update":
+            permissions[module]["update"] =
+              value.includes(0) || value.includes(companyId);
+            break;
+          case "delete":
+            permissions[module]["delete"] =
+              value.includes(0) || value.includes(companyId);
+            break;
+        }
+      }
+    }
+  });
+
+  if ("role" in claims) {
+    role = claims["role"] as string;
+  }
+
+  return { permissions, role };
 }
 
 export function makePermissionsFromClaims(claims: Json[] | null) {
@@ -588,10 +645,14 @@ export function makePermissionsFromClaims(claims: Json[] | null) {
   return { permissions, role };
 }
 
-export function makePermissionsFromEmployeeType(
-  data: EmployeeTypePermission[]
+export function makeCompanyPermissionsFromEmployeeType(
+  data: EmployeeTypePermission[],
+  companyId: number
 ) {
-  const result: Record<string, { name: string; permission: Permission }> = {};
+  const result: Record<
+    string,
+    { name: string; permission: CompanyPermission }
+  > = {};
   if (!data) return result;
   data.forEach((permission) => {
     if (!permission.module) {
@@ -602,10 +663,17 @@ export function makePermissionsFromEmployeeType(
       result[permission.module] = {
         name: permission.module.toLowerCase(),
         permission: {
-          view: permission.view,
-          create: permission.create,
-          update: permission.update,
-          delete: permission.delete,
+          view:
+            permission.view.includes(0) || permission.view.includes(companyId),
+          create:
+            permission.create.includes(0) ||
+            permission.create.includes(companyId),
+          update:
+            permission.update.includes(0) ||
+            permission.update.includes(companyId),
+          delete:
+            permission.delete.includes(0) ||
+            permission.delete.includes(companyId),
         },
       };
     }
@@ -684,10 +752,12 @@ export async function updateEmployee(
     id,
     employeeType,
     permissions,
+    companyId,
   }: {
     id: string;
     employeeType: string;
-    permissions: Record<string, Permission>;
+    permissions: Record<string, CompanyPermission>;
+    companyId: number;
   }
 ): Promise<Result> {
   const updateEmployeeEmployeeType = await client
@@ -697,7 +767,7 @@ export async function updateEmployee(
   if (updateEmployeeEmployeeType.error)
     return error(updateEmployeeEmployeeType.error, "Failed to update employee");
 
-  return updatePermissions(client, { id, permissions });
+  return updatePermissions(client, { id, permissions, companyId });
 }
 
 export async function updatePermissions(
@@ -705,38 +775,133 @@ export async function updatePermissions(
   {
     id,
     permissions,
+    companyId,
     addOnly = false,
-  }: { id: string; permissions: Record<string, Permission>; addOnly?: boolean }
+  }: {
+    id: string;
+    permissions: Record<string, CompanyPermission>;
+    companyId: number;
+    addOnly?: boolean;
+  }
 ): Promise<Result> {
   if (await client.rpc("is_claims_admin")) {
     const claims = await getClaims(client, id);
 
     if (claims.error) return error(claims.error, "Failed to get claims");
 
-    const currentClaims =
+    const updatedClaims = (
       typeof claims.data !== "object" ||
       Array.isArray(claims.data) ||
       claims.data === null
         ? {}
-        : claims.data;
+        : claims.data
+    ) as Record<string, number[]>;
 
-    const newClaims: Record<string, number[]> = {};
-    Object.entries(permissions).forEach(([name, permission]) => {
-      const module = name.toLowerCase();
-      if (!addOnly || permission.view)
-        newClaims[`${module}_view`] = permission.view;
-      if (!addOnly || permission.create)
-        newClaims[`${module}_create`] = permission.create;
-      if (!addOnly || permission.update)
-        newClaims[`${module}_update`] = permission.update;
-      if (!addOnly || permission.delete)
-        newClaims[`${module}_delete`] = permission.delete;
+    // add any missing claims to the current claims
+    Object.keys(permissions).forEach((name) => {
+      if (!(`${name}_view` in updatedClaims)) {
+        updatedClaims[`${name}_view`] = [];
+      }
+      if (!(`${name}_create` in updatedClaims)) {
+        updatedClaims[`${name}_create`] = [];
+      }
+      if (!(`${name}_update` in updatedClaims)) {
+        updatedClaims[`${name}_update`] = [];
+      }
+      if (!(`${name}_delete` in updatedClaims)) {
+        updatedClaims[`${name}_delete`] = [];
+      }
     });
 
-    const claimsUpdate = await setUserClaims(id, {
-      ...(currentClaims as Record<string, number[]>),
-      ...(newClaims as Record<string, number[]>),
-    });
+    if (addOnly) {
+      Object.entries(permissions).forEach(([name, permission]) => {
+        const module = name.toLowerCase();
+        if (
+          permission.view &&
+          !updatedClaims[`${module}_view`]?.includes(companyId)
+        ) {
+          updatedClaims[`${module}_view`].push(companyId);
+        }
+        if (
+          permission.create &&
+          !updatedClaims[`${module}_create`]?.includes(companyId)
+        ) {
+          updatedClaims[`${module}_create`].push(companyId);
+        }
+        if (
+          permission.update &&
+          !updatedClaims[`${module}_update`]?.includes(companyId)
+        ) {
+          updatedClaims[`${module}_update`].push(companyId);
+        }
+        if (
+          permission.delete &&
+          !updatedClaims[`${module}_delete`]?.includes(companyId)
+        ) {
+          updatedClaims[`${module}_delete`].push(companyId);
+        }
+      });
+    } else {
+      Object.entries(permissions).forEach(([name, permission]) => {
+        const module = name.toLowerCase();
+        if (permission.view) {
+          if (!updatedClaims[`${module}_view`]?.includes(companyId)) {
+            updatedClaims[`${module}_view`] = [
+              ...updatedClaims[`${module}_view`],
+              companyId,
+            ];
+          }
+        } else {
+          updatedClaims[`${module}_view`] = (
+            updatedClaims[`${module}_view`] as number[]
+          ).filter((c: number) => c !== companyId);
+        }
+
+        if (permission.create) {
+          if (!updatedClaims[`${module}_create`]?.includes(companyId)) {
+            updatedClaims[`${module}_create`] = [
+              ...updatedClaims[`${module}_create`],
+              companyId,
+            ];
+          }
+        } else {
+          updatedClaims[`${module}_create`] = (
+            updatedClaims[`${module}_create`] as number[]
+          ).filter((c: number) => c !== companyId);
+        }
+
+        if (permission.update) {
+          if (!updatedClaims[`${module}_update`]?.includes(companyId)) {
+            updatedClaims[`${module}_update`] = [
+              ...updatedClaims[`${module}_update`],
+              companyId,
+            ];
+          }
+        } else {
+          updatedClaims[`${module}_update`] = (
+            updatedClaims[`${module}_update`] as number[]
+          ).filter((c: number) => c !== companyId);
+        }
+
+        if (permission.delete) {
+          if (!updatedClaims[`${module}_delete`]?.includes(companyId)) {
+            updatedClaims[`${module}_delete`] = [
+              ...updatedClaims[`${module}_delete`],
+              companyId,
+            ];
+          }
+        } else {
+          updatedClaims[`${module}_delete`] = (
+            updatedClaims[`${module}_delete`] as number[]
+          ).filter((c: number) => c !== companyId);
+        }
+      });
+    }
+
+    const claimsUpdate =
+      await getSupabaseServiceRole().auth.admin.updateUserById(id, {
+        app_metadata: updatedClaims,
+      });
     if (claimsUpdate.error)
       return error(claimsUpdate.error, "Failed to update claims");
 

@@ -12,7 +12,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = () => true;
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const { client, companyId } = await requirePermissions(request, {
-    create: "settings",
+    update: "settings",
   });
 
   const [company, locations] = await Promise.all([

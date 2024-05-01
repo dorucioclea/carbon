@@ -4,10 +4,10 @@ import { getEmployeeTypes } from "~/modules/users";
 import { requirePermissions } from "~/services/auth/auth.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const authorized = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "users",
     role: "employee",
   });
 
-  return json(await getEmployeeTypes(authorized.client));
+  return json(await getEmployeeTypes(client, companyId));
 }

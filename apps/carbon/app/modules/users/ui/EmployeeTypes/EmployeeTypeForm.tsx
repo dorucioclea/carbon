@@ -15,7 +15,7 @@ import { useState } from "react";
 import type { z } from "zod";
 import { Hidden, Input, Submit } from "~/components/Form";
 import { usePermissions } from "~/hooks";
-import type { Permission } from "~/modules/users";
+import type { CompanyPermission } from "~/modules/users";
 import { employeeTypeValidator } from "~/modules/users";
 import PermissionCheckboxes from "~/modules/users/ui/components/Permission";
 import { path } from "~/utils/path";
@@ -26,7 +26,7 @@ type EmployeeTypeFormProps = {
       string,
       {
         name: string;
-        permission: Permission;
+        permission: CompanyPermission;
       }
     >;
   };
@@ -38,7 +38,7 @@ const EmployeeTypeForm = ({ initialValues }: EmployeeTypeFormProps) => {
   const onClose = () => navigate(-1);
 
   const [permissions, setPermissions] = useState(initialValues.permissions);
-  const updatePermissions = (module: string, permission: Permission) => {
+  const updatePermissions = (module: string, permission: CompanyPermission) => {
     setPermissions((prevPermissions) => ({
       ...prevPermissions,
       [module]: {

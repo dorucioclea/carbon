@@ -5,7 +5,7 @@ import type { GenericQueryFilters } from "~/utils/query";
 import { setGenericQueryFilters } from "~/utils/query";
 import { capitalize } from "~/utils/string";
 import { sanitize } from "~/utils/supabase";
-import type { Permission } from "./types";
+import type { CompanyPermission } from "./types";
 
 export async function deleteEmployeeType(
   client: SupabaseClient<Database>,
@@ -69,11 +69,7 @@ export async function getEmployee(
   client: SupabaseClient<Database>,
   id: string
 ) {
-  return client
-    .from("employee")
-    .select("id, user(id, firstName, lastName, email), employeeType(id)")
-    .eq("id", id)
-    .single();
+  return client.from("employees").select("*").eq("id", id).single();
 }
 
 export async function getEmployees(
@@ -220,7 +216,7 @@ export async function getUsers(client: SupabaseClient<Database>) {
 
 export async function insertEmployeeType(
   client: SupabaseClient<Database>,
-  employeeType: { id?: string; name: string; companyId: number }
+  employeeType: { name: string; companyId: number }
 ) {
   return client
     .from("employeeType")
@@ -246,6 +242,7 @@ export async function upsertEmployeeType(
     return client
       .from("employeeType")
       .update(sanitize(employeeType))
+      .eq("id", employeeType.id)
       .select("id")
       .single();
   }
@@ -260,7 +257,7 @@ export async function upsertEmployeeTypePermissions(
   client: SupabaseClient<Database>,
   employeeTypeId: string,
   companyId: number,
-  permissions: { name: string; permission: Permission }[]
+  permissions: { name: string; permission: CompanyPermission }[]
 ) {
   const employeeTypePermissions = permissions.map(({ name, permission }) => ({
     employeeTypeId,

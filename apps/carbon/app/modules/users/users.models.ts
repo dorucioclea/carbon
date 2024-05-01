@@ -50,7 +50,7 @@ export const employeeTypeValidator = z.object({
 
 export const employeeTypePermissionsValidator = z.array(
   z.object({
-    id: z.string(),
+    name: z.string(),
     permission: z.object({
       view: z.boolean(),
       create: z.boolean(),

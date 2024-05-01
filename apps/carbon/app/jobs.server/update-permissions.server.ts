@@ -12,12 +12,13 @@ export const permissionsUpdateSchema = z.object({
   permissions: z.record(
     z.string(),
     z.object({
-      view: z.array(z.number()),
-      create: z.array(z.number()),
-      update: z.array(z.number()),
-      delete: z.array(z.number()),
+      view: z.boolean(),
+      create: z.boolean(),
+      update: z.boolean(),
+      delete: z.boolean(),
     })
   ),
+  companyId: z.number(),
 });
 
 const job = triggerClient.defineJob({

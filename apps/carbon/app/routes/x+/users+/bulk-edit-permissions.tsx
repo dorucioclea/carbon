@@ -5,7 +5,6 @@ import type { z } from "zod";
 import type { permissionsUpdateSchema } from "~/jobs.server/update-permissions.server";
 
 import { triggerClient } from "~/lib/trigger.server";
-import type { Permission } from "~/modules/users";
 import {
   bulkPermissionsValidator,
   userPermissionsValidator,
@@ -53,18 +52,6 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
-  const updatedPermissions = Object.entries(permissions).reduce<
-    Record<string, Permission>
-  >((acc, [id, permission]) => {
-    acc[id] = {
-      view: permission.view ? [companyId] : [],
-      create: permission.create ? [companyId] : [],
-      update: permission.update ? [companyId] : [],
-      delete: permission.delete ? [companyId] : [],
-    };
-    return acc;
-  }, {});
-
   const jobs = userIds.map<{
     name: string;
     payload: z.infer<typeof permissionsUpdateSchema>;
@@ -72,8 +59,9 @@ export async function action({ request }: ActionFunctionArgs) {
     name: `update.permissions`,
     payload: {
       id,
-      permissions: updatedPermissions,
+      permissions,
       addOnly,
+      companyId,
     },
   }));
 

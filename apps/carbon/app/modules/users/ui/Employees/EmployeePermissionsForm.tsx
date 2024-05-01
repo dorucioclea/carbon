@@ -14,7 +14,7 @@ import { useNavigate } from "@remix-run/react";
 import { useState } from "react";
 import type { z } from "zod";
 import { Hidden, Select, Submit } from "~/components/Form";
-import type { Permission } from "~/modules/users";
+import type { CompanyPermission } from "~/modules/users";
 import { employeeValidator } from "~/modules/users";
 import PermissionCheckboxes from "~/modules/users/ui/components/Permission";
 import type { ListItem } from "~/types";
@@ -24,7 +24,7 @@ type EmployeePermissionsFormProps = {
   name: string;
   employeeTypes: ListItem[];
   initialValues: z.infer<typeof employeeValidator> & {
-    permissions: Record<string, Permission>;
+    permissions: Record<string, CompanyPermission>;
   };
 };
 
@@ -43,7 +43,7 @@ const EmployeePermissionsForm = ({
     })) ?? [];
 
   const [permissions, setPermissions] = useState(initialValues.permissions);
-  const updatePermissions = (module: string, permission: Permission) => {
+  const updatePermissions = (module: string, permission: CompanyPermission) => {
     setPermissions((prevPermissions) => ({
       ...prevPermissions,
       [module]: permission,

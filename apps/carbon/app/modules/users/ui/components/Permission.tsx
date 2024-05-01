@@ -1,11 +1,11 @@
 import { Checkbox, HStack, VStack } from "@carbon/react";
-import type { Permission } from "~/modules/users";
+import type { CompanyPermission } from "~/modules/users";
 import { capitalize } from "~/utils/string";
 
 type PermissionProps = {
   module: string;
-  permissions: Permission;
-  updatePermissions: (module: string, permissions: Permission) => void;
+  permissions: CompanyPermission;
+  updatePermissions: (module: string, permissions: CompanyPermission) => void;
 };
 
 const labels = ["view", "create", "update", "delete"] as const;
