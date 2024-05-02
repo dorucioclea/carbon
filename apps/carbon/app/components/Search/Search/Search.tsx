@@ -269,7 +269,7 @@ const SearchButton = () => {
       <Button
         leftIcon={<RxMagnifyingGlass />}
         variant="secondary"
-        className="w-[200px] px-2 text-muted-foreground "
+        className="w-[130px] px-2 text-muted-foreground "
         onClick={searchModal.onOpen}
       >
         <HStack className="w-full">

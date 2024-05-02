@@ -19,7 +19,7 @@ RETURNS TRIGGER AS $$
 BEGIN
   IF (old.name <> new.name OR old.description <> new.description) THEN
     UPDATE public.search SET name = new.name, description = COALESCE(new.description, '')
-    WHERE entity = 'Resource' AND uuid = new.id;
+    WHERE entity = 'Resource' AND uuid = new.id AND "companyId" = new."companyId";
   END IF;
   RETURN new;
 END;
@@ -32,7 +32,7 @@ CREATE TRIGGER update_work_cell_type_search_result
 CREATE FUNCTION public.delete_work_cell_type_search_result()
 RETURNS TRIGGER AS $$
 BEGIN
-  DELETE FROM public.search WHERE entity = 'Resource' AND uuid = old.id;
+  DELETE FROM public.search WHERE entity = 'Resource' AND uuid = old.id AND "companyId" = old."companyId";
   RETURN old;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -61,7 +61,7 @@ RETURNS TRIGGER AS $$
 BEGIN
   IF (old.name <> new.name OR old.description <> new.description) THEN
     UPDATE public.search SET name = new.name, description =  COALESCE(new.description, '')
-    WHERE entity = 'Resource' AND uuid = new.id;
+    WHERE entity = 'Resource' AND uuid = new.id AND "companyId" = new."companyId";
   END IF;
   RETURN new;
 END;
@@ -74,7 +74,7 @@ CREATE TRIGGER update_equipment_type_search_result
 CREATE FUNCTION public.delete_equipment_type_search_result()
 RETURNS TRIGGER AS $$
 BEGIN
-  DELETE FROM public.search WHERE entity = 'Resource' AND uuid = old.id;
+  DELETE FROM public.search WHERE entity = 'Resource' AND uuid = old.id AND "companyId" = old."companyId";
   RETURN old;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

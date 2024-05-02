@@ -250,7 +250,7 @@ RETURNS TRIGGER AS $$
 BEGIN
   IF (old.name <> new.name OR old.description <> new.description) THEN
     UPDATE public.search SET name = new.id, description = new.name || ' ' || COALESCE(new.description, '')
-    WHERE entity = 'Part' AND uuid = new.id;
+    WHERE entity = 'Part' AND uuid = new.id AND "companyId" = new."companyId";
   END IF;
   RETURN new;
 END;
@@ -264,7 +264,7 @@ CREATE TRIGGER update_part_search_result
 CREATE FUNCTION public.delete_part_search_result()
 RETURNS TRIGGER AS $$
 BEGIN
-  DELETE FROM public.search WHERE entity = 'Part' AND uuid = old.id;
+  DELETE FROM public.search WHERE entity = 'Part' AND uuid = old.id AND "companyId" = old."companyId";
   RETURN old;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

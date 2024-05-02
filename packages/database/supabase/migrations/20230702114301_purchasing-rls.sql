@@ -79,7 +79,7 @@ RETURNS TRIGGER AS $$
 BEGIN
   IF (old."purchaseOrderId" <> new."purchaseOrderId") THEN
     UPDATE public.search SET name = new."purchaseOrderId"
-    WHERE entity = 'Purchase Order' AND uuid = new.id;
+    WHERE entity = 'Purchase Order' AND uuid = new.id AND "companyId" = new."companyId";
   END IF;
   RETURN new;
 END;
@@ -92,7 +92,7 @@ CREATE TRIGGER update_purchase_order_search_result
 CREATE FUNCTION public.delete_purchase_order_search_result()
 RETURNS TRIGGER AS $$
 BEGIN
-  DELETE FROM public.search WHERE entity = 'Purchase Order' AND uuid = old.id;
+  DELETE FROM public.search WHERE entity = 'Purchase Order' AND uuid = old.id AND "companyId" = old."companyId";
   RETURN old;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

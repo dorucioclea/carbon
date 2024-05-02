@@ -121,7 +121,7 @@ ALTER TABLE "search" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Employees with sales_view can search for customers and sales orders" ON "search"
   FOR SELECT
-  USING (has_company_permission('sales_view', "companyId") AND entity IN ('Customer', 'Sales Order') AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (has_company_permission('sales_view', "companyId") AND entity IN ('Customer', 'Sales Order', 'Quotation') AND has_role('employee'));
 
 -- TODO: customers should be able to search for their own sales orders
 -- CREATE POLICY "Customers with sales_view can search for their own sales orders" ON "search"
@@ -141,7 +141,7 @@ CREATE POLICY "Employees with sales_view can search for customers and sales orde
 
 CREATE POLICY "Employees with purchasing_view can search for suppliers and purchase orders" ON "search"
   FOR SELECT
-  USING (has_company_permission('purchasing_view', "companyId") AND entity IN ('Supplier', 'Purchase Order') AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (has_company_permission('purchasing_view', "companyId") AND entity IN ('Supplier', 'Purchase Order', 'Request for Quotation') AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
 
 
 CREATE POLICY "Employees with resources_view can search for resources" ON "search"

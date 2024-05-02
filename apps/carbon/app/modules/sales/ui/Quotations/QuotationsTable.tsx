@@ -165,6 +165,7 @@ const QuotationsTable = memo(({ data, count }: QuotationsTableProps) => {
               label: <QuotationStatus status={status} />,
             })),
           },
+          pluralHeader: "Statuses",
         },
       },
       {

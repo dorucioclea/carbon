@@ -41,9 +41,11 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
+  const { id, salesOrderId, ...data } = validation.data;
+
   const createSalesOrder = await upsertSalesOrder(client, {
     salesOrderId: nextSequence.data,
-    ...validation.data,
+    ...data,
     companyId,
     createdBy: userId,
     customFields: setCustomFields(formData),

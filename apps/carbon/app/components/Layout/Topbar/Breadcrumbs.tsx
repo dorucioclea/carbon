@@ -7,6 +7,9 @@ import {
   BreadcrumbLink,
   Breadcrumbs as BreadcrumbsBase,
 } from "~/components";
+import { useRouteData } from "~/hooks";
+import type { Company } from "~/modules/settings";
+import { path } from "~/utils/path";
 
 export const BreadcrumbHandle = z.object({
   breadcrumb: z.any(),
@@ -19,6 +22,9 @@ const BreadcrumbHandleMatch = z.object({
 });
 
 const Breadcrumbs = () => {
+  const routeData = useRouteData<{ company: Company }>(
+    path.to.authenticatedRoot
+  );
   const matches = useMatches();
 
   const breadcrumbs = matches
@@ -38,13 +44,17 @@ const Breadcrumbs = () => {
   return (
     <HStack className="items-center h-full -ml-2" spacing={0}>
       <BreadcrumbsBase className="line-clamp-1">
-        {width && width <= 640 && (
+        {width && width <= 640 ? (
           <BreadcrumbItem>
             <Button isIcon asChild variant="ghost">
               <Link to="/">
                 <BsFillHexagonFill />
               </Link>
             </Button>
+          </BreadcrumbItem>
+        ) : (
+          <BreadcrumbItem>
+            <BreadcrumbLink to="/">{routeData?.company.name}</BreadcrumbLink>
           </BreadcrumbItem>
         )}
         {breadcrumbs.map((breadcrumb, i) => (

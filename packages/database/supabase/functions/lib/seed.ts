@@ -2440,6 +2440,15 @@ export const sequences = [
     size: 6,
     step: 1,
   },
+  {
+    table: "quote",
+    name: "Quote",
+    prefix: "QO",
+    suffix: null,
+    next: 0,
+    size: 6,
+    step: 1,
+  },
 ];
 
 export const supplierStauses = ["Active", "Inactive", "Pending", "Rejected"];

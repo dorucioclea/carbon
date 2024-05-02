@@ -307,7 +307,7 @@ RETURNS TRIGGER AS $$
 BEGIN
   IF (old."quoteId" <> new."quoteId" OR old."name" <> new."name") THEN
     UPDATE public.search SET name = new."quoteId", description = new.name
-    WHERE entity = 'Quotation' AND uuid = new.id;
+    WHERE entity = 'Quotation' AND uuid = new.id AND "companyId" = new."companyId";
   END IF;
   RETURN new;
 END;
@@ -320,7 +320,7 @@ CREATE TRIGGER update_quotation_search_result
 CREATE FUNCTION public.delete_quotation_search_result()
 RETURNS TRIGGER AS $$
 BEGIN
-  DELETE FROM public.search WHERE entity = 'Quotation' AND uuid = old.id;
+  DELETE FROM public.search WHERE entity = 'Quotation' AND uuid = old.id AND "companyId" = old."companyId";
   RETURN old;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
