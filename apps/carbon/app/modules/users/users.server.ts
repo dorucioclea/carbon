@@ -76,7 +76,6 @@ export async function createCustomerAccount(
       return error(invitation.error.message, "Failed to send invitation email");
 
     const userId = invitation.data.user.id;
-    const userToCompany = await addUserToCompany(client, { userId, companyId });
 
     const claims = makeCustomerClaims(companyId);
     const claimsUpdate = await setUserClaims(userId, {
@@ -84,7 +83,7 @@ export async function createCustomerAccount(
       ...claims,
     });
 
-    if (claimsUpdate.error || userToCompany.error) {
+    if (claimsUpdate.error) {
       await deleteAuthAccount(userId);
       return error(claimsUpdate.error, "Failed to add user");
     }
@@ -103,29 +102,34 @@ export async function createCustomerAccount(
     if (!insertUser.data)
       return error(insertUser, "No data returned from create user");
 
-    const updateContact = await client
-      .from("customerContact")
-      .update({ userId })
-      .eq("id", id);
+    const [updateContact, createCustomerAccount, userToCompany] =
+      await Promise.all([
+        client.from("customerContact").update({ userId }).eq("id", id),
+        insertCustomerAccount(client, {
+          id: userId,
+          customerId,
+          companyId,
+        }),
+        addUserToCompany(client, { userId, companyId }),
+      ]);
 
     if (updateContact.error) {
       await deleteAuthAccount(userId);
       return error(updateContact.error, "Failed to update customer contact");
     }
 
-    const generatedId = Array.isArray(insertUser.data)
-      ? insertUser.data[0].id
-      : // @ts-ignore
-        insertUser.data?.id!;
+    if (createCustomerAccount.error) {
+      await deleteAuthAccount(userId);
+      return error(
+        createCustomerAccount.error,
+        "Failed to create a customer account"
+      );
+    }
 
-    const createCustomerAccount = await insertCustomerAccount(client, {
-      id: generatedId,
-      customerId,
-      companyId,
-    });
-
-    if (createCustomerAccount.error)
-      return error(createCustomerAccount.error, "Failed to create an employee");
+    if (userToCompany.error) {
+      await deleteAuthAccount(userId);
+      return error(userToCompany.error, "Failed to add user to company");
+    }
 
     return success("Customer account created");
   }
@@ -159,6 +163,7 @@ export async function createEmployeeAccount(
     );
 
   const user = await getUserByEmail(email);
+
   if (user.data) {
     // TODO: user already exists -- send company invite
     await addUserToCompany(client, { userId: user.data.id, companyId });
@@ -173,16 +178,17 @@ export async function createEmployeeAccount(
       return error(invitation.error.message, "Failed to send invitation email");
 
     const userId = invitation.data.user.id;
-    const userToCompany = await addUserToCompany(client, { userId, companyId });
 
     const claims = makeClaimsFromEmployeeType(employeeTypePermissions);
     const claimsUpdate = await setUserClaims(userId, {
       role: "employee",
       ...claims,
     });
-    if (claimsUpdate.error || userToCompany.error) {
+    if (claimsUpdate.error) {
       await deleteAuthAccount(userId);
-      return error(claimsUpdate.error, "Failed to create user");
+      if (claimsUpdate.error) {
+        return error(claimsUpdate.error, "Failed to udpate user claims");
+      }
     }
 
     const insertUser = await createUser(client, {
@@ -199,14 +205,24 @@ export async function createEmployeeAccount(
     if (!insertUser.data)
       return error(insertUser, "No data returned from create user");
 
-    const createEmployee = await insertEmployee(client, {
-      id: insertUser.data[0].id,
-      employeeTypeId: employeeType,
-      companyId,
-    });
+    const [createEmployee, userToCompany] = await Promise.all([
+      insertEmployee(client, {
+        id: insertUser.data[0].id,
+        employeeTypeId: employeeType,
+        companyId,
+      }),
+      addUserToCompany(client, { userId, companyId }),
+    ]);
 
-    if (createEmployee.error)
-      return error(createEmployee.error, "Failed to create an employee");
+    if (createEmployee.error) {
+      await deleteAuthAccount(userId);
+      return error(createEmployee.error, "Failed to create a employee account");
+    }
+
+    if (userToCompany.error) {
+      await deleteAuthAccount(userId);
+      return error(userToCompany.error, "Failed to add user to company");
+    }
 
     return success("Employee account created");
   }
@@ -253,14 +269,13 @@ export async function createSupplierAccount(
       return error(invitation.error.message, "Failed to send invitation email");
 
     const userId = invitation.data.user.id;
-    const userToCompany = await addUserToCompany(client, { userId, companyId });
 
     const claims = makeSupplierClaims(companyId);
     const claimsUpdate = await setUserClaims(userId, {
       role: "supplier",
       ...claims,
     });
-    if (claimsUpdate.error || userToCompany.error) {
+    if (claimsUpdate.error) {
       await deleteAuthAccount(userId);
       return error(claimsUpdate.error, "Failed to create user");
     }
@@ -279,23 +294,34 @@ export async function createSupplierAccount(
     if (!insertUser.data)
       return error(insertUser, "No data returned from create user");
 
-    const updateContact = await client
-      .from("supplierContact")
-      .update({ userId })
-      .eq("id", id);
+    const [updateContact, createSupplierAccount, userToCompany] =
+      await Promise.all([
+        client.from("supplierContact").update({ userId }).eq("id", id),
+        insertSupplierAccount(client, {
+          id: insertUser.data[0].id,
+          supplierId,
+          companyId,
+        }),
+        addUserToCompany(client, { userId, companyId }),
+      ]);
+
     if (updateContact.error) {
       await deleteAuthAccount(userId);
       return error(updateContact.error, "Failed to update supplier contact");
     }
 
-    const createSupplierAccount = await insertSupplierAccount(client, {
-      id: insertUser.data[0].id,
-      supplierId,
-      companyId,
-    });
+    if (createSupplierAccount.error) {
+      await deleteAuthAccount(userId);
+      return error(
+        createSupplierAccount.error,
+        "Failed to create a supplier account"
+      );
+    }
 
-    if (createSupplierAccount.error)
-      return error(createSupplierAccount.error, "Failed to create an employee");
+    if (userToCompany.error) {
+      await deleteAuthAccount(userId);
+      return error(userToCompany.error, "Failed to add user to company");
+    }
 
     return success("Supplier account created");
   }

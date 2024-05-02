@@ -12,5 +12,22 @@ CREATE INDEX "employee_companyId_idx" ON "employee" ("companyId");
 
 ALTER TABLE "employee" ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Only claims admin can view/modify employees" ON "employee" FOR ALL USING (is_claims_admin());
-CREATE POLICY "Anyone that's authenticated can view employees" ON "employee" FOR SELECT USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Employees can view employees from their company" ON "employee" FOR SELECT USING (
+    is_claims_admin() OR
+    "companyId" IN (
+        SELECT "companyId" FROM "userToCompany" WHERE "userId" = auth.uid()::text
+    )
+);
+
+CREATE POLICY "Employees with users_update can create employees" ON "employee" FOR INSERT WITH CHECK (
+    has_company_permission('users_create', "companyId")
+);
+
+CREATE POLICY "Employees with users_update can update employees" ON "employee" FOR UPDATE USING (
+    has_company_permission('users_update', "companyId")
+);
+
+CREATE POLICY "Employees with users_update can delete employees" ON "employee" FOR DELETE USING (
+    has_company_permission('users_delete', "companyId")
+);

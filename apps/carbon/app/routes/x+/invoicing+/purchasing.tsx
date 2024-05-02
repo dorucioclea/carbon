@@ -47,7 +47,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       path.to.invoicing,
       await flash(
         request,
-        error(purchaseInvoices.error, "Failed to fetch purchas orders")
+        error(purchaseInvoices.error, "Failed to fetch purchase invoices")
       )
     );
   }

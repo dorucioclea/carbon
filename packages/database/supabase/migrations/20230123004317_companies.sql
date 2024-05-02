@@ -29,7 +29,7 @@ CREATE POLICY "Authenticated users can view company" ON "company"
 CREATE POLICY "Employees with settings_create can create company" ON "company"
   FOR INSERT
   WITH CHECK (
-    is_claims_admin()
+    has_any_company_permission('settings_create')
   );
 
 CREATE POLICY "Employees with settings_update can update company" ON "company"
@@ -42,7 +42,7 @@ CREATE POLICY "Employees with settings_update can update company" ON "company"
 CREATE POLICY "Employees with settings_delete can delete company" ON "company"
   FOR DELETE
   USING (
-    is_claims_admin()
+    has_company_permission('settings_delete', "id")
   );
 
 CREATE TABLE "userToCompany" (

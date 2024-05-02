@@ -71,6 +71,7 @@ CREATE OR REPLACE VIEW "purchaseInvoices" WITH(SECURITY_INVOKER=true) AS
     pi."updatedBy",
     pi."updatedAt",
     pi."customFields",
+    pi."companyId",
     CASE
       WHEN pi."dateDue" < CURRENT_DATE AND pi."status" = 'Submitted' THEN 'Overdue'
       ELSE pi."status"

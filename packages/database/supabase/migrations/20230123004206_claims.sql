@@ -133,7 +133,7 @@ CREATE OR REPLACE FUNCTION has_any_company_permission(claim text) RETURNS "bool"
       SELECT jsonb_to_integer_array(coalesce(raw_app_meta_data->claim, '[]')) INTO claim_value FROM auth.users WHERE id = auth.uid();
       IF claim_value IS NULL THEN
         return false;
-      ELSIF array_length(claim_value) > 0 THEN
+      ELSIF array_length(claim_value, 1) > 0 THEN
         return true;
       ELSE
         return false;

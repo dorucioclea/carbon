@@ -41,16 +41,16 @@ export function useUser(): User {
     isUser(data.user) &&
     data?.groups &&
     isGroups(data.groups) &&
-    data?.defaults &&
     isDefaults(data.defaults)
   ) {
     return {
       ...data.user,
       company: data.company,
       groups: data.groups,
-      defaults: data.defaults,
+      defaults: data.defaults ?? { locationId: null },
     };
   }
+
   // TODO: force logout -- the likely cause is development changes
   throw new Error(
     "useUser must be used within an authenticated route. If you are seeing this error, you are likely in development and have changed the session variables. Try deleting the cookies."
@@ -66,7 +66,11 @@ function isCompany(value: any): value is Company {
 }
 
 function isDefaults(value: any): value is Defaults {
-  return typeof value.locationId === "string" || value.locationId === null;
+  return (
+    value === null ||
+    typeof value.locationId === "string" ||
+    value.locationId === null
+  );
 }
 
 function isGroups(value: any): value is string[] {

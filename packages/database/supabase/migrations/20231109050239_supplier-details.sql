@@ -89,7 +89,7 @@ RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO public."supplierPayment"("supplierId", "invoiceSupplierId", "companyId")
   VALUES (new.id, new.id, new."companyId");
-  INSERT INTO public."supplierShipping"("supplierId", "shippingSupplierId")
+  INSERT INTO public."supplierShipping"("supplierId", "shippingSupplierId", "companyId")
   VALUES (new.id, new.id, new."companyId");
   RETURN new;
 END;

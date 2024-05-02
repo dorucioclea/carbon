@@ -36,6 +36,10 @@ CREATE TABLE "employeeTypePermission" (
 
 ALTER TABLE "employeeTypePermission" ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Only claims admin can view/modify permissions for employee types" ON "employeeTypePermission" FOR ALL USING (is_claims_admin());
+CREATE POLICY "Employees with users_update can view/modify permissions for employee type permissions" ON "employeeTypePermission" FOR ALL USING (
+  has_role('employee') AND
+  has_company_permission('users_update', (
+    SELECT "companyId" FROM "employeeType" WHERE "id" = "employeeTypeId"))
+);
 
 

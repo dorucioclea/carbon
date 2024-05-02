@@ -16443,6 +16443,7 @@ export type Database = {
         Row: {
           assignee: string | null
           balance: number | null
+          companyId: number | null
           createdAt: string | null
           createdBy: string | null
           currencyCode: string | null
@@ -16497,6 +16498,13 @@ export type Database = {
             referencedColumns: ["userId"]
           },
           {
+            foreignKeyName: "purchaseInvoice_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "purchaseInvoice_createdBy_fkey"
             columns: ["createdBy"]
             isOneToOne: false
@@ -16523,6 +16531,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "userDefaults"
             referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "purchaseInvoice_currencyCode_fkey"
+            columns: ["currencyCode", "companyId"]
+            isOneToOne: false
+            referencedRelation: "currency"
+            referencedColumns: ["code", "companyId"]
           },
           {
             foreignKeyName: "purchaseInvoice_invoiceSupplierId_fkey"

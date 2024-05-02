@@ -17,7 +17,8 @@ CREATE INDEX "employeeType_companyId_idx" ON "employeeType" ("companyId");
 
 ALTER TABLE "employeeType" ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Only claims admin can view/modify permissions for employee types" ON "employeeType" FOR ALL USING (
+CREATE POLICY "Employees with users_update can view/modify employee types" ON "employeeType" FOR ALL USING (
+    has_role('employee') AND
     has_company_permission('users_update', "companyId")
 );
 
