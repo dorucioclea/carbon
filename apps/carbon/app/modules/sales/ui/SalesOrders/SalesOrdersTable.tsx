@@ -10,14 +10,14 @@ import { formatDate } from "@carbon/utils";
 import { useFetcher, useFetchers } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo, useState } from "react";
-import { BsFillPenFill, BsPin, BsPinFill } from "react-icons/bs";
+import { BsFillPenFill } from "react-icons/bs";
 import { IoMdTrash } from "react-icons/io";
-//import { MdCallReceived } from "react-icons/md";
+import { LuPin } from "react-icons/lu";
 import {
+  CustomerAvatar,
   EmployeeAvatar,
   Hyperlink,
   New,
-  CustomerAvatar,
   Table,
 } from "~/components";
 import { ConfirmDelete } from "~/components/Modals";
@@ -25,7 +25,7 @@ import { usePermissions } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { SalesOrder } from "~/modules/sales";
 import { SalesStatus, salesOrderStatusType } from "~/modules/sales";
-import { usePeople, useCustomers } from "~/stores";
+import { useCustomers, usePeople } from "~/stores";
 import { favoriteSchema } from "~/types/validators";
 import { path } from "~/utils/path";
 import { useSalesOrder } from "./useSalesOrder";
@@ -84,8 +84,8 @@ const SalesOrdersTable = memo(({ data, count }: SalesOrdersTableProps) => {
                 <input type="hidden" name="id" value={row.original.id!} />
                 <input type="hidden" name="favorite" value="unfavorite" />
                 <button type="submit">
-                  <BsPinFill
-                    className="text-yellow-400 cursor-pointer h-4 w-4"
+                  <LuPin
+                    className="cursor-pointer w-4 h-4 outline-primary/50 fill-yellow-400"
                     type="submit"
                   />
                 </button>
@@ -99,8 +99,8 @@ const SalesOrdersTable = memo(({ data, count }: SalesOrdersTableProps) => {
                 <input type="hidden" name="id" value={row.original.id!} />
                 <input type="hidden" name="favorite" value="favorite" />
                 <button type="submit">
-                  <BsPin
-                    className="text-yellow-400 cursor-pointer h-4 w-4"
+                  <LuPin
+                    className="cursor-pointer w-4 h-4 text-muted-foreground"
                     type="submit"
                   />
                 </button>
