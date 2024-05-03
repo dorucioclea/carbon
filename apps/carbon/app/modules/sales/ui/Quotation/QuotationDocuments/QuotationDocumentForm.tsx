@@ -16,13 +16,13 @@ const QuotationDocumentForm = ({
   isExternal,
 }: QuotationDocumentFormProps) => {
   const submit = useSubmit();
+  const { company } = useUser();
   const { supabase } = useSupabase();
-  const { id: companyId } = useUser();
 
   const uploadFile = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && supabase) {
+    if (e.target.files && supabase && company) {
       const file = e.target.files[0];
-      const fileName = `${companyId}/quote/${
+      const fileName = `${company.id}/quote/${
         isExternal ? "external" : "internal"
       }/${id}/${file.name}`;
 

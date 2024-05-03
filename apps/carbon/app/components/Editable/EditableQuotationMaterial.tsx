@@ -37,11 +37,13 @@ const EditableQuotationMaterial =
           .from("part")
           .select("name, unitOfMeasureCode")
           .eq("id", partId)
+          .eq("companyId", row.companyId)
           .single(),
         client
           .from("partCost")
           .select("unitCost")
           .eq("partId", partId)
+          .eq("companyId", row.companyId)
           .single(),
       ]);
 

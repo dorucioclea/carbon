@@ -75,7 +75,7 @@ const PurchaseInvoiceHeader = () => {
     setLinesNotAssociatedWithPO(
       data.map((d) => ({
         ...d,
-        quantity: d.quantity * d.conversionFactor,
+        quantity: d.quantity * (d.conversionFactor ?? 1),
       })) ?? []
     );
     postingModal.onOpen();

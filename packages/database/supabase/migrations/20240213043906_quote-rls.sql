@@ -220,6 +220,7 @@ CREATE POLICY "Customers with sales_view can their own quote operations" ON "quo
     )
   );
 
+-- TODO: fix these kinds of policies where we pass a select statement to has_company_permission
 CREATE POLICY "Employees with sales_create can create quote operations" ON "quoteOperation"
   FOR INSERT
   WITH CHECK (

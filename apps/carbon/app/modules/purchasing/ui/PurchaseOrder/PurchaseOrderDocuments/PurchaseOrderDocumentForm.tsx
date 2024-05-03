@@ -2,6 +2,7 @@ import { File, toast } from "@carbon/react";
 import { useSubmit } from "@remix-run/react";
 import type { ChangeEvent } from "react";
 import { IoMdAdd } from "react-icons/io";
+import { useUser } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import { path } from "~/utils/path";
 
@@ -15,12 +16,13 @@ const PurchaseOrderDocumentForm = ({
   isExternal,
 }: PurchaseOrderDocumentFormProps) => {
   const submit = useSubmit();
+  const { company } = useUser();
   const { supabase } = useSupabase();
 
   const uploadFile = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && supabase) {
+    if (e.target.files && supabase && company) {
       const file = e.target.files[0];
-      const fileName = `purchasing/${
+      const fileName = `${company.id}/purchasing/${
         isExternal ? "external" : "internal"
       }/${orderId}/${file.name}`;
 

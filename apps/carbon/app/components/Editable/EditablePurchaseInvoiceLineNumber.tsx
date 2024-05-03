@@ -21,6 +21,7 @@ const EditablePurchaseInvoiceLineNumber =
       accounts: { label: string; value: string }[];
       services: { label: string; value: string }[];
       defaultLocationId: string | null;
+      supplierId: string;
       userId: string;
     }
   ) =>
@@ -31,7 +32,7 @@ const EditablePurchaseInvoiceLineNumber =
     onError,
     onUpdate,
   }: EditableTableCellComponentProps<PurchaseInvoiceLine>) => {
-    const { client, parts, services, accounts, userId } = options;
+    const { client, parts, services, accounts, supplierId, userId } = options;
     const selectOptions =
       row.invoiceLineType === "Part"
         ? parts
@@ -48,6 +49,7 @@ const EditablePurchaseInvoiceLineNumber =
         .from("account")
         .select("name")
         .eq("number", accountNumber)
+        .eq("companyId", row.companyId)
         .single();
 
       onUpdate({
@@ -74,37 +76,56 @@ const EditablePurchaseInvoiceLineNumber =
 
     const onPartChange = async (partId: string) => {
       if (!client) throw new Error("Supabase client not found");
-      const [part, shelf, cost] = await Promise.all([
+      const [part, partSupplier, inventory] = await Promise.all([
         client
           .from("part")
-          .select("name, unitOfMeasureCode")
+          .select(
+            `
+            name, unitOfMeasureCode, 
+            partCost(unitCost), 
+            partReplenishment(purchasingUnitOfMeasureCode, conversionFactor, purchasingLeadTime)
+          `
+          )
           .eq("id", partId)
+          .eq("companyId", row.companyId!)
           .single(),
+        client
+          .from("partSupplier")
+          .select("*")
+          .eq("partId", partId)
+          .eq("companyId", row.companyId!)
+          .eq("supplierId", supplierId)
+          .maybeSingle(),
         client
           .from("partInventory")
           .select("defaultShelfId")
           .eq("partId", partId)
-          .eq("locationId", options.defaultLocationId!)
-          .single(),
-        client
-          .from("partCost")
-          .select("unitCost")
-          .eq("partId", partId)
-          .single(),
+          .eq("companyId", row.companyId!)
+          .eq("locationId", row.locationId!)
+          .maybeSingle(),
       ]);
 
-      if (part.error) {
+      const partCost = part?.data?.partCost?.[0];
+      const partReplenishment = part?.data?.partReplenishment?.[0];
+
+      if (part.error || partSupplier.error || inventory.error) {
         onError();
         return;
       }
 
       onUpdate({
-        partId,
-        description: part.data?.name,
-        unitOfMeasureCode: part.data?.unitOfMeasureCode ?? null,
-        locationId: options.defaultLocationId!,
-        shelfId: shelf.data?.defaultShelfId ?? null,
-        unitPrice: cost.data?.unitCost ?? null,
+        partId: partId,
+        locationId: options.defaultLocationId,
+        description: part.data?.name ?? "",
+        quantity: partSupplier?.data?.minimumOrderQuantity ?? 1,
+        unitPrice: partSupplier?.data?.unitPrice ?? partCost?.unitCost ?? 0,
+        purchaseUnitOfMeasureCode:
+          partReplenishment?.purchasingUnitOfMeasureCode ??
+          part.data?.unitOfMeasureCode ??
+          "EA",
+
+        conversionFactor: partReplenishment?.conversionFactor ?? 1,
+        shelfId: inventory.data?.defaultShelfId ?? null,
       });
 
       try {
@@ -112,13 +133,17 @@ const EditablePurchaseInvoiceLineNumber =
           .from("purchaseInvoiceLine")
           .update({
             partId: partId,
-            assetId: null,
-            accountNumber: null,
-            description: part.data?.name,
-            unitOfMeasureCode: part.data?.unitOfMeasureCode ?? null,
             locationId: options.defaultLocationId,
-            shelfId: shelf.data?.defaultShelfId ?? null,
-            unitPrice: cost.data?.unitCost,
+            description: part.data?.name ?? "",
+            quantity: partSupplier?.data?.minimumOrderQuantity ?? 1,
+            unitPrice: partSupplier?.data?.unitPrice ?? partCost?.unitCost ?? 0,
+            purchaseUnitOfMeasureCode:
+              partReplenishment?.purchasingUnitOfMeasureCode ??
+              part.data?.unitOfMeasureCode ??
+              "EA",
+
+            conversionFactor: partReplenishment?.conversionFactor ?? 1,
+            shelfId: inventory.data?.defaultShelfId ?? null,
             updatedBy: userId,
           })
           .eq("id", row.id);
@@ -136,6 +161,7 @@ const EditablePurchaseInvoiceLineNumber =
         .from("service")
         .select("name")
         .eq("id", serviceId)
+        .eq("companyId", row.companyId)
         .single();
 
       if (service.error) {

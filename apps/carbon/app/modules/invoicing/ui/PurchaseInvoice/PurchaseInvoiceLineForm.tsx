@@ -54,7 +54,7 @@ const PurchaseInvoiceLineForm = ({
   const permissions = usePermissions();
   const { supabase } = useSupabase();
   const navigate = useNavigate();
-  const { defaults } = useUser();
+  const { company, defaults } = useUser();
   const { invoiceId } = useParams();
 
   if (!invoiceId) throw new Error("invoiceId not found");
@@ -148,7 +148,7 @@ const PurchaseInvoiceLineForm = ({
   };
 
   const onPartChange = async (partId: string) => {
-    if (!supabase) return;
+    if (!supabase || !company.id) return;
     const [part, partSupplier, inventory] = await Promise.all([
       supabase
         .from("part")
@@ -160,17 +160,20 @@ const PurchaseInvoiceLineForm = ({
         `
         )
         .eq("id", partId)
+        .eq("companyId", company.id)
         .single(),
       supabase
         .from("partSupplier")
         .select("*")
         .eq("partId", partId)
-        .eq("supplierId", routeData?.purchaseOrder?.supplierId!)
+        .eq("companyId", company.id)
+        .eq("supplierId", routeData?.purchaseInvoice?.supplierId!)
         .maybeSingle(),
       supabase
         .from("partInventory")
         .select("defaultShelfId")
         .eq("partId", partId)
+        .eq("companyId", company.id)
         .eq("locationId", locationId)
         .single(),
     ]);
@@ -195,11 +198,12 @@ const PurchaseInvoiceLineForm = ({
   };
 
   const onServiceChange = async (serviceId: string) => {
-    if (!supabase) return;
+    if (!supabase || !company.id) return;
     const service = await supabase
       .from("service")
       .select("name")
       .eq("id", serviceId)
+      .eq("companyId", company.id)
       .single();
 
     setPartData({
@@ -226,6 +230,7 @@ const PurchaseInvoiceLineForm = ({
       .from("partInventory")
       .select("defaultShelfId")
       .eq("partId", partData.partId)
+      .eq("companyId", company.id)
       .eq("locationId", newLocation.value)
       .maybeSingle();
 

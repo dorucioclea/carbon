@@ -52,7 +52,7 @@ const PurchaseOrderLineForm = ({
   const permissions = usePermissions();
   const { supabase } = useSupabase();
   const navigate = useNavigate();
-  const { defaults } = useUser();
+  const { company, defaults } = useUser();
   const { orderId } = useParams();
 
   if (!orderId) throw new Error("orderId not found");
@@ -144,7 +144,7 @@ const PurchaseOrderLineForm = ({
   };
 
   const onPartChange = async (partId: string) => {
-    if (!supabase) return;
+    if (!supabase || !company.id) return;
     const [part, partSupplier, inventory] = await Promise.all([
       supabase
         .from("part")
@@ -156,17 +156,20 @@ const PurchaseOrderLineForm = ({
         `
         )
         .eq("id", partId)
+        .eq("companyId", company.id)
         .single(),
       supabase
         .from("partSupplier")
         .select("*")
         .eq("partId", partId)
+        .eq("companyId", company.id)
         .eq("supplierId", routeData?.purchaseOrder?.supplierId!)
         .maybeSingle(),
       supabase
         .from("partInventory")
         .select("defaultShelfId")
         .eq("partId", partId)
+        .eq("companyId", company.id)
         .eq("locationId", locationId)
         .single(),
     ]);
@@ -196,6 +199,7 @@ const PurchaseOrderLineForm = ({
       .from("service")
       .select("name")
       .eq("id", serviceId)
+      .eq("companyId", company.id)
       .single();
 
     setPartData({
@@ -222,6 +226,7 @@ const PurchaseOrderLineForm = ({
       .from("partInventory")
       .select("defaultShelfId")
       .eq("partId", partData.partId)
+      .eq("companyId", company.id)
       .eq("locationId", newLocation.value)
       .maybeSingle();
 

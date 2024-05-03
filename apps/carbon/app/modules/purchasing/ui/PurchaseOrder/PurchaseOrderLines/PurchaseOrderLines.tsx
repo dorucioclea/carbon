@@ -302,6 +302,7 @@ const PurchaseOrderLines = () => {
         services: serviceOptions,
         accounts: accountOptions,
         defaultLocationId: defaults.locationId,
+        supplerId: routeData?.purchaseOrder.supplierId ?? "",
         userId: userId,
       }),
       purchaseUnitOfMeasureCode: EditableList(onCellEdit, unitOfMeasureOptions),
@@ -314,6 +315,7 @@ const PurchaseOrderLines = () => {
       serviceOptions,
       accountOptions,
       defaults.locationId,
+      routeData?.purchaseOrder.supplierId,
       userId,
       unitOfMeasureOptions,
     ]

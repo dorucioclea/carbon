@@ -22,6 +22,7 @@ export default function usePostingGroups(table: string) {
     ) => {
       if (!supabase) throw new Error("Supabase client not found");
       return await supabase
+        // @ts-ignore
         .from(table)
         .update({
           [id]: value,

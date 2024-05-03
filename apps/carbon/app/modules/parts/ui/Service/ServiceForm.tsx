@@ -20,7 +20,7 @@ import {
   Submit,
   TextArea,
 } from "~/components/Form";
-import { usePermissions, useRouteData } from "~/hooks";
+import { usePermissions, useRouteData, useUser } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import { serviceType, serviceValidator } from "~/modules/parts";
 import type { ListItem } from "~/types";
@@ -31,6 +31,7 @@ type ServiceFormProps = {
 };
 
 const useNextServiceIdShortcut = () => {
+  const { company } = useUser();
   const { supabase } = useSupabase();
   const [loading, setLoading] = useState<boolean>(false);
   const [serviceId, setServiceId] = useState<string>("");
@@ -44,6 +45,7 @@ const useNextServiceIdShortcut = () => {
         const { data } = await supabase
           ?.from("service")
           .select("id")
+          .eq("companyId", company.id)
           .ilike("id", `${prefix}%`)
           .order("id", { ascending: false })
           .limit(1)

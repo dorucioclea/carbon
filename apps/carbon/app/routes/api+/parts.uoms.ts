@@ -6,5 +6,5 @@ import { requirePermissions } from "~/services/auth/auth.server";
 export async function loader({ request }: LoaderFunctionArgs) {
   const { client, companyId } = await requirePermissions(request, {});
 
-  return json(getUnitOfMeasuresList(client, companyId));
+  return json(await getUnitOfMeasuresList(client, companyId));
 }

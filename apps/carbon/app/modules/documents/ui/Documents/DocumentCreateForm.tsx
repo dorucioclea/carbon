@@ -1,5 +1,6 @@
 import { File, toast } from "@carbon/react";
 import { useSubmit } from "@remix-run/react";
+import { nanoid } from "nanoid";
 import type { ChangeEvent } from "react";
 import { BsUpload } from "react-icons/bs";
 import { useUser } from "~/hooks";
@@ -15,10 +16,7 @@ const DocumentCreateForm = () => {
     if (e.target.files && supabase) {
       const file = e.target.files[0];
       const fileExtension = file.name.substring(file.name.lastIndexOf(".") + 1);
-      // TODO: refactor to use uuid
-      const fileName = `${user.id}/${Math.random()
-        .toString(32)
-        .slice(2)}.${fileExtension}`;
+      const fileName = `${user.id}/${nanoid()}.${fileExtension}`;
 
       const fileUpload = await supabase.storage
         .from("private")

@@ -37,13 +37,14 @@ export default function useReceiptForm() {
   );
 
   const fetchSourceDocuments = useCallback(() => {
-    if (!supabase) return;
+    if (!supabase || !user.company.id) return;
 
     switch (sourceDocument) {
       case "Purchase Order":
         supabase
           ?.from("purchaseOrder")
           .select("id, purchaseOrderId")
+          .eq("companyId", user.company.id)
           .or("status.eq.To Receive, status.eq.To Receive and Invoice")
           .then((response) => {
             if (response.error) {
@@ -61,7 +62,7 @@ export default function useReceiptForm() {
       default:
         setSourceDocuments([]);
     }
-  }, [sourceDocument, supabase]);
+  }, [sourceDocument, supabase, user.company.id]);
 
   useEffect(() => {
     fetchSourceDocuments();

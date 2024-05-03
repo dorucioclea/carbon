@@ -232,6 +232,7 @@ const PurchaseInvoiceLines = () => {
         services: serviceOptions,
         accounts: accountOptions,
         defaultLocationId: defaults.locationId,
+        supplierId: routeData?.purchaseInvoice.supplierId ?? "",
         userId: userId,
       }),
       purchaseUnitOfMeasureCode: EditableList(onCellEdit, unitOfMeasureOptions),
@@ -244,6 +245,7 @@ const PurchaseInvoiceLines = () => {
       serviceOptions,
       accountOptions,
       defaults.locationId,
+      routeData?.purchaseInvoice.supplierId,
       userId,
       unitOfMeasureOptions,
     ]
