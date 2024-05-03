@@ -1,7 +1,6 @@
-import { Button, ResizableHandle, ResizablePanel } from "@carbon/react";
+import { Drawer, DrawerContent } from "@carbon/react";
 import { useNavigate } from "@remix-run/react";
 import { Suspense, useState } from "react";
-import { LuX } from "react-icons/lu";
 import { Document, Page, pdfjs } from "react-pdf";
 import { path } from "~/utils/path";
 
@@ -28,17 +27,18 @@ const DocumentView = ({
   const onClose = () => navigate(path.to.documents);
 
   return (
-    <>
-      <ResizableHandle withHandle />
-      <ResizablePanel>
-        <Button isIcon variant={"ghost"} onClick={onClose}>
-          <LuX className="w-4 h-4" />
-        </Button>
+    <Drawer
+      open
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
+      <DrawerContent className="w-fit">
         <Suspense>
           <Document
             file={path.to.file.previewFile(`${bucket}/${pathToFile}`)}
             onLoadSuccess={onDocumentLoadSuccess}
-            className="h-full "
+            className="h-full"
           >
             <div className="overflow-auto" style={{ height: "100vh" }}>
               {Array.from(new Array(numPages), (_, index) => (
@@ -52,8 +52,8 @@ const DocumentView = ({
             </div>
           </Document>
         </Suspense>
-      </ResizablePanel>
-    </>
+      </DrawerContent>
+    </Drawer>
   );
 };
 
