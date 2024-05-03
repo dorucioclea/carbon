@@ -2,11 +2,8 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useLoaderData, useNavigate, useParams } from "@remix-run/react";
 import { ConfirmDelete } from "~/components/Modals";
-import {
-  deleteSalesOrderLine,
-  getSalesOrderLine,
-} from "~/modules/sales";
-import { requirePermissions } from "~/services/auth";
+import { deleteSalesOrderLine, getSalesOrderLine } from "~/modules/sales";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { notFound } from "~/utils/http";
 import { path } from "~/utils/path";
@@ -43,10 +40,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   if (!lineId) throw notFound("Could not find lineId");
   if (!orderId) throw notFound("Could not find orderId");
 
-  const { error: deleteTypeError } = await deleteSalesOrderLine(
-    client,
-    lineId
-  );
+  const { error: deleteTypeError } = await deleteSalesOrderLine(client, lineId);
   if (deleteTypeError) {
     throw redirect(
       path.to.salesOrderLines(orderId),

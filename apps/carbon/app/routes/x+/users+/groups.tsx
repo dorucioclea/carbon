@@ -5,7 +5,7 @@ import { Outlet, useLoaderData } from "@remix-run/react";
 import { arrayToTree } from "performant-array-to-tree";
 import type { Group } from "~/modules/users";
 import { GroupsTable, getGroups } from "~/modules/users";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";
 import { path } from "~/utils/path";

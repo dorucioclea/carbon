@@ -5,7 +5,7 @@ import { ConfirmDelete } from "~/components/Modals";
 import { useRouteData } from "~/hooks";
 import type { Ability } from "~/modules/resources";
 import { deleteEmployeeAbility } from "~/modules/resources";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";

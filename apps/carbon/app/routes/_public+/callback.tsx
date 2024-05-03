@@ -5,7 +5,7 @@ import { useActionData, useFetcher } from "@remix-run/react";
 import { useEffect } from "react";
 import { supabaseClient } from "~/lib/supabase/client";
 import { getUserByEmail } from "~/modules/users/users.server";
-import { refreshAccessToken } from "~/services/auth";
+import { refreshAccessToken } from "~/services/auth/auth.server";
 import { callbackValidator } from "~/services/auth/auth.models";
 import {
   commitAuthSession,

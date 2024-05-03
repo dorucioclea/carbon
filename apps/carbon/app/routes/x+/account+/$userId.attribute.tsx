@@ -11,7 +11,7 @@ import {
 } from "~/modules/account";
 import { getAttribute } from "~/modules/resources";
 import { getUserClaims } from "~/modules/users/users.server";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { assertIsPost } from "~/utils/http";
 import { error, success } from "~/utils/result";

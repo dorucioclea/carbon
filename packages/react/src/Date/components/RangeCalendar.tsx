@@ -6,7 +6,7 @@ import { useLocale } from "@react-aria/i18n";
 import { useRangeCalendarState } from "@react-stately/calendar";
 import { useRef } from "react";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
-import { Heading } from "~/Heading";
+import { Heading } from "../../Heading";
 
 import { CalendarButton } from "./Button";
 import { CalendarGrid } from "./CalendarGrid";

@@ -12,7 +12,7 @@ import {
   purchaseOrderDeliveryValidator,
   upsertPurchaseOrderDelivery,
 } from "~/modules/purchasing";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";

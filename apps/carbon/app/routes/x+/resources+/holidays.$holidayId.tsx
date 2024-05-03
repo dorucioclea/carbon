@@ -8,7 +8,7 @@ import {
   holidayValidator,
   upsertHoliday,
 } from "~/modules/resources";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { getCustomFields } from "~/utils/form";
 import { assertIsPost, notFound } from "~/utils/http";

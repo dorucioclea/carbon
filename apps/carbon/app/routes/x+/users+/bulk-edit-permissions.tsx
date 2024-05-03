@@ -9,7 +9,7 @@ import {
   bulkPermissionsValidator,
   userPermissionsValidator,
 } from "~/modules/users";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { assertIsPost } from "~/utils/http";
 import { getParams, path } from "~/utils/path";

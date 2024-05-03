@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react";
 import { forwardRef } from "react";
-import type { ButtonProps } from "~/Button";
-import { Button } from "~/Button";
+import type { ButtonProps } from "./Button";
+import { Button } from "./Button";
 
 const Menubar = forwardRef<HTMLDivElement, ComponentProps<"div">>(
   ({ children, ...props }, ref) => {

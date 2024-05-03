@@ -5,7 +5,7 @@ import {
   AccountSubcategoryForm,
   getAccountSubcategory,
 } from "~/modules/accounting";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { getCustomFields } from "~/utils/form";
 import { notFound } from "~/utils/http";

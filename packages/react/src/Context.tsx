@@ -10,7 +10,7 @@ import { forwardRef } from "react";
 import { LuChevronRight, LuCircle } from "react-icons/lu";
 import { RxCheck } from "react-icons/rx";
 
-import { cn } from "~/utils/cn";
+import { cn } from "./utils/cn";
 
 const ContextMenu = ContextMenuPrimitive.Root;
 

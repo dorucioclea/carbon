@@ -11,7 +11,7 @@ import {
   upsertEmployeeTypePermissions,
 } from "~/modules/users";
 import { makeEmptyPermissionsFromFeatures } from "~/modules/users/users.server";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";

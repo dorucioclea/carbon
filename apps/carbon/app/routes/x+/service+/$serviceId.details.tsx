@@ -5,7 +5,7 @@ import { useParams } from "@remix-run/react";
 import { useRouteData } from "~/hooks";
 import type { Service } from "~/modules/parts";
 import { ServiceForm, serviceValidator, upsertService } from "~/modules/parts";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";

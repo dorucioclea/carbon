@@ -10,7 +10,7 @@ import {
 } from "~/modules/accounting";
 import { getPartGroupsList } from "~/modules/parts";
 import { getSupplierTypesList } from "~/modules/purchasing";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import type { Handle } from "~/utils/handle";
 import { path } from "~/utils/path";

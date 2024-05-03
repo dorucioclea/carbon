@@ -8,7 +8,7 @@ import {
   salesOrderLineValidator,
   upsertSalesOrderLine,
 } from "~/modules/sales";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
@@ -46,10 +46,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
       path.to.salesOrderLines(orderId),
       await flash(
         request,
-        error(
-          createSalesOrderLine.error,
-          "Failed to create sales order line."
-        )
+        error(createSalesOrderLine.error, "Failed to create sales order line.")
       )
     );
   }

@@ -15,11 +15,11 @@ import posthog from "posthog-js";
 import { LuAlertCircle } from "react-icons/lu";
 
 import { Hidden, Input, Password, Submit } from "~/components/Form";
+import { loginValidator } from "~/services/auth";
 import {
-  loginValidator,
   signInWithEmail,
   verifyAuthSession,
-} from "~/services/auth";
+} from "~/services/auth/auth.server";
 import { commitAuthSession, getAuthSession } from "~/services/session.server";
 import type { Result } from "~/types";
 import { assertIsPost, safeRedirect } from "~/utils/http";

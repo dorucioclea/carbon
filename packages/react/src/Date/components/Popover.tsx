@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useEscape, useOutsideClick } from "~/hooks";
+import { useEscape, useOutsideClick } from "../../hooks";
 
 export function Popover(props: any) {
   const ref = useRef();

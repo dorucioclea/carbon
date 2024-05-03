@@ -11,7 +11,7 @@ import {
 } from "~/modules/invoicing";
 import { createPurchaseInvoiceFromPurchaseOrder } from "~/modules/invoicing/invoicing.server";
 import { getNextSequence, rollbackNextSequence } from "~/modules/settings";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import type { ListItem } from "~/types";
 import { setCustomFields } from "~/utils/form";

@@ -5,7 +5,7 @@ import { useRouteData, useUrlParams } from "~/hooks";
 import type { AttributeDataType } from "~/modules/resources";
 import { CustomFieldsTableDetail, getCustomFields } from "~/modules/settings";
 import { updateCustomFieldsSortOrder } from "~/modules/settings/settings.server";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { assertIsPost, notFound } from "~/utils/http";
 import { path } from "~/utils/path";

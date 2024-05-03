@@ -18,7 +18,7 @@ import { getParams, path } from "~/utils/path";
 import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { upsertCustomField } from "~/modules/settings/settings.server";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { assertIsPost, notFound } from "~/utils/http";
 import { error } from "~/utils/result";

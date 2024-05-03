@@ -1,4 +1,5 @@
-import { sanitize } from "dompurify";
+import pkg from "dompurify";
+const { sanitize } = pkg;
 
 type HTMLProps = {
   text: string;

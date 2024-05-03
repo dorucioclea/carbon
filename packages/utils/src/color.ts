@@ -22,7 +22,7 @@ const colors = [
 ];
 
 export function getColor(name: string) {
-  if (cache[name]) return colors[cache[name]];
+  if (cache[name]) return colors[cache[name]!];
   const hash = getBucket(name, colors.length);
   cache[name] = hash;
   return colors[hash];

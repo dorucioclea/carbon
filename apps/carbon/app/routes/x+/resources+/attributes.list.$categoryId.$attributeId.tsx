@@ -4,7 +4,7 @@ import { useLoaderData, useNavigate, useParams } from "@remix-run/react";
 import { useRouteData } from "~/hooks";
 import type { AttributeDataType } from "~/modules/resources";
 import { AttributeForm, getAttribute } from "~/modules/resources";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { notFound } from "~/utils/http";
 import { path } from "~/utils/path";

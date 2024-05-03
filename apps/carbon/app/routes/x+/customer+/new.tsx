@@ -6,7 +6,7 @@ import {
   customerValidator,
   upsertCustomer,
 } from "~/modules/sales";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";

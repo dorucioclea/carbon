@@ -4,8 +4,8 @@ import type { HTMLAttributes, InputHTMLAttributes } from "react";
 import { cloneElement, createContext, forwardRef, useContext } from "react";
 import * as ReactAria from "react-aria-components";
 
-import { cn } from "~/utils/cn";
-import { getValidChildren } from "~/utils/react";
+import { cn } from "./utils/cn";
+import { getValidChildren } from "./utils/react";
 
 const InputGroupContext = createContext<boolean>(false);
 

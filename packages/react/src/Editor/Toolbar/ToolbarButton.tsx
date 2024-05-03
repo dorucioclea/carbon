@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import type { ButtonProps } from "~/Button";
-import { IconButton } from "~/IconButton";
-import { Tooltip, TooltipContent, TooltipTrigger } from "~/Tooltip";
+import type { ButtonProps } from "../../Button";
+import { IconButton } from "../../IconButton";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../Tooltip";
 
 type ToolbarButtonProps = Omit<ButtonProps, "aria-label"> & {
   label: string;
