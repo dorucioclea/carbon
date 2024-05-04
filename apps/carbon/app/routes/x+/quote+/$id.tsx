@@ -136,6 +136,12 @@ export default function QuotationRoute() {
   if (!id) throw new Error("id not found");
 
   const isReleased = !["Draft"].includes(quote.quote?.status ?? "");
+  const isNotReadyToConvert = ![
+    "Open",
+    "Replied",
+    "Ordered",
+    "Partial",
+  ].includes(quote.quote?.status ?? "");
 
   const buttonRef = useRef<HTMLButtonElement>(null);
   useKeyboardShortcuts({
@@ -212,7 +218,10 @@ export default function QuotationRoute() {
               >
                 Release
               </MenubarItem>
-              <MenubarItem onClick={salesOrderDisclosure.onOpen}>
+              <MenubarItem
+                onClick={salesOrderDisclosure.onOpen}
+                isDisabled={isNotReadyToConvert}
+              >
                 Convert
               </MenubarItem>
             </Menubar>
