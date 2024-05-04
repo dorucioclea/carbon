@@ -1,16 +1,16 @@
 import { vitePlugin as remix } from "@remix-run/dev";
-import { defineConfig } from "vite";
+import { installGlobals } from "@remix-run/node";
+import { vercelPreset } from "@vercel/remix/vite";
 import path from "node:path";
 import { flatRoutes } from "remix-flat-routes";
-import { installGlobals } from "@remix-run/node";
+import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
-import { vercelPreset } from "@vercel/remix/vite";
 
 installGlobals();
 
 export default defineConfig({
   ssr: {
-    noExternal: ["react-icons"],
+    noExternal: ["react-icons", "react-phone-number-input"],
   },
   server: {
     port: 3000,

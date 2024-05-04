@@ -409,7 +409,6 @@ export function ValidatedForm<
       action={action}
       method={method}
       encType={encType}
-      replace={replace}
       preventScrollReset={preventScrollReset}
       relative={relative}
       onSubmit={(e) => {

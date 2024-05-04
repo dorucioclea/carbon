@@ -3,7 +3,7 @@ import { useLocale } from "@react-aria/i18n";
 import type { TimeFieldStateOptions } from "@react-stately/datepicker";
 import { useTimeFieldState } from "@react-stately/datepicker";
 import { useRef } from "react";
-import { InputGroup } from "~/Input";
+import { InputGroup } from "../Input";
 import { DateSegment } from "./components/DateSegment";
 
 const TimePicker = (

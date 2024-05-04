@@ -1,7 +1,7 @@
 import * as ReactAria from "react-aria-components";
 import { Input, type InputProps } from "./Input";
 
-import { cn } from "~/utils/cn";
+import { cn } from "./utils/cn";
 
 export type NumberFieldProps = ReactAria.NumberFieldProps;
 

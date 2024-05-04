@@ -5,7 +5,7 @@ import { useCalendar } from "@react-aria/calendar";
 import { useCalendarState } from "@react-stately/calendar";
 import { useMemo, useRef } from "react";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
-import { Heading } from "~/Heading";
+import { Heading } from "../../Heading";
 import { CalendarButton } from "./Button";
 import { CalendarGrid } from "./CalendarGrid";
 

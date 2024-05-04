@@ -1,12 +1,9 @@
-<p align="center"><a href="https://carbon.us.org" target="_blank"><img src="https://raw.githubusercontent.com/barbinbrad/carbon/main/www/public/logo-full.png" width="500" alt="Carbon Logo"></a></p>
 
 <p align="center">
 <a href="https://www.loom.com/share/7b2dccab3d404b84aa8f08e5bfa21d16?sid=56583b4c-2ae4-4b2a-b402-187a11b84922" target="_blank">
   <img src="https://github.com/barbinbrad/carbon/assets/64510427/229985c9-44de-4b2b-afdd-7d1f4fd9dedd" width="70%" />
 </a>
 </p>
-
-
 
 # Carbon ERP
 
@@ -35,7 +32,7 @@ Product highlights/roadmap are:
 ## Project Status
 
 - [x] Pre-Alpha: Developing foundation
-- [X] Alpha: Heavy feature development and refinement
+- [x] Alpha: Heavy feature development and refinement
 - [ ] Public Alpha: Ready for use. But go easy on us, there'll be bugs.
 - [ ] Public Beta: Stable enough for most non-enterprise use-cases.
 - [ ] Public: Production-ready
@@ -62,9 +59,11 @@ The monorepo follows the Turborepo convention of grouping packages into one of t
 
 ### `/apps`
 
-| Package Name | Description     | Local Command |
-| ------------ | --------------- | ------------- |
-| `carbon`     | ERP Application | `npm run dev` |
+| Package Name | Description     | Local Command         |
+| ------------ | --------------- | --------------------- |
+| `carbon`     | ERP Application | `npm run dev`         |
+| `docs`       | Documentation   | `npm run dev:docs`    |
+| `website`    | Website         | `npm run dev:website` |
 
 ### `/packages`
 
@@ -96,12 +95,11 @@ After installation you should be able to access the following apps/containers lo
 
 In addition you must configure the following external services:
 
-| Service         | Purpose                    | URL                                                                                   |
-| --------------- | ---------------------------|-------------------------------------------------------------------------------------- |
-| Upstash         | Serverless Redis           | [https://console.upstash.com/login](https://console.upstash.com/login)                |
-| Trigger.dev     | Job runner                 | [https://cloud.trigger.dev/login](https://cloud.trigger.dev/login)                    |
-| Posthog         | Product analytics platform | [https://us.posthog.com/signup](https://us.posthog.com/signup)                        |
-
+| Service     | Purpose                    | URL                                                                    |
+| ----------- | -------------------------- | ---------------------------------------------------------------------- |
+| Upstash     | Serverless Redis           | [https://console.upstash.com/login](https://console.upstash.com/login) |
+| Trigger.dev | Job runner                 | [https://cloud.trigger.dev/login](https://cloud.trigger.dev/login)     |
+| Posthog     | Product analytics platform | [https://us.posthog.com/signup](https://us.posthog.com/signup)         |
 
 Each of these services has a free tier which should be plenty to support local development.
 
@@ -135,17 +133,15 @@ Add your environment variables:
 
 3. Navigate to the project you created in [https://cloud.trigger.dev/](Trigger.dev) and copy the following from the `Environments & API Keys` section:
 
-- TRIGGER_PUBLIC_API_KEY=[Public 'dev' API Key, starting 'pk_dev_']
-- TRIGGER_API_KEY=[Server 'dev' API Key, starting 'tr_dev_']
+- TRIGGER*PUBLIC_API_KEY=[Public 'dev' API Key, starting 'pk_dev*']
+- TRIGGER*API_KEY=[Server 'dev' API Key, starting 'tr_dev*']
 
 4. In Posthog go to [https://[region].posthog.com/project/[project-id]/settings/project-details](https://[region].posthog.com/project/[project-id]/settings/project-details) to find your Project ID and Project API key:
 
 - POSTHOG_API_HOST=[https://[region].posthog.com]
-- POSTHOG_PROJECT_PUBLIC_KEY=[Project API Key starting 'phc_']
-
+- POSTHOG*PROJECT_PUBLIC_KEY=[Project API Key starting 'phc*']
 
 Then you can run the following:
-
 
 ```bash
 $ npm run db:build     # run db migrations and seed script
@@ -185,4 +181,11 @@ For example, to run test command in the `@carbon/react` package you can run:
 
 ```
 $ npm run test -w @carbon/react
+```
+
+### Or run with the `launcher.sh` script
+
+```
+chmod +x launcher.sh # make the file executable
+./launcher.sh
 ```

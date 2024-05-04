@@ -4,8 +4,8 @@ import TextStyle from "@tiptap/extension-text-style";
 import { EditorContent, useEditor as useEditorInternal } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import type { ComponentProps } from "react";
-import { cn } from "src/utils/cn";
-import { VStack } from "~/VStack";
+import { VStack } from "../VStack";
+import { cn } from "../utils/cn";
 import { Toolbar } from "./Toolbar";
 
 export const useEditor = (content: string) => {
