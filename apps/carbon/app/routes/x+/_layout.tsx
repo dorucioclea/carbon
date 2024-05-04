@@ -6,7 +6,7 @@ import NProgress from "nprogress";
 import { useEffect } from "react";
 import { IconSidebar, Topbar } from "~/components/Layout";
 import { SupabaseProvider, getSupabase } from "~/lib/supabase";
-import { getCompany, getIntegrations } from "~/modules/settings";
+import { getCompanies, getIntegrations } from "~/modules/settings";
 import { RealtimeDataProvider } from "~/modules/shared";
 import { getCustomFieldsSchemas } from "~/modules/shared/shared.server";
 import {
@@ -45,22 +45,31 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const client = getSupabase(accessToken);
 
   // parallelize the requests
-  const [company, customFields, integrations, user, claims, groups, defaults] =
-    await Promise.all([
-      getCompany(client, companyId),
-      getCustomFieldsSchemas(client, { companyId }),
-      getIntegrations(client, companyId),
-      getUser(client, userId),
-      getUserClaims(userId),
-      getUserGroups(client, userId),
-      getUserDefaults(client, userId, companyId),
-    ]);
+  const [
+    companies,
+    customFields,
+    integrations,
+    user,
+    claims,
+    groups,
+    defaults,
+  ] = await Promise.all([
+    getCompanies(client, userId),
+    getCustomFieldsSchemas(client, { companyId }),
+    getIntegrations(client, companyId),
+    getUser(client, userId),
+    getUserClaims(userId),
+    getUserGroups(client, userId),
+    getUserDefaults(client, userId, companyId),
+  ]);
 
   if (!claims || user.error || !user.data || !groups.data) {
     await destroyAuthSession(request);
   }
 
-  const requiresOnboarding = !company.data?.name;
+  const company = companies.data?.find((c) => c.companyId === companyId);
+
+  const requiresOnboarding = !companies.data?.[0]?.name;
   if (requiresOnboarding) {
     throw redirect(path.to.onboarding.root);
   }
@@ -71,14 +80,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
       expiresIn,
       expiresAt,
     },
-    company: company.data,
+    company,
+    companies: companies.data ?? [],
     customFields: customFields.data ?? [],
-    integrations: integrations.data ?? [],
-    user: user.data,
-    groups: groups.data,
     defaults: defaults.data,
+    integrations: integrations.data ?? [],
+    groups: groups.data,
     permissions: claims?.permissions,
     role: claims?.role,
+    user: user.data,
   });
 }
 

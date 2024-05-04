@@ -8,6 +8,31 @@ import { interpolateSequenceDate } from "~/utils/string";
 import { sanitize } from "~/utils/supabase";
 import type { companyValidator, sequenceValidator } from "./settings.models";
 
+export async function getCompanies(
+  client: SupabaseClient<Database>,
+  userId: string
+) {
+  const companies = await client
+    .from("companies")
+    .select("*")
+    .eq("userId", userId)
+    .order("name");
+
+  if (companies.error) {
+    return companies;
+  }
+
+  return {
+    data: companies.data.map((company) => ({
+      ...company,
+      logo: company.logo
+        ? `${SUPABASE_API_URL}/storage/v1/object/public/public/${company.logo}`
+        : null,
+    })),
+    error: null,
+  };
+}
+
 export async function getCompany(
   client: SupabaseClient<Database>,
   companyId: number

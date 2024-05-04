@@ -1,5 +1,5 @@
 import type {
-  getCompany,
+  getCompanies,
   getCustomField,
   getCustomFieldsTables,
   getIntegrations,
@@ -7,8 +7,8 @@ import type {
 } from "./settings.service";
 
 export type Company = NonNullable<
-  Awaited<ReturnType<typeof getCompany>>["data"]
->;
+  Awaited<ReturnType<typeof getCompanies>>["data"]
+>[number];
 
 export type CustomField = NonNullable<
   Awaited<ReturnType<typeof getCustomField>>["data"]

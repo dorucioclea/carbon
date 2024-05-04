@@ -73,7 +73,7 @@ const CompanyLogoForm = ({ company }: CompanyLogoFormProps) => {
           src={company.logo}
         />
       ) : (
-        <Avatar name={company?.name} size="2xl" />
+        <Avatar name={company?.name ?? undefined} size="2xl" />
       )}
 
       <File accept="image/*" onChange={uploadImage}>

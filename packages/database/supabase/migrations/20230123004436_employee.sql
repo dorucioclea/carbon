@@ -31,3 +31,16 @@ CREATE POLICY "Employees with users_update can update employees" ON "employee" F
 CREATE POLICY "Employees with users_update can delete employees" ON "employee" FOR DELETE USING (
     has_company_permission('users_delete', "companyId")
 );
+
+CREATE OR REPLACE VIEW "companies" WITH(SECURITY_INVOKER=true) AS
+  SELECT DISTINCT
+    c.*,
+    uc.*,
+    et.name AS "employeeType"
+    FROM "userToCompany" uc
+    INNER JOIN "company" c
+      ON c.id = uc."companyId"
+    INNER JOIN "employee" e
+      ON e.id = uc."userId" AND e."companyId" = uc."companyId"
+    INNER JOIN "employeeType" et
+      ON et.id = e."employeeTypeId"

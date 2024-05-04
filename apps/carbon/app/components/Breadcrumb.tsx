@@ -4,8 +4,6 @@ import { Link } from "@remix-run/react";
 import type { ComponentProps } from "react";
 import { cloneElement, forwardRef } from "react";
 
-import { LuChevronRight } from "react-icons/lu";
-
 const Breadcrumbs = forwardRef<
   HTMLElement,
   ComponentProps<"nav"> & {
@@ -45,9 +43,7 @@ const BreadcrumbItem = forwardRef<
     className={cn("inline-flex items-center", className)}
     {...props}
   >
-    {!isFirstChild && (
-      <LuChevronRight className="text-muted-foreground h-4 w-4" />
-    )}
+    {!isFirstChild && <span className="text-muted-foreground">/</span>}
     {children}
   </li>
 ));
@@ -60,7 +56,7 @@ const BreadcrumbLink = forwardRef<
   }
 >(({ className, children, isCurrentPage, ...props }, ref) => {
   return (
-    <Button variant="link" className={cn("px-2", className)} asChild>
+    <Button variant="ghost" className={cn("px-2", className)} asChild>
       {isCurrentPage ? (
         <span aria-current="page" ref={ref} {...props}>
           {children}
