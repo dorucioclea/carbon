@@ -1,15 +1,34 @@
+// import {
+//   Drawer,
+//   DrawerContent,
+//   DrawerHeader,
+//   DrawerTitle,
+// } from "@carbon/react";
 import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
+  Button,
+  ResizableHandle,
+  ResizablePanel,
+  Skeleton,
 } from "@carbon/react";
 import { useNavigate } from "@remix-run/react";
-import { Suspense, useState } from "react";
+import { useState } from "react";
+import { LuX } from "react-icons/lu";
 import { Document, Page, pdfjs } from "react-pdf";
 import { path } from "~/utils/path";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+
+function SkeletonDocument() {
+  return (
+    <div className="flex flex-col space-y-3">
+      <Skeleton className="h-[780px] bg-background w-[680px] rounded-xl" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 bg-background w-[680px]" />
+        <Skeleton className="h-4 bg-background w-[680px]" />
+      </div>
+    </div>
+  );
+}
 
 type DocumentPreviewProps = {
   bucket: string;
@@ -35,62 +54,51 @@ const DocumentView = ({
 
   if (type?.startsWith("Image")) {
     return (
-      <Drawer
-        open
-        onOpenChange={(open) => {
-          if (!open) onClose();
-        }}
-      >
-        <DrawerContent className="w-fit">
-          <DrawerHeader>
-            <DrawerTitle>{name}</DrawerTitle>
-          </DrawerHeader>
-          <Suspense>
-            <div className="flex items-center justify-center border p-2 rounded-md">
-              <img
-                src={path.to.file.previewFile(`${bucket}/${pathToFile}`)}
-                className="object-contain"
-                width={"680"}
-                alt="Preview"
-              />
-            </div>
-          </Suspense>
-        </DrawerContent>
-      </Drawer>
+      <>
+        <ResizableHandle withHandle />
+        <ResizablePanel maxSize={40}>
+          <Button isIcon variant={"ghost"} onClick={onClose}>
+            <LuX className="w-4 h-4" />
+          </Button>
+          <div className="border w-full mx-auto rounded-md">
+            <img
+              src={path.to.file.previewFile(`${bucket}/${pathToFile}`)}
+              className="object-contain"
+              width={"680"}
+              alt="Preview"
+            />
+          </div>
+        </ResizablePanel>
+      </>
     );
   }
 
   return (
-    <Drawer
-      open
-      onOpenChange={(open) => {
-        if (!open) onClose();
-      }}
-    >
-      <DrawerContent className="w-fit">
-        <DrawerHeader>
-          <DrawerTitle>{name}</DrawerTitle>
-        </DrawerHeader>
-        <Suspense>
-          <Document
-            file={path.to.file.previewFile(`${bucket}/${pathToFile}`)}
-            onLoadSuccess={onDocumentLoadSuccess}
-            className="h-full"
-          >
-            <div className="overflow-auto" style={{ height: "100vh" }}>
-              {Array.from(new Array(numPages), (_, index) => (
-                <Page
-                  key={`page_${index + 1}`}
-                  pageNumber={index + 1}
-                  renderTextLayer={false}
-                  width={680}
-                />
-              ))}
-            </div>
-          </Document>
-        </Suspense>
-      </DrawerContent>
-    </Drawer>
+    <>
+      <ResizableHandle withHandle />
+      <ResizablePanel maxSize={50}>
+        <Button isIcon variant={"ghost"} onClick={onClose}>
+          <LuX className="w-4 h-4" />
+        </Button>
+        <Document
+          file={path.to.file.previewFile(`${bucket}/${pathToFile}`)}
+          onLoadSuccess={onDocumentLoadSuccess}
+          loading={<SkeletonDocument />}
+        >
+          <div className="overflow-auto" style={{ height: "780px" }}>
+            {Array.from(new Array(numPages), (_, index) => (
+              <Page
+                key={`page_${index + 1}`}
+                pageNumber={index + 1}
+                renderTextLayer={false}
+                width={680}
+                height={780}
+              />
+            ))}
+          </div>
+        </Document>
+      </ResizablePanel>
+    </>
   );
 };
 

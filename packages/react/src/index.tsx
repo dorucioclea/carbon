@@ -208,6 +208,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./Select";
+import { Skeleton } from "./Skeleton";
 import { Spinner } from "./Spinner";
 import { Status } from "./Status";
 import { Switch } from "./Switch";
@@ -413,6 +414,7 @@ export {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
+  Skeleton,
   Spinner,
   Status,
   Switch,
