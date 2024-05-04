@@ -141,6 +141,17 @@ CREATE OR REPLACE FUNCTION has_any_company_permission(claim text) RETURNS "bool"
     END;
 $$;
 
+CREATE OR REPLACE FUNCTION get_company_id_from_foreign_key(foreign_key TEXT, tbl TEXT) RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
+    AS $$
+    DECLARE
+      company_id integer;
+    BEGIN
+      EXECUTE 'SELECT "companyId" FROM ' || tbl || ' WHERE id = $1' INTO company_id USING foreign_key;
+      RETURN company_id;
+    END;
+$$;
+
 CREATE OR REPLACE FUNCTION get_claims(uid uuid) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
     AS $$

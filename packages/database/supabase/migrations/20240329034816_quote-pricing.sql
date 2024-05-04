@@ -41,26 +41,26 @@ CREATE POLICY "Employees with sales_view can view quote line pricing" ON "quoteL
   FOR SELECT
   USING (
     has_role('employee') AND
-    has_company_permission('sales_view', (SELECT "companyId" FROM "quote" WHERE "id" = "quoteId"))
+    has_company_permission('sales_view', get_company_id_from_foreign_key("quoteId", 'quote'))
   );
 
 CREATE POLICY "Employees with sales_create can insert quote line pricing" ON "quoteLinePrice"
   FOR INSERT
   WITH CHECK (
     has_role('employee') AND
-    has_company_permission('sales_create', (SELECT "companyId" FROM "quote" WHERE "id" = "quoteId"))
+    has_company_permission('sales_create', get_company_id_from_foreign_key("quoteId", 'quote'))
   );
 
 CREATE POLICY "Employees with sales_update can update quote line pricing" ON "quoteLinePrice"
   FOR UPDATE
   USING (
     has_role('employee') AND
-    has_company_permission('sales_update', (SELECT "companyId" FROM "quote" WHERE "id" = "quoteId"))
+    has_company_permission('sales_update', get_company_id_from_foreign_key("quoteId", 'quote'))
   );
 
 CREATE POLICY "Employees with sales_delete can delete quote line pricing" ON "quoteLinePrice"
   FOR DELETE
   USING (
     has_role('employee') AND
-    has_company_permission('sales_delete', (SELECT "companyId" FROM "quote" WHERE "id" = "quoteId"))
+    has_company_permission('sales_delete', get_company_id_from_foreign_key("quoteId", 'quote'))
   );

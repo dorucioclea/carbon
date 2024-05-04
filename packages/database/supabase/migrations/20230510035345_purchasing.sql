@@ -268,12 +268,12 @@ ALTER TABLE "purchaseOrderStatusHistory" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can view purchase order status history" ON "purchaseOrderStatusHistory" 
   FOR SELECT USING (
-    has_company_permission('purchasing_view', (SELECT "companyId" FROM "purchaseOrder" WHERE "id" = "purchaseOrderId"))
+    has_company_permission('purchasing_view', get_company_id_from_foreign_key("purchaseOrderId", 'purchaseOrder'))
   );
 
 CREATE POLICY "Users can insert purchase order status history" ON "purchaseOrderStatusHistory"
   FOR INSERT WITH CHECK (
-    has_company_permission('purchasing_update', (SELECT "companyId" FROM "purchaseOrder" WHERE "id" = "purchaseOrderId"))
+    has_company_permission('purchasing_update', get_company_id_from_foreign_key("purchaseOrderId", 'purchaseOrder'))
   );
 
 
@@ -451,12 +451,12 @@ ALTER TABLE "purchaseOrderTransaction" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees with purchasing_view can view purchase order transactions" ON "purchaseOrderTransaction" 
   FOR SELECT USING (
     has_role('employee') AND
-    has_company_permission('purchasing_view', (SELECT "companyId" FROM "purchaseOrder" WHERE "id" = "purchaseOrderId"))
+    has_company_permission('purchasing_view', get_company_id_from_foreign_key("purchaseOrderId", 'purchaseOrder'))
   );
 
 CREATE POLICY "User with purchasing_update can insert purchase order transactions" ON "purchaseOrderTransaction" 
   FOR INSERT WITH CHECK (
-    has_company_permission('purchasing_update', (SELECT "companyId" FROM "purchaseOrder" WHERE "id" = "purchaseOrderId"))
+    has_company_permission('purchasing_update', get_company_id_from_foreign_key("purchaseOrderId", 'purchaseOrder'))
   );
 
 CREATE TABLE "purchaseOrderFavorite" (

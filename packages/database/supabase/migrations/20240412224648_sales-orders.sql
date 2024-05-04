@@ -412,7 +412,8 @@ ALTER TABLE "salesOrderStatusHistory" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Anyone with sales_view can view sales order status history" ON "salesOrderStatusHistory"
   FOR SELECT
   USING (
-    has_company_permission('sales_view', (SELECT "companyId" FROM "salesOrder" WHERE id = "salesOrderId")) AND has_role('employee')
+    has_role('employee') AND
+    has_company_permission('sales_view', get_company_id_from_foreign_key("salesOrderId", 'salesOrder')) 
   );
 
 -- Sales Order Lines

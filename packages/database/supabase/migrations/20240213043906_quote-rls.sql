@@ -159,14 +159,14 @@ CREATE POLICY "Employees with sales_view can view quote assemblies" ON "quoteAss
   FOR SELECT
   USING (
     has_role('employee') AND
-    has_company_permission('sales_view', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+    has_company_permission('sales_view', get_company_id_from_foreign_key("quoteId", 'quote'))  
   );
 
 CREATE POLICY "Customers with sales_view can their own quote assemblies" ON "quoteAssembly"
   FOR SELECT
   USING (
     has_role('customer') AND
-    has_company_permission('sales_view', (SELECT "companyId" FROM "quote" WHERE id = "quoteId")) AND
+    has_company_permission('sales_view', get_company_id_from_foreign_key("quoteId", 'quote')) AND
     "quoteId" IN (
       SELECT id FROM "quote" WHERE "customerId" IN (
         SELECT "customerId" FROM "quote" WHERE "customerId" IN (
@@ -180,21 +180,21 @@ CREATE POLICY "Employees with sales_create can create quote assemblies" ON "quot
   FOR INSERT
   WITH CHECK (
     has_role('employee') AND
-    has_company_permission('sales_create', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+    has_company_permission('sales_create', get_company_id_from_foreign_key("quoteId", 'quote'))
   );
 
 CREATE POLICY "Employees with sales_update can update quote assemblies" ON "quoteAssembly"
   FOR UPDATE
   USING (
     has_role('employee') AND
-    has_company_permission('sales_update', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+    has_company_permission('sales_update', get_company_id_from_foreign_key("quoteId", 'quote'))
   );
 
 CREATE POLICY "Employees with sales_delete can delete quote assemblies" ON "quoteAssembly"
   FOR DELETE
   USING (
     has_role('employee') AND
-    has_company_permission('sales_delete', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+    has_company_permission('sales_delete', get_company_id_from_foreign_key("quoteId", 'quote'))
   );
 
 ALTER TABLE "quoteOperation" ENABLE ROW LEVEL SECURITY;
@@ -203,14 +203,14 @@ CREATE POLICY "Employees with sales_view can view quote operations" ON "quoteOpe
   FOR SELECT
   USING (
     has_role('employee') AND
-    has_company_permission('sales_view', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+    has_company_permission('sales_view', get_company_id_from_foreign_key("quoteId", 'quote'))
   );
 
 CREATE POLICY "Customers with sales_view can their own quote operations" ON "quoteOperation"
   FOR SELECT
   USING (
     has_role('customer') AND
-    has_company_permission('sales_view', (SELECT "companyId" FROM "quote" WHERE id = "quoteId")) AND
+    has_company_permission('sales_view', get_company_id_from_foreign_key("quoteId", 'quote')) AND
     "quoteId" IN (
       SELECT id FROM "quote" WHERE "customerId" IN (
         SELECT "customerId" FROM "quote" WHERE "customerId" IN (
@@ -225,21 +225,21 @@ CREATE POLICY "Employees with sales_create can create quote operations" ON "quot
   FOR INSERT
   WITH CHECK (
     has_role('employee') AND
-    has_company_permission('sales_create', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+    has_company_permission('sales_create', get_company_id_from_foreign_key("quoteId", 'quote'))
   );
 
 CREATE POLICY "Employees with sales_update can update quote operations" ON "quoteOperation"
   FOR UPDATE
   USING (
     has_role('employee') AND
-    has_company_permission('sales_update', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+    has_company_permission('sales_update', get_company_id_from_foreign_key("quoteId", 'quote'))
   );
 
 CREATE POLICY "Employees with sales_delete can delete quote operations" ON "quoteOperation"
   FOR DELETE
   USING (
     has_role('employee') AND
-    has_company_permission('sales_delete', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+    has_company_permission('sales_delete', get_company_id_from_foreign_key("quoteId", 'quote'))
   );
 
 ALTER TABLE "quoteMaterial" ENABLE ROW LEVEL SECURITY;
@@ -248,14 +248,14 @@ CREATE POLICY "Employees with sales_view can view quote materials" ON "quoteMate
   FOR SELECT
   USING (
     has_role('employee') AND
-    has_company_permission('sales_view', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+    has_company_permission('sales_view', get_company_id_from_foreign_key("quoteId", 'quote'))
   );
 
 CREATE POLICY "Customers with sales_view can their own quote materials" ON "quoteMaterial"
   FOR SELECT
   USING (
     has_role('customer') AND
-    has_company_permission('sales_view', (SELECT "companyId" FROM "quote" WHERE id = "quoteId")) AND
+    has_company_permission('sales_view', get_company_id_from_foreign_key("quoteId", 'quote')) AND
     "quoteId" IN (
       SELECT id FROM "quote" WHERE "customerId" IN (
         SELECT "customerId" FROM "quote" WHERE "customerId" IN (
@@ -269,21 +269,21 @@ CREATE POLICY "Employees with sales_create can create quote materials" ON "quote
   FOR INSERT
   WITH CHECK (
     has_role('employee') AND
-    has_company_permission('sales_create', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+    has_company_permission('sales_create', get_company_id_from_foreign_key("quoteId", 'quote'))
   );
 
 CREATE POLICY "Employees with sales_update can update quote materials" ON "quoteMaterial"
   FOR UPDATE
   USING (
     has_role('employee') AND
-    has_company_permission('sales_update', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+    has_company_permission('sales_update', get_company_id_from_foreign_key("quoteId", 'quote'))
   );
 
 CREATE POLICY "Employees with sales_delete can delete quote materials" ON "quoteMaterial"
   FOR DELETE
   USING (
     has_role('employee') AND
-    has_company_permission('sales_delete', (SELECT "companyId" FROM "quote" WHERE id = "quoteId"))
+    has_company_permission('sales_delete', get_company_id_from_foreign_key("quoteId", 'quote'))
   );
 
 

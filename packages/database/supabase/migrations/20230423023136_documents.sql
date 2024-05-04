@@ -141,7 +141,7 @@ ALTER TABLE "documentTransaction" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users with documents_view can see document transactions" ON "documentTransaction" 
   FOR SELECT USING (
-    has_company_permission('documents_view', (SELECT "companyId" FROM "document" WHERE "id" = "documentId"))
+    has_company_permission('documents_view', get_company_id_from_foreign_key("documentId", 'document'))
   );
 
 CREATE POLICY "Users can insert document transactions" ON "documentTransaction" 

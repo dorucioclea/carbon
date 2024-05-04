@@ -107,7 +107,7 @@ CREATE POLICY "Employees with invoicing_view can view AP invoices status history
   FOR SELECT
   USING (
     has_role('employee') AND
-    has_company_permission('invoicing_view', (SELECT "companyId" FROM "purchaseInvoice" WHERE "id" = "invoiceId"))
+    has_company_permission('invoicing_view', get_company_id_from_foreign_key("invoiceId", 'purchaseInvoice'))
   );
 
 
@@ -260,7 +260,7 @@ CREATE POLICY "Employees with invoicing_view can view AP invoice price changes" 
   FOR SELECT
   USING (
     has_role('employee') AND
-    has_company_permission('invoicing_view', (SELECT "companyId" FROM "purchaseInvoice" WHERE "id" = "invoiceId"))
+    has_company_permission('invoicing_view', get_company_id_from_foreign_key("invoiceId", 'purchaseInvoice'))
   );
 
 CREATE OR REPLACE FUNCTION "purchaseInvoiceLine_update_price_change"()
@@ -366,7 +366,7 @@ CREATE POLICY "Employees with invoicing_view can view AP invoice/payment relatio
   FOR SELECT
   USING (
     has_role('employee') AND
-    has_company_permission('invoicing_view', (SELECT "companyId" FROM "purchaseInvoice" WHERE "id" = "invoiceId"))
+    has_company_permission('invoicing_view', get_company_id_from_foreign_key("invoiceId", 'purchaseInvoice'))
   );
 
 

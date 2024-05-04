@@ -30,7 +30,7 @@ const EditableSalesOrderLineNumber =
     onError,
     onUpdate,
   }: EditableTableCellComponentProps<SalesOrderLine>) => {
-    const { client, parts, services, userId } = options;
+    const { client, parts, services, defaultLocationId, userId } = options;
     const selectOptions =
       row.salesOrderLineType === "Part"
         ? parts
@@ -40,22 +40,25 @@ const EditableSalesOrderLineNumber =
 
     const onPartChange = async (partId: string) => {
       if (!client) throw new Error("Supabase client not found");
-      const [part, shelf, cost] = await Promise.all([
+      const [part, shelf, price] = await Promise.all([
         client
           .from("part")
           .select("name, unitOfMeasureCode")
           .eq("id", partId)
+          .eq("companyId", row.companyId!)
           .single(),
         client
           .from("partInventory")
           .select("defaultShelfId")
           .eq("partId", partId)
-          .eq("locationId", options.defaultLocationId!)
-          .single(),
+          .eq("companyId", row.companyId!)
+          .eq("locationId", defaultLocationId!)
+          .maybeSingle(),
         client
-          .from("partCost")
-          .select("unitCost")
+          .from("partUnitSalePrice")
+          .select("unitSalePrice")
           .eq("partId", partId)
+          .eq("companyId", row.companyId!)
           .single(),
       ]);
 
@@ -70,7 +73,7 @@ const EditableSalesOrderLineNumber =
         unitOfMeasureCode: part.data?.unitOfMeasureCode ?? null,
         locationId: options.defaultLocationId,
         shelfId: shelf.data?.defaultShelfId ?? null,
-        unitPrice: cost.data?.unitCost ?? null,
+        unitPrice: price.data?.unitSalePrice ?? null,
       });
 
       try {
@@ -84,7 +87,7 @@ const EditableSalesOrderLineNumber =
             unitOfMeasureCode: part.data?.unitOfMeasureCode ?? null,
             locationId: options.defaultLocationId,
             shelfId: shelf.data?.defaultShelfId ?? null,
-            unitPrice: cost.data?.unitCost,
+            unitPrice: price.data?.unitSalePrice ?? 0,
             updatedBy: userId,
           })
           .eq("id", row.id!);
@@ -102,6 +105,7 @@ const EditableSalesOrderLineNumber =
         .from("service")
         .select("name")
         .eq("id", serviceId)
+        .eq("companyId", row.companyId!)
         .single();
 
       if (service.error) {
@@ -119,6 +123,7 @@ const EditableSalesOrderLineNumber =
           .from("salesOrderLine")
           .update({
             serviceId: serviceId,
+            description: service.data?.name,
             updatedBy: userId,
           })
           .eq("id", row.id!);

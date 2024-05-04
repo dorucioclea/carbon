@@ -110,7 +110,7 @@ CREATE POLICY "Anyone with purchasing_view can view purchase order status histor
   FOR SELECT
   USING (
     has_role('employee') AND
-    has_company_permission('purchasing_view', (SELECT "companyId" FROM "purchaseOrder" WHERE id = "purchaseOrderId")) 
+    has_company_permission('purchasing_view', get_company_id_from_foreign_key("purchaseOrderId", 'purchaseOrder')) 
   );
 
 -- Purchase Order Lines

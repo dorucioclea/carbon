@@ -18732,6 +18732,13 @@ export type Database = {
         }
         Returns: Json
       }
+      get_company_id_from_foreign_key: {
+        Args: {
+          foreign_key: string
+          tbl: string
+        }
+        Returns: number
+      }
       get_my_claim: {
         Args: {
           claim: string
