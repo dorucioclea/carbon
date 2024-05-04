@@ -1,9 +1,9 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { getDocument } from "~/modules/documents";
+import { getDocument, getDocumentType } from "~/modules/documents";
 import DocumentView from "~/modules/documents/ui/Documents/DocumentView";
-import { requirePermissions } from "~/services/auth";
+import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { notFound } from "~/utils/http";
 import { path } from "~/utils/path";
@@ -25,14 +25,19 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       await flash(request, error(document.error, "Failed to get document"))
     );
   }
+  let documentType;
+  if (document?.data?.name) {
+    documentType = getDocumentType(document?.data?.name);
+  }
 
   return json({
     document: document.data,
+    type: documentType,
   });
 }
 
 export default function ViewDocumentRoute() {
-  const { document } = useLoaderData<typeof loader>();
+  const { document, type } = useLoaderData<typeof loader>();
 
   let name = document.name;
   if (name) name = name.split(".").slice(0, -1).join(".");
@@ -41,8 +46,9 @@ export default function ViewDocumentRoute() {
     <DocumentView
       key={document.id}
       bucket={"private"}
-      pathToFile={document.path}
-      ownerId={document.createdBy ?? ""}
+      type={type ?? ""}
+      pathToFile={document.path ?? ""}
+      name={document.name ?? ""}
     />
   );
 }

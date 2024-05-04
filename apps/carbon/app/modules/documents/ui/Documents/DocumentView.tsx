@@ -1,4 +1,9 @@
-import { Drawer, DrawerContent } from "@carbon/react";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from "@carbon/react";
 import { useNavigate } from "@remix-run/react";
 import { Suspense, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
@@ -7,15 +12,17 @@ import { path } from "~/utils/path";
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 type DocumentPreviewProps = {
-  ownerId: string;
   bucket: string;
   pathToFile: string;
+  type: string;
+  name: string;
 };
 
 const DocumentView = ({
-  ownerId,
   bucket,
   pathToFile,
+  type,
+  name,
 }: DocumentPreviewProps) => {
   const [numPages, setNumPages] = useState<number>();
 
@@ -26,6 +33,33 @@ const DocumentView = ({
   const navigate = useNavigate();
   const onClose = () => navigate(path.to.documents);
 
+  if (type?.startsWith("Image")) {
+    return (
+      <Drawer
+        open
+        onOpenChange={(open) => {
+          if (!open) onClose();
+        }}
+      >
+        <DrawerContent className="w-fit">
+          <DrawerHeader>
+            <DrawerTitle>{name}</DrawerTitle>
+          </DrawerHeader>
+          <Suspense>
+            <div className="flex items-center justify-center border p-2 rounded-md">
+              <img
+                src={path.to.file.previewFile(`${bucket}/${pathToFile}`)}
+                className="object-contain"
+                width={"680"}
+                alt="Preview"
+              />
+            </div>
+          </Suspense>
+        </DrawerContent>
+      </Drawer>
+    );
+  }
+
   return (
     <Drawer
       open
@@ -34,6 +68,9 @@ const DocumentView = ({
       }}
     >
       <DrawerContent className="w-fit">
+        <DrawerHeader>
+          <DrawerTitle>{name}</DrawerTitle>
+        </DrawerHeader>
         <Suspense>
           <Document
             file={path.to.file.previewFile(`${bucket}/${pathToFile}`)}
