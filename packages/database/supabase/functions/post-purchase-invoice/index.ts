@@ -40,6 +40,8 @@ serve(async (req: Request) => {
     if (purchaseInvoiceLines.error)
       throw new Error("Failed to fetch receipt lines");
 
+    const companyId = purchaseInvoice.data.companyId;
+
     const [parts, services, purchaseOrderLines, supplier] = await Promise.all([
       client
         .from("part")
@@ -52,7 +54,8 @@ serve(async (req: Request) => {
             }
             return acc;
           }, [])
-        ),
+        )
+        .eq("companyId", companyId),
       client
         .from("service")
         .select("id, partGroupId")
@@ -64,7 +67,8 @@ serve(async (req: Request) => {
             }
             return acc;
           }, [])
-        ),
+        )
+        .eq("companyId", companyId),
       client
         .from("purchaseOrderLine")
         .select("*")
@@ -84,6 +88,7 @@ serve(async (req: Request) => {
         .from("supplier")
         .select("*")
         .eq("id", purchaseInvoice.data.supplierId ?? "")
+        .eq("companyId", companyId)
         .single(),
     ]);
     if (parts.error) throw new Error("Failed to fetch part groups");
@@ -106,7 +111,9 @@ serve(async (req: Request) => {
           }
           return acc;
         }, [])
-      );
+      )
+      .eq("companyId", companyId);
+
     if (purchaseOrders.error)
       throw new Error("Failed to fetch purchase orders");
 
@@ -189,7 +196,8 @@ serve(async (req: Request) => {
           }
           return acc;
         }, [])
-      );
+      )
+      .eq("companyId", companyId);
     if (journalLines.error) {
       throw new Error("Failed to fetch journal entries to reverse");
     }
@@ -257,12 +265,14 @@ serve(async (req: Request) => {
               .from("accounts")
               .select("name, number, directPosting")
               .eq("number", invoiceLine.accountNumber ?? "")
+              .eq("companyId", companyId)
               .single(),
             client
               .from("accountDefault")
               .select(
                 "overheadCostAppliedAccount, payablesAccount, purchaseAccount"
               )
+              .eq("companyId", companyId)
               .single(),
           ]);
           if (account.error || !account.data)
@@ -292,6 +302,7 @@ serve(async (req: Request) => {
               invoiceLine.purchaseOrderLineId!
             ),
             journalLineReference,
+            companyId,
           });
 
           // credit the direct cost applied account
@@ -310,6 +321,7 @@ serve(async (req: Request) => {
               invoiceLine.purchaseOrderLineId!
             ),
             journalLineReference,
+            companyId,
           });
 
           journalLineReference = nanoid();
@@ -330,6 +342,7 @@ serve(async (req: Request) => {
               invoiceLine.purchaseOrderLineId!
             ),
             journalLineReference,
+            companyId,
           });
 
           // credit the accounts payable account
@@ -348,6 +361,7 @@ serve(async (req: Request) => {
               invoiceLine.purchaseOrderLineId!
             ),
             journalLineReference,
+            companyId,
           });
           break;
         case "Service":
@@ -438,6 +452,7 @@ serve(async (req: Request) => {
             documentId: purchaseInvoice.data?.id,
             externalDocumentId: purchaseInvoice.data?.supplierReference,
             journalLineReference,
+            companyId,
           });
 
           // creidt the direct cost applied account
@@ -453,6 +468,7 @@ serve(async (req: Request) => {
             documentId: purchaseInvoice.data?.id,
             externalDocumentId: purchaseInvoice.data?.supplierReference,
             journalLineReference,
+            companyId,
           });
 
           journalLineReference = nanoid();
@@ -473,6 +489,7 @@ serve(async (req: Request) => {
               invoiceLine.purchaseOrderLineId!
             ),
             journalLineReference,
+            companyId,
           });
 
           // credit the accounts payable account
@@ -491,6 +508,7 @@ serve(async (req: Request) => {
               invoiceLine.purchaseOrderLineId!
             ),
             journalLineReference,
+            companyId,
           });
 
           break;
@@ -568,6 +586,7 @@ serve(async (req: Request) => {
               unitOfMeasure: invoiceLine.inventoryUnitOfMeasureCode ?? "EA",
               unitPrice: invoiceLine.unitPrice,
               createdBy: invoiceLine.createdBy,
+              companyId,
             });
 
             if (partType === "Inventory") {
@@ -583,6 +602,7 @@ serve(async (req: Request) => {
                 documentId: purchaseInvoice.data?.id ?? undefined,
                 externalDocumentId:
                   purchaseInvoice.data?.supplierReference ?? undefined,
+                companyId,
               });
             }
 
@@ -599,6 +619,7 @@ serve(async (req: Request) => {
               quantity: invoiceLineQuantityInInventoryUnit,
               cost: invoiceLine.quantity * invoiceLine.unitPrice,
               costPostedToGL: invoiceLine.quantity * invoiceLine.unitPrice,
+              companyId,
             });
 
             // create the normal GL entries for a part
@@ -619,6 +640,7 @@ serve(async (req: Request) => {
                 documentId: purchaseInvoice.data?.id,
                 externalDocumentId: purchaseInvoice.data?.supplierReference,
                 journalLineReference,
+                companyId,
               });
 
               // creidt the direct cost applied account
@@ -634,6 +656,7 @@ serve(async (req: Request) => {
                 documentId: purchaseInvoice.data?.id,
                 externalDocumentId: purchaseInvoice.data?.supplierReference,
                 journalLineReference,
+                companyId,
               });
             } else {
               // debit the overhead account
@@ -649,6 +672,7 @@ serve(async (req: Request) => {
                 documentId: purchaseInvoice.data?.id,
                 externalDocumentId: purchaseInvoice.data?.supplierReference,
                 journalLineReference,
+                companyId,
               });
 
               // creidt the overhead cost applied account
@@ -664,6 +688,7 @@ serve(async (req: Request) => {
                 documentId: purchaseInvoice.data?.id,
                 externalDocumentId: purchaseInvoice.data?.supplierReference,
                 journalLineReference,
+                companyId,
               });
             }
 
@@ -685,6 +710,7 @@ serve(async (req: Request) => {
                 invoiceLine.purchaseOrderLineId!
               ),
               journalLineReference,
+              companyId,
             });
 
             // credit the accounts payable account
@@ -703,6 +729,7 @@ serve(async (req: Request) => {
                 invoiceLine.purchaseOrderLineId!
               ),
               journalLineReference,
+              companyId,
             });
           } // if the line is associated with a purchase order line, we do accrual/reversing
           else {
@@ -820,6 +847,7 @@ serve(async (req: Request) => {
                           )
                         : null,
                       journalLineReference,
+                      companyId,
                     });
 
                     journalLineInserts.push({
@@ -845,6 +873,7 @@ serve(async (req: Request) => {
                           invoiceLine.purchaseOrderLineId!
                         ),
                       journalLineReference,
+                      companyId,
                     });
                   }
 
@@ -867,6 +896,7 @@ serve(async (req: Request) => {
                 cost: quantityToReverse * invoiceLineUnitPriceInInventoryUnit,
                 costPostedToGL:
                   quantityToReverse * invoiceLineUnitPriceInInventoryUnit,
+                companyId,
               });
 
               // create the normal GL entries for a part
@@ -890,6 +920,7 @@ serve(async (req: Request) => {
                     invoiceLine.purchaseOrderLineId!
                   ),
                   journalLineReference,
+                  companyId,
                 });
 
                 // creidt the direct cost applied account
@@ -908,6 +939,7 @@ serve(async (req: Request) => {
                     invoiceLine.purchaseOrderLineId!
                   ),
                   journalLineReference,
+                  companyId,
                 });
               } else {
                 // debit the overhead account
@@ -926,6 +958,7 @@ serve(async (req: Request) => {
                     invoiceLine.purchaseOrderLineId!
                   ),
                   journalLineReference,
+                  companyId,
                 });
 
                 // creidt the overhead cost applied account
@@ -945,6 +978,7 @@ serve(async (req: Request) => {
                     invoiceLine.purchaseOrderLineId!
                   ),
                   journalLineReference,
+                  companyId,
                 });
               }
 
@@ -966,6 +1000,7 @@ serve(async (req: Request) => {
                   invoiceLine.purchaseOrderLineId!
                 ),
                 journalLineReference,
+                companyId,
               });
 
               // credit the accounts payable account
@@ -984,6 +1019,7 @@ serve(async (req: Request) => {
                   invoiceLine.purchaseOrderLineId!
                 ),
                 journalLineReference,
+                companyId,
               });
             }
 
@@ -1014,6 +1050,7 @@ serve(async (req: Request) => {
                     )
                   : null,
                 journalLineReference,
+                companyId,
               });
 
               // credit the inventory interim accrual account
@@ -1036,6 +1073,7 @@ serve(async (req: Request) => {
                     )
                   : null,
                 journalLineReference,
+                companyId,
               });
             }
           }
@@ -1076,7 +1114,11 @@ serve(async (req: Request) => {
         for await (const [locationId, receiptLines] of Object.entries(
           receiptLinesGroupedByLocationId
         )) {
-          const readableReceiptId = await getNextSequence(trx, "receipt");
+          const readableReceiptId = await getNextSequence(
+            trx,
+            "receipt",
+            companyId
+          );
           const receipt = await trx
             .insertInto("receipt")
             .values({
@@ -1090,6 +1132,7 @@ serve(async (req: Request) => {
               status: "Posted",
               postingDate: today,
               invoiced: true,
+              companyId,
               createdBy: purchaseInvoice.data.createdBy,
             })
             .returning(["id"])
@@ -1178,6 +1221,7 @@ serve(async (req: Request) => {
           accountingPeriodId,
           description: `Purchase Invoice ${purchaseInvoice.data?.invoiceId}`,
           postingDate: today,
+          companyId,
         })
         .returning(["id"])
         .execute();

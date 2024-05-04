@@ -2,12 +2,17 @@ import { Transaction } from "https://esm.sh/kysely@0.26.3";
 import { DB } from "../lib/database.ts";
 import { interpolateSequenceDate } from "../lib/utils.ts";
 
-export async function getNextSequence(trx: Transaction<DB>, tableName: string) {
+export async function getNextSequence(
+  trx: Transaction<DB>,
+  tableName: string,
+  companyId: number
+) {
   // get current purchase invoice sequence number
   const sequence = await trx
     .selectFrom("sequence")
     .selectAll()
     .where("table", "=", tableName)
+    .where("companyId", "=", companyId)
     .executeTakeFirstOrThrow();
 
   const { prefix, suffix, next, size, step } = sequence;
@@ -27,6 +32,7 @@ export async function getNextSequence(trx: Transaction<DB>, tableName: string) {
       updatedBy: "system",
     })
     .where("table", "=", tableName)
+    .where("companyId", "=", companyId)
     .execute();
 
   return `${derivedPrefix}${nextSequence}${derivedSuffix}`;

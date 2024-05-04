@@ -36,6 +36,8 @@ serve(async (req: Request) => {
     if (receipt.error) throw new Error("Failed to fetch receipt");
     if (receiptLines.error) throw new Error("Failed to fetch receipt lines");
 
+    const companyId = receipt.data?.companyId;
+
     const parts = await client
       .from("part")
       .select("id, partGroupId, partType")
@@ -47,7 +49,8 @@ serve(async (req: Request) => {
           }
           return acc;
         }, [])
-      );
+      )
+      .eq("companyId", companyId);
     if (parts.error) throw new Error("Failed to fetch part groups");
 
     switch (receipt.data?.sourceDocument) {
@@ -75,6 +78,7 @@ serve(async (req: Request) => {
           .from("supplier")
           .select("*")
           .eq("id", purchaseOrder.data.supplierId)
+          .eq("companyId", companyId)
           .single();
         if (supplier.error) throw new Error("Failed to fetch supplier");
 
@@ -379,6 +383,7 @@ serve(async (req: Request) => {
                       receiptLine.lineId!
                     ),
                     journalLineReference,
+                    companyId,
                   });
                   journalLineInserts.push({
                     accountNumber: entry[1].accountNumber!,
@@ -401,6 +406,7 @@ serve(async (req: Request) => {
                       receiptLine.lineId!
                     ),
                     journalLineReference,
+                    companyId,
                   });
                 }
 
@@ -422,6 +428,7 @@ serve(async (req: Request) => {
               quantity: quantityToReverse,
               cost: reversedValue,
               costPostedToGL: reversedValue,
+              companyId,
             });
 
             // create the normal GL entries
@@ -442,6 +449,7 @@ serve(async (req: Request) => {
                   receiptLine.lineId!
                 ),
                 journalLineReference,
+                companyId,
               });
 
               // creidt the direct cost applied account
@@ -457,6 +465,7 @@ serve(async (req: Request) => {
                   receiptLine.lineId!
                 ),
                 journalLineReference,
+                companyId,
               });
             } else {
               // debit the overhead account
@@ -472,6 +481,7 @@ serve(async (req: Request) => {
                   receiptLine.lineId!
                 ),
                 journalLineReference,
+                companyId,
               });
 
               // creidt the overhead cost applied account
@@ -487,6 +497,7 @@ serve(async (req: Request) => {
                   receiptLine.lineId!
                 ),
                 journalLineReference,
+                companyId,
               });
             }
 
@@ -505,6 +516,7 @@ serve(async (req: Request) => {
                 receiptLine.lineId!
               ),
               journalLineReference,
+              companyId,
             });
 
             // credit the accounts payable account
@@ -520,6 +532,7 @@ serve(async (req: Request) => {
                 receiptLine.lineId!
               ),
               journalLineReference,
+              companyId,
             });
           }
 
@@ -547,6 +560,7 @@ serve(async (req: Request) => {
                 purchaseOrder.data?.supplierReference ?? undefined,
               documentLineReference: `receipt:${receiptLine.lineId}`,
               journalLineReference,
+              companyId,
             });
 
             journalLineInserts.push({
@@ -562,6 +576,7 @@ serve(async (req: Request) => {
                 purchaseOrder.data?.supplierReference ?? undefined,
               documentLineReference: `receipt:${receiptLine.lineId}`,
               journalLineReference,
+              companyId,
             });
           }
 
@@ -576,6 +591,7 @@ serve(async (req: Request) => {
               documentType: "Purchase Receipt",
               documentId: receipt.data?.id ?? undefined,
               externalDocumentId: receipt.data?.externalDocumentId ?? undefined,
+              companyId,
             });
           }
         }
@@ -651,6 +667,7 @@ serve(async (req: Request) => {
               accountingPeriodId,
               description: `Purchase Receipt ${receipt.data.receiptId}`,
               postingDate: today,
+              companyId,
             })
             .returning(["id"])
             .execute();

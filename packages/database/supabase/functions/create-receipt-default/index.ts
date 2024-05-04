@@ -25,7 +25,7 @@ serve(async (req: Request) => {
     if (!companyId) throw new Error("Payload is missing companyId");
 
     await db.transaction().execute(async (trx) => {
-      receiptId = await getNextSequence(trx, "receipt");
+      receiptId = await getNextSequence(trx, "receipt", companyId);
       const newReceipt = await trx
         .insertInto("receipt")
         .values({

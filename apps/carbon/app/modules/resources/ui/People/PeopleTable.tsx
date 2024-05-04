@@ -29,6 +29,18 @@ const PeopleTable = memo(
     const permissions = usePermissions();
     const [params] = useUrlParams();
 
+    const employeeTypesById = useMemo(
+      () =>
+        employeeTypes.reduce<Record<string, Partial<EmployeeType>>>(
+          (acc, type) => {
+            if (type.id) acc[type.id] = type;
+            return acc;
+          },
+          {}
+        ),
+      [employeeTypes]
+    );
+
     const renderGenericAttribute = useCallback(
       (
         value?: string | number | boolean,
@@ -76,74 +88,60 @@ const PeopleTable = memo(
       []
     );
 
-    const rows = useMemo(
-      () =>
-        data.map((d) => {
-          // we should only have one user and employee per employee id
-          if (
-            d.user === null ||
-            d.employeeType === null ||
-            Array.isArray(d.user) ||
-            Array.isArray(d.employeeType)
-          ) {
-            throw new Error("Expected user and employee type to be objects");
-          }
-
-          return d;
-        }),
-      [data]
-    );
-
-    const columns = useMemo<ColumnDef<(typeof rows)[number]>[]>(() => {
-      const defaultColumns: ColumnDef<(typeof rows)[number]>[] = [
+    const columns = useMemo<ColumnDef<(typeof data)[number]>[]>(() => {
+      const defaultColumns: ColumnDef<(typeof data)[number]>[] = [
         {
           header: "User",
           cell: ({ row }) => (
             <HStack>
               <Avatar
                 size="sm"
-                name={row.original.user?.fullName!}
-                path={row.original.user?.avatarUrl!}
+                name={row.original.name ?? undefined}
+                path={row.original.avatarUrl ?? undefined}
               />
 
-              <Hyperlink to={path.to.personDetails(row?.original.user?.id!)}>
-                {row.original.user?.fullName}
+              <Hyperlink to={path.to.personDetails(row?.original.id!)}>
+                {row.original.fullName}
               </Hyperlink>
             </HStack>
           ),
         },
 
         {
-          accessorKey: "user.firstName",
+          accessorKey: "firstName",
           header: "First Name",
           cell: (item) => item.getValue(),
         },
         {
-          accessorKey: "user.lastName",
+          accessorKey: "lastName",
           header: "Last Name",
           cell: (item) => item.getValue(),
         },
         {
-          accessorKey: "user.email",
+          accessorKey: "email",
           header: "Email",
           cell: (item) => item.getValue(),
         },
         {
-          accessorKey: "employeeType.name",
+          id: "employeeTypeId",
           header: "Employee Type",
-          cell: (item) => <Enumerable value={item.getValue<string>()} />,
+          cell: ({ row }) => (
+            <Enumerable
+              value={employeeTypesById[row.original.employeeTypeId].name}
+            />
+          ),
           meta: {
             filter: {
               type: "static",
               options: employeeTypes.map((type) => ({
-                value: type.name!,
+                value: type.id!,
                 label: <Enumerable value={type.name!} />,
               })),
             },
           },
         },
         {
-          accessorKey: "user.active",
+          accessorKey: "active",
           header: "Active",
           cell: (item) => <Checkbox isChecked={item.getValue<boolean>()} />,
           meta: {
@@ -158,7 +156,7 @@ const PeopleTable = memo(
         },
       ];
 
-      const additionalColumns: ColumnDef<(typeof rows)[number]>[] = [];
+      const additionalColumns: ColumnDef<(typeof data)[number]>[] = [];
 
       attributeCategories.forEach((category) => {
         if (category.userAttribute && Array.isArray(category.userAttribute)) {
@@ -178,11 +176,16 @@ const PeopleTable = memo(
       });
 
       return [...defaultColumns, ...additionalColumns];
-    }, [attributeCategories, employeeTypes, renderGenericAttribute]);
+    }, [
+      attributeCategories,
+      employeeTypes,
+      employeeTypesById,
+      renderGenericAttribute,
+    ]);
 
     const renderContextMenu = useMemo(() => {
       return permissions.can("update", "resources")
-        ? (row: (typeof rows)[number]) => {
+        ? (row: (typeof data)[number]) => {
             return (
               <MenuItem
                 onClick={() =>
@@ -203,11 +206,11 @@ const PeopleTable = memo(
 
     return (
       <>
-        <Table<(typeof rows)[number]>
+        <Table<(typeof data)[number]>
           // actions={actions}
           count={count}
           columns={columns}
-          data={rows}
+          data={data}
           defaultColumnPinning={{
             left: ["Select", "User"],
           }}

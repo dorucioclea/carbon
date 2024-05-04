@@ -116,6 +116,7 @@ export async function getCurrentAccountingPeriod<T>(
     // .lte("endDate", d.toString())
     .gte("endDate", d)
     .lte("startDate", d)
+    .eq("companyId", companyId)
     .single();
 
   if (currentAccountingPeriod.error || !currentAccountingPeriod.data) {

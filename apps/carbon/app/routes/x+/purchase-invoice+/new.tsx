@@ -21,7 +21,7 @@ import { error } from "~/utils/result";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   // we don't use the client here -- if they have this permission, we'll upgrade to a service role if needed
-  const { userId } = await requirePermissions(request, {
+  const { companyId, userId } = await requirePermissions(request, {
     create: "invoicing",
   });
 
@@ -36,6 +36,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       if (!sourceDocumentId) throw new Error("Missing sourceDocumentId");
       result = await createPurchaseInvoiceFromPurchaseOrder(
         sourceDocumentId,
+        companyId,
         userId
       );
 

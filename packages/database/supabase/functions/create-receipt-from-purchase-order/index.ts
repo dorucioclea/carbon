@@ -123,7 +123,7 @@ serve(async (req: Request) => {
           .where("receiptId", "=", receiptId)
           .execute();
       } else {
-        receiptIdReadable = await getNextSequence(trx, "receipt");
+        receiptIdReadable = await getNextSequence(trx, "receipt", companyId);
         const newReceipt = await trx
           .insertInto("receipt")
           .values({

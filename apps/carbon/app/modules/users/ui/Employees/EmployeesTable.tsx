@@ -39,6 +39,15 @@ const EmployeesTable = memo(
     const permissions = usePermissions();
     const [params] = useUrlParams();
 
+    const employeeTypesById = useMemo(
+      () =>
+        employeeTypes.reduce<Record<string, ListItem>>((acc, type) => {
+          acc[type.id] = type;
+          return acc;
+        }, {}),
+      [employeeTypes]
+    );
+
     const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
 
     const bulkEditDrawer = useDisclosure();
@@ -88,11 +97,10 @@ const EmployeesTable = memo(
         {
           id: "employeeTypeId",
           header: "Employee Type",
-          cell: (item) => (
+          cell: ({ row }) => (
             <Enumerable
               value={
-                employeeTypes.find((et) => et.id === item.getValue<string>())
-                  ?.name ?? null
+                employeeTypesById[row.original.employeeTypeId!]?.name ?? ""
               }
             />
           ),
