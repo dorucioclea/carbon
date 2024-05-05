@@ -1,9 +1,3 @@
-// import {
-//   Drawer,
-//   DrawerContent,
-//   DrawerHeader,
-//   DrawerTitle,
-// } from "@carbon/react";
 import {
   Button,
   ResizableHandle,
@@ -56,7 +50,7 @@ const DocumentView = ({
     return (
       <>
         <ResizableHandle withHandle />
-        <ResizablePanel maxSize={40}>
+        <ResizablePanel maxSize={50} minSize={25}>
           <Button isIcon variant={"ghost"} onClick={onClose}>
             <LuX className="w-4 h-4" />
           </Button>
@@ -76,7 +70,7 @@ const DocumentView = ({
   return (
     <>
       <ResizableHandle withHandle />
-      <ResizablePanel maxSize={50}>
+      <ResizablePanel maxSize={75} minSize={25}>
         <Button isIcon variant={"ghost"} onClick={onClose}>
           <LuX className="w-4 h-4" />
         </Button>
