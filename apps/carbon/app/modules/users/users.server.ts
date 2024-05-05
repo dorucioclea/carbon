@@ -3,6 +3,7 @@ import { redis } from "@carbon/redis";
 import { redirect } from "@remix-run/node";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import crypto from "crypto";
+import logger from "~/lib/logger";
 import { getSupabaseServiceRole } from "~/lib/supabase";
 import { getSupplierContact } from "~/modules/purchasing";
 import { getCustomerContact } from "~/modules/sales";
@@ -420,6 +421,7 @@ export async function getUserClaims(userId: string) {
       // TODO: remove service role from here, and move it up a level
       const rawClaims = await getClaims(getSupabaseServiceRole(), userId);
       if (rawClaims.error || rawClaims.data === null) {
+        logger.error(rawClaims);
         throw new Error("Failed to get claims");
       }
 
@@ -788,7 +790,7 @@ export async function updateEmployee(
 ): Promise<Result> {
   const updateEmployeeEmployeeType = await client
     .from("employee")
-    .upsert([{ id, employeeTypeId: employeeType }]);
+    .upsert([{ id, companyId, employeeTypeId: employeeType }]);
 
   if (updateEmployeeEmployeeType.error)
     return error(updateEmployeeEmployeeType.error, "Failed to update employee");

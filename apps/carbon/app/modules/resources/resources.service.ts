@@ -389,9 +389,15 @@ export async function getEmployeeAbilities(
 
 export async function getEmployeeJob(
   client: SupabaseClient<Database>,
-  employeeId: string
+  employeeId: string,
+  companyId: number
 ) {
-  return client.from("employeeJob").select("*").eq("id", employeeId).single();
+  return client
+    .from("employeeJob")
+    .select("*")
+    .eq("id", employeeId)
+    .eq("companyId", companyId)
+    .single();
 }
 
 export async function getEmployeeSummary(
@@ -990,6 +996,7 @@ export async function updateEmployeeJob(
   client: SupabaseClient<Database>,
   employeeId: string,
   employeeJob: z.infer<typeof employeeJobValidator> & {
+    companyId: number;
     updatedBy: string;
     customFields?: Json;
   }
@@ -997,7 +1004,8 @@ export async function updateEmployeeJob(
   return client
     .from("employeeJob")
     .update(sanitize(employeeJob))
-    .eq("id", employeeId);
+    .eq("id", employeeId)
+    .eq("companyId", employeeJob.companyId);
 }
 
 export async function upsertContractor(

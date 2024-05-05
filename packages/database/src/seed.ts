@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import * as dotenv from "dotenv";
-import { admin, claims } from "./seed/index";
+import { admin, claims, permissions } from "./seed/index";
 import type { Database } from "./types";
 
 dotenv.config();
@@ -48,9 +48,9 @@ async function seed() {
     {
       id,
       email: admin.email,
-      emailVerified: new Date().toISOString(),
       firstName: admin.firstName,
       lastName: admin.lastName,
+      permissions,
     },
   ]);
   if (upsertAdmin.error) throw upsertAdmin.error;

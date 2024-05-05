@@ -56,7 +56,14 @@ const BreadcrumbLink = forwardRef<
   }
 >(({ className, children, isCurrentPage, ...props }, ref) => {
   return (
-    <Button variant="ghost" className={cn("px-2", className)} asChild>
+    <Button
+      variant="ghost"
+      className={cn(
+        "px-2 outline-none focus-visible:ring-transparent",
+        className
+      )}
+      asChild
+    >
       {isCurrentPage ? (
         <span aria-current="page" ref={ref} {...props}>
           {children}

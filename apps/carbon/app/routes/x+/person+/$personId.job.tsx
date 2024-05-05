@@ -17,14 +17,14 @@ import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "resources",
   });
 
   const { personId } = params;
   if (!personId) throw new Error("Could not find personId");
 
-  const job = await getEmployeeJob(client, personId);
+  const job = await getEmployeeJob(client, personId, companyId);
   if (job.error) {
     throw redirect(
       path.to.people,
@@ -39,7 +39,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export async function action({ request, params }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     update: "resources",
   });
   const { personId } = params;
@@ -54,6 +54,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const updateJob = await updateEmployeeJob(client, personId, {
     ...validation.data,
+    companyId,
     updatedBy: userId,
     customFields: setCustomFields(formData),
   });

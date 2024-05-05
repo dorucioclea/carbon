@@ -7,7 +7,7 @@ CREATE TABLE "user" (
     "about" TEXT NOT NULL DEFAULT '',
     "avatarUrl" TEXT,
     "active" BOOLEAN DEFAULT TRUE,
-    "emailVerified" TIMESTAMP WITH TIME ZONE,
+    "permissions" JSONB DEFAULT '{}',
     "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     "updatedAt" TIMESTAMP WITH TIME ZONE,
 

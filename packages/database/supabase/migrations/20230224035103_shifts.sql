@@ -207,7 +207,7 @@ CREATE TABLE "employeeJob" (
   "updatedBy" TEXT,
   "customFields" JSONB,
 
-  CONSTRAINT "employeeJob_pkey" PRIMARY KEY ("id"),
+  CONSTRAINT "employeeJob_pkey" PRIMARY KEY ("id", "companyId"),
   CONSTRAINT "employeeJob_id_fkey" FOREIGN KEY ("id") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "employeeJob_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "location"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "employeeJob_shiftId_fkey" FOREIGN KEY ("shiftId") REFERENCES "shift"("id") ON DELETE CASCADE ON UPDATE CASCADE,

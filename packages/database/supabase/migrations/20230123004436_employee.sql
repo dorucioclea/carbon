@@ -2,10 +2,9 @@ CREATE TABLE "employee" (
     "id" TEXT NOT NULL,
     "companyId" INTEGER,
     "employeeTypeId" TEXT NOT NULL,
-    CONSTRAINT "employee_pkey" PRIMARY KEY ("id"),
+    CONSTRAINT "employee_pkey" PRIMARY KEY ("id", "companyId"),
     CONSTRAINT "employee_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "employee_employeeTypeId_fkey" FOREIGN KEY ("employeeTypeId") REFERENCES "employeeType"("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "employee_employeeCompany_unique" UNIQUE ("id", "companyId")
+    CONSTRAINT "employee_employeeTypeId_fkey" FOREIGN KEY ("employeeTypeId") REFERENCES "employeeType"("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 CREATE INDEX "employee_companyId_idx" ON "employee" ("companyId");

@@ -3643,17 +3643,17 @@ export type Database = {
       }
       employee: {
         Row: {
-          companyId: number | null
+          companyId: number
           employeeTypeId: string
           id: string
         }
         Insert: {
-          companyId?: number | null
+          companyId: number
           employeeTypeId: string
           id: string
         }
         Update: {
-          companyId?: number | null
+          companyId?: number
           employeeTypeId?: string
           id?: string
         }
@@ -3815,28 +3815,28 @@ export type Database = {
           {
             foreignKeyName: "employeeJob_id_fkey"
             columns: ["id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "employees"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "employeeJob_id_fkey"
             columns: ["id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "employeeSummary"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "employeeJob_id_fkey"
             columns: ["id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "user"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "employeeJob_id_fkey"
             columns: ["id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "userDefaults"
             referencedColumns: ["userId"]
           },
@@ -15014,11 +15014,11 @@ export type Database = {
           avatarUrl: string | null
           createdAt: string
           email: string
-          emailVerified: string | null
           firstName: string
           fullName: string | null
           id: string
           lastName: string
+          permissions: Json | null
           updatedAt: string | null
         }
         Insert: {
@@ -15027,11 +15027,11 @@ export type Database = {
           avatarUrl?: string | null
           createdAt?: string
           email: string
-          emailVerified?: string | null
           firstName: string
           fullName?: string | null
           id: string
           lastName: string
+          permissions?: Json | null
           updatedAt?: string | null
         }
         Update: {
@@ -15040,11 +15040,11 @@ export type Database = {
           avatarUrl?: string | null
           createdAt?: string
           email?: string
-          emailVerified?: string | null
           firstName?: string
           fullName?: string | null
           id?: string
           lastName?: string
+          permissions?: Json | null
           updatedAt?: string | null
         }
         Relationships: []
@@ -19541,20 +19541,6 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
-      delete_claim: {
-        Args: {
-          uid: string
-          claim: string
-        }
-        Returns: string
-      }
-      get_claim: {
-        Args: {
-          uid: string
-          claim: string
-        }
-        Returns: Json
-      }
       get_claims: {
         Args: {
           uid: string
@@ -19574,8 +19560,10 @@ export type Database = {
         }
         Returns: Json
       }
-      get_my_claims: {
-        Args: Record<PropertyKey, never>
+      get_my_permission: {
+        Args: {
+          claim: string
+        }
         Returns: Json
       }
       get_permission_companies: {
@@ -19661,14 +19649,6 @@ export type Database = {
           "": Json
         }
         Returns: unknown
-      }
-      set_claim: {
-        Args: {
-          uid: string
-          claim: string
-          value: Json
-        }
-        Returns: string
       }
       users_for_groups: {
         Args: {

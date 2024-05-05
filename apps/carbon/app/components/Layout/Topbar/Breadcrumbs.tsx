@@ -19,7 +19,6 @@ import {
   ModalHeader,
   ModalTitle,
   VStack,
-  cn,
   useDisclosure,
   useWindowSize,
 } from "@carbon/react";
@@ -116,7 +115,7 @@ function CompanyBreadcrumb() {
               <Button
                 aria-current="page"
                 variant="ghost"
-                className="px-2"
+                className="px-2 focus-visible:ring-transparent"
                 rightIcon={<LuChevronsUpDown />}
               >
                 {routeData?.company.name}
@@ -129,11 +128,7 @@ function CompanyBreadcrumb() {
                 {routeData?.companies.map((c) => (
                   <DropdownMenuItem
                     key={c.companyId}
-                    className={cn(
-                      "flex items-center justify-between",
-                      c.id == routeData.company.id &&
-                        "bg-accent text-accent-foreground"
-                    )}
+                    className="flex items-center justify-between"
                   >
                     <HStack>
                       <Avatar
@@ -170,7 +165,12 @@ function CompanyBreadcrumb() {
             }}
           >
             <ModalContent>
-              <ValidatedForm validator={companyValidator} method="post">
+              <ValidatedForm
+                action={path.to.newCompany}
+                validator={companyValidator}
+                method="post"
+                onSubmit={companyForm.onClose}
+              >
                 <ModalHeader>
                   <ModalTitle>Let's setup your new company</ModalTitle>
                   <ModalDescription>

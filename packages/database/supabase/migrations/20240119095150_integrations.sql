@@ -14,7 +14,7 @@ CREATE TABLE "integration" (
   "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
 
-  CONSTRAINT integration_pkey PRIMARY KEY ("id"),
+  CONSTRAINT integration_pkey PRIMARY KEY ("id", "companyId"),
   CONSTRAINT integration_metadata CHECK (
     active = false OR
     json_matches_schema(jsonschema, metadata)

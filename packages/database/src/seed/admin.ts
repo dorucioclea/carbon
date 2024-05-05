@@ -7,10 +7,13 @@ const admin = {
 
 const ALL_TEAMS_ID = 0;
 
-const claims: Record<string, string | number[]> = {
+const claims: Record<string, string> = {
   role: "employee",
+};
+
+const permissions: Record<string, number[]> = {
   settings_update: [ALL_TEAMS_ID],
   users_update: [ALL_TEAMS_ID],
 };
 
-export { admin, claims };
+export { admin, claims, permissions };

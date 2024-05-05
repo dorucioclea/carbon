@@ -10,7 +10,7 @@ CREATE TABLE search (
   link TEXT NOT NULL,
   "companyId" INTEGER NOT NULL,
 
-  CONSTRAINT search_uuid_unique UNIQUE (uuid),
+  CONSTRAINT search_uuid_unique UNIQUE ("uuid", "companyId"),
   CONSTRAINT search_companyId_fkey FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 

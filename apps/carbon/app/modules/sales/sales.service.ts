@@ -1233,10 +1233,10 @@ export async function upsertSalesOrder(
       .select("id, salesOrderId");
   }
 
-  const [customerPayment, customerShipping, customer] = await Promise.all([
+  const [customerPayment, customerShipping, employee] = await Promise.all([
     getCustomerPayment(client, salesOrder.customerId),
     getCustomerShipping(client, salesOrder.customerId),
-    getEmployeeJob(client, salesOrder.createdBy),
+    getEmployeeJob(client, salesOrder.createdBy, salesOrder.companyId),
   ]);
 
   if (customerPayment.error) return customerPayment;
@@ -1252,7 +1252,7 @@ export async function upsertSalesOrder(
 
   const { shippingMethodId, shippingTermId } = customerShipping.data;
 
-  const locationId = customer?.data?.locationId ?? null;
+  const locationId = employee?.data?.locationId ?? null;
 
   const order = await client
     .from("salesOrder")

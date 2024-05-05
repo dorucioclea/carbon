@@ -33,7 +33,7 @@ async function assertAuthSession(
 
 const sessionStorage = createCookieSessionStorage({
   cookie: {
-    name: "__authSession",
+    name: "carbon",
     httpOnly: true,
     path: "/",
     sameSite: "lax",

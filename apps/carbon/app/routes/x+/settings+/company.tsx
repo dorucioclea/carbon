@@ -124,6 +124,7 @@ export default function Company() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 w-full">
+            {/* @ts-ignore */}
             <CompanyForm company={initialValues} />
             <CompanyLogoForm company={company} />
           </div>

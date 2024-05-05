@@ -14,7 +14,7 @@ const colors = [
   { background: "#8338ec", color: "#ffffff" },
   { background: "#ffadad", color: "#000000" },
   { background: "#ffd6a5", color: "#000000" },
-  { background: "#fdffb6", color: "#000000" },
+  { background: "#4f46e5", color: "#ffffff" },
   { background: "#caffbf", color: "#000000" },
   { background: "#9bf6ff", color: "#000000" },
   { background: "#a0c4ff", color: "#000000" },

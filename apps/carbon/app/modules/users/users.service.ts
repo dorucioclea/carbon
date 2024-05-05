@@ -67,9 +67,15 @@ export async function getCustomers(
 
 export async function getEmployee(
   client: SupabaseClient<Database>,
-  id: string
+  id: string,
+  companyId: number
 ) {
-  return client.from("employees").select("*").eq("id", id).single();
+  return client
+    .from("employees")
+    .select("*")
+    .eq("id", id)
+    .eq("companyId", companyId)
+    .single();
 }
 
 export async function getEmployees(

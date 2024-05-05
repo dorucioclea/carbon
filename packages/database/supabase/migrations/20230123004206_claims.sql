@@ -1,3 +1,5 @@
+
+
 CREATE OR REPLACE FUNCTION is_claims_admin() RETURNS "bool"
   LANGUAGE "plpgsql" 
   AS $$
@@ -15,8 +17,8 @@ CREATE OR REPLACE FUNCTION is_claims_admin() RETURNS "bool"
       
       IF EXISTS (
           SELECT 1
-          FROM jsonb_array_elements_text((current_setting('request.jwt.claims', true)::jsonb)->'app_metadata'->'users_update') AS j
-          WHERE j::int = 0
+          FROM get_permission_companies_as_text('users_update') AS company
+          WHERE company::int = 0
       ) THEN
         return true; -- user has user_update set to true
       ELSE
@@ -31,26 +33,26 @@ CREATE OR REPLACE FUNCTION is_claims_admin() RETURNS "bool"
   END;
 $$;
 
-CREATE OR REPLACE FUNCTION get_my_claims() RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION get_my_permission(claim text) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
     AS $$
-    DECLARE retval jsonb;
+    DECLARE permissions jsonb;
     BEGIN
-      -- TODO: we should be able to use (current_setting('request.jwt.claims', true)::jsonb)->'app_metadata'
-      select raw_app_meta_data from auth.users into retval where id = auth.uid();
-        return retval;
+      select coalesce(permissions->claim, null) from public.user into permissions where id = auth.uid()::text;
+        return permissions;
       
     END;
 $$;
 
+
 CREATE OR REPLACE FUNCTION get_my_claim(claim text) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
     AS $$
-    DECLARE retval jsonb;
+    DECLARE claims jsonb;
     BEGIN
       -- TODO: we should be able to use (current_setting('request.jwt.claims', true)::jsonb)->'app_metadata'
-      select coalesce(raw_app_meta_data->claim, null) from auth.users into retval where id = auth.uid();
-        return retval;
+      select coalesce(raw_app_meta_data->claim, null) from auth.users into claims where id = auth.uid();
+        return claims;
       
     END;
 $$;
@@ -72,8 +74,8 @@ CREATE OR REPLACE FUNCTION get_permission_companies(claim text) RETURNS integer[
     AS $$
     DECLARE retval integer[];
     BEGIN
-      -- TODO: (current_setting('request.jwt.claims', true)::jsonb)->'app_metadata'->
-      select jsonb_to_integer_array(coalesce(raw_app_meta_data->claim, '[]')) from auth.users into retval where id = auth.uid();
+      
+      select jsonb_to_integer_array(coalesce(permissions->claim, '[]')) from public.user into retval where id = auth.uid()::text;
         return retval;
       
     END;
@@ -85,7 +87,7 @@ CREATE OR REPLACE FUNCTION get_permission_companies_as_text(claim text) RETURNS 
     DECLARE retval text[];
     BEGIN
       -- TODO: (current_setting('request.jwt.claims', true)::jsonb)->'app_metadata'->
-      select jsonb_to_text_array(coalesce(raw_app_meta_data->claim, '[]')) from auth.users into retval where id = auth.uid();
+      select jsonb_to_text_array(coalesce(permissions->claim, '[]')) from public.user into retval where id = auth.uid()::text;
         return retval;
       
     END;
@@ -107,15 +109,15 @@ CREATE OR REPLACE FUNCTION has_company_permission(claim text, company integer) R
     LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
     AS $$
     DECLARE
-      claim_value integer[];
+      permission_value integer[];
     BEGIN
       -- TODO: (current_setting('request.jwt.claims', true)::jsonb)->'app_metadata'->claim
-      SELECT jsonb_to_integer_array(coalesce(raw_app_meta_data->claim, '[]')) INTO claim_value FROM auth.users WHERE id = auth.uid();
-      IF claim_value IS NULL THEN
+      SELECT jsonb_to_integer_array(coalesce(permissions->claim, '[]')) INTO permission_value FROM public.user WHERE id = auth.uid()::text;
+      IF permission_value IS NULL THEN
         return false;
-      ELSIF 0 = ANY(claim_value::integer[]) THEN
+      ELSIF 0 = ANY(permission_value::integer[]) THEN
         return true;
-      ELSIF company = ANY(claim_value::integer[]) THEN
+      ELSIF company = ANY(permission_value::integer[]) THEN
         return true;
       ELSE
         return false;
@@ -127,13 +129,13 @@ CREATE OR REPLACE FUNCTION has_any_company_permission(claim text) RETURNS "bool"
     LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
     AS $$
     DECLARE
-      claim_value integer[];
+      permission_value integer[];
     BEGIN
       
-      SELECT jsonb_to_integer_array(coalesce(raw_app_meta_data->claim, '[]')) INTO claim_value FROM auth.users WHERE id = auth.uid();
-      IF claim_value IS NULL THEN
+      SELECT jsonb_to_integer_array(coalesce(permissions->claim, '[]')) INTO permission_value FROM public.user WHERE id = auth.uid()::text;
+      IF permission_value IS NULL THEN
         return false;
-      ELSIF array_length(claim_value, 1) > 0 THEN
+      ELSIF array_length(permission_value, 1) > 0 THEN
         return true;
       ELSE
         return false;
@@ -152,56 +154,18 @@ CREATE OR REPLACE FUNCTION get_company_id_from_foreign_key(foreign_key TEXT, tbl
     END;
 $$;
 
-CREATE OR REPLACE FUNCTION get_claims(uid uuid) RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION get_claims(uid text) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
     AS $$
-    DECLARE retval jsonb;
+    DECLARE claims jsonb;
+    DECLARE perms jsonb;
     BEGIN
-      select raw_app_meta_data from auth.users into retval where id = uid::uuid;
-        return retval;
-      
-    END;
-$$;
-
-CREATE OR REPLACE FUNCTION get_claim(uid uuid, claim text) RETURNS "jsonb"
-    LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
-    AS $$
-    DECLARE retval jsonb;
-    BEGIN
-      select coalesce(raw_app_meta_data->claim, null) from auth.users into retval where id = uid::uuid;
-        return retval;
+      select raw_app_meta_data from auth.users into claims where id = uid::uuid;
+      select permissions from public.user into perms where id = uid::text;
+        return (claims || perms)::jsonb;
       
     END;
 $$;
 
 
-
-CREATE OR REPLACE FUNCTION set_claim(uid uuid, claim text, value jsonb) RETURNS "text"
-    LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
-    AS $$
-    BEGIN
-      IF NOT is_claims_admin() THEN
-          RETURN 'error: access denied';
-      ELSE        
-        update auth.users set raw_app_meta_data = 
-          raw_app_meta_data || 
-            json_build_object(claim, value)::jsonb where id = uid;
-        return 'OK';
-      END IF;
-    END;
-$$;
-
-CREATE OR REPLACE FUNCTION delete_claim(uid uuid, claim text) RETURNS "text"
-    LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
-    AS $$
-    BEGIN
-      IF NOT is_claims_admin() THEN
-          RETURN 'error: access denied';
-      ELSE        
-        update auth.users set raw_app_meta_data = 
-          raw_app_meta_data - claim where id = uid;
-        return 'OK';
-      END IF;
-    END;
-$$;
 NOTIFY pgrst, 'reload schema';

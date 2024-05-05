@@ -43,7 +43,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export async function action({ request, params }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     update: "resources",
   });
   const { personId } = params;
@@ -59,6 +59,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const updateJob = await updateEmployeeJob(client, personId, {
     ...validation.data,
+    companyId,
     updatedBy: userId,
   });
   if (updateJob.error) {

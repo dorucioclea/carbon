@@ -66,7 +66,6 @@ export async function action({ request }: ActionFunctionArgs) {
 
   // there are no entries in the userToCompany table which
   // dictates RLS for the company table
-  const supabaseClient = getSupabaseServiceRole();
 
   const validation = await validator(onboardingCompanyValidator).validate(
     await request.formData()
@@ -76,6 +75,7 @@ export async function action({ request }: ActionFunctionArgs) {
     return validationError(validation.error);
   }
 
+  const supabaseClient = getSupabaseServiceRole();
   const { next, ...data } = validation.data;
 
   let companyId: number | undefined;
