@@ -6,9 +6,11 @@ import {
 } from "@carbon/react";
 import { useNavigate } from "@remix-run/react";
 import { useState } from "react";
-import { LuX } from "react-icons/lu";
+import { LuDownload, LuX } from "react-icons/lu";
 import { Document, Page, pdfjs } from "react-pdf";
+import { type Document as DocumentType } from "~/modules/documents";
 import { path } from "~/utils/path";
+import { useDocument } from "./useDocument";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
@@ -26,17 +28,11 @@ function SkeletonDocument() {
 
 type DocumentPreviewProps = {
   bucket: string;
-  pathToFile: string;
   type: string;
-  name: string;
+  document: DocumentType;
 };
 
-const DocumentView = ({
-  bucket,
-  pathToFile,
-  type,
-  name,
-}: DocumentPreviewProps) => {
+const DocumentView = ({ bucket, document }: DocumentPreviewProps) => {
   const [numPages, setNumPages] = useState<number>();
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
@@ -45,18 +41,25 @@ const DocumentView = ({
 
   const navigate = useNavigate();
   const onClose = () => navigate(path.to.documents);
+  const { download } = useDocument();
 
-  if (type?.startsWith("Image")) {
+  if (document.type?.startsWith("Image")) {
     return (
       <>
         <ResizableHandle withHandle />
         <ResizablePanel maxSize={50} minSize={25}>
-          <Button isIcon variant={"ghost"} onClick={onClose}>
-            <LuX className="w-4 h-4" />
-          </Button>
+          <div>
+            <Button isIcon variant={"ghost"} onClick={onClose}>
+              <LuX className="w-4 h-4" />
+            </Button>
+            <Button isIcon variant={"ghost"} onClick={onClose}>
+              <LuDownload className="w-4 h-4 mr-2" />
+              Download
+            </Button>
+          </div>
           <div className="border w-full mx-auto rounded-md">
             <img
-              src={path.to.file.previewFile(`${bucket}/${pathToFile}`)}
+              src={path.to.file.previewFile(`${bucket}/${document.path}`)}
               className="object-contain"
               width={"680"}
               alt="Preview"
@@ -71,15 +74,21 @@ const DocumentView = ({
     <>
       <ResizableHandle withHandle />
       <ResizablePanel maxSize={75} minSize={25}>
-        <Button isIcon variant={"ghost"} onClick={onClose}>
-          <LuX className="w-4 h-4" />
-        </Button>
+        <div className="flex justify-between">
+          <Button isIcon variant={"ghost"} onClick={onClose}>
+            <LuX className="w-4 h-4" />
+          </Button>
+          <Button variant={"ghost"} onClick={() => download(document)}>
+            <LuDownload className="w-4 h-4 mr-2" />
+            Download
+          </Button>
+        </div>
         <Document
-          file={path.to.file.previewFile(`${bucket}/${pathToFile}`)}
+          file={path.to.file.previewFile(`${bucket}/${document.path}`)}
           onLoadSuccess={onDocumentLoadSuccess}
           loading={<SkeletonDocument />}
         >
-          <div className="overflow-auto" style={{ height: "780px" }}>
+          <div className="overflow-auto " style={{ height: "90vh" }}>
             {Array.from(new Array(numPages), (_, index) => (
               <Page
                 key={`page_${index + 1}`}
