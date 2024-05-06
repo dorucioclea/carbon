@@ -985,7 +985,8 @@ export async function updatePermissions(
 
     const permissionsUpdate = await getSupabaseServiceRole()
       .from("user")
-      .update({ permissions: updatedPermissions });
+      .update({ permissions: updatedPermissions })
+      .eq("id", id);
     if (permissionsUpdate.error)
       return error(permissionsUpdate.error, "Failed to update claims");
 

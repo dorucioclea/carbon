@@ -23,7 +23,7 @@ import {
   useWindowSize,
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
-import { Link, useMatches } from "@remix-run/react";
+import { Form, Link, useMatches } from "@remix-run/react";
 import { BsFillHexagonFill } from "react-icons/bs";
 import { LuChevronsUpDown } from "react-icons/lu";
 import { MdAdd } from "react-icons/md";
@@ -126,22 +126,30 @@ function CompanyBreadcrumb() {
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 {routeData?.companies.map((c) => (
-                  <DropdownMenuItem
+                  <Form
                     key={c.companyId}
-                    className="flex items-center justify-between"
+                    method="post"
+                    action={path.to.companySwitch(c.companyId!)}
                   >
-                    <HStack>
-                      <Avatar
-                        size="xs"
-                        name={c.name ?? undefined}
-                        src={c.logo ?? undefined}
-                      />
-                      <span>{c.name}</span>
-                    </HStack>
-                    <Badge variant="secondary" className="ml-2">
-                      {c.employeeType}
-                    </Badge>
-                  </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="flex items-center justify-between w-full"
+                      asChild
+                    >
+                      <button type="submit">
+                        <HStack>
+                          <Avatar
+                            size="xs"
+                            name={c.name ?? undefined}
+                            src={c.logo ?? undefined}
+                          />
+                          <span>{c.name}</span>
+                        </HStack>
+                        <Badge variant="secondary" className="ml-2">
+                          {c.employeeType}
+                        </Badge>
+                      </button>
+                    </DropdownMenuItem>
+                  </Form>
                 ))}
               </DropdownMenuGroup>
 

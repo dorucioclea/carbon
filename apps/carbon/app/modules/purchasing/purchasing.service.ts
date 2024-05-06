@@ -777,7 +777,7 @@ export async function upsertPurchaseOrder(
   const [supplierPayment, supplierShipping, purchaser] = await Promise.all([
     getSupplierPayment(client, purchaseOrder.supplierId),
     getSupplierShipping(client, purchaseOrder.supplierId),
-    getEmployeeJob(client, purchaseOrder.createdBy),
+    getEmployeeJob(client, purchaseOrder.createdBy, purchaseOrder.companyId),
   ]);
 
   if (supplierPayment.error) return supplierPayment;

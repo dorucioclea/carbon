@@ -16,7 +16,7 @@ import {
   getPermissionCacheKey,
 } from "~/modules/users/users.server";
 import { requirePermissions } from "~/services/auth/auth.server";
-import { commitAuthSession } from "~/services/session.server";
+import { updateCompanySession } from "~/services/session.server";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 
@@ -96,9 +96,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   throw redirect(path.to.authenticatedRoot, {
     headers: {
-      "Set-Cookie": await commitAuthSession(request, {
-        company: companyId,
-      }),
+      "Set-Cookie": await updateCompanySession(request, companyId),
     },
   });
 }

@@ -100,6 +100,8 @@ export const path = {
       generatePath(`${x}/accounting/charts/${id}`),
     chartOfAccounts: `${x}/accounting/charts`,
     company: `${x}/settings/company`,
+    companySwitch: (companyId: number) =>
+      generatePath(`${x}/settings/company/switch/${companyId}`),
     contractor: (id: string) =>
       generatePath(`${x}/resources/contractors/${id}`),
     contractors: `${x}/resources/contractors`,

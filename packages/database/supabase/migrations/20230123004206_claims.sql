@@ -145,7 +145,7 @@ CREATE OR REPLACE FUNCTION get_company_id_from_foreign_key(foreign_key TEXT, tbl
     DECLARE
       company_id integer;
     BEGIN
-      EXECUTE 'SELECT "companyId" FROM ' || tbl || ' WHERE id = $1' INTO company_id USING foreign_key;
+      EXECUTE 'SELECT "companyId" FROM "' || tbl || '" WHERE id = $1' INTO company_id USING foreign_key;
       RETURN company_id;
     END;
 $$;

@@ -5,8 +5,11 @@ import { useActionData, useFetcher } from "@remix-run/react";
 import { useEffect } from "react";
 import { supabaseClient } from "~/lib/supabase/client";
 import { getUserByEmail } from "~/modules/users/users.server";
-import { refreshAccessToken } from "~/services/auth/auth.server";
 import { callbackValidator } from "~/services/auth/auth.models";
+import {
+  refreshAccessToken,
+  requirePermissions,
+} from "~/services/auth/auth.server";
 import {
   commitAuthSession,
   destroyAuthSession,
@@ -28,6 +31,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export async function action({ request }: ActionFunctionArgs): FormActionData {
   assertIsPost(request);
+  const { companyId } = await requirePermissions(request, {});
 
   const validation = await validator(callbackValidator).validate(
     await request.formData()
@@ -40,7 +44,7 @@ export async function action({ request }: ActionFunctionArgs): FormActionData {
   }
 
   const { refreshToken } = validation.data;
-  const authSession = await refreshAccessToken(refreshToken);
+  const authSession = await refreshAccessToken(refreshToken, companyId);
   if (!authSession) {
     return redirect(
       path.to.root,

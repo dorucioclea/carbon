@@ -191,7 +191,7 @@ export async function signInWithEmail(email: string, password: string) {
 
 export async function refreshAccessToken(
   refreshToken?: string,
-  companyId?: number | null
+  companyId?: number
 ): Promise<AuthSession | null> {
   if (!refreshToken) return null;
 
@@ -203,13 +203,7 @@ export async function refreshAccessToken(
 
   if (!data.session || error) return null;
 
-  let company = companyId;
-  if (!companyId) {
-    const companies = await getCompaniesForUser(client, data.user?.id!);
-    company = companies?.[0] ?? -1;
-  }
-
-  return makeAuthSession(data.session, company!);
+  return makeAuthSession(data.session, companyId!);
 }
 
 export async function verifyAuthSession(authSession: AuthSession) {
