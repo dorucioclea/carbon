@@ -49,3 +49,29 @@ CREATE TABLE "userToCompany" (
   "userId" TEXT NOT NULL REFERENCES "user" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
   "companyId" INTEGER NOT NULL REFERENCES "company" ("id") ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+ALTER TABLE "userToCompany" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Authenticated users can view userToCompany" ON "userToCompany"
+  FOR SELECT
+  USING (
+    auth.role() = 'authenticated' 
+  );
+
+CREATE POLICY "Employees with users_create can create userToCompany" ON "userToCompany"
+  FOR INSERT
+  WITH CHECK (
+    has_company_permission('users_create', "companyId")
+  );
+
+CREATE POLICY "Employees with users_update can update userToCompany" ON "userToCompany"
+  FOR UPDATE
+  USING (
+    has_company_permission('users_update', "companyId")
+  );
+
+CREATE POLICY "Employees with users_delete can delete userToCompany" ON "userToCompany"
+  FOR DELETE
+  USING (
+    has_company_permission('users_delete', "companyId")
+  );

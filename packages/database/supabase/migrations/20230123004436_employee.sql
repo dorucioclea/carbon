@@ -1,6 +1,6 @@
 CREATE TABLE "employee" (
     "id" TEXT NOT NULL,
-    "companyId" INTEGER,
+    "companyId" INTEGER NULL,
     "employeeTypeId" TEXT NOT NULL,
     CONSTRAINT "employee_pkey" PRIMARY KEY ("id", "companyId"),
     CONSTRAINT "employee_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
@@ -13,7 +13,6 @@ ALTER TABLE "employee" ENABLE ROW LEVEL SECURITY;
 
 
 CREATE POLICY "Employees can view employees from their company" ON "employee" FOR SELECT USING (
-    is_claims_admin() OR
     "companyId" IN (
         SELECT "companyId" FROM "userToCompany" WHERE "userId" = auth.uid()::text
     )
@@ -31,7 +30,7 @@ CREATE POLICY "Employees with users_update can delete employees" ON "employee" F
     has_company_permission('users_delete', "companyId")
 );
 
-CREATE OR REPLACE VIEW "companies" WITH(SECURITY_INVOKER=true) AS
+CREATE OR REPLACE VIEW "companies" AS
   SELECT DISTINCT
     c.*,
     uc.*,
@@ -42,4 +41,4 @@ CREATE OR REPLACE VIEW "companies" WITH(SECURITY_INVOKER=true) AS
     INNER JOIN "employee" e
       ON e.id = uc."userId" AND e."companyId" = uc."companyId"
     INNER JOIN "employeeType" et
-      ON et.id = e."employeeTypeId"
+      ON et.id = e."employeeTypeId";

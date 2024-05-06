@@ -15,11 +15,7 @@ CREATE OR REPLACE FUNCTION is_claims_admin() RETURNS "bool"
         return false; -- jwt expired
       END IF; 
       
-      IF EXISTS (
-          SELECT 1
-          FROM get_permission_companies_as_text('users_update') AS company
-          WHERE company::int = 0
-      ) THEN
+      IF has_company_permission('update_users', 0) THEN
         return true; -- user has user_update set to true
       ELSE
         return false; -- user does NOT have user_update set to true

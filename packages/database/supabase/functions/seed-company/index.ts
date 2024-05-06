@@ -232,41 +232,49 @@ serve(async (req: Request) => {
         .values(customFields.map((cf) => ({ ...cf, companyId })))
         .execute();
 
-      const user = await supabaseClient.auth.admin.getUserById(userId);
+      const user = await supabaseClient
+        .from("user")
+        .select("permissions")
+        .eq("id", userId)
+        .single();
       if (user.error) throw new Error(user.error.message);
 
-      const currentClaims = user.data?.user.app_metadata ?? {};
-      const newClaims = { ...currentClaims };
+      const currentPermissions = (user.data?.permissions ?? {}) as Record<
+        string,
+        number[]
+      >;
+      const newPermissions = { ...currentPermissions };
       modules.forEach(({ name }) => {
         const module = name?.toLowerCase();
-        if (`${module}_view` in newClaims) {
-          newClaims[`${module}_view`].push(companyId);
+        if (`${module}_view` in newPermissions) {
+          newPermissions[`${module}_view`].push(companyId);
         } else {
-          newClaims[`${module}_view`] = [companyId];
+          newPermissions[`${module}_view`] = [companyId];
         }
 
-        if (`${module}_create` in newClaims) {
-          newClaims[`${module}_create`].push(companyId);
+        if (`${module}_create` in newPermissions) {
+          newPermissions[`${module}_create`].push(companyId);
         } else {
-          newClaims[`${module}_create`] = [companyId];
+          newPermissions[`${module}_create`] = [companyId];
         }
 
-        if (`${module}_update` in newClaims) {
-          newClaims[`${module}_update`].push(companyId);
+        if (`${module}_update` in newPermissions) {
+          newPermissions[`${module}_update`].push(companyId);
         } else {
-          newClaims[`${module}_update`] = [companyId];
+          newPermissions[`${module}_update`] = [companyId];
         }
 
-        if (`${module}_delete` in newClaims) {
-          newClaims[`${module}_delete`].push(companyId);
+        if (`${module}_delete` in newPermissions) {
+          newPermissions[`${module}_delete`].push(companyId);
         } else {
-          newClaims[`${module}_delete`] = [companyId];
+          newPermissions[`${module}_delete`] = [companyId];
         }
       });
 
-      const { error } = await supabaseClient.auth.admin.updateUserById(userId, {
-        app_metadata: newClaims,
-      });
+      const { error } = await supabaseClient
+        .from("user")
+        .update({ permissions: newPermissions })
+        .eq("id", userId);
       if (error) throw new Error(error.message);
     });
 

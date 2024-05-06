@@ -1,3 +1,4 @@
+import type { User } from "@supabase/supabase-js";
 import { createClient } from "@supabase/supabase-js";
 import * as dotenv from "dotenv";
 import { admin, claims, permissions } from "./seed/index";
@@ -20,7 +21,8 @@ const getUserId = async (): Promise<string> => {
   const existingUserId = await supabaseAdmin.auth.admin
     .listUsers()
     .then(
-      ({ data }) => data.users.find((user) => user.email === admin.email)?.id
+      ({ data }) =>
+        data.users.find((user: User) => user?.email! === admin.email)?.id
     );
 
   if (existingUserId) return existingUserId;
