@@ -9,9 +9,7 @@ import { formatDate } from "@carbon/utils";
 import { useFetcher, useFetchers, useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo, useState } from "react";
-import { BsFillPenFill } from "react-icons/bs";
-import { IoMdTrash } from "react-icons/io";
-import { LuPin } from "react-icons/lu";
+import { LuPencil, LuPin, LuTrash } from "react-icons/lu";
 import {
   CustomerAvatar,
   EmployeeAvatar,
@@ -267,7 +265,7 @@ const QuotationsTable = memo(({ data, count }: QuotationsTableProps) => {
     return (row: Quotation) => (
       <>
         <MenuItem onClick={() => navigate(path.to.quote(row.id!))}>
-          <MenuIcon icon={<BsFillPenFill />} />
+          <MenuIcon icon={<LuPencil />} />
           Edit
         </MenuItem>
         <MenuItem
@@ -277,7 +275,7 @@ const QuotationsTable = memo(({ data, count }: QuotationsTableProps) => {
             deleteQuotationModal.onOpen();
           }}
         >
-          <MenuIcon icon={<IoMdTrash />} />
+          <MenuIcon icon={<LuTrash />} />
           Delete
         </MenuItem>
       </>

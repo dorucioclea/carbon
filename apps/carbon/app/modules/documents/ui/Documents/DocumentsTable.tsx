@@ -387,7 +387,7 @@ const DocumentsTable = memo(
         // },
         // {
         //   label: "Move to Trash",
-        //   icon: <IoMdTrash />,
+        //   icon: <LuTrash />,
         //   // TODO - disabled can be a function of selected
         //   disabled: true,
         //   onClick: (selected: Document[]) => {

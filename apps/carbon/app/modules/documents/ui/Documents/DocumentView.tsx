@@ -48,16 +48,17 @@ const DocumentView = ({ bucket, document }: DocumentPreviewProps) => {
       <>
         <ResizableHandle withHandle />
         <ResizablePanel maxSize={50} minSize={25}>
-          <div>
+          <div className="flex items-center justify-between">
             <Button isIcon variant={"ghost"} onClick={onClose}>
               <LuX className="w-4 h-4" />
             </Button>
-            <Button isIcon variant={"ghost"} onClick={onClose}>
+            <span>{document.name}</span>
+            <Button variant={"ghost"} onClick={() => download(document)}>
               <LuDownload className="w-4 h-4 mr-2" />
               Download
             </Button>
           </div>
-          <div className="border w-full mx-auto rounded-md">
+          <div className="border flex items-center w-full mx-auto rounded-md">
             <img
               src={path.to.file.previewFile(`${bucket}/${document.path}`)}
               className="object-contain"
@@ -74,10 +75,11 @@ const DocumentView = ({ bucket, document }: DocumentPreviewProps) => {
     <>
       <ResizableHandle withHandle />
       <ResizablePanel maxSize={75} minSize={25}>
-        <div className="flex justify-between">
+        <div className="flex items-center justify-between">
           <Button isIcon variant={"ghost"} onClick={onClose}>
             <LuX className="w-4 h-4" />
           </Button>
+          <span>{document.name}</span>
           <Button variant={"ghost"} onClick={() => download(document)}>
             <LuDownload className="w-4 h-4 mr-2" />
             Download
@@ -88,7 +90,7 @@ const DocumentView = ({ bucket, document }: DocumentPreviewProps) => {
           onLoadSuccess={onDocumentLoadSuccess}
           loading={<SkeletonDocument />}
         >
-          <div className="overflow-auto " style={{ height: "90vh" }}>
+          <div className="overflow-auto " style={{ height: "92vh" }}>
             {Array.from(new Array(numPages), (_, index) => (
               <Page
                 key={`page_${index + 1}`}

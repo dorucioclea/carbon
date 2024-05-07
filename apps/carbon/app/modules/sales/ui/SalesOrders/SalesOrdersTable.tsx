@@ -10,9 +10,7 @@ import { formatDate } from "@carbon/utils";
 import { useFetcher, useFetchers } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useMemo, useState } from "react";
-import { BsFillPenFill } from "react-icons/bs";
-import { IoMdTrash } from "react-icons/io";
-import { LuPin } from "react-icons/lu";
+import { LuPencil, LuPin, LuTrash } from "react-icons/lu";
 import {
   CustomerAvatar,
   EmployeeAvatar,
@@ -263,7 +261,7 @@ const SalesOrdersTable = memo(({ data, count }: SalesOrdersTableProps) => {
           disabled={!permissions.can("view", "sales")}
           onClick={() => edit(row)}
         >
-          <MenuIcon icon={<BsFillPenFill />} />
+          <MenuIcon icon={<LuPencil />} />
           Edit
         </MenuItem>
 
@@ -287,7 +285,7 @@ const SalesOrdersTable = memo(({ data, count }: SalesOrdersTableProps) => {
             deleteSalesOrderModal.onOpen();
           }}
         >
-          <MenuIcon icon={<IoMdTrash />} />
+          <MenuIcon icon={<LuTrash />} />
           Delete
         </MenuItem>
       </>
