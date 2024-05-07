@@ -7,29 +7,10 @@ description: Conventions for permissions in Carbon ERP
 
 There are two types of permissions in the system:
 
-1. **Module permissions** - These are permissions that are specific to a module. For example, a user may have permission to view the sales module, but not to create, update or delete sales.
-2. **Role permissions** - These are permissions that are specific to a role. For example, customers may be able to view the sales module, but a customer role limits the data to only their own sales, where an employee with the same permission can view all sales.
+1. **Role permissions** - These are permissions that are specific to a role. These are in the `auth.users` and included in the JWT.
+2. **Module permissions** - These are permissions that are specific to a module. The are store in the `public.user` table.
 
-A user's permissions are stored in the `auth.users` table in the `raw_app_meta_data` column.
-
-The JSON permissions data in that column something like this:
-
-```json
-{
-  "role": "employee",
-  ...
-  "sales_view": true,
-  "sales_create": true,
-  "sales_update": true,
-  "sales_delete": false,
-  ...
-  "purchasing_view": false,
-  "purchasing_create": false,
-  "purchasing_update": false,
-  "purchasing_delete": false,
-  ...
-}
-```
+For example, customers may be able to view the sales module, but a customer role limits the data to only their own sales, where an employee with the same permission can view all sales.
 
 Each user has a **role**, which may be one of the following:
 
@@ -37,7 +18,26 @@ Each user has a **role**, which may be one of the following:
 - `customer`
 - `supplier`
 
-Additionally, each user has a set of permissions for each module. Generally, the permissions are:
+Additionally, each user has company-based permissions which are something like this:
+
+```json
+{
+  "sales_view": [1],
+  "sales_create": [1],
+  "sales_update": [1],
+  "sales_delete": [1],
+  ...
+  "purchasing_view": [1,2],
+  "purchasing_create": [1],
+  "purchasing_update": [1],
+  "purchasing_delete": [1],
+  ...
+}
+```
+
+This permissions roughly translates to: "The user has full permissions in purchasing and sales for company 1, but only the ability to view purchasing for company 2.
+
+Generally, the permission values are an array of company IDs (integers), and keys are:
 
 - `<module>_view`
 - `<module>_create`
@@ -70,15 +70,15 @@ ALTER TABLE "customer" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees with sales_view can view customer" ON "customer"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('sales_view')::boolean, false) = true
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permissions('sales_view', "companyId")
   );
 
 CREATE POLICY "Customers with sales_view can their own organization" ON "customer"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('sales_view')::boolean, false) = true
-    AND (get_my_claim('role'::text)) = '"customer"'::jsonb
+    has_role('customer') AND
+    has_company_permissions('sales_view', "companyId")
     AND id IN (
       SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
     )
@@ -87,22 +87,22 @@ CREATE POLICY "Customers with sales_view can their own organization" ON "custome
 CREATE POLICY "Employees with sales_create can create customers" ON "customer"
   FOR INSERT
   WITH CHECK (
-    coalesce(get_my_claim('sales_create')::boolean, false)
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permissions('sales_create', "companyId")
   );
 
 CREATE POLICY "Employees with sales_update can update customers" ON "customer"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('sales_update')::boolean, false)
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permissions('sales_update', "companyId")
   );
 
 CREATE POLICY "Customers with sales_update can their own organization" ON "customer"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('sales_update')::boolean, false) = true
-    AND (get_my_claim('role'::text)) = '"customer"'::jsonb
+    has_role('customer') AND
+    has_company_permissions('sales_update', "companyId")
     AND id IN (
       SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
     )
@@ -111,8 +111,8 @@ CREATE POLICY "Customers with sales_update can their own organization" ON "custo
 CREATE POLICY "Employees with sales_delete can delete customers" ON "customer"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('sales_delete')::boolean, false) = true
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permissions('sales_delete', "companyId")
   );
 
 ```
