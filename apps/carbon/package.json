@@ -70,6 +70,8 @@
   "devDependencies": {
     "@carbon/tailwind": "*",
     "@carbon/tsconfig": "*",
+    "@playwright/test": "^1.44.0",
+    "@types/node": "^20.12.11",
     "@types/nprogress": "^0.2.0",
     "@types/react": "^18.2.74",
     "@types/react-dom": "^18.2.24",
