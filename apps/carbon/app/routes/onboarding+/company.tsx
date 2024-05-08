@@ -78,7 +78,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const supabaseClient = getSupabaseServiceRole();
   const { next, ...data } = validation.data;
 
-  let companyId: number | undefined;
+  let companyId: string | undefined;
 
   const [company, locations] = await Promise.all([
     getCompany(client, 1),

@@ -40,7 +40,7 @@ export async function getCompaniesForUser(
 
 export async function getCustomers(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
   }
@@ -68,7 +68,7 @@ export async function getCustomers(
 export async function getEmployee(
   client: SupabaseClient<Database>,
   id: string,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("employees")
@@ -80,7 +80,7 @@ export async function getEmployee(
 
 export async function getEmployees(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
   }
@@ -113,7 +113,7 @@ export async function getEmployeeType(
 
 export async function getEmployeeTypes(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args?: GenericQueryFilters & { search: string | null }
 ) {
   let query = client
@@ -157,7 +157,7 @@ export async function getGroupMembers(
 
 export async function getGroups(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args?: GenericQueryFilters & {
     search: string | null;
     uid: string | null;
@@ -187,7 +187,7 @@ export async function getPermissionsByEmployeeType(
 
 export async function getSuppliers(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
   }
@@ -222,7 +222,7 @@ export async function getUsers(client: SupabaseClient<Database>) {
 
 export async function insertEmployeeType(
   client: SupabaseClient<Database>,
-  employeeType: { name: string; companyId: number }
+  employeeType: { name: string; companyId: string }
 ) {
   return client
     .from("employeeType")
@@ -233,7 +233,7 @@ export async function insertEmployeeType(
 
 export async function insertGroup(
   client: SupabaseClient<Database>,
-  group: { name: string; companyId: number }
+  group: { name: string; companyId: string }
 ) {
   return client.from("group").insert(group).select("*").single();
 }
@@ -241,7 +241,7 @@ export async function insertGroup(
 export async function upsertEmployeeType(
   client: SupabaseClient<Database>,
   employeeType:
-    | { name: string; companyId: number }
+    | { name: string; companyId: string }
     | { id: string; name: string }
 ) {
   if ("id" in employeeType) {
@@ -262,7 +262,7 @@ export async function upsertEmployeeType(
 export async function upsertEmployeeTypePermissions(
   client: SupabaseClient<Database>,
   employeeTypeId: string,
-  companyId: number,
+  companyId: string,
   permissions: { name: string; permission: CompanyPermission }[]
 ) {
   const employeeTypePermissions = permissions.map(({ name, permission }) => ({
@@ -286,7 +286,7 @@ export async function upsertGroup(
   }: {
     id: string;
     name: string;
-    companyId: number;
+    companyId: string;
   }
 ) {
   return client.from("group").upsert([{ id, name, companyId }]);

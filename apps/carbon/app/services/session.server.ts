@@ -179,7 +179,7 @@ export async function refreshAuthSession(
 
 export async function updateCompanySession(
   request: Request,
-  companyId: number
+  companyId: string
 ) {
   const session = await getSession(request);
   const authSession = await getAuthSession(request);

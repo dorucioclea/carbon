@@ -54,7 +54,7 @@ export async function getAuthAccountByAccessToken(accessToken: string) {
 
 function makeAuthSession(
   supabaseSession: SupabaseAuthSession | null,
-  companyId: number
+  companyId: string
 ): AuthSession | null {
   if (!supabaseSession) return null;
 
@@ -87,7 +87,7 @@ export async function requirePermissions(
   }
 ): Promise<{
   client: SupabaseClient<Database>;
-  companyId: number;
+  companyId: string;
   email: string;
   userId: string;
 }> {

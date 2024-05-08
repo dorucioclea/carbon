@@ -30,7 +30,7 @@ export async function addUserToCompany(
   client: SupabaseClient<Database>,
   userToCompany: {
     userId: string;
-    companyId: number;
+    companyId: string;
   }
 ) {
   return client.from("userToCompany").insert(userToCompany);
@@ -45,7 +45,7 @@ export async function createCustomerAccount(
   }: {
     id: string;
     customerId: string;
-    companyId: number;
+    companyId: string;
   }
 ): Promise<Result> {
   // TODO: convert to transaction and call this at the end of the transaction
@@ -160,7 +160,7 @@ export async function createEmployeeAccount(
     firstName: string;
     lastName: string;
     employeeType: string;
-    companyId: number;
+    companyId: string;
   }
 ): Promise<Result> {
   // TODO: convert to transaction and call this at the end of the transaction
@@ -262,7 +262,7 @@ export async function createSupplierAccount(
   }: {
     id: string;
     supplierId: string;
-    companyId: number;
+    companyId: string;
   }
 ): Promise<Result> {
   // TODO: convert to transaction and call this at the end of the transaction
@@ -489,7 +489,7 @@ export async function getUserGroups(
 export async function getUserDefaults(
   client: SupabaseClient<Database>,
   userId: string,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("userDefaults")
@@ -504,7 +504,7 @@ async function insertCustomerAccount(
   customerAccount: {
     id: string;
     customerId: string;
-    companyId: number;
+    companyId: string;
   }
 ) {
   return client
@@ -526,7 +526,7 @@ async function insertSupplierAccount(
   supplierAccount: {
     id: string;
     supplierId: string;
-    companyId: number;
+    companyId: string;
   }
 ) {
   return client
@@ -583,7 +583,7 @@ function isClaimPermission(key: string, value: unknown) {
   );
 }
 
-function makeCustomerPermissions(companyId: number) {
+function makeCustomerPermissions(companyId: string) {
   // TODO: this should be more dynamic
   const permissions: Record<string, number[]> = {
     documents_view: [companyId],
@@ -616,7 +616,7 @@ export function makeEmptyPermissionsFromModules(data: Module[]) {
 
 export function makeCompanyPermissionsFromClaims(
   claims: Json[] | null,
-  companyId: number
+  companyId: string
 ) {
   if (typeof claims !== "object" || claims === null) return null;
   let permissions: Record<string, CompanyPermission> = {};
@@ -714,7 +714,7 @@ export function makePermissionsFromClaims(claims: Json[] | null) {
 
 export function makeCompanyPermissionsFromEmployeeType(
   data: EmployeeTypePermission[],
-  companyId: number
+  companyId: string
 ) {
   const result: Record<
     string,
@@ -749,7 +749,7 @@ export function makeCompanyPermissionsFromEmployeeType(
   return result;
 }
 
-function makeSupplierPermissions(companyId: number) {
+function makeSupplierPermissions(companyId: string) {
   // TODO: this should be more dynamic
   const permissions: Record<string, number[]> = {
     documents_view: [companyId],
@@ -842,7 +842,7 @@ export async function updateEmployee(
     id: string;
     employeeType: string;
     permissions: Record<string, CompanyPermission>;
-    companyId: number;
+    companyId: string;
   }
 ): Promise<Result> {
   const updateEmployeeEmployeeType = await client
@@ -865,7 +865,7 @@ export async function updatePermissions(
   }: {
     id: string;
     permissions: Record<string, CompanyPermission>;
-    companyId: number;
+    companyId: string;
     addOnly?: boolean;
   }
 ): Promise<Result> {
