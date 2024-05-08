@@ -44,7 +44,7 @@ export async function getPurchaseInvoice(
 
 export async function getPurchaseInvoices(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
     supplierId: string | null;
@@ -96,7 +96,7 @@ export async function upsertPurchaseInvoice(
   purchaseInvoice:
     | (Omit<z.infer<typeof purchaseInvoiceValidator>, "id" | "invoiceId"> & {
         invoiceId: string;
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -146,7 +146,7 @@ export async function upsertPurchaseInvoiceLine(
   client: SupabaseClient<Database>,
   purchaseInvoiceLine:
     | (Omit<z.infer<typeof purchaseInvoiceLineValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })

@@ -5,7 +5,7 @@ import type { z } from "zod";
 import { sanitize } from "~/utils/supabase";
 import type { customFieldValidator } from "./settings.models";
 
-export async function clearCustomFieldsCache(companyId?: number) {
+export async function clearCustomFieldsCache(companyId?: string) {
   const keys = companyId ? `customFields:${companyId}:*` : "customFields:*";
   redis.keys(keys).then(function (keys) {
     const pipeline = redis.pipeline();
@@ -19,7 +19,7 @@ export async function clearCustomFieldsCache(companyId?: number) {
 export async function deleteCustomField(
   client: SupabaseClient<Database>,
   id: string,
-  companyId: number
+  companyId: string
 ) {
   try {
     clearCustomFieldsCache(companyId);
@@ -32,7 +32,7 @@ export async function upsertCustomField(
   client: SupabaseClient<Database>,
   customField:
     | (Omit<z.infer<typeof customFieldValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
       })
     | (Omit<z.infer<typeof customFieldValidator>, "id"> & {

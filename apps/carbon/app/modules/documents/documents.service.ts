@@ -59,7 +59,7 @@ export async function getDocument(
 
 export async function getDocuments(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
     favorite?: boolean;
@@ -194,7 +194,7 @@ export async function upsertDocument(
     | (Omit<z.infer<typeof documentValidator>, "id"> & {
         path: string;
         size: number;
-        companyId: number;
+        companyId: string;
         createdBy: string;
       } & SourceDocumentData)
     | (Omit<z.infer<typeof documentValidator>, "id"> & {

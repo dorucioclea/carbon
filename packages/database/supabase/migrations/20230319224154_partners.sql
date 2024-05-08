@@ -3,7 +3,7 @@ CREATE TABLE "partner" (
   "hoursPerWeek" INTEGER NOT NULL DEFAULT 0,
   "abilityId" TEXT,
   "active" BOOLEAN NOT NULL DEFAULT true,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,

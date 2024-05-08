@@ -34,7 +34,7 @@ export type Module = NonNullable<
 export type Group = {
   data: {
     id: string;
-    companyId: number;
+    companyId: string;
     isEmployeeTypeGroup: boolean;
     isCustomerOrgGroup: boolean;
     isCustomerTypeGroup: boolean;

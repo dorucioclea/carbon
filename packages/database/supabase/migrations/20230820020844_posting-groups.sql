@@ -1,5 +1,5 @@
 CREATE TABLE "accountDefault" (
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   -- income statement
     -- revenue
     "salesAccount" TEXT NOT NULL,
@@ -142,7 +142,7 @@ CREATE TABLE "postingGroupInventory" (
   "inventoryAdjustmentVarianceAccount" TEXT NOT NULL,
   "materialVarianceAccount" TEXT NOT NULL,
   "capacityVarianceAccount" TEXT NOT NULL,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "updatedBy" TEXT,
 
   CONSTRAINT "postingGroupInventory_pkey" PRIMARY KEY ("id"),
@@ -196,7 +196,7 @@ CREATE TABLE "postingGroupPurchasing" (
   "purchaseCreditAccount" TEXT NOT NULL,
   "purchasePrepaymentAccount" TEXT NOT NULL,
   "purchaseTaxPayableAccount" TEXT NOT NULL,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "updatedBy" TEXT,
 
   CONSTRAINT "postingGroupPurchasing_pkey" PRIMARY KEY ("id"),
@@ -242,7 +242,7 @@ CREATE TABLE "postingGroupSales" (
   "salesCreditAccount" TEXT NOT NULL,
   "salesPrepaymentAccount" TEXT NOT NULL,
   "salesTaxPayableAccount" TEXT NOT NULL,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "updatedBy" TEXT,
 
   CONSTRAINT "postingGroupSales_pkey" PRIMARY KEY ("id"),

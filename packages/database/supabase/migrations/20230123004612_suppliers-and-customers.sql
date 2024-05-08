@@ -23,7 +23,7 @@ CREATE TABLE "contact" (
   "countryCode" INTEGER,
   "birthday" DATE,
   "notes" TEXT,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
 
   CONSTRAINT "contact_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "contact_countryCode_fkey" FOREIGN KEY ("countryCode") REFERENCES "country"("id") ON DELETE SET NULL ON UPDATE CASCADE,
@@ -42,7 +42,7 @@ CREATE TABLE "address" (
   "countryCode" INTEGER,
   "phone" TEXT,
   "fax" TEXT,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
 
   CONSTRAINT "address_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "address_countryCode_fkey" FOREIGN KEY ("countryCode") REFERENCES "country"("id") ON DELETE SET NULL ON UPDATE CASCADE,
@@ -54,7 +54,7 @@ CREATE INDEX "address_companyId_idx" ON "address" ("companyId");
 CREATE TABLE "supplierStatus" (
     "id" TEXT NOT NULL DEFAULT xid(),
     "name" TEXT NOT NULL,
-    "companyId" INTEGER NOT NULL,
+    "companyId" TEXT NOT NULL,
     "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     "createdBy" TEXT NOT NULL,
     "updatedBy" TEXT,
@@ -74,7 +74,7 @@ CREATE TABLE "supplierType" (
     "id" TEXT NOT NULL DEFAULT uuid_generate_v4(),
     "name" TEXT NOT NULL,
     "protected" BOOLEAN NOT NULL DEFAULT false,
-    "companyId" INTEGER NOT NULL,
+    "companyId" TEXT NOT NULL,
     "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     "createdBy" TEXT NOT NULL,
     "updatedBy" TEXT,
@@ -99,7 +99,7 @@ CREATE TABLE "supplier" (
     "accountManagerId" TEXT,
     "logo" TEXT,
     "assignee" TEXT,
-    "companyId" INTEGER NOT NULL,
+    "companyId" TEXT NOT NULL,
     "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     "createdBy" TEXT,
     "updatedAt" TIMESTAMP WITH TIME ZONE,
@@ -152,7 +152,7 @@ CREATE INDEX "supplierContact_supplierId_idx" ON "supplierContact"("supplierId")
 CREATE TABLE "supplierAccount" (
     "id" TEXT NOT NULL,
     "supplierId" TEXT NOT NULL,
-    "companyId" INTEGER NOT NULL,
+    "companyId" TEXT NOT NULL,
 
     CONSTRAINT "supplierAccount_pkey" PRIMARY KEY ("id", "companyId"),
     CONSTRAINT "supplierAccount_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "supplier"("id") ON DELETE CASCADE ON UPDATE CASCADE,
@@ -166,7 +166,7 @@ CREATE INDEX "supplierAccount_companyId_idx" ON "supplierAccount" ("companyId");
 CREATE TABLE "customerStatus" (
     "id" TEXT NOT NULL DEFAULT xid(),
     "name" TEXT NOT NULL,
-    "companyId" INTEGER NOT NULL,
+    "companyId" TEXT NOT NULL,
     "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     "createdBy" TEXT NOT NULL,
     "updatedBy" TEXT,
@@ -186,7 +186,7 @@ CREATE TABLE "customerType" (
     "id" TEXT NOT NULL DEFAULT uuid_generate_v4(),
     "name" TEXT NOT NULL,
     "protected" BOOLEAN NOT NULL DEFAULT false,
-    "companyId" INTEGER NOT NULL,
+    "companyId" TEXT NOT NULL,
     "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     "createdBy" TEXT NOT NULL,
     "updatedBy" TEXT,
@@ -211,7 +211,7 @@ CREATE TABLE "customer" (
     "accountManagerId" TEXT,
     "logo" TEXT,
     "assignee" TEXT,
-    "companyId" INTEGER NOT NULL,
+    "companyId" TEXT NOT NULL,
     "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     "createdBy" TEXT,
     "updatedAt" TIMESTAMP WITH TIME ZONE,
@@ -264,7 +264,7 @@ CREATE INDEX "customerContact_customerId_idx" ON "customerContact"("customerId")
 CREATE TABLE "customerAccount" (
     "id" TEXT NOT NULL,
     "customerId" TEXT NOT NULL,
-    "companyId" INTEGER NOT NULL,
+    "companyId" TEXT NOT NULL,
 
     CONSTRAINT "customerAccount_pkey" PRIMARY KEY ("id", "companyId"),
     CONSTRAINT "customerAccount_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "customer"("id") ON DELETE CASCADE ON UPDATE CASCADE,

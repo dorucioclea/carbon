@@ -25,7 +25,7 @@ export async function insertNote(
   note: {
     note: string;
     documentId: string;
-    companyId: number;
+    companyId: string;
     createdBy: string;
   }
 ) {

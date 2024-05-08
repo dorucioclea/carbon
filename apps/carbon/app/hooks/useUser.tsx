@@ -10,7 +10,7 @@ type PersonalData = {
 };
 
 type Company = {
-  id: number;
+  id: string;
   name: string;
   logo: string | null;
 };
@@ -59,7 +59,7 @@ export function useUser(): User {
 
 function isCompany(value: any): value is Company {
   return (
-    typeof value.id === "number" &&
+    typeof value.id === "string" &&
     typeof value.name === "string" &&
     (typeof value.logo === "string" || value.logo === null)
   );

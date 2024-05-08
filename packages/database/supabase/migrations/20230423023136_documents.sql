@@ -22,7 +22,7 @@ CREATE TABLE "document" (
   "readGroups" TEXT[],
   "writeGroups" TEXT[],
   "active" BOOLEAN NOT NULL DEFAULT TRUE,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,

@@ -7,7 +7,7 @@ CREATE TABLE "currency" (
   "decimalPlaces" INTEGER NOT NULL DEFAULT 2,
   "isBaseCurrency" BOOLEAN NOT NULL DEFAULT false,
   "active" BOOLEAN NOT NULL DEFAULT true,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
@@ -99,7 +99,7 @@ CREATE TABLE "accountCategory" (
   "category" TEXT NOT NULL,
   "class" "glAccountClass" NOT NULL,
   "incomeBalance" "glIncomeBalance" NOT NULL,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
@@ -179,11 +179,11 @@ CREATE POLICY "Employees with accounting_view can view account subcategories" ON
   USING (
     has_role('employee')
     AND   (
-      0 = ANY(get_permission_companies('accounting_view'))
+      '0' = ANY(get_permission_companies_as_text('accounting_view'))
       OR (
         "accountCategoryId" IN (
           SELECT "id" FROM "accountCategory" WHERE "companyId" = ANY(
-            get_permission_companies('accounting_view')
+            get_permission_companies_as_text('accounting_view')
           )
         )
       )
@@ -196,11 +196,11 @@ CREATE POLICY "Employees with accounting_create can insert account subcategories
   WITH CHECK (   
     has_role('employee')
     AND   (
-      0 = ANY(get_permission_companies('accounting_create'))
+      '0' = ANY(get_permission_companies_as_text('accounting_create'))
       OR (
         "accountCategoryId" IN (
           SELECT "id" FROM "accountCategory" WHERE "companyId" = ANY(
-            get_permission_companies('accounting_create')
+            get_permission_companies_as_text('accounting_create')
           )
         )
       )
@@ -212,11 +212,11 @@ CREATE POLICY "Employees with accounting_update can update account subcategories
   USING (
     has_role('employee')
     AND   (
-      0 = ANY(get_permission_companies('accounting_update'))
+      '0' = ANY(get_permission_companies_as_text('accounting_update'))
       OR (
         "accountCategoryId" IN (
           SELECT "id" FROM "accountCategory" WHERE "companyId" = ANY(
-            get_permission_companies('accounting_update')
+            get_permission_companies_as_text('accounting_update')
           )
         )
       )
@@ -228,11 +228,11 @@ CREATE POLICY "Employees with accounting_delete can delete account subcategories
   USING (
     has_role('employee')
     AND   (
-      0 = ANY(get_permission_companies('accounting_delete'))
+      '0' = ANY(get_permission_companies_as_text('accounting_delete'))
       OR (
         "accountCategoryId" IN (
           SELECT "id" FROM "accountCategory" WHERE "companyId" = ANY(
-            get_permission_companies('accounting_delete')
+            get_permission_companies_as_text('accounting_delete')
           )
         )
       )
@@ -251,7 +251,7 @@ CREATE TABLE "account" (
   "consolidatedRate" "glConsolidatedRate",
   "directPosting" BOOLEAN NOT NULL DEFAULT false,
   "active" BOOLEAN NOT NULL DEFAULT true,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,

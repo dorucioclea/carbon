@@ -25,7 +25,7 @@ export async function getAccount(client: SupabaseClient<Database>, id: string) {
 export async function getAttributes(
   client: SupabaseClient<Database>,
   userId: string,
-  companyId: number,
+  companyId: string,
   isPublic: boolean
 ) {
   return client
@@ -50,7 +50,7 @@ export async function getAttributes(
 export async function getPrivateAttributes(
   client: SupabaseClient<Database>,
   userId: string,
-  companyId: number
+  companyId: string
 ) {
   return getAttributes(client, userId, companyId, false);
 }
@@ -58,7 +58,7 @@ export async function getPrivateAttributes(
 export async function getPublicAttributes(
   client: SupabaseClient<Database>,
   userId: string,
-  companyId: number
+  companyId: string
 ) {
   return getAttributes(client, userId, companyId, true);
 }

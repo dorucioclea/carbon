@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION is_claims_admin() RETURNS "bool"
         return false; -- jwt expired
       END IF; 
       
-      IF has_company_permission('update_users', 0) THEN
+      IF has_company_permission('update_users', '0') THEN
         return true; -- user has user_update set to true
       ELSE
         return false; -- user does NOT have user_update set to true
@@ -101,19 +101,19 @@ CREATE OR REPLACE FUNCTION has_role(role text) RETURNS "bool"
     END;
 $$;
 
-CREATE OR REPLACE FUNCTION has_company_permission(claim text, company integer) RETURNS "bool"
+CREATE OR REPLACE FUNCTION has_company_permission(claim text, company text) RETURNS "bool"
     LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
     AS $$
     DECLARE
-      permission_value integer[];
+      permission_value text[];
     BEGIN
       -- TODO: (current_setting('request.jwt.claims', true)::jsonb)->'app_metadata'->claim
-      SELECT jsonb_to_integer_array(coalesce(permissions->claim, '[]')) INTO permission_value FROM public.user WHERE id = auth.uid()::text;
+      SELECT jsonb_to_text_array(coalesce(permissions->claim, '[]')) INTO permission_value FROM public.user WHERE id = auth.uid()::text;
       IF permission_value IS NULL THEN
         return false;
-      ELSIF 0 = ANY(permission_value::integer[]) THEN
+      ELSIF '0' = ANY(permission_value::text[]) THEN
         return true;
-      ELSIF company = ANY(permission_value::integer[]) THEN
+      ELSIF company = ANY(permission_value::text[]) THEN
         return true;
       ELSE
         return false;
@@ -125,10 +125,10 @@ CREATE OR REPLACE FUNCTION has_any_company_permission(claim text) RETURNS "bool"
     LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
     AS $$
     DECLARE
-      permission_value integer[];
+      permission_value text[];
     BEGIN
       
-      SELECT jsonb_to_integer_array(coalesce(permissions->claim, '[]')) INTO permission_value FROM public.user WHERE id = auth.uid()::text;
+      SELECT jsonb_to_text_array(coalesce(permissions->claim, '[]')) INTO permission_value FROM public.user WHERE id = auth.uid()::text;
       IF permission_value IS NULL THEN
         return false;
       ELSIF array_length(permission_value, 1) > 0 THEN
@@ -139,11 +139,11 @@ CREATE OR REPLACE FUNCTION has_any_company_permission(claim text) RETURNS "bool"
     END;
 $$;
 
-CREATE OR REPLACE FUNCTION get_company_id_from_foreign_key(foreign_key TEXT, tbl TEXT) RETURNS integer
+CREATE OR REPLACE FUNCTION get_company_id_from_foreign_key(foreign_key TEXT, tbl TEXT) RETURNS text
     LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
     AS $$
     DECLARE
-      company_id integer;
+      company_id text;
     BEGIN
       EXECUTE 'SELECT "companyId" FROM "' || tbl || '" WHERE id = $1' INTO company_id USING foreign_key;
       RETURN company_id;

@@ -111,7 +111,7 @@ export async function deleteSupplierType(
 
 export async function getPurchaseOrderExternalDocuments(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   purchaseOrderId: string
 ) {
   return client.storage
@@ -121,7 +121,7 @@ export async function getPurchaseOrderExternalDocuments(
 
 export async function getPurchaseOrderInternalDocuments(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   purchaseOrderId: string
 ) {
   return client.storage
@@ -142,7 +142,7 @@ export async function getPurchaseOrder(
 
 export async function getPurchaseOrders(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
     status: string | null;
@@ -229,7 +229,7 @@ export async function getPurchaseOrderLine(
 
 export async function getPurchaseOrderSuppliers(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("purchaseOrderSuppliers")
@@ -240,7 +240,7 @@ export async function getPurchaseOrderSuppliers(
 
 export async function getRequestsForQuotes(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
   }
@@ -344,7 +344,7 @@ export async function getSupplierShipping(
 
 export async function getSuppliers(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
     type: string | null;
@@ -378,7 +378,7 @@ export async function getSuppliers(
 
 export async function getSuppliersList(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("supplier")
@@ -400,7 +400,7 @@ export async function getSupplierStatus(
 
 export async function getSupplierStatuses(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args?: GenericQueryFilters & { search: string | null }
 ) {
   let query = client
@@ -423,7 +423,7 @@ export async function getSupplierStatuses(
 
 export async function getSupplierStatusesList(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("supplierStatus")
@@ -445,7 +445,7 @@ export async function getSupplierType(
 
 export async function getSupplierTypes(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args?: GenericQueryFilters & { search: string | null }
 ) {
   let query = client
@@ -468,7 +468,7 @@ export async function getSupplierTypes(
 
 export async function getSupplierTypesList(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("supplierType")
@@ -480,7 +480,7 @@ export async function getSupplierTypesList(
 export async function insertSupplier(
   client: SupabaseClient<Database>,
   supplier: Omit<z.infer<typeof supplierValidator>, "id"> & {
-    companyId: number;
+    companyId: string;
     createdBy: string;
     customFields?: Json;
   }
@@ -492,7 +492,7 @@ export async function insertSupplierContact(
   client: SupabaseClient<Database>,
   supplierContact: {
     supplierId: string;
-    companyId: number;
+    companyId: string;
     contact: z.infer<typeof supplierContactValidator>;
     customFields?: Json;
   }
@@ -531,7 +531,7 @@ export async function insertSupplierLocation(
   client: SupabaseClient<Database>,
   supplierLocation: {
     supplierId: string;
-    companyId: number;
+    companyId: string;
     address: {
       addressLine1?: string;
       addressLine2?: string;
@@ -635,7 +635,7 @@ export async function upsertSupplier(
   client: SupabaseClient<Database>,
   supplier:
     | (Omit<z.infer<typeof supplierValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -752,7 +752,7 @@ export async function upsertPurchaseOrder(
         "id" | "purchaseOrderId"
       > & {
         purchaseOrderId: string;
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -843,7 +843,7 @@ export async function upsertPurchaseOrderDelivery(
   client: SupabaseClient<Database>,
   purchaseOrderDelivery:
     | (z.infer<typeof purchaseOrderDeliveryValidator> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -872,7 +872,7 @@ export async function upsertPurchaseOrderLine(
   client: SupabaseClient<Database>,
   purchaseOrderLine:
     | (Omit<z.infer<typeof purchaseOrderLineValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -933,7 +933,7 @@ export async function upsertRequestForQuote(
         "id" | "requestForQuoteId"
       > & {
         requestForQuoteId: string;
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -967,7 +967,7 @@ export async function upsertSupplierStatus(
   client: SupabaseClient<Database>,
   supplierStatus:
     | (Omit<z.infer<typeof supplierStatusValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -995,7 +995,7 @@ export async function upsertSupplierType(
   client: SupabaseClient<Database>,
   supplierType:
     | (Omit<z.infer<typeof supplierTypeValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
