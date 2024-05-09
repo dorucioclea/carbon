@@ -20,11 +20,11 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/b
 
 function SkeletonDocument() {
   return (
-    <div className="flex flex-col space-y-3">
-      <Skeleton className="h-[780px] bg-background w-[680px] rounded-xl" />
+    <div className="flex flex-col space-y-3 p-3">
+      <Skeleton className="h-[380px] bg-muted w-full rounded-md" />
       <div className="space-y-2">
-        <Skeleton className="h-4 bg-background w-[680px]" />
-        <Skeleton className="h-4 bg-background w-[680px]" />
+        <Skeleton className="h-4 bg-muted w-full rounded-md" />
+        <Skeleton className="h-4 bg-muted w-full rounded-md" />
       </div>
     </div>
   );
@@ -32,106 +32,95 @@ function SkeletonDocument() {
 
 type DocumentPreviewProps = {
   bucket: string;
-  type: string;
   document: DocumentType;
 };
 
-const DocumentView = ({ bucket, document }: DocumentPreviewProps) => {
+const DocumentPreview = ({ bucket, document }: DocumentPreviewProps) => {
   const [numPages, setNumPages] = useState<number>();
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
     setNumPages(numPages);
   }
 
+  const { download } = useDocument();
+
+  switch (document.type) {
+    case "Image":
+      return (
+        <img
+          src={path.to.file.previewFile(`${bucket}/${document.path}`)}
+          className="object-contain"
+          width={"680"}
+          alt="Preview"
+        />
+      );
+    case "PDF":
+      return (
+        <Document
+          file={path.to.file.previewFile(`${bucket}/${document.path}`)}
+          onLoadSuccess={onDocumentLoadSuccess}
+          loading={<SkeletonDocument />}
+        >
+          <div className="overflow-auto max-h-[calc(100vh-91px)]">
+            {Array.from(new Array(numPages), (_, index) => (
+              <Page
+                key={`page_${index + 1}`}
+                pageNumber={index + 1}
+                renderTextLayer={false}
+                width={680}
+                height={780}
+              />
+            ))}
+          </div>
+        </Document>
+      );
+    default:
+      return (
+        <div className="flex flex-1 border-t border-border flex-col items-center justify-start w-full h-full pt-24">
+          <DocumentIcon className="w-36 h-36 mb-2" type={document.type!} />
+          <p className="text-xl mb-1">{document.name}</p>
+          <p className="text-muted-foreground mb-4">
+            {convertKbToString(document.size ?? 0)}
+          </p>
+          <Button
+            size="lg"
+            leftIcon={<LuDownload />}
+            onClick={() => download(document)}
+          >
+            Download
+          </Button>
+        </div>
+      );
+  }
+};
+
+const DocumentView = ({ bucket, document }: DocumentPreviewProps) => {
   const navigate = useNavigate();
   const onClose = () => navigate(path.to.documents);
   const { download } = useDocument();
-
-  if (document.type?.startsWith("Image")) {
-    return (
-      <>
-        <ResizableHandle withHandle />
-        <ResizablePanel maxSize={50} minSize={25}>
-          <div className="flex items-center justify-between">
-            <Button isIcon variant={"ghost"} onClick={onClose}>
-              <LuX className="w-4 h-4" />
-            </Button>
-            <span>{document.name}</span>
-            <Button variant={"ghost"} onClick={() => download(document)}>
-              <LuDownload className="w-4 h-4 mr-2" />
-              Download
-            </Button>
-          </div>
-          <div className="border flex items-center w-full mx-auto rounded-md">
-            <img
-              src={path.to.file.previewFile(`${bucket}/${document.path}`)}
-              className="object-contain"
-              width={"680"}
-              alt="Preview"
-            />
-          </div>
-        </ResizablePanel>
-      </>
-    );
-  } else if (document.type?.startsWith("PDF")) {
-    return (
-      <>
-        <ResizableHandle withHandle />
-        <ResizablePanel maxSize={75} minSize={25}>
-          <div className="flex items-center justify-between">
-            <Button isIcon variant={"ghost"} onClick={onClose}>
-              <LuX className="w-4 h-4" />
-            </Button>
-            <span>{document.name}</span>
-            <Button variant={"ghost"} onClick={() => download(document)}>
-              <LuDownload className="w-4 h-4 mr-2" />
-              Download
-            </Button>
-          </div>
-          <Document
-            file={path.to.file.previewFile(`${bucket}/${document.path}`)}
-            onLoadSuccess={onDocumentLoadSuccess}
-            loading={<SkeletonDocument />}
-          >
-            <div className="overflow-auto " style={{ height: "92vh" }}>
-              {Array.from(new Array(numPages), (_, index) => (
-                <Page
-                  key={`page_${index + 1}`}
-                  pageNumber={index + 1}
-                  renderTextLayer={false}
-                  width={680}
-                  height={780}
-                />
-              ))}
-            </div>
-          </Document>
-        </ResizablePanel>
-      </>
-    );
-  } else {
-    return (
-      <>
-        <ResizableHandle withHandle />
-        <ResizablePanel maxSize={75} minSize={25} className="bg-background">
-          <div className="flex items-center justify-between">
-            <Button isIcon variant={"ghost"} onClick={onClose}>
-              <LuX className="w-4 h-4" />
-            </Button>
-          </div>
-          <div className="py-16 flex flex-col items-center">
-            <DocumentIcon type={document.type!} />
-            <p className="text-xl mb-4 mt-2">
-              {document.name} - {convertKbToString(document.size ?? 0)}
-            </p>
-            <Button onClick={() => download(document)}>
-              <LuDownload className="w-4 h-4 mr-2" />
-              Download
-            </Button>
-          </div>
-        </ResizablePanel>
-      </>
-    );
-  }
+  return (
+    <>
+      <ResizableHandle withHandle />
+      <ResizablePanel
+        defaultSize={50}
+        maxSize={70}
+        minSize={25}
+        className="bg-background"
+      >
+        <div className="flex items-center justify-between p-0.5">
+          <Button isIcon variant={"ghost"} onClick={onClose}>
+            <LuX className="w-4 h-4" />
+          </Button>
+          <span className="text-sm">{document.name}</span>
+          <Button variant={"ghost"} onClick={() => download(document)}>
+            <LuDownload className="w-4 h-4 mr-2" />
+            Download
+          </Button>
+        </div>
+        <DocumentPreview bucket={bucket} document={document} />
+      </ResizablePanel>
+    </>
+  );
 };
 
 export default DocumentView;

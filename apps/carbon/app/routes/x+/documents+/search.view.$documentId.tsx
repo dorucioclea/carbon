@@ -47,7 +47,6 @@ export default function ViewDocumentRoute() {
       key={document.id}
       bucket={"private"}
       type={type ?? ""}
-      // name={document.name ?? ""}
       document={document}
     />
   );
