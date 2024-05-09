@@ -4,7 +4,7 @@ CREATE TABLE "userAttributeCategory" (
   "name" TEXT NOT NULL,
   "public" BOOLEAN DEFAULT FALSE,
   "protected" BOOLEAN DEFAULT FALSE,
-  "companyId" INTEGER,
+  "companyId" TEXT,
   "active" BOOLEAN DEFAULT TRUE,
   "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   "createdBy" TEXT NOT NULL,
@@ -194,7 +194,7 @@ CREATE POLICY "Users with resource update can view/modify user attribute values"
       SELECT "id" FROM "userAttributeCategory" WHERE
       "companyId" = ANY(
         coalesce(
-          get_permission_companies_as_text('resources_update')::text[],
+          get_permission_companies('resources_update')::text[],
           array[]::text[]
         )
       )
@@ -211,7 +211,7 @@ CREATE POLICY "Users can view other users attributes if the category is public" 
       SELECT "id" FROM "userAttribute" WHERE "userAttributeCategoryId" IN (
         SELECT "id" FROM "userAttributeCategory" WHERE "public" = true AND "companyId" = ANY(
           coalesce(
-            get_permission_companies_as_text('resources_view')::text[],
+            get_permission_companies('resources_view')::text[],
             array[]::text[]
           )
         )

@@ -72,10 +72,10 @@ CREATE POLICY "Employees with resources_view can view employeeAbilities" ON "emp
     has_role('employee')
     AND (
       '0' = ANY(
-            get_permission_companies_as_text('resources_view')
+            get_permission_companies('resources_view')
       ) 
       OR "employeeId" IN (
-        SELECT "employeeId" FROM "employee" WHERE "companyId" = ANY(get_permission_companies_as_text('resources_view'))
+        SELECT "employeeId" FROM "employee" WHERE "companyId" = ANY(get_permission_companies('resources_view'))
       )
     )
   );
@@ -86,10 +86,10 @@ CREATE POLICY "Employees with resources_create can insert employeeAbilities" ON 
     has_role('employee')
     AND (
       '0' = ANY(
-            get_permission_companies_as_text('resources_create')
+            get_permission_companies('resources_create')
       ) 
       OR "employeeId" IN (
-        SELECT "employeeId" FROM "employee" WHERE "companyId" = ANY(get_permission_companies_as_text('resources_create'))
+        SELECT "employeeId" FROM "employee" WHERE "companyId" = ANY(get_permission_companies('resources_create'))
       )
     )
 );
@@ -100,10 +100,10 @@ CREATE POLICY "Employees with resources_update can update employeeAbilities" ON 
     has_role('employee')
     AND (
       '0' = ANY(
-            get_permission_companies_as_text('resources_update')
+            get_permission_companies('resources_update')
       ) 
       OR "employeeId" IN (
-        SELECT "employeeId" FROM "employee" WHERE "companyId" = ANY(get_permission_companies_as_text('resources_update'))
+        SELECT "employeeId" FROM "employee" WHERE "companyId" = ANY(get_permission_companies('resources_update'))
       )
     )
   );
@@ -114,10 +114,10 @@ CREATE POLICY "Employees with resources_delete can delete employeeAbilities" ON 
     has_role('employee')
     AND (
       '0' = ANY(
-            get_permission_companies_as_text('resources_delete')
+            get_permission_companies('resources_delete')
       ) 
       OR "employeeId" IN (
-        SELECT "employeeId" FROM "employee" WHERE "companyId" = ANY(get_permission_companies_as_text('resources_delete'))
+        SELECT "employeeId" FROM "employee" WHERE "companyId" = ANY(get_permission_companies('resources_delete'))
       )
     )
   );

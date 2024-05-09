@@ -205,19 +205,19 @@ const SalesOrderLines = () => {
         },
       },
       {
-        id: "quantityReceived",
+        accessorKey: "quantitySent",
         header: "Quantity Received",
         cell: ({ row }) => {
           switch (row.original.salesOrderLineType) {
             case "Comment":
               return null;
             default:
-              return <span>{row.original.quantityReceived}</span>;
+              return <span>{row.original.quantitySent}</span>;
           }
         },
       },
       {
-        id: "quantityInvoiced",
+        accessorKey: "quantityInvoiced",
         header: "Quantity Invoiced",
         cell: ({ row }) => {
           switch (row.original.salesOrderLineType) {
@@ -229,14 +229,14 @@ const SalesOrderLines = () => {
         },
       },
       {
-        id: "receivedComplete",
-        header: "Received Complete",
+        accessorKey: "sentComplete",
+        header: "Shipped Com`plete",
         cell: ({ row }) => {
           switch (row.original.salesOrderLineType) {
             case "Comment":
               return null;
             default:
-              return <Checkbox isChecked={!!row.original.receivedComplete} />;
+              return <Checkbox isChecked={!!row.original.sentComplete} />;
           }
         },
       },

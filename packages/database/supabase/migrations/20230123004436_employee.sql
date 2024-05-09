@@ -1,6 +1,6 @@
 CREATE TABLE "employee" (
     "id" TEXT NOT NULL,
-    "companyId" INTEGER NULL,
+    "companyId" TEXT NOT NULL,
     "employeeTypeId" TEXT NOT NULL,
     CONSTRAINT "employee_pkey" PRIMARY KEY ("id", "companyId"),
     CONSTRAINT "employee_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,

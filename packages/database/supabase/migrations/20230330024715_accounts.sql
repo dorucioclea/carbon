@@ -179,11 +179,11 @@ CREATE POLICY "Employees with accounting_view can view account subcategories" ON
   USING (
     has_role('employee')
     AND   (
-      '0' = ANY(get_permission_companies_as_text('accounting_view'))
+      '0' = ANY(get_permission_companies('accounting_view'))
       OR (
         "accountCategoryId" IN (
           SELECT "id" FROM "accountCategory" WHERE "companyId" = ANY(
-            get_permission_companies_as_text('accounting_view')
+            get_permission_companies('accounting_view')
           )
         )
       )
@@ -196,11 +196,11 @@ CREATE POLICY "Employees with accounting_create can insert account subcategories
   WITH CHECK (   
     has_role('employee')
     AND   (
-      '0' = ANY(get_permission_companies_as_text('accounting_create'))
+      '0' = ANY(get_permission_companies('accounting_create'))
       OR (
         "accountCategoryId" IN (
           SELECT "id" FROM "accountCategory" WHERE "companyId" = ANY(
-            get_permission_companies_as_text('accounting_create')
+            get_permission_companies('accounting_create')
           )
         )
       )
@@ -212,11 +212,11 @@ CREATE POLICY "Employees with accounting_update can update account subcategories
   USING (
     has_role('employee')
     AND   (
-      '0' = ANY(get_permission_companies_as_text('accounting_update'))
+      '0' = ANY(get_permission_companies('accounting_update'))
       OR (
         "accountCategoryId" IN (
           SELECT "id" FROM "accountCategory" WHERE "companyId" = ANY(
-            get_permission_companies_as_text('accounting_update')
+            get_permission_companies('accounting_update')
           )
         )
       )
@@ -228,11 +228,11 @@ CREATE POLICY "Employees with accounting_delete can delete account subcategories
   USING (
     has_role('employee')
     AND   (
-      '0' = ANY(get_permission_companies_as_text('accounting_delete'))
+      '0' = ANY(get_permission_companies('accounting_delete'))
       OR (
         "accountCategoryId" IN (
           SELECT "id" FROM "accountCategory" WHERE "companyId" = ANY(
-            get_permission_companies_as_text('accounting_delete')
+            get_permission_companies('accounting_delete')
           )
         )
       )

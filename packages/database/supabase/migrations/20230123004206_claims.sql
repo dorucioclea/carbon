@@ -53,31 +53,14 @@ CREATE OR REPLACE FUNCTION get_my_claim(claim text) RETURNS "jsonb"
     END;
 $$;
 
-CREATE OR REPLACE FUNCTION jsonb_to_integer_array(jsonb) RETURNS integer[]
-    LANGUAGE "sql" IMMUTABLE
-    AS $$
-    SELECT array_agg(value::int) FROM jsonb_array_elements_text($1) AS t(value);
-$$;
-
 CREATE OR REPLACE FUNCTION jsonb_to_text_array(jsonb) RETURNS text[]
     LANGUAGE "sql" IMMUTABLE
     AS $$
     SELECT array_agg(value::text) FROM jsonb_array_elements_text($1) AS t(value);
 $$;
 
-CREATE OR REPLACE FUNCTION get_permission_companies(claim text) RETURNS integer[]
-    LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
-    AS $$
-    DECLARE retval integer[];
-    BEGIN
-      
-      select jsonb_to_integer_array(coalesce(permissions->claim, '[]')) from public.user into retval where id = auth.uid()::text;
-        return retval;
-      
-    END;
-$$;
 
-CREATE OR REPLACE FUNCTION get_permission_companies_as_text(claim text) RETURNS text[]
+CREATE OR REPLACE FUNCTION get_permission_companies(claim text) RETURNS text[]
     LANGUAGE "plpgsql" SECURITY DEFINER SET search_path = public
     AS $$
     DECLARE retval text[];

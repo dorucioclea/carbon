@@ -8,7 +8,7 @@ import type {
 
 export type Company = NonNullable<
   Awaited<ReturnType<typeof getCompanies>>["data"]
->[string];
+>[number];
 
 export type CustomField = NonNullable<
   Awaited<ReturnType<typeof getCustomField>>["data"]

@@ -151,11 +151,11 @@ CREATE POLICY "Employees with resources_create can insert employee shifts" ON "e
   WITH CHECK (   
     has_role('employee')
     AND   (
-      '0' = ANY(get_permission_companies_as_text('resources_create'))
+      '0' = ANY(get_permission_companies('resources_create'))
       OR (
         "shiftId" IN (
           SELECT "id" FROM "shift" WHERE "companyId" = ANY(
-            get_permission_companies_as_text('resources_create')
+            get_permission_companies('resources_create')
           )
         )
       )
@@ -167,11 +167,11 @@ CREATE POLICY "Employees with resources_update can update employee shifts" ON "e
   USING (
     has_role('employee')
     AND   (
-      '0' = ANY(get_permission_companies_as_text('resources_update'))
+      '0' = ANY(get_permission_companies('resources_update'))
       OR (
         "shiftId" IN (
           SELECT "id" FROM "shift" WHERE "companyId" = ANY(
-            get_permission_companies_as_text('resources_update')
+            get_permission_companies('resources_update')
           )
         )
       )
@@ -183,11 +183,11 @@ CREATE POLICY "Employees with resources_delete can delete employee shifts" ON "e
   USING (
     has_role('employee')
     AND   (
-      '0' = ANY(get_permission_companies_as_text('resources_delete'))
+      '0' = ANY(get_permission_companies('resources_delete'))
       OR (
         "shiftId" IN (
           SELECT "id" FROM "shift" WHERE "companyId" = ANY(
-            get_permission_companies_as_text('resources_delete')
+            get_permission_companies('resources_delete')
           )
         )
       )

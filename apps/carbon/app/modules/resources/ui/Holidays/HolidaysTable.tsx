@@ -21,12 +21,10 @@ const HolidaysTable = memo(({ data, count, years }: HolidaysTableProps) => {
   const permissions = usePermissions();
   const [params] = useUrlParams();
 
-
   const customColumns = useCustomColumns<(typeof data)[number]>("holiday");
 
   const columns = useMemo<ColumnDef<(typeof data)[number]>[]>(() => {
-    return [
-
+    const defaultColumns: ColumnDef<(typeof data)[number]>[] = [
       {
         accessorKey: "name",
         header: "Holiday",
@@ -58,7 +56,6 @@ const HolidaysTable = memo(({ data, count, years }: HolidaysTableProps) => {
     ];
     return [...defaultColumns, ...customColumns];
   }, [customColumns, years]);
-
 
   const renderContextMenu = useCallback(
     (row: (typeof data)[number]) => {

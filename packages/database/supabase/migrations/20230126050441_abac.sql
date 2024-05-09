@@ -280,10 +280,10 @@ CREATE POLICY "Employees with sales_view can view customer contact" ON "customer
     has_role('employee')
     AND (
       '0' = ANY(
-            get_permission_companies_as_text('sales_view')
+            get_permission_companies('sales_view')
       ) 
       OR "customerId" IN (
-        SELECT "customerId" FROM "customer" WHERE "companyId" = ANY(get_permission_companies_as_text('sales_view'))
+        SELECT "customerId" FROM "customer" WHERE "companyId" = ANY(get_permission_companies('sales_view'))
       )
     )
   );
@@ -303,10 +303,10 @@ CREATE POLICY "Employees with sales_create can create customer contacts" ON "cus
     has_role('employee')
     AND (
       '0' = ANY(
-            get_permission_companies_as_text('sales_create')
+            get_permission_companies('sales_create')
       ) 
       OR "customerId" IN (
-        SELECT "customerId" FROM "customer" WHERE "companyId" = ANY(get_permission_companies_as_text('sales_create'))
+        SELECT "customerId" FROM "customer" WHERE "companyId" = ANY(get_permission_companies('sales_create'))
       )
     )
   );
@@ -315,7 +315,7 @@ CREATE POLICY "Customers with sales_create can create customer contacts" ON "cus
   FOR INSERT
   WITH CHECK (
     has_role('customer')
-    -- TODO: get_permission_companies_as_text('sales_create').length > 0
+    -- TODO: get_permission_companies('sales_create').length > 0
     AND "customerId" IN (
       SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
     )
@@ -327,10 +327,10 @@ CREATE POLICY "Employees with sales_update can update customer contacts" ON "cus
     has_role('employee')
     AND (
       '0' = ANY(
-            get_permission_companies_as_text('sales_update')
+            get_permission_companies('sales_update')
       ) 
       OR "customerId" IN (
-        SELECT "customerId" FROM "customer" WHERE "companyId" = ANY(get_permission_companies_as_text('sales_update'))
+        SELECT "customerId" FROM "customer" WHERE "companyId" = ANY(get_permission_companies('sales_update'))
       )
     )
   );
@@ -339,7 +339,7 @@ CREATE POLICY "Customers with sales_update can update their customer contacts" O
   FOR UPDATE
   USING (
     has_role('customer') 
-    -- TODO: get_permission_companies_as_text('sales_update').length > 0
+    -- TODO: get_permission_companies('sales_update').length > 0
     AND "customerId" IN (
       SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
     )
@@ -351,10 +351,10 @@ CREATE POLICY "Employees with sales_delete can delete customer contacts" ON "cus
     has_role('employee')
     AND (
       '0' = ANY(
-            get_permission_companies_as_text('sales_delete')
+            get_permission_companies('sales_delete')
       ) 
       OR "customerId" IN (
-        SELECT "customerId" FROM "customer" WHERE "companyId" = ANY(get_permission_companies_as_text('sales_delete'))
+        SELECT "customerId" FROM "customer" WHERE "companyId" = ANY(get_permission_companies('sales_delete'))
       )
     )
   );
@@ -453,10 +453,10 @@ CREATE POLICY "Employees with purchasing_view can view supplier contact" ON "sup
     has_role('employee')
     AND (
       '0' = ANY(
-            get_permission_companies_as_text('purchasing_view')
+            get_permission_companies('purchasing_view')
       ) 
       OR "supplierId" IN (
-        SELECT "supplierId" FROM "supplier" WHERE "companyId" = ANY(get_permission_companies_as_text('purchasing_view'))
+        SELECT "supplierId" FROM "supplier" WHERE "companyId" = ANY(get_permission_companies('purchasing_view'))
       )
     )
   );
@@ -465,7 +465,7 @@ CREATE POLICY "Suppliers with purchasing_view can their own supplier contacts" O
   FOR SELECT
   USING (
     has_role('supplier')
-    -- TODO: get_permission_companies_as_text('purchasing_view').length > 0
+    -- TODO: get_permission_companies('purchasing_view').length > 0
     AND "supplierId" IN (
       SELECT "supplierId" FROM "supplierAccount" WHERE id::uuid = auth.uid()
     )
@@ -477,10 +477,10 @@ CREATE POLICY "Employees with purchasing_create can create supplier contacts" ON
     has_role('employee')
     AND (
       '0' = ANY(
-            get_permission_companies_as_text('purchasing_create')
+            get_permission_companies('purchasing_create')
       ) 
       OR "supplierId" IN (
-        SELECT "supplierId" FROM "supplier" WHERE "companyId" = ANY(get_permission_companies_as_text('purchasing_create'))
+        SELECT "supplierId" FROM "supplier" WHERE "companyId" = ANY(get_permission_companies('purchasing_create'))
       )
     )
   );
@@ -489,7 +489,7 @@ CREATE POLICY "Suppliers with purchasing_create can create supplier contacts" ON
   FOR INSERT
   WITH CHECK (
     has_role('supplier')
-    -- TODO: get_permission_companies_as_text('purchasing_create').length > 0
+    -- TODO: get_permission_companies('purchasing_create').length > 0
     AND "supplierId" IN (
       SELECT "supplierId" FROM "supplierAccount" WHERE id::uuid = auth.uid()
     )
@@ -501,10 +501,10 @@ CREATE POLICY "Employees with purchasing_update can update supplier contacts" ON
     has_role('employee')
     AND (
       '0' = ANY(
-            get_permission_companies_as_text('purchasing_update')
+            get_permission_companies('purchasing_update')
       ) 
       OR "supplierId" IN (
-        SELECT "supplierId" FROM "supplier" WHERE "companyId" = ANY(get_permission_companies_as_text('purchasing_update'))
+        SELECT "supplierId" FROM "supplier" WHERE "companyId" = ANY(get_permission_companies('purchasing_update'))
       )
     )
   );
@@ -513,7 +513,7 @@ CREATE POLICY "Suppliers with purchasing_update can update their supplier contac
   FOR UPDATE
   USING (
     has_role('supplier') 
-    -- TODO: get_permission_companies_as_text('purchasing_update').length > 0
+    -- TODO: get_permission_companies('purchasing_update').length > 0
     AND "supplierId" IN (
       SELECT "supplierId" FROM "supplierAccount" WHERE id::uuid = auth.uid()
     )
@@ -525,10 +525,10 @@ CREATE POLICY "Employees with purchasing_delete can delete supplier contacts" ON
     has_role('employee')
     AND (
       '0' = ANY(
-            get_permission_companies_as_text('purchasing_delete')
+            get_permission_companies('purchasing_delete')
       ) 
       OR "supplierId" IN (
-        SELECT "supplierId" FROM "supplier" WHERE "companyId" = ANY(get_permission_companies_as_text('purchasing_delete'))
+        SELECT "supplierId" FROM "supplier" WHERE "companyId" = ANY(get_permission_companies('purchasing_delete'))
       )
     )
   );

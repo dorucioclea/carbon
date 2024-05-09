@@ -127,7 +127,7 @@ export default function SalesOrderShipmentRoute() {
     trackingNumber: salesOrderShipment.trackingNumber ?? "",
     receiptRequestedDate: salesOrderShipment.receiptRequestedDate ?? "",
     receiptPromisedDate: salesOrderShipment.receiptPromisedDate ?? "",
-    shipmentDate: salesOrderShipment.shipmentDate ?? "",
+    deliveryDate: salesOrderShipment.deliveryDate ?? "",
     notes: salesOrderShipment.notes ?? "",
     dropShipment: salesOrderShipment.dropShipment ?? false,
     customerId: salesOrderShipment.customerId ?? "",

@@ -297,7 +297,7 @@ CREATE OR REPLACE FUNCTION "journalLinesByAccountNumber" (
 ) 
 RETURNS TABLE (
   "number" TEXT,
-  "companyId" INTEGER,
+  "companyId" TEXT,
   "balance" NUMERIC(19, 4),
   "balanceAtDate" NUMERIC(19, 4),
   "netChange" NUMERIC(19, 4)

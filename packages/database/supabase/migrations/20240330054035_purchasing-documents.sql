@@ -4,7 +4,7 @@ CREATE POLICY "Users with purchasing_view can view documents that start with pur
   FOR SELECT USING (
     has_role('employee')
     AND (storage.foldername(path))[1] = ANY(
-            get_permission_companies_as_text('purchasing_view')
+            get_permission_companies('purchasing_view')
         )
     AND (storage.foldername(path))[2] = 'purchasing'
   );
@@ -13,7 +13,7 @@ CREATE POLICY "Users with purchasing_create can create documents that start with
   FOR INSERT WITH CHECK (
     has_role('employee')
     AND (storage.foldername(path))[1] = ANY(
-            get_permission_companies_as_text('purchasing_create')
+            get_permission_companies('purchasing_create')
         )
     AND (storage.foldername(path))[2] = 'purchasing'
   );
@@ -22,7 +22,7 @@ CREATE POLICY "Users with purchasing_update can update documents that start with
   FOR UPDATE USING (
     has_role('employee')
     AND (storage.foldername(path))[1] = ANY(
-            get_permission_companies_as_text('purchasing_update')
+            get_permission_companies('purchasing_update')
         )
     AND (storage.foldername(path))[2] = 'purchasing'
   );
@@ -31,7 +31,7 @@ CREATE POLICY "Users with purchasing_delete can delete documents that start with
   FOR DELETE USING (
     has_role('employee')
     AND (storage.foldername(path))[1] = ANY(
-            get_permission_companies_as_text('purchasing_delete')
+            get_permission_companies('purchasing_delete')
         )
     AND (storage.foldername(path))[2] = 'purchasing'
   );

@@ -23,10 +23,10 @@ CREATE VIEW "modules" AS
 CREATE TABLE "employeeTypePermission" (
     "employeeTypeId" TEXT NOT NULL,
     "module" module NOT NULL,
-    "create" INTEGER[] NOT NULL DEFAULT '{}',
-    "delete" INTEGER[] NOT NULL DEFAULT '{}',
-    "update" INTEGER[] NOT NULL DEFAULT '{}',
-    "view" INTEGER[] NOT NULL DEFAULT '{}',
+    "create" TEXT[] NOT NULL DEFAULT '{}',
+    "delete" TEXT[] NOT NULL DEFAULT '{}',
+    "update" TEXT[] NOT NULL DEFAULT '{}',
+    "view" TEXT[] NOT NULL DEFAULT '{}',
     "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     "updatedAt" TIMESTAMP WITH TIME ZONE,
 

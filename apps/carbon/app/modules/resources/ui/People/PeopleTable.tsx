@@ -101,7 +101,7 @@ const PeopleTable = memo(
               />
 
               <Hyperlink to={path.to.personDetails(row?.original.id!)}>
-                {row.original.fullName}
+                {row.original.name}
               </Hyperlink>
             </HStack>
           ),
@@ -127,7 +127,9 @@ const PeopleTable = memo(
           header: "Employee Type",
           cell: ({ row }) => (
             <Enumerable
-              value={employeeTypesById[row.original.employeeTypeId].name}
+              value={
+                employeeTypesById[row.original.employeeTypeId!].name as string
+              }
             />
           ),
           meta: {
@@ -190,9 +192,7 @@ const PeopleTable = memo(
               <MenuItem
                 onClick={() =>
                   navigate(
-                    `${path.to.personDetails(
-                      row.user?.id!
-                    )}?${params.toString()}`
+                    `${path.to.personDetails(row.id!)}?${params.toString()}`
                   )
                 }
               >

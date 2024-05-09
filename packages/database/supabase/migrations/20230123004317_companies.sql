@@ -15,6 +15,7 @@ CREATE TABLE "company" (
   "website" TEXT,
   "updatedBy" TEXT,
   
+  CONSTRAINT "company_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "accountDefault_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id")
 );
 

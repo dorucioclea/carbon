@@ -3,7 +3,7 @@ import { getSupabaseServiceRole } from "~/lib/supabase";
 export async function loader() {
   try {
     const test = await getSupabaseServiceRole()
-      .from("users")
+      .from("userAttributeDataType")
       .select("id", { head: true })
       .single();
     if (test.error) throw test.error;

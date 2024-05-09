@@ -5,7 +5,7 @@ FOR SELECT USING (
     bucket_id = 'private'
     AND has_role('employee')
     AND (storage.foldername(name))[1] = ANY(
-            get_permission_companies_as_text('purchasing_view')
+            get_permission_companies('purchasing_view')
         )
     AND (storage.foldername(name))[2] = 'purchasing'
     AND (storage.foldername(name))[3] = 'internal'
@@ -16,7 +16,7 @@ FOR INSERT WITH CHECK (
     bucket_id = 'private'
     AND has_role('employee')
     AND (storage.foldername(name))[1] = ANY(
-            get_permission_companies_as_text('purchasing_create')
+            get_permission_companies('purchasing_create')
         )
     AND (storage.foldername(name))[2] = 'purchasing'
     AND (storage.foldername(name))[3] = 'internal'
@@ -27,7 +27,7 @@ FOR UPDATE USING (
     bucket_id = 'private'
     AND has_role('employee')
     AND (storage.foldername(name))[1] = ANY(
-            get_permission_companies_as_text('purchasing_update')
+            get_permission_companies('purchasing_update')
         )
     AND (storage.foldername(name))[2] = 'purchasing'
     AND (storage.foldername(name))[3] = 'internal'
@@ -38,7 +38,7 @@ FOR DELETE USING (
     bucket_id = 'private'
     AND has_role('employee')
     AND (storage.foldername(name))[1] = ANY(
-            get_permission_companies_as_text('purchasing_delete')
+            get_permission_companies('purchasing_delete')
         )
     AND (storage.foldername(name))[2] = 'purchasing'
     AND (storage.foldername(name))[3] = 'internal'
@@ -51,7 +51,7 @@ FOR SELECT USING (
     bucket_id = 'private'
     AND has_role('employee')
     AND (storage.foldername(name))[1] = ANY(
-            get_permission_companies_as_text('purchasing_view')
+            get_permission_companies('purchasing_view')
         )
     AND (storage.foldername(name))[2] = 'purchasing'
     AND (storage.foldername(name))[3] = 'external'
@@ -62,7 +62,7 @@ FOR INSERT WITH CHECK (
     bucket_id = 'private'
     AND has_role('employee')
     AND (storage.foldername(name))[1] = ANY(
-            get_permission_companies_as_text('purchasing_create')
+            get_permission_companies('purchasing_create')
         )
     AND (storage.foldername(name))[2] = 'purchasing'
     AND (storage.foldername(name))[3] = 'external'
@@ -73,7 +73,7 @@ FOR UPDATE USING (
     bucket_id = 'private'
     AND has_role('employee')
     AND (storage.foldername(name))[1] = ANY(
-            get_permission_companies_as_text('purchasing_update')
+            get_permission_companies('purchasing_update')
         )
     AND (storage.foldername(name))[2] = 'purchasing'
     AND (storage.foldername(name))[3] = 'external'
@@ -84,7 +84,7 @@ FOR DELETE USING (
     bucket_id = 'private'
     AND has_role('employee')
     AND (storage.foldername(name))[1] = ANY(
-            get_permission_companies_as_text('purchasing_delete')
+            get_permission_companies('purchasing_delete')
         )
     AND (storage.foldername(name))[2] = 'purchasing'
     AND (storage.foldername(name))[3] = 'external'

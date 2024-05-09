@@ -258,11 +258,11 @@ CREATE POLICY "Employees with resources_view can view crew abilities" ON "crewAb
   USING (
     has_role('employee')
     AND (
-      '0' = ANY(get_permission_companies_as_text('resources_view'))
+      '0' = ANY(get_permission_companies('resources_view'))
       OR (
         "crewId" IN (
           SELECT "id" FROM "crew" WHERE "companyId" = ANY(
-            get_permission_companies_as_text('resources_view')
+            get_permission_companies('resources_view')
           )
         )
       )
@@ -274,11 +274,11 @@ CREATE POLICY "Employees with resources_create can insert crew abilities" ON "cr
   WITH CHECK (   
     has_role('employee')
     AND (
-      '0' = ANY(get_permission_companies_as_text('resources_create'))
+      '0' = ANY(get_permission_companies('resources_create'))
       OR (
         "crewId" IN (
           SELECT "id" FROM "crew" WHERE "companyId" = ANY(
-            get_permission_companies_as_text('resources_create')
+            get_permission_companies('resources_create')
           )
         )
       )
@@ -290,11 +290,11 @@ CREATE POLICY "Employees with resources_update can update crew abilities" ON "cr
   USING (
     has_role('employee')
     AND (
-      '0' = ANY(get_permission_companies_as_text('resources_update'))
+      '0' = ANY(get_permission_companies('resources_update'))
       OR (
         "crewId" IN (
           SELECT "id" FROM "crew" WHERE "companyId" = ANY(
-            get_permission_companies_as_text('resources_update')
+            get_permission_companies('resources_update')
           )
         )
       )
@@ -306,11 +306,11 @@ CREATE POLICY "Employees with resources_delete can delete crew abilities" ON "cr
   USING (
     has_role('employee')
     AND (
-      '0' = ANY(get_permission_companies_as_text('resources_delete'))
+      '0' = ANY(get_permission_companies('resources_delete'))
       OR (
         "crewId" IN (
           SELECT "id" FROM "crew" WHERE "companyId" = ANY(
-            get_permission_companies_as_text('resources_delete')
+            get_permission_companies('resources_delete')
           )
         )
       )
