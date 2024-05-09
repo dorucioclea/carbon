@@ -4,7 +4,7 @@ CREATE TABLE "ability" (
   "curve" JSONB NOT NULL DEFAULT '{"data":[{"id":0,"week":0,"value":50},{"id":1,"week":1,"value":80},{"id":2,"week":2,"value":90},{"id":3,"week":3,"value":100}]}'::jsonb,
   "shadowWeeks" NUMERIC NOT NULL DEFAULT 0,
   "active" BOOLEAN NOT NULL DEFAULT true,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
@@ -71,7 +71,7 @@ CREATE POLICY "Employees with resources_view can view employeeAbilities" ON "emp
   USING (
     has_role('employee')
     AND (
-      0 = ANY(
+      '0' = ANY(
             get_permission_companies('resources_view')
       ) 
       OR "employeeId" IN (
@@ -85,7 +85,7 @@ CREATE POLICY "Employees with resources_create can insert employeeAbilities" ON 
   WITH CHECK (   
     has_role('employee')
     AND (
-      0 = ANY(
+      '0' = ANY(
             get_permission_companies('resources_create')
       ) 
       OR "employeeId" IN (
@@ -99,7 +99,7 @@ CREATE POLICY "Employees with resources_update can update employeeAbilities" ON 
   USING (
     has_role('employee')
     AND (
-      0 = ANY(
+      '0' = ANY(
             get_permission_companies('resources_update')
       ) 
       OR "employeeId" IN (
@@ -113,7 +113,7 @@ CREATE POLICY "Employees with resources_delete can delete employeeAbilities" ON 
   USING (
     has_role('employee')
     AND (
-      0 = ANY(
+      '0' = ANY(
             get_permission_companies('resources_delete')
       ) 
       OR "employeeId" IN (

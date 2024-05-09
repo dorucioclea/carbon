@@ -10,7 +10,7 @@ CREATE TABLE "location" (
   "timezone" TEXT NOT NULL,
   "latitude" NUMERIC,
   "longitude" NUMERIC,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
@@ -72,7 +72,7 @@ CREATE TABLE "shift" (
   "friday" BOOLEAN NOT NULL DEFAULT false,
   "saturday" BOOLEAN NOT NULL DEFAULT false,
   "active" BOOLEAN NOT NULL DEFAULT true,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
@@ -151,7 +151,7 @@ CREATE POLICY "Employees with resources_create can insert employee shifts" ON "e
   WITH CHECK (   
     has_role('employee')
     AND   (
-      0 = ANY(get_permission_companies('resources_create'))
+      '0' = ANY(get_permission_companies('resources_create'))
       OR (
         "shiftId" IN (
           SELECT "id" FROM "shift" WHERE "companyId" = ANY(
@@ -167,7 +167,7 @@ CREATE POLICY "Employees with resources_update can update employee shifts" ON "e
   USING (
     has_role('employee')
     AND   (
-      0 = ANY(get_permission_companies('resources_update'))
+      '0' = ANY(get_permission_companies('resources_update'))
       OR (
         "shiftId" IN (
           SELECT "id" FROM "shift" WHERE "companyId" = ANY(
@@ -183,7 +183,7 @@ CREATE POLICY "Employees with resources_delete can delete employee shifts" ON "e
   USING (
     has_role('employee')
     AND   (
-      0 = ANY(get_permission_companies('resources_delete'))
+      '0' = ANY(get_permission_companies('resources_delete'))
       OR (
         "shiftId" IN (
           SELECT "id" FROM "shift" WHERE "companyId" = ANY(
@@ -197,7 +197,7 @@ CREATE POLICY "Employees with resources_delete can delete employee shifts" ON "e
 
 CREATE TABLE "employeeJob" (
   "id" TEXT NOT NULL,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "locationId" TEXT,
   "shiftId" TEXT,
   "managerId" TEXT,

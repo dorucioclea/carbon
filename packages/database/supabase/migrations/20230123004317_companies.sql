@@ -1,5 +1,5 @@
 CREATE TABLE "company" (
-  "id" SERIAL PRIMARY KEY,
+  "id" TEXT NOT NULL DEFAULT xid(),
   "name" TEXT NOT NULL,
   "taxId" TEXT,
   "logo" TEXT,
@@ -15,6 +15,7 @@ CREATE TABLE "company" (
   "website" TEXT,
   "updatedBy" TEXT,
   
+  CONSTRAINT "company_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "accountDefault_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id")
 );
 
@@ -47,7 +48,7 @@ CREATE POLICY "Employees with settings_delete can delete company" ON "company"
 
 CREATE TABLE "userToCompany" (
   "userId" TEXT NOT NULL REFERENCES "user" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
-  "companyId" INTEGER NOT NULL REFERENCES "company" ("id") ON UPDATE CASCADE ON DELETE CASCADE
+  "companyId" TEXT NOT NULL REFERENCES "company" ("id") ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 ALTER TABLE "userToCompany" ENABLE ROW LEVEL SECURITY;

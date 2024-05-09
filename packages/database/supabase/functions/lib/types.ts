@@ -37,7 +37,7 @@ export type Database = {
       ability: {
         Row: {
           active: boolean
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           curve: Json
@@ -49,7 +49,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           curve?: Json
@@ -61,7 +61,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           curve?: Json
@@ -150,7 +150,7 @@ export type Database = {
           accountSubcategoryId: string | null
           active: boolean
           class: Database["public"]["Enums"]["glAccountClass"] | null
-          companyId: number
+          companyId: string
           consolidatedRate:
             | Database["public"]["Enums"]["glConsolidatedRate"]
             | null
@@ -171,7 +171,7 @@ export type Database = {
           accountSubcategoryId?: string | null
           active?: boolean
           class?: Database["public"]["Enums"]["glAccountClass"] | null
-          companyId: number
+          companyId: string
           consolidatedRate?:
             | Database["public"]["Enums"]["glConsolidatedRate"]
             | null
@@ -192,7 +192,7 @@ export type Database = {
           accountSubcategoryId?: string | null
           active?: boolean
           class?: Database["public"]["Enums"]["glAccountClass"] | null
-          companyId?: number
+          companyId?: string
           consolidatedRate?:
             | Database["public"]["Enums"]["glConsolidatedRate"]
             | null
@@ -299,7 +299,7 @@ export type Database = {
         Row: {
           category: string
           class: Database["public"]["Enums"]["glAccountClass"]
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -311,7 +311,7 @@ export type Database = {
         Insert: {
           category: string
           class: Database["public"]["Enums"]["glAccountClass"]
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -323,7 +323,7 @@ export type Database = {
         Update: {
           category?: string
           class?: Database["public"]["Enums"]["glAccountClass"]
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -417,7 +417,7 @@ export type Database = {
           bankForeignCurrencyAccount: string
           bankLocalCurrencyAccount: string
           capacityVarianceAccount: string
-          companyId: number
+          companyId: string
           costOfGoodsSoldAccount: string
           customerPaymentDiscountAccount: string
           directCostAppliedAccount: string
@@ -460,7 +460,7 @@ export type Database = {
           bankForeignCurrencyAccount: string
           bankLocalCurrencyAccount: string
           capacityVarianceAccount: string
-          companyId: number
+          companyId: string
           costOfGoodsSoldAccount: string
           customerPaymentDiscountAccount: string
           directCostAppliedAccount: string
@@ -503,7 +503,7 @@ export type Database = {
           bankForeignCurrencyAccount?: string
           bankLocalCurrencyAccount?: string
           capacityVarianceAccount?: string
-          companyId?: number
+          companyId?: string
           costOfGoodsSoldAccount?: string
           customerPaymentDiscountAccount?: string
           directCostAppliedAccount?: string
@@ -1116,7 +1116,7 @@ export type Database = {
         Row: {
           closedAt: string | null
           closedBy: string | null
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           endDate: string
@@ -1129,7 +1129,7 @@ export type Database = {
         Insert: {
           closedAt?: string | null
           closedBy?: string | null
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           endDate: string
@@ -1142,7 +1142,7 @@ export type Database = {
         Update: {
           closedAt?: string | null
           closedBy?: string | null
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           endDate?: string
@@ -1365,7 +1365,7 @@ export type Database = {
           addressLine1: string | null
           addressLine2: string | null
           city: string | null
-          companyId: number
+          companyId: string
           countryCode: number | null
           fax: string | null
           id: string
@@ -1377,7 +1377,7 @@ export type Database = {
           addressLine1?: string | null
           addressLine2?: string | null
           city?: string | null
-          companyId: number
+          companyId: string
           countryCode?: number | null
           fax?: string | null
           id?: string
@@ -1389,7 +1389,7 @@ export type Database = {
           addressLine1?: string | null
           addressLine2?: string | null
           city?: string | null
-          companyId?: number
+          companyId?: string
           countryCode?: number | null
           fax?: string | null
           id?: string
@@ -1462,7 +1462,7 @@ export type Database = {
           countryCode: string | null
           email: string | null
           fax: string | null
-          id: number
+          id: string
           logo: string | null
           name: string
           phone: string | null
@@ -1479,7 +1479,7 @@ export type Database = {
           countryCode?: string | null
           email?: string | null
           fax?: string | null
-          id?: number
+          id?: string
           logo?: string | null
           name: string
           phone?: string | null
@@ -1496,7 +1496,7 @@ export type Database = {
           countryCode?: string | null
           email?: string | null
           fax?: string | null
-          id?: number
+          id?: string
           logo?: string | null
           name?: string
           phone?: string | null
@@ -1543,7 +1543,7 @@ export type Database = {
           addressLine2: string | null
           birthday: string | null
           city: string | null
-          companyId: number
+          companyId: string
           countryCode: number | null
           email: string
           fax: string | null
@@ -1564,7 +1564,7 @@ export type Database = {
           addressLine2?: string | null
           birthday?: string | null
           city?: string | null
-          companyId: number
+          companyId: string
           countryCode?: number | null
           email: string
           fax?: string | null
@@ -1585,7 +1585,7 @@ export type Database = {
           addressLine2?: string | null
           birthday?: string | null
           city?: string | null
-          companyId?: number
+          companyId?: string
           countryCode?: number | null
           email?: string
           fax?: string | null
@@ -1628,7 +1628,7 @@ export type Database = {
       contractor: {
         Row: {
           active: boolean
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -1639,7 +1639,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -1650,7 +1650,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -1813,7 +1813,7 @@ export type Database = {
       costLedger: {
         Row: {
           adjustment: boolean
-          companyId: number
+          companyId: string
           cost: number
           costLedgerType: Database["public"]["Enums"]["costLedgerType"]
           costPostedToGL: number
@@ -1832,7 +1832,7 @@ export type Database = {
         }
         Insert: {
           adjustment?: boolean
-          companyId: number
+          companyId: string
           cost?: number
           costLedgerType: Database["public"]["Enums"]["costLedgerType"]
           costPostedToGL?: number
@@ -1851,7 +1851,7 @@ export type Database = {
         }
         Update: {
           adjustment?: boolean
-          companyId?: number
+          companyId?: string
           cost?: number
           costLedgerType?: Database["public"]["Enums"]["costLedgerType"]
           costPostedToGL?: number
@@ -1905,7 +1905,7 @@ export type Database = {
       }
       crew: {
         Row: {
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           crewLeaderId: string | null
@@ -1918,7 +1918,7 @@ export type Database = {
           workCellId: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           crewLeaderId?: string | null
@@ -1931,7 +1931,7 @@ export type Database = {
           workCellId?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           crewLeaderId?: string | null
@@ -2084,7 +2084,7 @@ export type Database = {
         Row: {
           active: boolean
           code: string
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -2100,7 +2100,7 @@ export type Database = {
         Insert: {
           active?: boolean
           code: string
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -2116,7 +2116,7 @@ export type Database = {
         Update: {
           active?: boolean
           code?: string
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -2178,7 +2178,7 @@ export type Database = {
         Row: {
           accountManagerId: string | null
           assignee: string | null
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string | null
           customerStatusId: string | null
@@ -2194,7 +2194,7 @@ export type Database = {
         Insert: {
           accountManagerId?: string | null
           assignee?: string | null
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy?: string | null
           customerStatusId?: string | null
@@ -2210,7 +2210,7 @@ export type Database = {
         Update: {
           accountManagerId?: string | null
           assignee?: string | null
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string | null
           customerStatusId?: string | null
@@ -2368,17 +2368,17 @@ export type Database = {
       }
       customerAccount: {
         Row: {
-          companyId: number
+          companyId: string
           customerId: string
           id: string
         }
         Insert: {
-          companyId: number
+          companyId: string
           customerId: string
           id: string
         }
         Update: {
-          companyId?: number
+          companyId?: string
           customerId?: string
           id?: string
         }
@@ -2591,7 +2591,7 @@ export type Database = {
       }
       customerPayment: {
         Row: {
-          companyId: number
+          companyId: string
           currencyCode: string | null
           customerId: string
           invoiceCustomerContactId: string | null
@@ -2602,7 +2602,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           currencyCode?: string | null
           customerId: string
           invoiceCustomerContactId?: string | null
@@ -2613,7 +2613,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           currencyCode?: string | null
           customerId?: string
           invoiceCustomerContactId?: string | null
@@ -2740,7 +2740,7 @@ export type Database = {
       }
       customerShipping: {
         Row: {
-          companyId: number
+          companyId: string
           customerId: string
           shippingCustomerContactId: string | null
           shippingCustomerId: string | null
@@ -2751,7 +2751,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           customerId: string
           shippingCustomerContactId?: string | null
           shippingCustomerId?: string | null
@@ -2762,7 +2762,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           customerId?: string
           shippingCustomerContactId?: string | null
           shippingCustomerId?: string | null
@@ -2889,7 +2889,7 @@ export type Database = {
       }
       customerStatus: {
         Row: {
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -2899,7 +2899,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -2909,7 +2909,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -2993,7 +2993,7 @@ export type Database = {
       }
       customerType: {
         Row: {
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -3004,7 +3004,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -3015,7 +3015,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -3101,7 +3101,7 @@ export type Database = {
       customField: {
         Row: {
           active: boolean | null
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFieldTableId: string
@@ -3115,7 +3115,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean | null
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFieldTableId: string
@@ -3129,7 +3129,7 @@ export type Database = {
         }
         Update: {
           active?: boolean | null
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFieldTableId?: string
@@ -3237,21 +3237,21 @@ export type Database = {
       }
       customFieldTable: {
         Row: {
-          companyId: number
+          companyId: string
           id: string
           module: Database["public"]["Enums"]["module"]
           name: string
           table: string
         }
         Insert: {
-          companyId: number
+          companyId: string
           id?: string
           module: Database["public"]["Enums"]["module"]
           name: string
           table: string
         }
         Update: {
-          companyId?: number
+          companyId?: string
           id?: string
           module?: Database["public"]["Enums"]["module"]
           name?: string
@@ -3276,7 +3276,7 @@ export type Database = {
       }
       department: {
         Row: {
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -3287,7 +3287,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -3298,7 +3298,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -3335,7 +3335,7 @@ export type Database = {
       document: {
         Row: {
           active: boolean
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           description: string | null
@@ -3356,7 +3356,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           description?: string | null
@@ -3377,7 +3377,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           description?: string | null
@@ -3643,17 +3643,17 @@ export type Database = {
       }
       employee: {
         Row: {
-          companyId: number
+          companyId: string
           employeeTypeId: string
           id: string
         }
         Insert: {
-          companyId: number
+          companyId: string
           employeeTypeId: string
           id: string
         }
         Update: {
-          companyId?: number
+          companyId?: string
           employeeTypeId?: string
           id?: string
         }
@@ -3749,7 +3749,7 @@ export type Database = {
       }
       employeeJob: {
         Row: {
-          companyId: number
+          companyId: string
           customFields: Json | null
           departmentId: string | null
           id: string
@@ -3763,7 +3763,7 @@ export type Database = {
           workCellId: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           customFields?: Json | null
           departmentId?: string | null
           id: string
@@ -3777,7 +3777,7 @@ export type Database = {
           workCellId?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           customFields?: Json | null
           departmentId?: string | null
           id?: string
@@ -4010,7 +4010,7 @@ export type Database = {
       }
       employeeType: {
         Row: {
-          companyId: number
+          companyId: string
           createdAt: string
           id: string
           name: string
@@ -4018,7 +4018,7 @@ export type Database = {
           updatedAt: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           createdAt?: string
           id?: string
           name: string
@@ -4026,7 +4026,7 @@ export type Database = {
           updatedAt?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           createdAt?: string
           id?: string
           name?: string
@@ -4052,34 +4052,34 @@ export type Database = {
       }
       employeeTypePermission: {
         Row: {
-          create: number[]
+          create: string[]
           createdAt: string
-          delete: number[]
+          delete: string[]
           employeeTypeId: string
           module: Database["public"]["Enums"]["module"]
-          update: number[]
+          update: string[]
           updatedAt: string | null
-          view: number[]
+          view: string[]
         }
         Insert: {
-          create?: number[]
+          create?: string[]
           createdAt?: string
-          delete?: number[]
+          delete?: string[]
           employeeTypeId: string
           module: Database["public"]["Enums"]["module"]
-          update?: number[]
+          update?: string[]
           updatedAt?: string | null
-          view?: number[]
+          view?: string[]
         }
         Update: {
-          create?: number[]
+          create?: string[]
           createdAt?: string
-          delete?: number[]
+          delete?: string[]
           employeeTypeId?: string
           module?: Database["public"]["Enums"]["module"]
-          update?: number[]
+          update?: string[]
           updatedAt?: string | null
-          view?: number[]
+          view?: string[]
         }
         Relationships: [
           {
@@ -4095,7 +4095,7 @@ export type Database = {
         Row: {
           active: boolean
           activeDate: string | null
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -4113,7 +4113,7 @@ export type Database = {
         Insert: {
           active?: boolean
           activeDate?: string | null
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -4131,7 +4131,7 @@ export type Database = {
         Update: {
           active?: boolean
           activeDate?: string | null
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -4264,7 +4264,7 @@ export type Database = {
       equipmentType: {
         Row: {
           active: boolean
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -4278,7 +4278,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -4292,7 +4292,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -4386,19 +4386,19 @@ export type Database = {
       }
       fiscalYearSettings: {
         Row: {
-          companyId: number
+          companyId: string
           startMonth: Database["public"]["Enums"]["month"]
           taxStartMonth: Database["public"]["Enums"]["month"]
           updatedBy: string
         }
         Insert: {
-          companyId: number
+          companyId: string
           startMonth?: Database["public"]["Enums"]["month"]
           taxStartMonth?: Database["public"]["Enums"]["month"]
           updatedBy: string
         }
         Update: {
-          companyId?: number
+          companyId?: string
           startMonth?: Database["public"]["Enums"]["month"]
           taxStartMonth?: Database["public"]["Enums"]["month"]
           updatedBy?: string
@@ -4450,7 +4450,7 @@ export type Database = {
       }
       group: {
         Row: {
-          companyId: number | null
+          companyId: string | null
           createdAt: string
           id: string
           isCustomerOrgGroup: boolean
@@ -4463,7 +4463,7 @@ export type Database = {
           updatedAt: string | null
         }
         Insert: {
-          companyId?: number | null
+          companyId?: string | null
           createdAt?: string
           id?: string
           isCustomerOrgGroup?: boolean
@@ -4476,7 +4476,7 @@ export type Database = {
           updatedAt?: string | null
         }
         Update: {
-          companyId?: number | null
+          companyId?: string | null
           createdAt?: string
           id?: string
           isCustomerOrgGroup?: boolean
@@ -4507,7 +4507,7 @@ export type Database = {
       }
       holiday: {
         Row: {
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -4519,7 +4519,7 @@ export type Database = {
           year: number | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -4531,7 +4531,7 @@ export type Database = {
           year?: number | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -4618,7 +4618,7 @@ export type Database = {
       integration: {
         Row: {
           active: boolean
-          companyId: number
+          companyId: string
           description: string | null
           id: string
           jsonschema: Json
@@ -4631,7 +4631,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
-          companyId: number
+          companyId: string
           description?: string | null
           id: string
           jsonschema: Json
@@ -4644,7 +4644,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
-          companyId?: number
+          companyId?: string
           description?: string | null
           id?: string
           jsonschema?: Json
@@ -4689,7 +4689,7 @@ export type Database = {
       journal: {
         Row: {
           accountingPeriodId: string | null
-          companyId: number
+          companyId: string
           createdAt: string
           customFields: Json | null
           description: string | null
@@ -4698,7 +4698,7 @@ export type Database = {
         }
         Insert: {
           accountingPeriodId?: string | null
-          companyId: number
+          companyId: string
           createdAt?: string
           customFields?: Json | null
           description?: string | null
@@ -4707,7 +4707,7 @@ export type Database = {
         }
         Update: {
           accountingPeriodId?: string | null
-          companyId?: number
+          companyId?: string
           createdAt?: string
           customFields?: Json | null
           description?: string | null
@@ -4743,7 +4743,7 @@ export type Database = {
           accountNumber: string
           accrual: boolean
           amount: number
-          companyId: number
+          companyId: string
           createdAt: string
           customFields: Json | null
           description: string | null
@@ -4762,7 +4762,7 @@ export type Database = {
           accountNumber: string
           accrual?: boolean
           amount: number
-          companyId: number
+          companyId: string
           createdAt?: string
           customFields?: Json | null
           description?: string | null
@@ -4781,7 +4781,7 @@ export type Database = {
           accountNumber?: string
           accrual?: boolean
           amount?: number
-          companyId?: number
+          companyId?: string
           createdAt?: string
           customFields?: Json | null
           description?: string | null
@@ -4832,7 +4832,7 @@ export type Database = {
           addressLine1: string
           addressLine2: string | null
           city: string
-          companyId: number
+          companyId: string
           countryCode: string | null
           createdAt: string
           createdBy: string
@@ -4851,7 +4851,7 @@ export type Database = {
           addressLine1: string
           addressLine2?: string | null
           city: string
-          companyId: number
+          companyId: string
           countryCode?: string | null
           createdAt?: string
           createdBy: string
@@ -4870,7 +4870,7 @@ export type Database = {
           addressLine1?: string
           addressLine2?: string | null
           city?: string
-          companyId?: number
+          companyId?: string
           countryCode?: string | null
           createdAt?: string
           createdBy?: string
@@ -4969,7 +4969,7 @@ export type Database = {
       note: {
         Row: {
           active: boolean
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           documentId: string
@@ -4980,7 +4980,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           documentId: string
@@ -4991,7 +4991,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           documentId?: string
@@ -5052,7 +5052,7 @@ export type Database = {
           approvedBy: string | null
           assignee: string | null
           blocked: boolean
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -5075,7 +5075,7 @@ export type Database = {
           approvedBy?: string | null
           assignee?: string | null
           blocked?: boolean
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -5098,7 +5098,7 @@ export type Database = {
           approvedBy?: string | null
           assignee?: string | null
           blocked?: boolean
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -5260,7 +5260,7 @@ export type Database = {
       }
       partCost: {
         Row: {
-          companyId: number
+          companyId: string
           costingMethod: Database["public"]["Enums"]["partCostingMethod"]
           costIsAdjusted: boolean
           createdAt: string
@@ -5273,7 +5273,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           costingMethod: Database["public"]["Enums"]["partCostingMethod"]
           costIsAdjusted?: boolean
           createdAt?: string
@@ -5286,7 +5286,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           costingMethod?: Database["public"]["Enums"]["partCostingMethod"]
           costIsAdjusted?: boolean
           createdAt?: string
@@ -5395,7 +5395,7 @@ export type Database = {
       partGroup: {
         Row: {
           active: boolean
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -5407,7 +5407,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -5419,7 +5419,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -5504,7 +5504,7 @@ export type Database = {
       }
       partInventory: {
         Row: {
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -5515,7 +5515,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -5526,7 +5526,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -5667,7 +5667,7 @@ export type Database = {
       }
       partLedger: {
         Row: {
-          companyId: number
+          companyId: string
           createdAt: string
           documentId: string | null
           documentType:
@@ -5684,7 +5684,7 @@ export type Database = {
           shelfId: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           createdAt?: string
           documentId?: string | null
           documentType?:
@@ -5701,7 +5701,7 @@ export type Database = {
           shelfId?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           createdAt?: string
           documentId?: string | null
           documentType?:
@@ -5794,7 +5794,7 @@ export type Database = {
         Row: {
           abilityId: string
           active: boolean
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -5806,7 +5806,7 @@ export type Database = {
         Insert: {
           abilityId: string
           active?: boolean
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -5818,7 +5818,7 @@ export type Database = {
         Update: {
           abilityId?: string
           active?: boolean
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -5916,7 +5916,7 @@ export type Database = {
       }
       partPlanning: {
         Row: {
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           critical: boolean
@@ -5939,7 +5939,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           critical?: boolean
@@ -5962,7 +5962,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           critical?: boolean
@@ -6108,7 +6108,7 @@ export type Database = {
       }
       partReplenishment: {
         Row: {
-          companyId: number
+          companyId: string
           conversionFactor: number
           createdAt: string
           createdBy: string
@@ -6128,7 +6128,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           conversionFactor?: number
           createdAt?: string
           createdBy: string
@@ -6148,7 +6148,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           conversionFactor?: number
           createdAt?: string
           createdBy?: string
@@ -6306,7 +6306,7 @@ export type Database = {
       partSupplier: {
         Row: {
           active: boolean
-          companyId: number
+          companyId: string
           conversionFactor: number
           createdAt: string
           createdBy: string
@@ -6323,7 +6323,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
-          companyId: number
+          companyId: string
           conversionFactor?: number
           createdAt?: string
           createdBy: string
@@ -6340,7 +6340,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
-          companyId?: number
+          companyId?: string
           conversionFactor?: number
           createdAt?: string
           createdBy?: string
@@ -6487,7 +6487,7 @@ export type Database = {
       partUnitSalePrice: {
         Row: {
           allowInvoiceDiscount: boolean
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           currencyCode: string
@@ -6502,7 +6502,7 @@ export type Database = {
         }
         Insert: {
           allowInvoiceDiscount?: boolean
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           currencyCode: string
@@ -6517,7 +6517,7 @@ export type Database = {
         }
         Update: {
           allowInvoiceDiscount?: boolean
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           currencyCode?: string
@@ -6642,7 +6642,7 @@ export type Database = {
         Row: {
           active: boolean
           calculationMethod: Database["public"]["Enums"]["paymentTermCalculationMethod"]
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -6657,7 +6657,7 @@ export type Database = {
         Insert: {
           active?: boolean
           calculationMethod?: Database["public"]["Enums"]["paymentTermCalculationMethod"]
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -6672,7 +6672,7 @@ export type Database = {
         Update: {
           active?: boolean
           calculationMethod?: Database["public"]["Enums"]["paymentTermCalculationMethod"]
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -6760,7 +6760,7 @@ export type Database = {
       postingGroupInventory: {
         Row: {
           capacityVarianceAccount: string
-          companyId: number
+          companyId: string
           costOfGoodsSoldAccount: string
           directCostAppliedAccount: string
           id: string
@@ -6781,7 +6781,7 @@ export type Database = {
         }
         Insert: {
           capacityVarianceAccount: string
-          companyId: number
+          companyId: string
           costOfGoodsSoldAccount: string
           directCostAppliedAccount: string
           id?: string
@@ -6802,7 +6802,7 @@ export type Database = {
         }
         Update: {
           capacityVarianceAccount?: string
-          companyId?: number
+          companyId?: string
           costOfGoodsSoldAccount?: string
           directCostAppliedAccount?: string
           id?: string
@@ -7085,7 +7085,7 @@ export type Database = {
       }
       postingGroupPurchasing: {
         Row: {
-          companyId: number
+          companyId: string
           id: string
           partGroupId: string | null
           payablesAccount: string
@@ -7098,7 +7098,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           id?: string
           partGroupId?: string | null
           payablesAccount: string
@@ -7111,7 +7111,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           id?: string
           partGroupId?: string | null
           payablesAccount?: string
@@ -7268,7 +7268,7 @@ export type Database = {
       }
       postingGroupSales: {
         Row: {
-          companyId: number
+          companyId: string
           customerTypeId: string | null
           id: string
           partGroupId: string | null
@@ -7281,7 +7281,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           customerTypeId?: string | null
           id?: string
           partGroupId?: string | null
@@ -7294,7 +7294,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           customerTypeId?: string | null
           id?: string
           partGroupId?: string | null
@@ -7453,7 +7453,7 @@ export type Database = {
         Row: {
           assignee: string | null
           balance: number
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           currencyCode: string
@@ -7482,7 +7482,7 @@ export type Database = {
         Insert: {
           assignee?: string | null
           balance?: number
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           currencyCode: string
@@ -7511,7 +7511,7 @@ export type Database = {
         Update: {
           assignee?: string | null
           balance?: number
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           currencyCode?: string
@@ -7740,7 +7740,7 @@ export type Database = {
         Row: {
           accountNumber: string | null
           assetId: string | null
-          companyId: number
+          companyId: string
           conversionFactor: number | null
           createdAt: string
           createdBy: string
@@ -7768,7 +7768,7 @@ export type Database = {
         Insert: {
           accountNumber?: string | null
           assetId?: string | null
-          companyId: number
+          companyId: string
           conversionFactor?: number | null
           createdAt?: string
           createdBy: string
@@ -7796,7 +7796,7 @@ export type Database = {
         Update: {
           accountNumber?: string | null
           assetId?: string | null
-          companyId?: number
+          companyId?: string
           conversionFactor?: number | null
           createdAt?: string
           createdBy?: string
@@ -8212,7 +8212,7 @@ export type Database = {
           assignee: string | null
           closedAt: string | null
           closedBy: string | null
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -8234,7 +8234,7 @@ export type Database = {
           assignee?: string | null
           closedAt?: string | null
           closedBy?: string | null
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -8256,7 +8256,7 @@ export type Database = {
           assignee?: string | null
           closedAt?: string | null
           closedBy?: string | null
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -8454,7 +8454,7 @@ export type Database = {
       }
       purchaseOrderDelivery: {
         Row: {
-          companyId: number
+          companyId: string
           customerId: string | null
           customerLocationId: string | null
           customFields: Json | null
@@ -8472,7 +8472,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           customerId?: string | null
           customerLocationId?: string | null
           customFields?: Json | null
@@ -8490,7 +8490,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           customerId?: string | null
           customerLocationId?: string | null
           customFields?: Json | null
@@ -8698,7 +8698,7 @@ export type Database = {
         Row: {
           accountNumber: string | null
           assetId: string | null
-          companyId: number
+          companyId: string
           conversionFactor: number | null
           createdAt: string
           createdBy: string
@@ -8729,7 +8729,7 @@ export type Database = {
         Insert: {
           accountNumber?: string | null
           assetId?: string | null
-          companyId: number
+          companyId: string
           conversionFactor?: number | null
           createdAt?: string
           createdBy: string
@@ -8760,7 +8760,7 @@ export type Database = {
         Update: {
           accountNumber?: string | null
           assetId?: string | null
-          companyId?: number
+          companyId?: string
           conversionFactor?: number | null
           createdAt?: string
           createdBy?: string
@@ -8940,7 +8940,7 @@ export type Database = {
       }
       purchaseOrderPayment: {
         Row: {
-          companyId: number
+          companyId: string
           currencyCode: string
           customFields: Json | null
           id: string
@@ -8953,7 +8953,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           currencyCode?: string
           customFields?: Json | null
           id: string
@@ -8966,7 +8966,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           currencyCode?: string
           customFields?: Json | null
           id?: string
@@ -9215,7 +9215,7 @@ export type Database = {
       }
       purchasePayment: {
         Row: {
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           currencyCode: string
@@ -9230,7 +9230,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           currencyCode: string
@@ -9245,7 +9245,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           currencyCode?: string
@@ -9377,7 +9377,7 @@ export type Database = {
       quote: {
         Row: {
           assignee: string | null
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customerContactId: string | null
@@ -9399,7 +9399,7 @@ export type Database = {
         }
         Insert: {
           assignee?: string | null
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customerContactId?: string | null
@@ -9421,7 +9421,7 @@ export type Database = {
         }
         Update: {
           assignee?: string | null
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customerContactId?: string | null
@@ -9607,7 +9607,7 @@ export type Database = {
       }
       quoteAssembly: {
         Row: {
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -9623,7 +9623,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -9639,7 +9639,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -9864,7 +9864,7 @@ export type Database = {
       }
       quoteLine: {
         Row: {
-          companyId: number
+          companyId: string
           createdBy: string
           customerPartId: string | null
           customerPartRevision: string | null
@@ -9881,7 +9881,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           createdBy: string
           customerPartId?: string | null
           customerPartRevision?: string | null
@@ -9898,7 +9898,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           createdBy?: string
           customerPartId?: string | null
           customerPartRevision?: string | null
@@ -10178,7 +10178,7 @@ export type Database = {
       }
       quoteMaterial: {
         Row: {
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -10195,7 +10195,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -10212,7 +10212,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -10373,7 +10373,7 @@ export type Database = {
       }
       quoteOperation: {
         Row: {
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -10394,7 +10394,7 @@ export type Database = {
           workCellTypeId: string
         }
         Insert: {
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -10415,7 +10415,7 @@ export type Database = {
           workCellTypeId: string
         }
         Update: {
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -10567,7 +10567,7 @@ export type Database = {
       receipt: {
         Row: {
           assignee: string | null
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -10589,7 +10589,7 @@ export type Database = {
         }
         Insert: {
           assignee?: string | null
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -10611,7 +10611,7 @@ export type Database = {
         }
         Update: {
           assignee?: string | null
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -10797,7 +10797,7 @@ export type Database = {
       }
       receiptLine: {
         Row: {
-          companyId: number
+          companyId: string
           conversionFactor: number | null
           createdAt: string
           createdBy: string
@@ -10816,7 +10816,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           conversionFactor?: number | null
           createdAt?: string
           createdBy: string
@@ -10835,7 +10835,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           conversionFactor?: number | null
           createdAt?: string
           createdBy?: string
@@ -10985,7 +10985,7 @@ export type Database = {
       requestForQuote: {
         Row: {
           assignee: string | null
-          companyId: number
+          companyId: string
           createdAt: string | null
           createdBy: string
           customFields: Json | null
@@ -11003,7 +11003,7 @@ export type Database = {
         }
         Insert: {
           assignee?: string | null
-          companyId: number
+          companyId: string
           createdAt?: string | null
           createdBy: string
           customFields?: Json | null
@@ -11021,7 +11021,7 @@ export type Database = {
         }
         Update: {
           assignee?: string | null
-          companyId?: number
+          companyId?: string
           createdAt?: string | null
           createdBy?: string
           customFields?: Json | null
@@ -11226,7 +11226,7 @@ export type Database = {
       }
       requestForQuoteLine: {
         Row: {
-          companyId: number
+          companyId: string
           createdAt: string | null
           createdBy: string
           customFields: Json | null
@@ -11243,7 +11243,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           createdAt?: string | null
           createdBy: string
           customFields?: Json | null
@@ -11260,7 +11260,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           createdAt?: string | null
           createdBy?: string
           customFields?: Json | null
@@ -11724,7 +11724,7 @@ export type Database = {
           assignee: string | null
           closedAt: string | null
           closedBy: string | null
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           currencyCode: string
@@ -11747,7 +11747,7 @@ export type Database = {
           assignee?: string | null
           closedAt?: string | null
           closedBy?: string | null
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           currencyCode?: string
@@ -11770,7 +11770,7 @@ export type Database = {
           assignee?: string | null
           closedAt?: string | null
           closedBy?: string | null
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           currencyCode?: string
@@ -12043,7 +12043,7 @@ export type Database = {
         Row: {
           accountNumber: string | null
           assetId: string | null
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -12072,7 +12072,7 @@ export type Database = {
         Insert: {
           accountNumber?: string | null
           assetId?: string | null
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -12101,7 +12101,7 @@ export type Database = {
         Update: {
           accountNumber?: string | null
           assetId?: string | null
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -12265,7 +12265,7 @@ export type Database = {
       }
       salesOrderPayment: {
         Row: {
-          companyId: number
+          companyId: string
           currencyCode: string
           customFields: Json | null
           id: string
@@ -12278,7 +12278,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           currencyCode?: string
           customFields?: Json | null
           id: string
@@ -12291,7 +12291,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           currencyCode?: string
           customFields?: Json | null
           id?: string
@@ -12386,7 +12386,7 @@ export type Database = {
       salesOrderShipment: {
         Row: {
           assignee: string | null
-          companyId: number
+          companyId: string
           customerId: string | null
           customerLocationId: string | null
           customFields: Json | null
@@ -12407,7 +12407,7 @@ export type Database = {
         }
         Insert: {
           assignee?: string | null
-          companyId: number
+          companyId: string
           customerId?: string | null
           customerLocationId?: string | null
           customFields?: Json | null
@@ -12428,7 +12428,7 @@ export type Database = {
         }
         Update: {
           assignee?: string | null
-          companyId?: number
+          companyId?: string
           customerId?: string | null
           customerLocationId?: string | null
           customFields?: Json | null
@@ -12740,7 +12740,7 @@ export type Database = {
       }
       search: {
         Row: {
-          companyId: number
+          companyId: string
           description: string | null
           entity: Database["public"]["Enums"]["searchEntity"] | null
           fts: unknown | null
@@ -12750,7 +12750,7 @@ export type Database = {
           uuid: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           description?: string | null
           entity?: Database["public"]["Enums"]["searchEntity"] | null
           fts?: unknown | null
@@ -12760,7 +12760,7 @@ export type Database = {
           uuid?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           description?: string | null
           entity?: Database["public"]["Enums"]["searchEntity"] | null
           fts?: unknown | null
@@ -12788,7 +12788,7 @@ export type Database = {
       }
       sequence: {
         Row: {
-          companyId: number
+          companyId: string
           id: string
           name: string
           next: number
@@ -12801,7 +12801,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           id?: string
           name: string
           next?: number
@@ -12814,7 +12814,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           id?: string
           name?: string
           next?: number
@@ -12878,7 +12878,7 @@ export type Database = {
           approvedBy: string | null
           assignee: string | null
           blocked: boolean
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -12898,7 +12898,7 @@ export type Database = {
           approvedBy?: string | null
           assignee?: string | null
           blocked?: boolean
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -12918,7 +12918,7 @@ export type Database = {
           approvedBy?: string | null
           assignee?: string | null
           blocked?: boolean
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -13071,7 +13071,7 @@ export type Database = {
       serviceSupplier: {
         Row: {
           active: boolean
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -13084,7 +13084,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -13097,7 +13097,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -13233,7 +13233,7 @@ export type Database = {
       shelf: {
         Row: {
           active: boolean
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -13245,7 +13245,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -13257,7 +13257,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -13378,7 +13378,7 @@ export type Database = {
       shift: {
         Row: {
           active: boolean
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -13399,7 +13399,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -13420,7 +13420,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -13545,7 +13545,7 @@ export type Database = {
           active: boolean
           carrier: Database["public"]["Enums"]["shippingCarrier"]
           carrierAccountId: string | null
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -13559,7 +13559,7 @@ export type Database = {
           active?: boolean
           carrier?: Database["public"]["Enums"]["shippingCarrier"]
           carrierAccountId?: string | null
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -13573,7 +13573,7 @@ export type Database = {
           active?: boolean
           carrier?: Database["public"]["Enums"]["shippingCarrier"]
           carrierAccountId?: string | null
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -13673,7 +13673,7 @@ export type Database = {
       shippingTerm: {
         Row: {
           active: boolean
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           id: string
@@ -13683,7 +13683,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           id?: string
@@ -13693,7 +13693,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           id?: string
@@ -13778,7 +13778,7 @@ export type Database = {
         Row: {
           accountManagerId: string | null
           assignee: string | null
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string | null
           customFields: Json | null
@@ -13794,7 +13794,7 @@ export type Database = {
         Insert: {
           accountManagerId?: string | null
           assignee?: string | null
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy?: string | null
           customFields?: Json | null
@@ -13810,7 +13810,7 @@ export type Database = {
         Update: {
           accountManagerId?: string | null
           assignee?: string | null
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string | null
           customFields?: Json | null
@@ -13968,17 +13968,17 @@ export type Database = {
       }
       supplierAccount: {
         Row: {
-          companyId: number
+          companyId: string
           id: string
           supplierId: string
         }
         Insert: {
-          companyId: number
+          companyId: string
           id: string
           supplierId: string
         }
         Update: {
-          companyId?: number
+          companyId?: string
           id?: string
           supplierId?: string
         }
@@ -14170,7 +14170,7 @@ export type Database = {
       supplierLedger: {
         Row: {
           amount: number
-          companyId: number
+          companyId: string
           createdAt: string
           documentId: string | null
           documentType:
@@ -14184,7 +14184,7 @@ export type Database = {
         }
         Insert: {
           amount: number
-          companyId: number
+          companyId: string
           createdAt?: string
           documentId?: string | null
           documentType?:
@@ -14198,7 +14198,7 @@ export type Database = {
         }
         Update: {
           amount?: number
-          companyId?: number
+          companyId?: string
           createdAt?: string
           documentId?: string | null
           documentType?:
@@ -14328,7 +14328,7 @@ export type Database = {
       }
       supplierPayment: {
         Row: {
-          companyId: number
+          companyId: string
           currencyCode: string | null
           customFields: Json | null
           invoiceSupplierContactId: string | null
@@ -14340,7 +14340,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           currencyCode?: string | null
           customFields?: Json | null
           invoiceSupplierContactId?: string | null
@@ -14352,7 +14352,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           currencyCode?: string | null
           customFields?: Json | null
           invoiceSupplierContactId?: string | null
@@ -14508,7 +14508,7 @@ export type Database = {
       }
       supplierShipping: {
         Row: {
-          companyId: number
+          companyId: string
           customFields: Json | null
           shippingMethodId: string | null
           shippingSupplierContactId: string | null
@@ -14520,7 +14520,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           customFields?: Json | null
           shippingMethodId?: string | null
           shippingSupplierContactId?: string | null
@@ -14532,7 +14532,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           customFields?: Json | null
           shippingMethodId?: string | null
           shippingSupplierContactId?: string | null
@@ -14688,7 +14688,7 @@ export type Database = {
       }
       supplierStatus: {
         Row: {
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -14698,7 +14698,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -14708,7 +14708,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -14792,7 +14792,7 @@ export type Database = {
       }
       supplierType: {
         Row: {
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -14803,7 +14803,7 @@ export type Database = {
           updatedBy: string | null
         }
         Insert: {
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -14814,7 +14814,7 @@ export type Database = {
           updatedBy?: string | null
         }
         Update: {
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -14901,7 +14901,7 @@ export type Database = {
         Row: {
           active: boolean
           code: string
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -14913,7 +14913,7 @@ export type Database = {
         Insert: {
           active?: boolean
           code: string
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -14925,7 +14925,7 @@ export type Database = {
         Update: {
           active?: boolean
           code?: string
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -15168,7 +15168,7 @@ export type Database = {
       userAttributeCategory: {
         Row: {
           active: boolean | null
-          companyId: number | null
+          companyId: string | null
           createdAt: string
           createdBy: string
           id: string
@@ -15180,7 +15180,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean | null
-          companyId?: number | null
+          companyId?: string | null
           createdAt?: string
           createdBy: string
           id?: string
@@ -15192,7 +15192,7 @@ export type Database = {
         }
         Update: {
           active?: boolean | null
-          companyId?: number | null
+          companyId?: string | null
           createdAt?: string
           createdBy?: string
           id?: string
@@ -15442,15 +15442,15 @@ export type Database = {
       }
       userToCompany: {
         Row: {
-          companyId: number
+          companyId: string
           userId: string
         }
         Insert: {
-          companyId: number
+          companyId: string
           userId: string
         }
         Update: {
-          companyId?: number
+          companyId?: string
           userId?: string
         }
         Relationships: [
@@ -15501,7 +15501,7 @@ export type Database = {
       warehouse: {
         Row: {
           active: boolean
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           id: string
@@ -15517,7 +15517,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           id?: string
@@ -15533,7 +15533,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           id?: string
@@ -15652,7 +15652,7 @@ export type Database = {
         Row: {
           active: boolean
           activeDate: string | null
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -15669,7 +15669,7 @@ export type Database = {
         Insert: {
           active?: boolean
           activeDate?: string | null
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -15686,7 +15686,7 @@ export type Database = {
         Update: {
           active?: boolean
           activeDate?: string | null
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -15818,7 +15818,7 @@ export type Database = {
       workCellType: {
         Row: {
           active: boolean
-          companyId: number
+          companyId: string
           createdAt: string
           createdBy: string
           customFields: Json | null
@@ -15835,7 +15835,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
-          companyId: number
+          companyId: string
           createdAt?: string
           createdBy: string
           customFields?: Json | null
@@ -15852,7 +15852,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
-          companyId?: number
+          companyId?: string
           createdAt?: string
           createdBy?: string
           customFields?: Json | null
@@ -15953,7 +15953,7 @@ export type Database = {
         Row: {
           category: string | null
           class: Database["public"]["Enums"]["glAccountClass"] | null
-          companyId: number | null
+          companyId: string | null
           createdAt: string | null
           createdBy: string | null
           customFields: Json | null
@@ -15966,7 +15966,7 @@ export type Database = {
         Insert: {
           category?: string | null
           class?: Database["public"]["Enums"]["glAccountClass"] | null
-          companyId?: number | null
+          companyId?: string | null
           createdAt?: string | null
           createdBy?: string | null
           customFields?: Json | null
@@ -15979,7 +15979,7 @@ export type Database = {
         Update: {
           category?: string | null
           class?: Database["public"]["Enums"]["glAccountClass"] | null
-          companyId?: number | null
+          companyId?: string | null
           createdAt?: string | null
           createdBy?: string | null
           customFields?: Json | null
@@ -16070,7 +16070,7 @@ export type Database = {
           accountSubcategoryId: string | null
           active: boolean | null
           class: Database["public"]["Enums"]["glAccountClass"] | null
-          companyId: number | null
+          companyId: string | null
           consolidatedRate:
             | Database["public"]["Enums"]["glConsolidatedRate"]
             | null
@@ -16093,7 +16093,7 @@ export type Database = {
           accountSubcategoryId?: string | null
           active?: boolean | null
           class?: Database["public"]["Enums"]["glAccountClass"] | null
-          companyId?: number | null
+          companyId?: string | null
           consolidatedRate?:
             | Database["public"]["Enums"]["glConsolidatedRate"]
             | null
@@ -16116,7 +16116,7 @@ export type Database = {
           accountSubcategoryId?: string | null
           active?: boolean | null
           class?: Database["public"]["Enums"]["glAccountClass"] | null
-          companyId?: number | null
+          companyId?: string | null
           consolidatedRate?:
             | Database["public"]["Enums"]["glConsolidatedRate"]
             | null
@@ -16224,12 +16224,12 @@ export type Database = {
           addressLine1: string | null
           addressLine2: string | null
           city: string | null
-          companyId: number | null
+          companyId: string | null
           countryCode: string | null
           email: string | null
           employeeType: string | null
           fax: string | null
-          id: number | null
+          id: string | null
           logo: string | null
           name: string | null
           phone: string | null
@@ -16317,7 +16317,7 @@ export type Database = {
         Row: {
           abilityIds: string[] | null
           active: boolean | null
-          companyId: number | null
+          companyId: string | null
           customFields: Json | null
           email: string | null
           firstName: string | null
@@ -16355,7 +16355,7 @@ export type Database = {
         Row: {
           accountManagerId: string | null
           assignee: string | null
-          companyId: number | null
+          companyId: string | null
           createdAt: string | null
           createdBy: string | null
           customerStatusId: string | null
@@ -16516,7 +16516,7 @@ export type Database = {
       }
       customFieldTables: {
         Row: {
-          companyId: number | null
+          companyId: string | null
           fields: Json | null
           id: string | null
           module: Database["public"]["Enums"]["module"] | null
@@ -16585,7 +16585,7 @@ export type Database = {
       documents: {
         Row: {
           active: boolean | null
-          companyId: number | null
+          companyId: string | null
           createdAt: string | null
           createdBy: string | null
           description: string | null
@@ -16670,7 +16670,7 @@ export type Database = {
         Row: {
           active: boolean | null
           avatarUrl: string | null
-          companyId: number | null
+          companyId: string | null
           email: string | null
           employeeTypeId: string | null
           firstName: string | null
@@ -16705,7 +16705,7 @@ export type Database = {
       employeeSummary: {
         Row: {
           avatarUrl: string | null
-          companyId: number | null
+          companyId: string | null
           departmentName: string | null
           id: string | null
           locationName: string | null
@@ -16733,7 +16733,7 @@ export type Database = {
       }
       groupMembers: {
         Row: {
-          companyId: number | null
+          companyId: string | null
           groupId: string | null
           id: number | null
           isCustomerOrgGroup: boolean | null
@@ -16808,7 +16808,7 @@ export type Database = {
       }
       groups: {
         Row: {
-          companyId: number | null
+          companyId: string | null
           id: string | null
           isCustomerOrgGroup: boolean | null
           isCustomerTypeGroup: boolean | null
@@ -16823,7 +16823,7 @@ export type Database = {
       }
       groups_recursive: {
         Row: {
-          companyId: number | null
+          companyId: string | null
           groupId: string | null
           isCustomerOrgGroup: boolean | null
           isCustomerTypeGroup: boolean | null
@@ -16839,7 +16839,7 @@ export type Database = {
       }
       holidayYears: {
         Row: {
-          companyId: number | null
+          companyId: string | null
           year: number | null
         }
         Relationships: [
@@ -16871,7 +16871,7 @@ export type Database = {
           abilityName: string | null
           active: boolean | null
           city: string | null
-          companyId: number | null
+          companyId: string | null
           createdAt: string | null
           createdBy: string | null
           customFields: Json | null
@@ -16980,7 +16980,7 @@ export type Database = {
       }
       partQuantities: {
         Row: {
-          companyId: number | null
+          companyId: string | null
           locationId: string | null
           partId: string | null
           quantityAvailable: number | null
@@ -17013,7 +17013,7 @@ export type Database = {
           approvedBy: string | null
           assignee: string | null
           blocked: boolean | null
-          companyId: number | null
+          companyId: string | null
           createdAt: string | null
           createdBy: string | null
           customFields: Json | null
@@ -17181,7 +17181,7 @@ export type Database = {
         Row: {
           assignee: string | null
           balance: number | null
-          companyId: number | null
+          companyId: string | null
           createdAt: string | null
           createdBy: string | null
           currencyCode: string | null
@@ -17395,7 +17395,7 @@ export type Database = {
         Row: {
           accountNumber: string | null
           assetId: string | null
-          companyId: number | null
+          companyId: string | null
           conversionFactor: number | null
           createdAt: string | null
           createdBy: string | null
@@ -17665,7 +17665,7 @@ export type Database = {
           assignee: string | null
           closedAt: string | null
           closedBy: string | null
-          companyId: number | null
+          companyId: string | null
           createdAt: string | null
           createdBy: string | null
           customFields: Json | null
@@ -17872,7 +17872,7 @@ export type Database = {
       }
       purchaseOrderSuppliers: {
         Row: {
-          companyId: number | null
+          companyId: string | null
           id: string | null
           name: string | null
         }
@@ -17916,7 +17916,7 @@ export type Database = {
       }
       quoteLines: {
         Row: {
-          companyId: number | null
+          companyId: string | null
           createdBy: string | null
           customerPartId: string | null
           customerPartRevision: string | null
@@ -18063,7 +18063,7 @@ export type Database = {
       quotes: {
         Row: {
           assignee: string | null
-          companyId: number | null
+          companyId: string | null
           createdAt: string | null
           createdBy: string | null
           customerContactId: string | null
@@ -18253,7 +18253,7 @@ export type Database = {
       receipts: {
         Row: {
           assignee: string | null
-          companyId: number | null
+          companyId: string | null
           createdAt: string | null
           createdBy: string | null
           customFields: Json | null
@@ -18441,7 +18441,7 @@ export type Database = {
       requestForQuotes: {
         Row: {
           assignee: string | null
-          companyId: number | null
+          companyId: string | null
           createdAt: string | null
           createdBy: string | null
           customFields: Json | null
@@ -18592,7 +18592,7 @@ export type Database = {
       }
       salesOrderCustomers: {
         Row: {
-          companyId: number | null
+          companyId: string | null
           id: string | null
           name: string | null
         }
@@ -18617,7 +18617,7 @@ export type Database = {
         Row: {
           accountNumber: string | null
           assetId: string | null
-          companyId: number | null
+          companyId: string | null
           createdAt: string | null
           createdBy: string | null
           customerId: string | null
@@ -18812,7 +18812,7 @@ export type Database = {
           closedBy: string | null
           closedByAvatar: string | null
           closedByFullName: string | null
-          companyId: number | null
+          companyId: string | null
           createdAt: string | null
           createdBy: string | null
           createdByAvatar: string | null
@@ -19044,7 +19044,7 @@ export type Database = {
           approvedBy: string | null
           assignee: string | null
           blocked: boolean | null
-          companyId: number | null
+          companyId: string | null
           createdAt: string | null
           createdBy: string | null
           customFields: Json | null
@@ -19199,7 +19199,7 @@ export type Database = {
       shifts: {
         Row: {
           active: boolean | null
-          companyId: number | null
+          companyId: string | null
           createdAt: string | null
           createdBy: string | null
           customFields: Json | null
@@ -19324,7 +19324,7 @@ export type Database = {
         Row: {
           accountManagerId: string | null
           assignee: string | null
-          companyId: number | null
+          companyId: string | null
           createdAt: string | null
           createdBy: string | null
           customFields: Json | null
@@ -19486,7 +19486,7 @@ export type Database = {
       }
       userDefaults: {
         Row: {
-          companyId: number | null
+          companyId: string | null
           locationId: string | null
           userId: string | null
         }
@@ -19552,7 +19552,7 @@ export type Database = {
           foreign_key: string
           tbl: string
         }
-        Returns: number
+        Returns: string
       }
       get_my_claim: {
         Args: {
@@ -19570,19 +19570,13 @@ export type Database = {
         Args: {
           claim: string
         }
-        Returns: unknown
-      }
-      get_permission_companies_as_text: {
-        Args: {
-          claim: string
-        }
-        Returns: unknown
+        Returns: string[]
       }
       groups_for_user: {
         Args: {
           uid: string
         }
-        Returns: unknown
+        Returns: string[]
       }
       groups_query: {
         Args: {
@@ -19592,7 +19586,7 @@ export type Database = {
         Returns: {
           id: string
           name: string
-          companyId: number
+          companyId: string
           parentId: string
           isEmployeeTypeGroup: boolean
           isCustomerOrgGroup: boolean
@@ -19611,7 +19605,7 @@ export type Database = {
       has_company_permission: {
         Args: {
           claim: string
-          company: number
+          company: string
         }
         Returns: boolean
       }
@@ -19632,23 +19626,17 @@ export type Database = {
         }
         Returns: {
           number: string
-          companyId: number
+          companyId: string
           balance: number
           balanceAtDate: number
           netChange: number
         }[]
       }
-      jsonb_to_integer_array: {
-        Args: {
-          "": Json
-        }
-        Returns: unknown
-      }
       jsonb_to_text_array: {
         Args: {
           "": Json
         }
-        Returns: unknown
+        Returns: string[]
       }
       users_for_groups: {
         Args: {
@@ -19672,7 +19660,7 @@ export type Database = {
         Args: {
           _xid: unknown
         }
-        Returns: unknown
+        Returns: number[]
       }
       xid_encode: {
         Args: {
@@ -19684,7 +19672,7 @@ export type Database = {
         Args: {
           _xid: unknown
         }
-        Returns: unknown
+        Returns: number[]
       }
       xid_pid: {
         Args: {
@@ -20067,6 +20055,101 @@ export type Database = {
           },
         ]
       }
+      s3_multipart_uploads: {
+        Row: {
+          bucket_id: string
+          created_at: string
+          id: string
+          in_progress_size: number
+          key: string
+          owner_id: string | null
+          upload_signature: string
+          version: string
+        }
+        Insert: {
+          bucket_id: string
+          created_at?: string
+          id: string
+          in_progress_size?: number
+          key: string
+          owner_id?: string | null
+          upload_signature: string
+          version: string
+        }
+        Update: {
+          bucket_id?: string
+          created_at?: string
+          id?: string
+          in_progress_size?: number
+          key?: string
+          owner_id?: string | null
+          upload_signature?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "s3_multipart_uploads_bucket_id_fkey"
+            columns: ["bucket_id"]
+            isOneToOne: false
+            referencedRelation: "buckets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      s3_multipart_uploads_parts: {
+        Row: {
+          bucket_id: string
+          created_at: string
+          etag: string
+          id: string
+          key: string
+          owner_id: string | null
+          part_number: number
+          size: number
+          upload_id: string
+          version: string
+        }
+        Insert: {
+          bucket_id: string
+          created_at?: string
+          etag: string
+          id?: string
+          key: string
+          owner_id?: string | null
+          part_number: number
+          size?: number
+          upload_id: string
+          version: string
+        }
+        Update: {
+          bucket_id?: string
+          created_at?: string
+          etag?: string
+          id?: string
+          key?: string
+          owner_id?: string | null
+          part_number?: number
+          size?: number
+          upload_id?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "s3_multipart_uploads_parts_bucket_id_fkey"
+            columns: ["bucket_id"]
+            isOneToOne: false
+            referencedRelation: "buckets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "s3_multipart_uploads_parts_upload_id_fkey"
+            columns: ["upload_id"]
+            isOneToOne: false
+            referencedRelation: "s3_multipart_uploads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -20097,13 +20180,44 @@ export type Database = {
         Args: {
           name: string
         }
-        Returns: unknown
+        Returns: string[]
       }
       get_size_by_bucket: {
         Args: Record<PropertyKey, never>
         Returns: {
           size: number
           bucket_id: string
+        }[]
+      }
+      list_multipart_uploads_with_delimiter: {
+        Args: {
+          bucket_id: string
+          prefix_param: string
+          delimiter_param: string
+          max_keys?: number
+          next_key_token?: string
+          next_upload_token?: string
+        }
+        Returns: {
+          key: string
+          id: string
+          created_at: string
+        }[]
+      }
+      list_objects_with_delimiter: {
+        Args: {
+          bucket_id: string
+          prefix_param: string
+          delimiter_param: string
+          max_keys?: number
+          start_after?: string
+          next_token?: string
+        }
+        Returns: {
+          name: string
+          id: string
+          metadata: Json
+          updated_at: string
         }[]
       }
       search: {
@@ -20136,9 +20250,11 @@ export type Database = {
   }
 }
 
+type PublicSchema = Database[Extract<keyof Database, "public">]
+
 export type Tables<
   PublicTableNameOrOptions extends
-    | keyof (Database["public"]["Tables"] & Database["public"]["Views"])
+    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
@@ -20151,10 +20267,10 @@ export type Tables<
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (Database["public"]["Tables"] &
-        Database["public"]["Views"])
-    ? (Database["public"]["Tables"] &
-        Database["public"]["Views"])[PublicTableNameOrOptions] extends {
+  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
+        PublicSchema["Views"])
+    ? (PublicSchema["Tables"] &
+        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -20163,7 +20279,7 @@ export type Tables<
 
 export type TablesInsert<
   PublicTableNameOrOptions extends
-    | keyof Database["public"]["Tables"]
+    | keyof PublicSchema["Tables"]
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
@@ -20174,8 +20290,8 @@ export type TablesInsert<
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-    ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -20184,7 +20300,7 @@ export type TablesInsert<
 
 export type TablesUpdate<
   PublicTableNameOrOptions extends
-    | keyof Database["public"]["Tables"]
+    | keyof PublicSchema["Tables"]
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
@@ -20195,8 +20311,8 @@ export type TablesUpdate<
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-    ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -20205,14 +20321,14 @@ export type TablesUpdate<
 
 export type Enums<
   PublicEnumNameOrOptions extends
-    | keyof Database["public"]["Enums"]
+    | keyof PublicSchema["Enums"]
     | { schema: keyof Database },
   EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
     ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
 > = PublicEnumNameOrOptions extends { schema: keyof Database }
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : PublicEnumNameOrOptions extends keyof Database["public"]["Enums"]
-    ? Database["public"]["Enums"][PublicEnumNameOrOptions]
+  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
+    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
     : never
 

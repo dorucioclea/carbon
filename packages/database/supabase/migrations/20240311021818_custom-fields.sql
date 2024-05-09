@@ -4,7 +4,7 @@ CREATE TABLE "customFieldTable" (
   "module" module NOT NULL,
   "table" TEXT NOT NULL,
   "name" TEXT NOT NULL,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
 
   CONSTRAINT "customFieldTable_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "customFieldTable_module_table_name_key" UNIQUE ("module", "table", "name", "companyId"),
@@ -30,7 +30,7 @@ CREATE TABLE "customField" (
   "dataTypeId" INTEGER NOT NULL,
   "listOptions" TEXT ARRAY,
   "active" BOOLEAN DEFAULT TRUE,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,

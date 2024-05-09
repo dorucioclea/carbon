@@ -30,7 +30,7 @@ export async function addUserToCompany(
   client: SupabaseClient<Database>,
   userToCompany: {
     userId: string;
-    companyId: number;
+    companyId: string;
   }
 ) {
   return client.from("userToCompany").insert(userToCompany);
@@ -45,7 +45,7 @@ export async function createCustomerAccount(
   }: {
     id: string;
     customerId: string;
-    companyId: number;
+    companyId: string;
   }
 ): Promise<Result> {
   // TODO: convert to transaction and call this at the end of the transaction
@@ -160,7 +160,7 @@ export async function createEmployeeAccount(
     firstName: string;
     lastName: string;
     employeeType: string;
-    companyId: number;
+    companyId: string;
   }
 ): Promise<Result> {
   // TODO: convert to transaction and call this at the end of the transaction
@@ -262,7 +262,7 @@ export async function createSupplierAccount(
   }: {
     id: string;
     supplierId: string;
-    companyId: number;
+    companyId: string;
   }
 ): Promise<Result> {
   // TODO: convert to transaction and call this at the end of the transaction
@@ -489,7 +489,7 @@ export async function getUserGroups(
 export async function getUserDefaults(
   client: SupabaseClient<Database>,
   userId: string,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("userDefaults")
@@ -504,7 +504,7 @@ async function insertCustomerAccount(
   customerAccount: {
     id: string;
     customerId: string;
-    companyId: number;
+    companyId: string;
   }
 ) {
   return client
@@ -526,7 +526,7 @@ async function insertSupplierAccount(
   supplierAccount: {
     id: string;
     supplierId: string;
-    companyId: number;
+    companyId: string;
   }
 ) {
   return client
@@ -547,14 +547,14 @@ function makePermissionsFromEmployeeType({
   data,
 }: {
   data: {
-    view: number[];
-    create: number[];
-    update: number[];
-    delete: number[];
+    view: string[];
+    create: string[];
+    update: string[];
+    delete: string[];
     module: string;
   }[];
 }) {
-  const permissions: Record<string, number[]> = {};
+  const permissions: Record<string, string[]> = {};
 
   data.forEach((permission) => {
     if (!permission.module) {
@@ -583,9 +583,9 @@ function isClaimPermission(key: string, value: unknown) {
   );
 }
 
-function makeCustomerPermissions(companyId: number) {
+function makeCustomerPermissions(companyId: string) {
   // TODO: this should be more dynamic
-  const permissions: Record<string, number[]> = {
+  const permissions: Record<string, string[]> = {
     documents_view: [companyId],
     jobs_view: [companyId],
     sales_view: [companyId],
@@ -616,7 +616,7 @@ export function makeEmptyPermissionsFromModules(data: Module[]) {
 
 export function makeCompanyPermissionsFromClaims(
   claims: Json[] | null,
-  companyId: number
+  companyId: string
 ) {
   if (typeof claims !== "object" || claims === null) return null;
   let permissions: Record<string, CompanyPermission> = {};
@@ -645,19 +645,19 @@ export function makeCompanyPermissionsFromClaims(
         switch (action) {
           case "view":
             permissions[module]["view"] =
-              value.includes(0) || value.includes(companyId);
+              value.includes("0") || value.includes(companyId);
             break;
           case "create":
             permissions[module]["create"] =
-              value.includes(0) || value.includes(companyId);
+              value.includes("0") || value.includes(companyId);
             break;
           case "update":
             permissions[module]["update"] =
-              value.includes(0) || value.includes(companyId);
+              value.includes("0") || value.includes(companyId);
             break;
           case "delete":
             permissions[module]["delete"] =
-              value.includes(0) || value.includes(companyId);
+              value.includes("0") || value.includes(companyId);
             break;
         }
       }
@@ -690,16 +690,16 @@ export function makePermissionsFromClaims(claims: Json[] | null) {
 
       switch (action) {
         case "view":
-          permissions[module]["view"] = value as number[];
+          permissions[module]["view"] = value as string[];
           break;
         case "create":
-          permissions[module]["create"] = value as number[];
+          permissions[module]["create"] = value as string[];
           break;
         case "update":
-          permissions[module]["update"] = value as number[];
+          permissions[module]["update"] = value as string[];
           break;
         case "delete":
-          permissions[module]["delete"] = value as number[];
+          permissions[module]["delete"] = value as string[];
           break;
       }
     }
@@ -714,7 +714,7 @@ export function makePermissionsFromClaims(claims: Json[] | null) {
 
 export function makeCompanyPermissionsFromEmployeeType(
   data: EmployeeTypePermission[],
-  companyId: number
+  companyId: string
 ) {
   const result: Record<
     string,
@@ -731,15 +731,16 @@ export function makeCompanyPermissionsFromEmployeeType(
         name: permission.module.toLowerCase(),
         permission: {
           view:
-            permission.view.includes(0) || permission.view.includes(companyId),
+            permission.view.includes("0") ||
+            permission.view.includes(companyId),
           create:
-            permission.create.includes(0) ||
+            permission.create.includes("0") ||
             permission.create.includes(companyId),
           update:
-            permission.update.includes(0) ||
+            permission.update.includes("0") ||
             permission.update.includes(companyId),
           delete:
-            permission.delete.includes(0) ||
+            permission.delete.includes("0") ||
             permission.delete.includes(companyId),
         },
       };
@@ -749,9 +750,9 @@ export function makeCompanyPermissionsFromEmployeeType(
   return result;
 }
 
-function makeSupplierPermissions(companyId: number) {
+function makeSupplierPermissions(companyId: string) {
   // TODO: this should be more dynamic
-  const permissions: Record<string, number[]> = {
+  const permissions: Record<string, string[]> = {
     documents_view: [companyId],
     purchasing_view: [companyId],
     parts_view: [companyId],
@@ -802,7 +803,7 @@ async function setUserClaims(
 async function setUserPermissions(
   client: SupabaseClient<Database>,
   userId: string,
-  permissions: Record<string, number[]>
+  permissions: Record<string, string[]>
 ) {
   const user = await client
     .from("user")
@@ -813,7 +814,7 @@ async function setUserPermissions(
 
   const currentPermissions = (user.data?.permissions ?? {}) as Record<
     string,
-    number[]
+    string[]
   >;
   const newPermissions = { ...currentPermissions };
 
@@ -842,7 +843,7 @@ export async function updateEmployee(
     id: string;
     employeeType: string;
     permissions: Record<string, CompanyPermission>;
-    companyId: number;
+    companyId: string;
   }
 ): Promise<Result> {
   const updateEmployeeEmployeeType = await client
@@ -865,7 +866,7 @@ export async function updatePermissions(
   }: {
     id: string;
     permissions: Record<string, CompanyPermission>;
-    companyId: number;
+    companyId: string;
     addOnly?: boolean;
   }
 ): Promise<Result> {
@@ -880,7 +881,7 @@ export async function updatePermissions(
       claims.data === null
         ? {}
         : claims.data
-    ) as Record<string, number[]>;
+    ) as Record<string, string[]>;
 
     // add any missing claims to the current claims
     Object.keys(permissions).forEach((name) => {
@@ -938,8 +939,8 @@ export async function updatePermissions(
           }
         } else {
           updatedPermissions[`${module}_view`] = (
-            updatedPermissions[`${module}_view`] as number[]
-          ).filter((c: number) => c !== companyId);
+            updatedPermissions[`${module}_view`] as string[]
+          ).filter((c: string) => c !== companyId);
         }
 
         if (permission.create) {
@@ -951,8 +952,8 @@ export async function updatePermissions(
           }
         } else {
           updatedPermissions[`${module}_create`] = (
-            updatedPermissions[`${module}_create`] as number[]
-          ).filter((c: number) => c !== companyId);
+            updatedPermissions[`${module}_create`] as string[]
+          ).filter((c: string) => c !== companyId);
         }
 
         if (permission.update) {
@@ -964,8 +965,8 @@ export async function updatePermissions(
           }
         } else {
           updatedPermissions[`${module}_update`] = (
-            updatedPermissions[`${module}_update`] as number[]
-          ).filter((c: number) => c !== companyId);
+            updatedPermissions[`${module}_update`] as string[]
+          ).filter((c: string) => c !== companyId);
         }
 
         if (permission.delete) {
@@ -977,8 +978,8 @@ export async function updatePermissions(
           }
         } else {
           updatedPermissions[`${module}_delete`] = (
-            updatedPermissions[`${module}_delete`] as number[]
-          ).filter((c: number) => c !== companyId);
+            updatedPermissions[`${module}_delete`] as string[]
+          ).filter((c: string) => c !== companyId);
         }
       });
     }

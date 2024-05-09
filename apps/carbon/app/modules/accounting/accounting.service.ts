@@ -110,7 +110,7 @@ export async function getAccount(
 
 export async function getAccounts(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
   }
@@ -135,7 +135,7 @@ export async function getAccounts(
 
 export async function getAccountsList(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args?: {
     type?: string | null;
     incomeBalance?: string | null;
@@ -166,7 +166,7 @@ export async function getAccountsList(
 
 export async function getAccountCategories(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
   }
@@ -192,7 +192,7 @@ export async function getAccountCategories(
 
 export async function getAccountCategoriesList(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("accountCategory")
@@ -214,7 +214,7 @@ export async function getAccountCategory(
 
 export async function getAccountSubcategories(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
   }
@@ -303,7 +303,7 @@ function getAccountTotal(
 
 export async function getBaseCurrency(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("currency")
@@ -315,7 +315,7 @@ export async function getBaseCurrency(
 
 export async function getChartOfAccounts(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: Omit<GenericQueryFilters, "limit" | "offset"> & {
     name: string | null;
     incomeBalance: string | null;
@@ -398,7 +398,7 @@ export async function getCurrency(
 
 export async function getCurrencies(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
   }
@@ -423,7 +423,7 @@ export async function getCurrencies(
 
 export async function getCurrenciesList(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("currency")
@@ -434,7 +434,7 @@ export async function getCurrenciesList(
 
 export async function getCurrentAccountingPeriod(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   date: string
 ) {
   return client
@@ -448,7 +448,7 @@ export async function getCurrentAccountingPeriod(
 
 export async function getDefaultAccounts(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("accountDefault")
@@ -459,7 +459,7 @@ export async function getDefaultAccounts(
 
 export async function getFiscalYearSettings(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("fiscalYearSettings")
@@ -494,7 +494,7 @@ export async function getInventoryPostingGroup(
 
 export async function getInventoryPostingGroups(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters
 ) {
   let query = client
@@ -523,7 +523,7 @@ export async function getPaymentTerm(
 
 export async function getPaymentTerms(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
   }
@@ -548,7 +548,7 @@ export async function getPaymentTerms(
 
 export async function getPaymentTermsList(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("paymentTerm")
@@ -584,7 +584,7 @@ export async function getPurchasingPostingGroup(
 
 export async function getPurchasingPostingGroups(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters
 ) {
   let query = client
@@ -626,7 +626,7 @@ export async function getPurchasingSalesGroup(
 
 export async function getSalesPostingGroups(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters
 ) {
   let query = client
@@ -645,7 +645,7 @@ export async function getSalesPostingGroups(
 export async function insertPartEntries(
   client: SupabaseClient<Database>,
   partEntries: (z.infer<typeof partLedgerValidator> & {
-    companyId: number;
+    companyId: string;
   })[]
 ) {
   return client.from("partLedger").insert(partEntries);
@@ -654,7 +654,7 @@ export async function insertPartEntries(
 export async function insertPartLedger(
   client: SupabaseClient<Database>,
   partEntry: z.infer<typeof partLedgerValidator> & {
-    companyId: number;
+    companyId: string;
   }
 ) {
   return client.from("partLedger").insert([partEntry]);
@@ -663,7 +663,7 @@ export async function insertPartLedger(
 export async function updateDefaultAccounts(
   client: SupabaseClient<Database>,
   defaultAccounts: z.infer<typeof defaultAcountValidator> & {
-    companyId: number;
+    companyId: string;
     updatedBy: string;
   }
 ) {
@@ -676,7 +676,7 @@ export async function updateDefaultAccounts(
 export async function updateFiscalYearSettings(
   client: SupabaseClient<Database>,
   fiscalYearSettings: z.infer<typeof fiscalYearSettingsValidator> & {
-    companyId: number;
+    companyId: string;
     updatedBy: string;
   }
 ) {
@@ -690,7 +690,7 @@ export async function upsertAccount(
   client: SupabaseClient<Database>,
   account:
     | (Omit<z.infer<typeof accountValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -715,7 +715,7 @@ export async function upsertAccountCategory(
   client: SupabaseClient<Database>,
   accountCategory:
     | (Omit<z.infer<typeof accountCategoryValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -744,7 +744,7 @@ export async function upsertAccountSubcategory(
   client: SupabaseClient<Database>,
   accountSubcategory:
     | (Omit<z.infer<typeof accountSubcategoryValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -773,13 +773,13 @@ export async function upsertCurrency(
   client: SupabaseClient<Database>,
   currency:
     | (Omit<z.infer<typeof currencyValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
     | (Omit<z.infer<typeof currencyValidator>, "id"> & {
         id: string;
-        companyId: number;
+        companyId: string;
         updatedBy: string;
         customFields?: Json;
       })
@@ -807,7 +807,7 @@ export async function upsertPaymentTerm(
   client: SupabaseClient<Database>,
   paymentTerm:
     | (Omit<z.infer<typeof paymentTermValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })

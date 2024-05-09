@@ -2,7 +2,7 @@ export interface AuthSession {
   accessToken: string;
   refreshToken: string;
   userId: string;
-  companyId: number;
+  companyId: string;
   email: string;
   expiresIn: number;
   expiresAt: number;

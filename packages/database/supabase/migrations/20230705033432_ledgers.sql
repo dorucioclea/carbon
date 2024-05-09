@@ -14,7 +14,7 @@ CREATE TYPE "month" AS ENUM (
 );
 
 CREATE TABLE "fiscalYearSettings" (
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "startMonth" "month" NOT NULL DEFAULT 'January',
   "taxStartMonth" "month" NOT NULL DEFAULT 'January',
   "updatedBy" TEXT NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE "accountingPeriod" (
   "startDate" DATE NOT NULL,
   "endDate" DATE NOT NULL,
   "status" "accountingPeriodStatus" NOT NULL DEFAULT 'Inactive',
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "closedAt" TIMESTAMP WITH TIME ZONE,
   "closedBy" TEXT,
   "createdBy" TEXT NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE "journal" (
   "id" SERIAL,
   "description" TEXT,
   "accountingPeriodId" TEXT,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "postingDate" DATE NOT NULL DEFAULT CURRENT_DATE,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   "customFields" JSONB,
@@ -112,7 +112,7 @@ CREATE TABLE "journalLine" (
   "journalLineReference" TEXT NOT NULL,
   "documentLineReference" TEXT,
   "accrual" BOOLEAN NOT NULL DEFAULT false,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   "customFields" JSONB,
 
@@ -198,7 +198,7 @@ CREATE TABLE "costLedger" (
   "quantity" NUMERIC(12, 4) NOT NULL DEFAULT 0,
   "cost" NUMERIC(19, 4) NOT NULL DEFAULT 0,
   "costPostedToGL" NUMERIC(19, 4) NOT NULL DEFAULT 0,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 
   CONSTRAINT "costLedger_pkey" PRIMARY KEY ("id"),
@@ -230,7 +230,7 @@ CREATE TABLE "partLedger" (
   "locationId" TEXT,
   "shelfId" TEXT,
   "quantity" NUMERIC(12, 4) NOT NULL,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 
   CONSTRAINT "partLedger_pkey" PRIMARY KEY ("id"),
@@ -270,7 +270,7 @@ CREATE TABLE "supplierLedger" (
   "externalDocumentId" TEXT,
   "supplierId" TEXT NOT NULL,
   "amount" NUMERIC(19, 4) NOT NULL,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 
   CONSTRAINT "supplierLedger_pkey" PRIMARY KEY ("id"),
@@ -297,7 +297,7 @@ CREATE OR REPLACE FUNCTION "journalLinesByAccountNumber" (
 ) 
 RETURNS TABLE (
   "number" TEXT,
-  "companyId" INTEGER,
+  "companyId" TEXT,
   "balance" NUMERIC(19, 4),
   "balanceAtDate" NUMERIC(19, 4),
   "netChange" NUMERIC(19, 4)

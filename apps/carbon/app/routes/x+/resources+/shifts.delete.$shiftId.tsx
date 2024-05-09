@@ -71,9 +71,9 @@ export default function DeleteShiftRoute() {
   return (
     <ConfirmDelete
       action={path.to.deleteShift(shiftId)}
-      name={shift.name}
+      name={shift.name ?? "Shift"}
       text={`Are you sure you want to delete the shift: ${shift.name} from ${
-        shift.location?.name ?? "unknown location"
+        shift.locationName ?? "unknown location"
       }? This cannot be undone.`}
       onCancel={onCancel}
     />

@@ -1,9 +1,5 @@
 import { useParams } from "@remix-run/react";
-import { BsBank, BsCreditCard, BsListCheck, BsTruck } from "react-icons/bs";
-import {
-  HiOutlineDocumentArrowDown,
-  HiOutlineDocumentArrowUp,
-} from "react-icons/hi2";
+import { BsBank, BsListCheck } from "react-icons/bs";
 import { usePermissions } from "~/hooks";
 import type { Role } from "~/types";
 import { path } from "~/utils/path";
@@ -36,6 +32,7 @@ export function useSalesOrderSidebar({
       count: lines,
       icon: BsListCheck,
       shortcut: "Command+Shift+l",
+      role: ["employee", "customer"],
     },
     /*{
       name: "Shipment",

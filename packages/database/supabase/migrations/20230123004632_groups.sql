@@ -1,7 +1,7 @@
 CREATE TABLE "group" (
   "id" TEXT NOT NULL DEFAULT uuid_generate_v4(),
   "name" TEXT NOT NULL,
-  "companyId" INTEGER,
+  "companyId" TEXT,
   "isIdentityGroup" BOOLEAN NOT NULL DEFAULT false,
   "isEmployeeTypeGroup" BOOLEAN NOT NULL DEFAULT false,
   "isCustomerOrgGroup" BOOLEAN NOT NULL DEFAULT false,
@@ -50,10 +50,12 @@ BEGIN
   VALUES (new.id, new.name, TRUE, new."companyId");
 
   INSERT INTO public."membership"("groupId", "memberGroupId")
-  VALUES ('00000000-0000-0000-0000-' || lpad(new."companyId"::text, 12, '0'), new.id);
+  VALUES ('00000000-0000-' || substring(new."companyId"::text, 1, 4) || '-' || substring(new."companyId"::text, 5, 4) || '-' || substring(new."companyId"::text, 9, 12), new.id);
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+
 
 CREATE FUNCTION public.update_employee_type_group()
 RETURNS TRIGGER AS $$
@@ -231,7 +233,7 @@ CREATE OR REPLACE FUNCTION groups_query(
 RETURNS TABLE (
   "id" TEXT,
   "name" TEXT,
-  "companyId" INTEGER,
+  "companyId" TEXT,
   "parentId" TEXT,
   "isEmployeeTypeGroup" BOOLEAN,
   "isCustomerOrgGroup" BOOLEAN,
@@ -306,7 +308,7 @@ BEGIN
   VALUES (new.id, new.name, TRUE, new."companyId");
 
   INSERT INTO public."membership"("groupId", "memberGroupId")
-  VALUES ('11111111-1111-1111-1111-' || lpad(new."companyId"::text, 12, '0'), new.id);
+  VALUES ('11111111-1111-' || substring(new."companyId"::text, 1, 4) || '-' || substring(new."companyId"::text, 5, 4) || '-' || substring(new."companyId"::text, 9, 12), new.id);
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -318,7 +320,7 @@ BEGIN
   VALUES (new.id, new.name, TRUE, new."companyId");
 
   INSERT INTO public."membership"("groupId", "memberGroupId")
-  VALUES ('22222222-2222-2222-2222-' || lpad(new."companyId"::text, 12, '0'), new.id);
+  VALUES ('22222222-2222-'  || substring(new."companyId"::text, 1, 4) || '-' || substring(new."companyId"::text, 5, 4) || '-' || substring(new."companyId"::text, 9, 12), new.id);
 
   RETURN new;
 END;

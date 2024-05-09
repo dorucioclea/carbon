@@ -142,7 +142,7 @@ export async function deleteWorkCellType(
 
 export async function getAbilities(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & { search: string | null }
 ) {
   let query = client
@@ -167,7 +167,7 @@ export async function getAbilities(
 
 export async function getAbilitiesList(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("ability")
@@ -209,7 +209,7 @@ export async function getAttribute(
 
 async function getAttributes(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   userIds: string[]
 ) {
   return client
@@ -231,7 +231,7 @@ async function getAttributes(
 
 export async function getAttributeCategories(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args?: { search: string | null } & GenericQueryFilters
 ) {
   let query = client
@@ -295,7 +295,7 @@ export async function getContractor(
 
 export async function getContractors(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args?: GenericQueryFilters & { search: string | null }
 ) {
   let query = client
@@ -328,7 +328,7 @@ export async function getDepartment(
 
 export async function getDepartments(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args?: GenericQueryFilters & { search: string | null }
 ) {
   let query = client
@@ -353,7 +353,7 @@ export async function getDepartments(
 
 export async function getDepartmentsList(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("department")
@@ -390,7 +390,7 @@ export async function getEmployeeAbilities(
 export async function getEmployeeJob(
   client: SupabaseClient<Database>,
   employeeId: string,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("employeeJob")
@@ -439,7 +439,7 @@ export async function getEquipmentType(
 
 export async function getEquipmentTypes(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args?: { search: string | null } & GenericQueryFilters
 ) {
   let query = client
@@ -466,7 +466,7 @@ export async function getEquipmentTypes(
 
 export async function getEquipmentTypesList(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("equipmentType")
@@ -484,7 +484,7 @@ export async function getHoliday(
 
 export async function getHolidays(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args?: GenericQueryFilters & { search: string | null }
 ) {
   let query = client
@@ -509,7 +509,7 @@ export async function getHolidays(
 
 export function getHolidayYears(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client.from("holidayYears").select("year").eq("companyId", companyId);
 }
@@ -523,7 +523,7 @@ export async function getLocation(
 
 export async function getLocations(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args?: GenericQueryFilters & { search: string | null }
 ) {
   let query = client
@@ -546,7 +546,7 @@ export async function getLocations(
 
 export async function getLocationsList(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("location")
@@ -581,7 +581,7 @@ export async function getPartner(
 
 export async function getPartners(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args?: GenericQueryFilters & { search: string | null }
 ) {
   let query = client
@@ -624,7 +624,7 @@ type Person = Employee & {
 
 export async function getPeople(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
   }
@@ -714,7 +714,7 @@ export async function getShift(
 
 export async function getShifts(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & { search: string | null }
 ) {
   let query = client
@@ -794,7 +794,7 @@ export async function getWorkCellType(
 
 export async function getWorkCellTypes(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args?: { search: string | null } & GenericQueryFilters
 ) {
   let query = client
@@ -821,7 +821,7 @@ export async function getWorkCellTypes(
 
 export async function getWorkCellTypesList(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("workCellType")
@@ -841,7 +841,7 @@ export async function insertAbility(
       }[];
     };
     shadowWeeks: number;
-    companyId: number;
+    companyId: string;
     createdBy: string;
   }
 ) {
@@ -914,7 +914,7 @@ export async function insertEmployeeJob(
   client: SupabaseClient<Database>,
   job: {
     id: string;
-    companyId: number;
+    companyId: string;
     locationId: string;
   }
 ) {
@@ -996,7 +996,7 @@ export async function updateEmployeeJob(
   client: SupabaseClient<Database>,
   employeeId: string,
   employeeJob: z.infer<typeof employeeJobValidator> & {
-    companyId: number;
+    companyId: string;
     updatedBy: string;
     customFields?: Json;
   }
@@ -1015,7 +1015,7 @@ export async function upsertContractor(
         id: string;
         hoursPerWeek?: number;
         abilities: string[];
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       }
@@ -1068,7 +1068,7 @@ export async function upsertDepartment(
   client: SupabaseClient<Database>,
   department:
     | (Omit<z.infer<typeof departmentValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -1128,7 +1128,7 @@ export async function upsertEquipment(
   client: SupabaseClient<Database>,
   equipment:
     | (Omit<z.infer<typeof equipmentValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -1150,7 +1150,7 @@ export async function upsertEquipmentType(
   client: SupabaseClient<Database>,
   equipmentType:
     | (Omit<z.infer<typeof equipmentTypeValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -1175,7 +1175,7 @@ export async function upsertHoliday(
   client: SupabaseClient<Database>,
   holiday:
     | (Omit<z.infer<typeof holidayValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -1195,7 +1195,7 @@ export async function upsertLocation(
   client: SupabaseClient<Database>,
   location:
     | (Omit<z.infer<typeof locationValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -1218,7 +1218,7 @@ export async function upsertPartner(
   client: SupabaseClient<Database>,
   partner:
     | (Omit<z.infer<typeof partnerValidator>, "supplierId"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -1243,7 +1243,7 @@ export async function upsertShift(
   shift:
     | (Omit<z.infer<typeof shiftValidator>, "id"> & {
         createdBy: string;
-        companyId: number;
+        companyId: string;
         customFields?: Json;
       })
     | (Omit<z.infer<typeof shiftValidator>, "id"> & {
@@ -1262,7 +1262,7 @@ export async function upsertWorkCell(
   client: SupabaseClient<Database>,
   workCell:
     | (Omit<z.infer<typeof workCellValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -1285,7 +1285,7 @@ export async function upsertWorkCellType(
   client: SupabaseClient<Database>,
   workCellType:
     | (Omit<z.infer<typeof workCellTypeValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })

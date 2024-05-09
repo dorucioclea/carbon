@@ -38,7 +38,7 @@ export async function deleteUnitOfMeasure(
 export async function getPartCost(
   client: SupabaseClient<Database>,
   id: string,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("partCost")
@@ -57,7 +57,7 @@ export async function getPartGroup(
 
 export async function getPartGroups(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args?: GenericQueryFilters & { search: string | null }
 ) {
   let query = client
@@ -82,7 +82,7 @@ export async function getPartGroups(
 
 export async function getPartGroupsList(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("partGroup")
@@ -94,7 +94,7 @@ export async function getPartGroupsList(
 export async function getPartInventory(
   client: SupabaseClient<Database>,
   partId: string,
-  companyId: number,
+  companyId: string,
   locationId: string
 ) {
   return client
@@ -109,7 +109,7 @@ export async function getPartInventory(
 export async function getPartManufacturing(
   client: SupabaseClient<Database>,
   id: string,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("partReplenishment")
@@ -122,7 +122,7 @@ export async function getPartManufacturing(
 export async function getPartPlanning(
   client: SupabaseClient<Database>,
   partId: string,
-  companyId: number,
+  companyId: string,
   locationId: string
 ) {
   return client
@@ -137,7 +137,7 @@ export async function getPartPlanning(
 export async function getPartReplenishment(
   client: SupabaseClient<Database>,
   id: string,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("partReplenishment")
@@ -149,7 +149,7 @@ export async function getPartReplenishment(
 
 export async function getParts(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
     supplierId: string | null;
@@ -180,7 +180,7 @@ export async function getParts(
 
 export async function getPartsList(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   replenishmentSystem: PartReplenishmentSystem | null
 ) {
   let query = client
@@ -202,7 +202,7 @@ export async function getPartsList(
 export async function getPartQuantities(
   client: SupabaseClient<Database>,
   partId: string,
-  companyId: number,
+  companyId: string,
   locationId: string
 ) {
   return client
@@ -217,7 +217,7 @@ export async function getPartQuantities(
 export async function getPart(
   client: SupabaseClient<Database>,
   id: string,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("part")
@@ -230,7 +230,7 @@ export async function getPart(
 export async function getPartSuppliers(
   client: SupabaseClient<Database>,
   id: string,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("partSupplier")
@@ -251,7 +251,7 @@ export async function getPartSuppliers(
 export async function getPartUnitSalePrice(
   client: SupabaseClient<Database>,
   id: string,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("partUnitSalePrice")
@@ -263,7 +263,7 @@ export async function getPartUnitSalePrice(
 
 export async function getServices(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
     type: string | null;
@@ -305,7 +305,7 @@ export async function getServices(
 export async function getService(
   client: SupabaseClient<Database>,
   id: string,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("services")
@@ -317,7 +317,7 @@ export async function getService(
 
 export async function getServicesList(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   type: ServiceType | null
 ) {
   let query = client
@@ -338,7 +338,7 @@ export async function getServicesList(
 export async function getServiceSuppliers(
   client: SupabaseClient<Database>,
   id: string,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("serviceSupplier")
@@ -363,7 +363,7 @@ export async function getShelvesList(
 export async function getUnitOfMeasure(
   client: SupabaseClient<Database>,
   id: string,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("unitOfMeasure")
@@ -375,7 +375,7 @@ export async function getUnitOfMeasure(
 
 export async function getUnitOfMeasures(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & { search: string | null }
 ) {
   let query = client
@@ -397,7 +397,7 @@ export async function getUnitOfMeasures(
 
 export async function getUnitOfMeasuresList(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("unitOfMeasure")
@@ -411,7 +411,7 @@ export async function insertShelf(
   shelfId: string,
   locationId: string,
   userId: string,
-  companyId: number
+  companyId: string
 ) {
   const shelfLookup = await client
     .from("shelf")
@@ -445,7 +445,7 @@ export async function upsertPart(
   client: SupabaseClient<Database>,
   part:
     | (z.infer<typeof partValidator> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -483,7 +483,7 @@ export async function upsertPartInventory(
   client: SupabaseClient<Database>,
   partInventory:
     | (z.infer<typeof partInventoryValidator> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -520,7 +520,7 @@ export async function upsertPartPlanning(
   client: SupabaseClient<Database>,
   partPlanning:
     | {
-        companyId: number;
+        companyId: string;
         partId: string;
         locationId: string;
         createdBy: string;
@@ -556,7 +556,7 @@ export async function upsertPartGroup(
   client: SupabaseClient<Database>,
   partGroup:
     | (Omit<z.infer<typeof partGroupValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -584,7 +584,7 @@ export async function upsertPartSupplier(
   client: SupabaseClient<Database>,
   partSupplier:
     | (Omit<z.infer<typeof partSupplierValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -626,7 +626,7 @@ export async function upsertService(
   client: SupabaseClient<Database>,
   service:
     | (z.infer<typeof serviceValidator> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -652,7 +652,7 @@ export async function upsertServiceSupplier(
   client: SupabaseClient<Database>,
   serviceSupplier:
     | (Omit<z.infer<typeof serviceSupplierValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -681,7 +681,7 @@ export async function upsertUnitOfMeasure(
   client: SupabaseClient<Database>,
   unitOfMeasure:
     | (Omit<z.infer<typeof unitOfMeasureValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })

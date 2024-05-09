@@ -2,7 +2,7 @@ import { getSupabaseServiceRole } from "~/lib/supabase";
 
 export async function createPurchaseInvoiceFromPurchaseOrder(
   purchaseOrderId: string,
-  companyId: number,
+  companyId: string,
   userId: string
 ) {
   const client = getSupabaseServiceRole();

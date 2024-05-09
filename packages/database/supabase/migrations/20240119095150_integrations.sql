@@ -10,7 +10,7 @@ CREATE TABLE "integration" (
   "visible" BOOLEAN NOT NULL DEFAULT TRUE,
   "jsonschema" JSON NOT NULL,
   "metadata" JSON NOT NULL DEFAULT '{}',
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
 

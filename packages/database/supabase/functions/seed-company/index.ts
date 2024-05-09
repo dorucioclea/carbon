@@ -36,7 +36,7 @@ serve(async (req: Request) => {
   try {
     if (!id) throw new Error("Payload is missing id");
     if (!userId) throw new Error("Payload is missing userId");
-    const companyId = Number(id);
+    const companyId = id as string;
     const supabaseClient = getSupabaseServiceRole(
       req.headers.get("Authorization")
     );
@@ -55,7 +55,10 @@ serve(async (req: Request) => {
             ...g,
             id: g.id.replace(
               groupCompanyTemplate,
-              companyId.toString().padStart(12, "0")
+              `${companyId.substring(0, 4)}-${companyId.substring(
+                4,
+                8
+              )}-${companyId.substring(8, 20)}`
             ),
             companyId,
           }))

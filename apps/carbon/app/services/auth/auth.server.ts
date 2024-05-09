@@ -54,7 +54,7 @@ export async function getAuthAccountByAccessToken(accessToken: string) {
 
 function makeAuthSession(
   supabaseSession: SupabaseAuthSession | null,
-  companyId: number
+  companyId: string
 ): AuthSession | null {
   if (!supabaseSession) return null;
 
@@ -87,7 +87,7 @@ export async function requirePermissions(
   }
 ): Promise<{
   client: SupabaseClient<Database>;
-  companyId: number;
+  companyId: string;
   email: string;
   userId: string;
 }> {
@@ -114,7 +114,7 @@ export async function requirePermissions(
             action as "view" | "create" | "update" | "delete"
           ];
         return (
-          permissionForCompany.includes(0) || // 0 is the wildcard for all companies
+          permissionForCompany.includes("0") || // 0 is the wildcard for all companies
           permissionForCompany.includes(companyId)
         );
       } else if (Array.isArray(permission)) {
@@ -124,7 +124,7 @@ export async function requirePermissions(
               action as "view" | "create" | "update" | "delete"
             ];
           return (
-            permissionForCompany.includes(0) || // 0 is the wildcard for all companies
+            permissionForCompany.includes("0") || // 0 is the wildcard for all companies
             permissionForCompany.includes(companyId)
           );
         });
@@ -191,7 +191,7 @@ export async function signInWithEmail(email: string, password: string) {
 
 export async function refreshAccessToken(
   refreshToken?: string,
-  companyId?: number
+  companyId?: string
 ): Promise<AuthSession | null> {
   if (!refreshToken) return null;
 

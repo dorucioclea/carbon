@@ -4,7 +4,7 @@ CREATE TABLE "note" (
   "note" TEXT NOT NULL,
   "noteRichText" JSONB NOT NULL DEFAULT '{}'::jsonb,
   "active" BOOLEAN NOT NULL DEFAULT true,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,

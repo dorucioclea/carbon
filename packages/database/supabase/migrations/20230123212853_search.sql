@@ -8,7 +8,7 @@ CREATE TABLE search (
   entity "searchEntity",
   uuid TEXT,
   link TEXT NOT NULL,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
 
   CONSTRAINT search_uuid_unique UNIQUE ("uuid", "companyId"),
   CONSTRAINT search_companyId_fkey FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE

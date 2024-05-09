@@ -23,7 +23,7 @@ export async function assign(
 }
 
 export async function getCustomFieldsCacheKey(args?: {
-  companyId?: number;
+  companyId?: string;
   module?: string;
   table?: string;
 }) {
@@ -35,7 +35,7 @@ export async function getCustomFieldsCacheKey(args?: {
 export async function getCustomFieldsSchemas(
   client: SupabaseClient<Database>,
   args?: {
-    companyId: number;
+    companyId: string;
     module?: string;
     table?: string;
   }

@@ -2,7 +2,7 @@ CREATE TABLE "contractor" (
   "id" TEXT NOT NULL,
   "hoursPerWeek" INTEGER NOT NULL DEFAULT 0,
   "active" BOOLEAN NOT NULL DEFAULT true,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedBy" TEXT,
@@ -68,7 +68,7 @@ CREATE POLICY "Employees with resources_view can view contractor abilities" ON "
   USING (
     has_role('employee')
     AND (
-      0 = ANY(get_permission_companies('resources_view'))
+      '0' = ANY(get_permission_companies('resources_view'))
       OR (
         "contractorId" IN (
           SELECT "id" FROM "contractor" WHERE "companyId" = ANY(
@@ -84,7 +84,7 @@ CREATE POLICY "Employees with resources_create can insert contractor abilities" 
   WITH CHECK (   
     has_role('employee')
     AND (
-      0 = ANY(get_permission_companies('resources_create'))
+      '0' = ANY(get_permission_companies('resources_create'))
       OR (
         "contractorId" IN (
           SELECT "id" FROM "contractor" WHERE "companyId" = ANY(
@@ -100,7 +100,7 @@ CREATE POLICY "Employees with resources_update can update contractor abilities" 
   USING (
     has_role('employee')
     AND (
-      0 = ANY(get_permission_companies('resources_update'))
+      '0' = ANY(get_permission_companies('resources_update'))
       OR (
         "contractorId" IN (
           SELECT "id" FROM "contractor" WHERE "companyId" = ANY(
@@ -116,7 +116,7 @@ CREATE POLICY "Employees with resources_delete can delete contractor abilities" 
   USING (
     has_role('employee')
     AND (
-      0 = ANY(get_permission_companies('resources_delete'))
+      '0' = ANY(get_permission_companies('resources_delete'))
       OR (
         "contractorId" IN (
           SELECT "id" FROM "contractor" WHERE "companyId" = ANY(

@@ -35,7 +35,7 @@ export async function getCompanies(
 
 export async function getCompany(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   const company = await client
     .from("company")
@@ -60,7 +60,7 @@ export async function getCompany(
 export async function getCurrentSequence(
   client: SupabaseClient<Database>,
   table: string,
-  companyId: number
+  companyId: string
 ) {
   const sequence = await getSequence(client, table, companyId);
   if (sequence.error) {
@@ -127,7 +127,7 @@ export async function getIntegration(
 
 export async function getIntegrations(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("integration")
@@ -140,7 +140,7 @@ export async function getIntegrations(
 export async function getNextSequence(
   client: SupabaseClient<Database>,
   table: string,
-  companyId: number
+  companyId: string
 ) {
   const sequence = await getSequence(client, table, companyId);
   if (sequence.error) {
@@ -172,7 +172,7 @@ export async function getNextSequence(
 export async function getSequence(
   client: SupabaseClient<Database>,
   table: string,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("sequence")
@@ -184,7 +184,7 @@ export async function getSequence(
 
 export async function getSequences(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
   }
@@ -209,7 +209,7 @@ export async function getSequences(
 export async function getSequencesList(
   client: SupabaseClient<Database>,
   table: string,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("sequence")
@@ -229,7 +229,7 @@ export async function insertCompany(
 export async function rollbackNextSequence(
   client: SupabaseClient<Database>,
   table: string,
-  companyId: number
+  companyId: string
 ) {
   const sequence = await getSequence(client, table, companyId);
   if (sequence.error) {
@@ -248,7 +248,7 @@ export async function rollbackNextSequence(
 
 export async function seedCompany(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   userId: string
 ) {
   return client.functions.invoke("seed-company", {
@@ -261,7 +261,7 @@ export async function seedCompany(
 
 export async function updateCompany(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   company: Partial<z.infer<typeof companyValidator>> & {
     updatedBy: string;
   }
@@ -284,7 +284,7 @@ export async function updateIntegration(
 
 export async function updateLogo(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   logo: string | null
 ) {
   return client
@@ -300,7 +300,7 @@ export async function updateLogo(
 export async function updateSequence(
   client: SupabaseClient<Database>,
   table: string,
-  companyId: number,
+  companyId: string,
   sequence: Partial<z.infer<typeof sequenceValidator>> & {
     updatedBy: string;
   }

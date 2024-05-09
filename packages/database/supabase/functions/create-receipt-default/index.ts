@@ -30,7 +30,7 @@ serve(async (req: Request) => {
         .insertInto("receipt")
         .values({
           receiptId,
-          companyId: Number(companyId),
+          companyId: companyId,
           locationId: locationId,
           createdBy: userId,
         })

@@ -29,7 +29,7 @@ export async function deleteShippingMethod(
 
 export async function getReceipts(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
   }
@@ -81,7 +81,7 @@ export async function getShippingMethod(
 
 export async function getShippingMethods(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
   }
@@ -108,7 +108,7 @@ export async function getShippingMethods(
 
 export async function getShippingMethodsList(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("shippingMethod")
@@ -120,7 +120,7 @@ export async function getShippingMethodsList(
 
 export async function getShippingTermsList(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("shippingTerm")
@@ -135,7 +135,7 @@ export async function upsertReceipt(
   receipt:
     | (Omit<z.infer<typeof receiptValidator>, "id" | "receiptId"> & {
         receiptId: string;
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -164,7 +164,7 @@ export async function upsertShippingMethod(
   client: SupabaseClient<Database>,
   shippingMethod:
     | (Omit<z.infer<typeof shippingMethodValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })

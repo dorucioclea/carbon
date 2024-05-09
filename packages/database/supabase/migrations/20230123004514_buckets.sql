@@ -15,11 +15,11 @@ ON storage.objects FOR INSERT WITH CHECK (
     bucket_id = 'public'
     AND has_role('employee')
     AND (
-        0 = ANY(
+        '0' = ANY(
             get_permission_companies('settings_create')
         ) OR 
         (storage.foldername(name))[1] = ANY(
-            get_permission_companies_as_text('settings_create')
+            get_permission_companies('settings_create')
         )
     )
 );
@@ -29,11 +29,11 @@ ON storage.objects FOR UPDATE USING (
     bucket_id = 'public'
     AND has_role('employee')
     AND (
-        0 = ANY(
+        '0' = ANY(
             get_permission_companies('settings_create')
         ) OR
         (storage.foldername(name))[1] = ANY(
-            get_permission_companies_as_text('settings_update')
+            get_permission_companies('settings_update')
         )
     )
 );
@@ -43,11 +43,11 @@ ON storage.objects FOR DELETE USING (
     bucket_id = 'public'
     AND has_role('employee')
     AND (
-        0 = ANY(
+        '0' = ANY(
             get_permission_companies('settings_create')
         ) OR
         (storage.foldername(name))[1] = ANY(
-            get_permission_companies_as_text('settings_delete')
+            get_permission_companies('settings_delete')
         )
     )
 );

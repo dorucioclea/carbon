@@ -28,6 +28,7 @@ import {
   upsertLocation,
 } from "~/modules/resources";
 import {
+  getCompanies,
   getCompany,
   insertCompany,
   onboardingCompanyValidator,
@@ -39,7 +40,10 @@ import {
   getPermissionCacheKey,
 } from "~/modules/users/users.server";
 import { requirePermissions } from "~/services/auth/auth.server";
-import { commitAuthSession } from "~/services/session.server";
+import {
+  destroyAuthSession,
+  updateCompanySession,
+} from "~/services/session.server";
 import { assertIsPost } from "~/utils/http";
 
 export async function loader({ request }: ActionFunctionArgs) {
@@ -78,18 +82,20 @@ export async function action({ request }: ActionFunctionArgs) {
   const supabaseClient = getSupabaseServiceRole();
   const { next, ...data } = validation.data;
 
-  let companyId: number | undefined;
+  let companyId: string | undefined;
 
-  const [company, locations] = await Promise.all([
-    getCompany(client, 1),
-    getLocationsList(client, 1),
-  ]);
+  const companies = await getCompanies(client, userId);
+  const company = companies?.data?.[0];
 
+  const locations = await getLocationsList(client, company?.id ?? "");
   const location = locations?.data?.[0];
 
-  if (company.data && location) {
+  if (company && location) {
     const [companyUpdate, locationUpdate] = await Promise.all([
-      updateCompany(supabaseClient, 1, { ...data, updatedBy: userId }),
+      updateCompany(supabaseClient, company.id!, {
+        ...data,
+        updatedBy: userId,
+      }),
       upsertLocation(supabaseClient, {
         ...location,
         ...data,
@@ -168,11 +174,13 @@ export async function action({ request }: ActionFunctionArgs) {
     }
   }
 
+  if (!companyId) {
+    await destroyAuthSession(request);
+  }
+
   throw redirect(next, {
     headers: {
-      "Set-Cookie": await commitAuthSession(request, {
-        company: companyId ?? 1,
-      }),
+      "Set-Cookie": await updateCompanySession(request, companyId!),
     },
   });
 }

@@ -6,7 +6,7 @@ CREATE TABLE "customerPayment" (
   "invoiceCustomerContactId" TEXT,
   "paymentTermId" TEXT,
   "currencyCode" TEXT,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
   
@@ -46,7 +46,7 @@ CREATE TABLE "customerShipping" (
   "shippingCustomerContactId" TEXT,
   "shippingTermId" TEXT,
   "shippingMethodId" TEXT,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
 

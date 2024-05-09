@@ -239,7 +239,7 @@ export async function getCustomerShipping(
 
 export async function getCustomers(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
   }
@@ -263,7 +263,7 @@ export async function getCustomers(
 
 export async function getCustomersList(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("customer")
@@ -285,7 +285,7 @@ export async function getCustomerStatus(
 
 export async function getCustomerStatuses(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args?: GenericQueryFilters & { search: string | null }
 ) {
   let query = client
@@ -308,7 +308,7 @@ export async function getCustomerStatuses(
 
 export async function getCustomerStatusesList(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("customerStatus")
@@ -330,7 +330,7 @@ export async function getCustomerType(
 
 export async function getCustomerTypes(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args?: GenericQueryFilters & { search: string | null }
 ) {
   let query = client
@@ -353,7 +353,7 @@ export async function getCustomerTypes(
 
 export async function getCustomerTypesList(
   client: SupabaseClient<Database>,
-  companyId: number
+  companyId: string
 ) {
   return client
     .from("customerType")
@@ -371,7 +371,7 @@ export async function getQuote(
 
 export async function getQuotes(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
   }
@@ -424,7 +424,7 @@ export async function getQuoteAssemblies(
 
 export async function getQuoteExternalDocuments(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   quoteId: string
 ) {
   return client.storage
@@ -434,7 +434,7 @@ export async function getQuoteExternalDocuments(
 
 export async function getQuoteInternalDocuments(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   quoteId: string
 ) {
   return client.storage
@@ -548,7 +548,7 @@ export async function insertCustomerContact(
   client: SupabaseClient<Database>,
   customerContact: {
     customerId: string;
-    companyId: number;
+    companyId: string;
     contact: z.infer<typeof customerContactValidator>;
     customFields?: Json;
   }
@@ -586,7 +586,7 @@ export async function insertCustomerLocation(
   client: SupabaseClient<Database>,
   customerLocation: {
     customerId: string;
-    companyId: number;
+    companyId: string;
     address: {
       addressLine1?: string;
       addressLine2?: string;
@@ -703,7 +703,7 @@ export async function upsertCustomer(
   client: SupabaseClient<Database>,
   customer:
     | (Omit<z.infer<typeof customerValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -813,7 +813,7 @@ export async function upsertCustomerStatus(
   client: SupabaseClient<Database>,
   customerStatus:
     | (Omit<z.infer<typeof customerStatusValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -837,7 +837,7 @@ export async function upsertCustomerType(
   client: SupabaseClient<Database>,
   customerType:
     | (Omit<z.infer<typeof customerTypeValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -882,7 +882,7 @@ export async function upsertQuote(
   quote:
     | (Omit<z.infer<typeof quotationValidator>, "id" | "quoteId"> & {
         quoteId: string;
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -912,7 +912,7 @@ export async function upsertQuoteAssembly(
     | (Omit<z.infer<typeof quotationAssemblyValidator>, "id"> & {
         quoteId: string;
         quoteLineId: string;
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -943,7 +943,7 @@ export async function upsertQuoteLine(
   client: SupabaseClient<Database>,
   quotationLine:
     | (Omit<z.infer<typeof quotationLineValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -985,7 +985,7 @@ export async function upsertQuoteMaterial(
         quoteId: string;
         quoteLineId: string;
         quoteOperationId: string;
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -1019,7 +1019,7 @@ export async function upsertQuoteOperation(
     | (Omit<z.infer<typeof quotationOperationValidator>, "id"> & {
         quoteId: string;
         quoteLineId: string;
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -1048,7 +1048,7 @@ export async function upsertQuoteOperation(
 
 export async function getSalesOrderExternalDocuments(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   salesOrderId: string
 ) {
   return client.storage
@@ -1058,7 +1058,7 @@ export async function getSalesOrderExternalDocuments(
 
 /*export async function getSalesOrderInternalDocuments(
   client: SupabaseClient<Database>,
-  companyId: number,
+  companyId: string,
   salesOrderId: string
 ) {
   return client.storage
@@ -1164,7 +1164,7 @@ export async function insertSalesOrderLines(
   client: SupabaseClient<Database>,
   salesOrderLines:
     | (Omit<z.infer<typeof salesOrderLineValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })[]
@@ -1214,7 +1214,7 @@ export async function upsertSalesOrder(
   salesOrder:
     | (Omit<z.infer<typeof salesOrderValidator>, "id" | "salesOrderId"> & {
         salesOrderId: string;
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -1330,7 +1330,7 @@ export async function upsertSalesOrderLine(
   client: SupabaseClient<Database>,
   salesOrderLine:
     | (Omit<z.infer<typeof salesOrderLineValidator>, "id"> & {
-        companyId: number;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })

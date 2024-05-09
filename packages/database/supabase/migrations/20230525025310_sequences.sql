@@ -18,7 +18,7 @@ CREATE TABLE "sequence" (
   "next" INTEGER NOT NULL DEFAULT 1,
   "size" INTEGER NOT NULL DEFAULT 5,
   "step" INTEGER NOT NULL DEFAULT 1,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
 

@@ -17,7 +17,7 @@ CREATE TABLE "department" (
   "id" TEXT NOT NULL DEFAULT xid(),
   "name" TEXT NOT NULL UNIQUE,
   "parentDepartmentId" TEXT,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
@@ -73,7 +73,7 @@ CREATE TABLE "workCellType" (
   "overheadRate" NUMERIC NOT NULL DEFAULT 0,
   "defaultStandardFactor" factor NOT NULL DEFAULT 'Total Hours',
   "active" BOOLEAN NOT NULL DEFAULT true,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
@@ -130,7 +130,7 @@ CREATE TABLE "workCell" (
   "locationId" TEXT,
   "workCellTypeId" TEXT NOT NULL,
   "active" BOOLEAN NOT NULL DEFAULT true,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "activeDate" DATE,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
@@ -193,7 +193,7 @@ CREATE TABLE "crew" (
   "crewLeaderId" TEXT,
   "groupId" TEXT NOT NULL,
   "workCellId" TEXT,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
@@ -258,7 +258,7 @@ CREATE POLICY "Employees with resources_view can view crew abilities" ON "crewAb
   USING (
     has_role('employee')
     AND (
-      0 = ANY(get_permission_companies('resources_view'))
+      '0' = ANY(get_permission_companies('resources_view'))
       OR (
         "crewId" IN (
           SELECT "id" FROM "crew" WHERE "companyId" = ANY(
@@ -274,7 +274,7 @@ CREATE POLICY "Employees with resources_create can insert crew abilities" ON "cr
   WITH CHECK (   
     has_role('employee')
     AND (
-      0 = ANY(get_permission_companies('resources_create'))
+      '0' = ANY(get_permission_companies('resources_create'))
       OR (
         "crewId" IN (
           SELECT "id" FROM "crew" WHERE "companyId" = ANY(
@@ -290,7 +290,7 @@ CREATE POLICY "Employees with resources_update can update crew abilities" ON "cr
   USING (
     has_role('employee')
     AND (
-      0 = ANY(get_permission_companies('resources_update'))
+      '0' = ANY(get_permission_companies('resources_update'))
       OR (
         "crewId" IN (
           SELECT "id" FROM "crew" WHERE "companyId" = ANY(
@@ -306,7 +306,7 @@ CREATE POLICY "Employees with resources_delete can delete crew abilities" ON "cr
   USING (
     has_role('employee')
     AND (
-      0 = ANY(get_permission_companies('resources_delete'))
+      '0' = ANY(get_permission_companies('resources_delete'))
       OR (
         "crewId" IN (
           SELECT "id" FROM "crew" WHERE "companyId" = ANY(
@@ -324,7 +324,7 @@ CREATE TABLE "equipmentType" (
   "requiredAbility" TEXT,
   "setupHours" NUMERIC NOT NULL DEFAULT 0,
   "active" BOOLEAN NOT NULL DEFAULT true,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
@@ -383,7 +383,7 @@ CREATE TABLE "equipment" (
   "workCellId" TEXT,
   "active" BOOLEAN NOT NULL DEFAULT true,
   "activeDate" DATE DEFAULT CURRENT_DATE,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedBy" TEXT,

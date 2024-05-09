@@ -29,7 +29,7 @@ const job = triggerClient.defineJob({
         })
         .array()
         .optional(),
-      companyId: z.number(),
+      companyId: z.string(),
     }),
   }),
   run: async (payload, io, ctx) => {

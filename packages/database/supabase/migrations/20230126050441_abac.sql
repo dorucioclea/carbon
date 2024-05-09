@@ -279,7 +279,7 @@ CREATE POLICY "Employees with sales_view can view customer contact" ON "customer
   USING (
     has_role('employee')
     AND (
-      0 = ANY(
+      '0' = ANY(
             get_permission_companies('sales_view')
       ) 
       OR "customerId" IN (
@@ -292,7 +292,6 @@ CREATE POLICY "Customers with sales_view can their own customer contacts" ON "cu
   FOR SELECT
   USING (
     has_role('customer')
-    -- TODO: get_permission_companies('sales_view').length > 0
     AND "customerId" IN (
       SELECT "customerId" FROM "customerAccount" WHERE id::uuid = auth.uid()
     )
@@ -303,7 +302,7 @@ CREATE POLICY "Employees with sales_create can create customer contacts" ON "cus
   WITH CHECK (
     has_role('employee')
     AND (
-      0 = ANY(
+      '0' = ANY(
             get_permission_companies('sales_create')
       ) 
       OR "customerId" IN (
@@ -327,7 +326,7 @@ CREATE POLICY "Employees with sales_update can update customer contacts" ON "cus
   USING (
     has_role('employee')
     AND (
-      0 = ANY(
+      '0' = ANY(
             get_permission_companies('sales_update')
       ) 
       OR "customerId" IN (
@@ -351,7 +350,7 @@ CREATE POLICY "Employees with sales_delete can delete customer contacts" ON "cus
   USING (
     has_role('employee')
     AND (
-      0 = ANY(
+      '0' = ANY(
             get_permission_companies('sales_delete')
       ) 
       OR "customerId" IN (
@@ -453,7 +452,7 @@ CREATE POLICY "Employees with purchasing_view can view supplier contact" ON "sup
   USING (
     has_role('employee')
     AND (
-      0 = ANY(
+      '0' = ANY(
             get_permission_companies('purchasing_view')
       ) 
       OR "supplierId" IN (
@@ -477,7 +476,7 @@ CREATE POLICY "Employees with purchasing_create can create supplier contacts" ON
   WITH CHECK (
     has_role('employee')
     AND (
-      0 = ANY(
+      '0' = ANY(
             get_permission_companies('purchasing_create')
       ) 
       OR "supplierId" IN (
@@ -501,7 +500,7 @@ CREATE POLICY "Employees with purchasing_update can update supplier contacts" ON
   USING (
     has_role('employee')
     AND (
-      0 = ANY(
+      '0' = ANY(
             get_permission_companies('purchasing_update')
       ) 
       OR "supplierId" IN (
@@ -525,7 +524,7 @@ CREATE POLICY "Employees with purchasing_delete can delete supplier contacts" ON
   USING (
     has_role('employee')
     AND (
-      0 = ANY(
+      '0' = ANY(
             get_permission_companies('purchasing_delete')
       ) 
       OR "supplierId" IN (

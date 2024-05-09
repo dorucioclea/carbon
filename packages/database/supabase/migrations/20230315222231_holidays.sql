@@ -3,7 +3,7 @@ CREATE TABLE "holiday" (
   "name" TEXT NOT NULL,
   "date" DATE NOT NULL,
   "year" INTEGER GENERATED ALWAYS AS (EXTRACT(YEAR FROM "date")) STORED,
-  "companyId" INTEGER NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedBy" TEXT,

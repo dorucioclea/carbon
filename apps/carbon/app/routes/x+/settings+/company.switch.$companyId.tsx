@@ -1,7 +1,11 @@
 import { redirect, type ActionFunctionArgs } from "@remix-run/node";
 import { getCompanies } from "~/modules/settings";
 import { requirePermissions } from "~/services/auth/auth.server";
-import { flash, updateCompanySession } from "~/services/session.server";
+import {
+  destroyAuthSession,
+  flash,
+  updateCompanySession,
+} from "~/services/session.server";
 import { path, requestReferrer } from "~/utils/path";
 import { error } from "~/utils/result";
 
@@ -16,7 +20,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  const companyId = Number(params.companyId);
+  const companyId = params.companyId;
   if (!companies.data?.find((company) => company.id === companyId)) {
     throw redirect(
       requestReferrer(request) ?? path.to.authenticatedRoot,
@@ -24,9 +28,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
+  if (!companyId) {
+    await destroyAuthSession(request);
+  }
+
   throw redirect(path.to.authenticatedRoot, {
     headers: {
-      "Set-Cookie": await updateCompanySession(request, companyId),
+      "Set-Cookie": await updateCompanySession(request, companyId!),
     },
   });
 }

@@ -63,7 +63,7 @@ export async function commitAuthSession(
 export async function destroyAuthSession(request: Request) {
   const session = await getSession(request);
 
-  return redirect(path.to.login, {
+  throw redirect(path.to.login, {
     headers: {
       "Set-Cookie": await sessionStorage.destroySession(session),
     },
@@ -179,7 +179,7 @@ export async function refreshAuthSession(
 
 export async function updateCompanySession(
   request: Request,
-  companyId: number
+  companyId: string
 ) {
   const session = await getSession(request);
   const authSession = await getAuthSession(request);
