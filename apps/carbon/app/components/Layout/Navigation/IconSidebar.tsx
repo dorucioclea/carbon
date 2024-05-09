@@ -109,7 +109,7 @@ const NavigationIconLink = forwardRef<
     ref
   ) => {
     const iconClasses = [
-      "absolute left-3 top-3 flex rounded-md items-center items-center justify-center text-primary/80", // Layout
+      "absolute left-3 top-3 flex rounded-md items-center items-center justify-center", // Layout
     ];
 
     const classes = [
