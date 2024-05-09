@@ -21,12 +21,6 @@ CREATE TABLE "company" (
 
 ALTER TABLE "company" ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Authenticated users can view company" ON "company"
-  FOR SELECT
-  USING (
-    auth.role() = 'authenticated' 
-  );
-
 CREATE POLICY "Employees with settings_create can create company" ON "company"
   FOR INSERT
   WITH CHECK (
@@ -48,15 +42,25 @@ CREATE POLICY "Employees with settings_delete can delete company" ON "company"
 
 CREATE TABLE "userToCompany" (
   "userId" TEXT NOT NULL REFERENCES "user" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
-  "companyId" TEXT NOT NULL REFERENCES "company" ("id") ON UPDATE CASCADE ON DELETE CASCADE
+  "companyId" TEXT NOT NULL REFERENCES "company" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
+
+  CONSTRAINT "userToCompany_pkey" PRIMARY KEY ("userId", "companyId")
 );
+
+CREATE POLICY "Authenticated users can view company" ON "company"
+  FOR SELECT
+  USING (
+    auth.role() = 'authenticated' AND "id" IN (
+      SELECT "companyId" FROM "userToCompany" WHERE "userId" = auth.uid()::text
+    )
+  );
 
 ALTER TABLE "userToCompany" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Authenticated users can view userToCompany" ON "userToCompany"
   FOR SELECT
   USING (
-    auth.role() = 'authenticated' 
+    auth.role() = 'authenticated'
   );
 
 CREATE POLICY "Employees with users_create can create userToCompany" ON "userToCompany"
