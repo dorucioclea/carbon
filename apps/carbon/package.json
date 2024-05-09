@@ -98,6 +98,7 @@
     "dev": "run-p dev:remix dev:trigger",
     "dev:remix": "PORT=3000 remix vite:dev",
     "dev:trigger": "wait-on http://localhost:3000/healthcheck && npx --yes @trigger.dev/cli@latest dev",
+    "e2e": "npx playwright test",
     "lint": "TIMING=1 eslint \"app/**/*.ts*\"",
     "start": "remix-serve ./build/server/index.js",
     "types": "tsc"
