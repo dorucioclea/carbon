@@ -7,7 +7,6 @@ import {
   accountDefaults,
   accounts,
   currencies,
-  customFields,
   customerStatuses,
   fiscalYearSettings,
   groupCompanyTemplate,
@@ -230,11 +229,6 @@ serve(async (req: Request) => {
         .values(integrations.map((i) => ({ ...i, companyId })))
         .execute();
 
-      await trx
-        .insertInto("customFieldTable")
-        .values(customFields.map((cf) => ({ ...cf, companyId })))
-        .execute();
-
       const user = await supabaseClient
         .from("user")
         .select("permissions")
@@ -244,7 +238,7 @@ serve(async (req: Request) => {
 
       const currentPermissions = (user.data?.permissions ?? {}) as Record<
         string,
-        number[]
+        string[]
       >;
       const newPermissions = { ...currentPermissions };
       modules.forEach(({ name }) => {
