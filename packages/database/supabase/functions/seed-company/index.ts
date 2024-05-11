@@ -6,8 +6,6 @@ import {
   accountCategories,
   accountDefaults,
   accounts,
-  currencies,
-  customFields,
   customerStatuses,
   fiscalYearSettings,
   groupCompanyTemplate,
@@ -159,11 +157,6 @@ serve(async (req: Request) => {
         .values(sequences.map((s) => ({ ...s, companyId })))
         .execute();
 
-      await trx
-        .insertInto("currency")
-        .values(currencies.map((c) => ({ ...c, companyId })))
-        .execute();
-
       const accountCategoriesWithIds = await trx
         .insertInto("accountCategory")
         .values(accountCategories.map((ac) => ({ ...ac, companyId })))
@@ -228,11 +221,6 @@ serve(async (req: Request) => {
       await trx
         .insertInto("integration")
         .values(integrations.map((i) => ({ ...i, companyId })))
-        .execute();
-
-      await trx
-        .insertInto("customFieldTable")
-        .values(customFields.map((cf) => ({ ...cf, companyId })))
         .execute();
 
       const user = await supabaseClient
