@@ -6,6 +6,7 @@ import {
   accountCategories,
   accountDefaults,
   accounts,
+  currencies,
   customerStatuses,
   fiscalYearSettings,
   groupCompanyTemplate,
@@ -157,6 +158,11 @@ serve(async (req: Request) => {
         .values(sequences.map((s) => ({ ...s, companyId })))
         .execute();
 
+      await trx
+        .insertInto("currency")
+        .values(currencies.map((c) => ({ ...c, companyId })))
+        .execute();
+
       const accountCategoriesWithIds = await trx
         .insertInto("accountCategory")
         .values(accountCategories.map((ac) => ({ ...ac, companyId })))
@@ -232,7 +238,7 @@ serve(async (req: Request) => {
 
       const currentPermissions = (user.data?.permissions ?? {}) as Record<
         string,
-        number[]
+        string[]
       >;
       const newPermissions = { ...currentPermissions };
       modules.forEach(({ name }) => {
