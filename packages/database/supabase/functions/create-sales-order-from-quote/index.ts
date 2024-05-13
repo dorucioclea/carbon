@@ -26,7 +26,7 @@ serve(async (req: Request) => {
 
     const client = getSupabaseServiceRole(req.headers.get("Authorization"));
 
-    const [quote, quoteLines] =
+    const [quote, quoteLinesWithPrices] =
       await Promise.all([
         client
           .from("quote")
@@ -35,20 +35,22 @@ serve(async (req: Request) => {
           .single(),
         client
           .from("quoteLine")
-          .select("*")
+          .select("*, quoteLinePrice(id, quantity, unitCost)")
           .eq("quoteId", quoteId),
       ]);
 
     if (!quote.data) throw new Error("Quote not found");
-    if (quoteLines.error) throw new Error(quoteLines.error.message);
+    if (quoteLinesWithPrices.error) throw new Error(quoteLinesWithPrices.error.message);
 
-    const salesOrderLines = quoteLines.data.reduce<SalesOrderLineItem[]>(
+    const salesOrderLines = quoteLinesWithPrices.data.reduce<SalesOrderLineItem[]>(
       (acc, d) => {  
         acc.push({
           salesOrderLineType: "Part",
           partId: d.partId,
           description: d.description,
           createdBy: userId,
+          saleQuantity: d.quoteLinePrice.length > 0 ? d.quoteLinePrice[0].quantity : null,
+          unitPrice: d.quoteLinePrice.length > 0 ? d.quoteLinePrice[0].unitCost : null
         });
 
         return acc;
@@ -72,8 +74,6 @@ serve(async (req: Request) => {
       .where("id", "=", quoteId)
       .execute();
   
-      if (quoteUpdate.error) throw new Error("Sales order not created");
-
       const quoteLinesUpdate = await trx
       .updateTable("quoteLine")
       .set({
@@ -83,8 +83,6 @@ serve(async (req: Request) => {
       })
       .where("quoteId", "=", quoteId)
       .execute();
-
-      if (quoteLinesUpdate.error) throw new Error("Sales order not created");
 
       salesOrderId = await getNextSequence(trx, "salesOrder");
 
