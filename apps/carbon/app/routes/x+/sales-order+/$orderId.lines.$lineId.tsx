@@ -101,7 +101,7 @@ export default function EditSalesOrderLineRoute() {
     accountNumber: salesOrderLine?.accountNumber ?? "",
     assetId: salesOrderLine?.assetId ?? "",
     description: salesOrderLine?.description ?? "",
-    salesQuantity: salesOrderLine?.salesQuantity ?? 1,
+    saleQuantity: salesOrderLine?.saleQuantity ?? 1,
     unitPrice: salesOrderLine?.unitPrice ?? 0,
     setupPrice: salesOrderLine?.setupPrice ?? 0,
     unitOfMeasureCode: salesOrderLine?.unitOfMeasureCode ?? "",

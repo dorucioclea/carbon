@@ -1,4 +1,5 @@
 import { intervalTrigger } from "@trigger.dev/sdk";
+import type { ExchangeRatesClient, Rates } from "~/lib/exchange-rates.server";
 import { getExchangeRatesClient } from "~/lib/exchange-rates.server";
 import { getSupabaseServiceRole } from "~/lib/supabase";
 import { triggerClient } from "~/lib/trigger.server";
@@ -15,59 +16,79 @@ const job = triggerClient.defineJob({
     seconds: 60 * 60 * 8, // thrice a day
   }),
   run: async (payload, io, ctx) => {
-    const integration = await supabaseClient
-      .from("integration")
-      .select("active, metadata")
-      .eq("id", "exchange-rates-v1")
-      .maybeSingle();
+    let rates: Rates;
+    let hasRates = false;
+    let exchangeRatesClient: ExchangeRatesClient | undefined;
 
-    const integrationMetadata = exchangeRatesFormValidator.safeParse(
-      integration?.data?.metadata
-    );
+    const integrations = await supabaseClient
+      .from("companyIntegration")
+      .select("active, metadata, companyId")
+      .eq("id", "exchange-rates-v1");
 
-    if (!integrationMetadata.success || integration?.data?.active !== true)
+    if (integrations.error) {
+      io.logger.error(JSON.stringify(integrations.error));
       return;
-    const exchangeRatesClient = getExchangeRatesClient(
-      integrationMetadata.data.apiKey
-    );
-
-    if (!exchangeRatesClient) return;
+    }
 
     await io.logger.info(`💵 Exchange Rates Job: ${payload.lastTimestamp}`);
-    await io.logger.info(JSON.stringify(exchangeRatesClient.getMetaData()));
+    for await (const integration of integrations.data) {
+      const integrationMetadata = exchangeRatesFormValidator.safeParse(
+        integration?.metadata
+      );
 
-    try {
-      const rates = await exchangeRatesClient.getExchangeRates();
-      const updatedAt = new Date().toISOString();
-      await io.logger.info(JSON.stringify(rates));
-      const { data } = await supabaseClient.from("currency").select("*");
-      if (!data) return;
+      if (!integrationMetadata.success || integration?.active !== true) return;
 
-      const updates = data
-        .map((currency) => ({
-          ...currency,
-          exchangeRate: Number(
-            rates[currency.code as CurrencyCode]?.toFixed(
-              currency.decimalPlaces
-            )
-          ),
-          updatedAt,
-        }))
-        .filter((currency) => currency.exchangeRate);
+      try {
+        if (!hasRates) {
+          exchangeRatesClient = getExchangeRatesClient(
+            integrationMetadata.data.apiKey
+          );
 
-      if (updates?.length === 0) return;
+          if (!exchangeRatesClient) return;
+          await io.logger.info(
+            JSON.stringify(exchangeRatesClient.getMetaData())
+          );
+          rates = await exchangeRatesClient.getExchangeRates();
+          await io.logger.info(JSON.stringify(rates));
+          hasRates = true;
+        }
+        // @ts-expect-error
+        if (!rates) throw new Error("No rates found");
 
-      const { error } = await supabaseClient.from("currency").upsert(updates);
-      if (error) {
-        await io.logger.error(JSON.stringify(error));
-        return;
+        const updatedAt = new Date().toISOString();
+
+        const { data } = await supabaseClient
+          .from("currency")
+          .select("*")
+          .eq("companyId", integration.companyId);
+        if (!data) return;
+
+        const updates = data
+          // eslint-disable-next-line no-loop-func
+          .map((currency) => ({
+            ...currency,
+            exchangeRate: Number(
+              rates[currency.code as CurrencyCode]?.toFixed(
+                currency.decimalPlaces
+              )
+            ),
+            updatedAt,
+          }))
+          .filter((currency) => currency.exchangeRate);
+
+        if (updates?.length === 0) return;
+
+        const { error } = await supabaseClient.from("currency").upsert(updates);
+        if (error) {
+          await io.logger.error(JSON.stringify(error));
+          return;
+        }
+      } catch (err) {
+        // TODO: notify someone
+        await io.logger.error(JSON.stringify(err));
       }
-
-      io.logger.log("Success");
-    } catch (err) {
-      // TODO: notify someone
-      await io.logger.error(JSON.stringify(err));
     }
+    io.logger.log("Success");
   },
 });
 

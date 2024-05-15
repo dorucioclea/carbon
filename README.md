@@ -1,6 +1,5 @@
-
 <p align="center">
-<a href="https://www.loom.com/share/7b2dccab3d404b84aa8f08e5bfa21d16?sid=56583b4c-2ae4-4b2a-b402-187a11b84922" target="_blank">
+<a href="https://www.loom.com/share/7eb03a5e4d4d4836b34f173805fb7403?sid=7ed308d0-8d59-4230-a3f1-137aae3c24da" target="_blank">
   <img src="https://github.com/barbinbrad/carbon/assets/64510427/229985c9-44de-4b2b-afdd-7d1f4fd9dedd" width="70%" />
 </a>
 </p>
@@ -119,8 +118,6 @@ Create an `.env` file and copy the contents of `.env.example` file into it
 $ cp ./.env.example ./.env
 ```
 
-Add your environment variables:
-
 1. Use the output of `npm run db:start` to set the supabase entries:
 
 - SUPABASE_SERVICE_ROLE=[service_role key]
@@ -145,7 +142,7 @@ Then you can run the following:
 
 ```bash
 $ npm run db:build     # run db migrations and seed script
-$ npm run build:app    # build the app
+$ npm run build        # build the packages
 ```
 
 Finally, start the apps and packages:

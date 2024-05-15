@@ -17,7 +17,7 @@ export const handle: Handle = {
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     create: "parts",
   });
 
@@ -30,6 +30,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const createService = await upsertService(client, {
     ...validation.data,
+    companyId,
     active: true,
     createdBy: userId,
     customFields: setCustomFields(formData),

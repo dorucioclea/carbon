@@ -32,7 +32,7 @@ export const handle: Handle = {
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     update: "settings",
   });
   const formData = await request.formData();
@@ -44,7 +44,7 @@ export async function action({ request }: ActionFunctionArgs) {
       return validationError(validation.error);
     }
 
-    const update = await updateCompany(client, {
+    const update = await updateCompany(client, companyId, {
       ...validation.data,
       updatedBy: userId,
     });
@@ -60,7 +60,8 @@ export async function action({ request }: ActionFunctionArgs) {
   if (formData.get("intent") === "logo") {
     const logoPath = formData.get("path");
     if (logoPath === null || typeof logoPath === "string") {
-      const logoUpdate = await updateLogo(client, logoPath);
+      const logoUpdate = await updateLogo(client, companyId, logoPath);
+
       if (logoUpdate.error) {
         throw redirect(
           path.to.company,
@@ -123,6 +124,7 @@ export default function Company() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 w-full">
+            {/* @ts-ignore */}
             <CompanyForm company={initialValues} />
             <CompanyLogoForm company={company} />
           </div>

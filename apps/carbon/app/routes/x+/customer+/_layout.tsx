@@ -23,7 +23,7 @@ export const handle: Handle = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "sales",
   });
 
@@ -34,11 +34,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
     shippingMethods,
     shippingTerms,
   ] = await Promise.all([
-    getCustomerTypes(client),
-    getCustomerStatuses(client),
-    getPaymentTermsList(client),
-    getShippingMethodsList(client),
-    getShippingTermsList(client),
+    getCustomerTypes(client, companyId),
+    getCustomerStatuses(client, companyId),
+    getPaymentTermsList(client, companyId),
+    getShippingMethodsList(client, companyId),
+    getShippingTermsList(client, companyId),
   ]);
 
   return json({

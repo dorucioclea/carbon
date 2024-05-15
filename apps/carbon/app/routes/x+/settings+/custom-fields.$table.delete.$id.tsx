@@ -7,15 +7,15 @@ import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function action({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     delete: "settings",
   });
 
-  const { tableId, id } = params;
-  if (!tableId) throw new Error("tableId is not found");
+  const { table, id } = params;
+  if (!table) throw new Error("table is not found");
   if (!id) throw new Error("id is not found");
 
-  const deleteField = await deleteCustomField(client, id);
+  const deleteField = await deleteCustomField(client, id, companyId);
   if (deleteField.error) {
     throw redirect(
       path.to.attributes,
@@ -27,7 +27,7 @@ export async function action({ request, params }: LoaderFunctionArgs) {
   }
 
   throw redirect(
-    path.to.customFieldList(tableId),
+    path.to.customFieldList(table),
     await flash(request, success("Successfully deleted custom field"))
   );
 }

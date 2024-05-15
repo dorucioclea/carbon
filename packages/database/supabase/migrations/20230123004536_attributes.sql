@@ -4,6 +4,7 @@ CREATE TABLE "userAttributeCategory" (
   "name" TEXT NOT NULL,
   "public" BOOLEAN DEFAULT FALSE,
   "protected" BOOLEAN DEFAULT FALSE,
+  "companyId" TEXT,
   "active" BOOLEAN DEFAULT TRUE,
   "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   "createdBy" TEXT NOT NULL,
@@ -11,9 +12,12 @@ CREATE TABLE "userAttributeCategory" (
   "updatedBy" TEXT,
 
   CONSTRAINT "userAttributeCategory_pkey" PRIMARY KEY ("id"),
+  CONSTRAINT "userAttributeCategory_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "userAttributeCategory_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE,
   CONSTRAINT "userAttributeCategory_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE
 );
+
+CREATE INDEX "userAttributeCategory_companyId_idx" ON "userAttributeCategory" ("companyId");
 
 -- ALTER TABLE "userAttributeCategory" ENABLE ROW LEVEL SECURITY;
 
@@ -80,7 +84,17 @@ CREATE TABLE "attributeDataType" (
     )
 );
 
--- ALTER TABLE "attributeDataType" ENABLE ROW LEVEL SECURITY;
+INSERT INTO "attributeDataType" ("label", "isBoolean", "isDate", "isList", "isNumeric", "isText", "isUser")
+VALUES 
+  ('Yes/No', true, false, false, false, false, false),
+  ('Date', false, true, false, false, false, false),
+  ('List', false, false, true, false, false, false),
+  ('Numeric', false, false, false, true, false, false),
+  ('Text', false, false, false, false, true, false),
+  ('User', false, false, false, false, false, true);
+
+ALTER TABLE "attributeDataType" ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Authenticated users can view attribute data types" ON "attributeDataType" FOR SELECT USING (auth.role() = 'authenticated');
 
 CREATE TABLE "userAttribute" (
   "id" TEXT NOT NULL DEFAULT xid(),
@@ -103,6 +117,8 @@ CREATE TABLE "userAttribute" (
   CONSTRAINT "userAttribute_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE
 
 );
+
+CREATE INDEX "userAttribute_userAttributeCategoryId_idx" ON "userAttribute" ("userAttributeCategoryId");
 
 -- ALTER TABLE "userAttribute" ENABLE ROW LEVEL SECURITY;
 
@@ -168,20 +184,37 @@ CREATE TABLE "userAttributeValue" (
     UNIQUE ( "userAttributeId", "userId")
 );
 
-CREATE INDEX "userAttributeValue_userAttributeId_index" ON "userAttributeValue" ("userAttributeId");
-CREATE INDEX "userAttributeValue_userId_index" ON "userAttributeValue" ("userId");
+CREATE INDEX "userAttributeValue_userAttributeId_idx" ON "userAttributeValue" ("userAttributeId");
+CREATE INDEX "userAttributeValue_userId_idx" ON "userAttributeValue" ("userId");
 
 ALTER TABLE "userAttributeValue" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Claims admin can view/modify user attribute values" ON "userAttributeValue" FOR ALL USING (is_claims_admin());
+CREATE POLICY "Users with resource update can view/modify user attribute values" ON "userAttributeValue" FOR ALL USING (
+  "userAttributeId" IN (
+    SELECT "id" FROM "userAttribute" WHERE "userAttributeCategoryId" IN (
+      SELECT "id" FROM "userAttributeCategory" WHERE
+      "companyId" = ANY(
+        coalesce(
+          get_permission_companies('resources_update')::text[],
+          array[]::text[]
+        )
+      )
+    )
+  )
+);
 CREATE POLICY "Users can insert attributes for themselves" ON "userAttributeValue" FOR UPDATE WITH CHECK (auth.uid() = "userId"::uuid);
 CREATE POLICY "Users can modify attributes for themselves" ON "userAttributeValue" FOR UPDATE WITH CHECK (auth.uid() = "userId"::uuid);
-CREATE POLICY "Users can view their own attribtues" ON "userAttributeValue" FOR SELECT USING (auth.uid() = "userId"::uuid);
+CREATE POLICY "Users can view their own attributes" ON "userAttributeValue" FOR SELECT USING (auth.uid() = "userId"::uuid);
 CREATE POLICY "Users can view other users attributes if the category is public" ON "userAttributeValue" FOR SELECT 
   USING (
     auth.role() = 'authenticated' AND
     "userAttributeValue"."userAttributeId" IN (
       SELECT "id" FROM "userAttribute" WHERE "userAttributeCategoryId" IN (
-        SELECT "id" FROM "userAttributeCategory" WHERE "public" = true
+        SELECT "id" FROM "userAttributeCategory" WHERE "public" = true AND "companyId" = ANY(
+          coalesce(
+            get_permission_companies('resources_view')::text[],
+            array[]::text[]
+          )
+        )
       )
     )
   );

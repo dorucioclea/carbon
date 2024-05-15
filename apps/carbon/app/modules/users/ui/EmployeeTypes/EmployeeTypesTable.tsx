@@ -47,7 +47,9 @@ const EmployeeTypesTable = memo(({ data, count }: EmployeeTypesTableProps) => {
         <>
           <MenuItem
             onClick={() => {
-              navigate(`${path.to.employeeAccounts}?type=${row.id}`);
+              navigate(
+                `${path.to.employeeAccounts}?filter=employeeTypeId:eq:${row.id}`
+              );
             }}
           >
             <MenuIcon icon={<BsPeopleFill />} />

@@ -41,6 +41,8 @@ export const useDocument = () => {
   const insertTransaction = useCallback(
     (document: DocumentType, type: DocumentTransactionType) => {
       if (user?.id === undefined) throw new Error("User is undefined");
+      if (!document.id) throw new Error("Document id is undefined");
+
       return supabase?.from("documentTransaction").insert({
         documentId: document.id,
         type,
@@ -52,11 +54,14 @@ export const useDocument = () => {
 
   const deleteLabel = useCallback(
     async (document: DocumentType, label: string) => {
+      if (!document.id) throw new Error("Document id is undefined");
+      if (user?.id === undefined) throw new Error("User is undefined");
+
       return supabase
         ?.from("documentLabel")
         .delete()
         .eq("documentId", document.id)
-        .eq("userId", user?.id)
+        .eq("userId", user.id)
         .eq("label", label);
     },
     [supabase, user?.id]
@@ -64,6 +69,8 @@ export const useDocument = () => {
 
   const download = useCallback(
     async (doc: DocumentType) => {
+      if (!doc.path) throw new Error("Document path is undefined");
+
       const result = await supabase?.storage.from("private").download(doc.path);
 
       if (!result || result.error) {
@@ -75,7 +82,7 @@ export const useDocument = () => {
       document.body.appendChild(a);
       const url = window.URL.createObjectURL(result.data);
       a.href = url;
-      a.download = doc.name;
+      a.download = doc.name ?? "File";
       a.click();
 
       setTimeout(() => {
@@ -97,7 +104,7 @@ export const useDocument = () => {
 
   const edit = useCallback(
     (document: DocumentType) =>
-      navigate(`${path.to.document(document.id)}?${params}`),
+      navigate(`${path.to.document(document.id!)}?${params}`),
     [navigate, params]
   );
 
@@ -107,13 +114,13 @@ export const useDocument = () => {
         await supabase
           ?.from("documentFavorite")
           .delete()
-          .eq("documentId", document.id)
+          .eq("documentId", document.id!)
           .eq("userId", user?.id);
         return insertTransaction(document, "Unfavorite");
       } else {
         await supabase
           ?.from("documentFavorite")
-          .insert({ documentId: document.id, userId: user?.id });
+          .insert({ documentId: document.id!, userId: user?.id });
         return insertTransaction(document, "Favorite");
       }
     },
@@ -136,12 +143,12 @@ export const useDocument = () => {
       await supabase
         ?.from("documentLabel")
         .delete()
-        .eq("documentId", document.id)
+        .eq("documentId", document.id!)
         .eq("userId", user.id)
         .then(() => {
           return supabase?.from("documentLabel").insert(
             labels.map((label) => ({
-              documentId: document.id,
+              documentId: document.id!,
               label,
               userId: user.id,
             }))
@@ -155,6 +162,7 @@ export const useDocument = () => {
 
   const makePreview = useCallback(
     async (doc: DocumentType) => {
+      if (!doc.path) throw new Error("Document path is undefined");
       const result = await supabase?.storage.from("private").download(doc.path);
 
       if (!result || result.error) {
@@ -172,7 +180,7 @@ export const useDocument = () => {
       return supabase
         ?.from("documentLabel")
         .delete()
-        .eq("documentId", document.id)
+        .eq("documentId", document.id!)
         .eq("userId", user?.id)
         .eq("label", label);
     },

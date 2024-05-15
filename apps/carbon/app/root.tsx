@@ -41,14 +41,7 @@ export function links() {
 export const meta: MetaFunction = () => {
   return [
     {
-      charset: "utf-8",
-    },
-    {
       title: "Carbon ERP",
-    },
-    {
-      name: "viewport",
-      content: "width=device-width",
     },
   ];
 };
@@ -111,6 +104,8 @@ function Document({
   return (
     <html lang="en" className={`${mode} h-full overflow-x-hidden`}>
       <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <title>{title}</title>
         <Links />
@@ -167,14 +162,14 @@ export function ErrorBoundary() {
   return (
     <Document title="Error!">
       <div className="dark">
-        <div className="flex flex-col w-full h-screen bg-zinc-900 items-center justify-center space-y-4">
+        <div className="flex flex-col w-full h-screen bg-zinc-900 items-center justify-center space-y-4 ">
           <img
             src="/carbon-logo-light.png"
             alt="Carbon Logo"
             className="block max-w-[60px]"
           />
           <Heading size="h1">Something went wrong</Heading>
-          <p className="text-muted-foreground">{message}</p>
+          <p className="text-muted-foreground max-w-2xl">{message}</p>
           <Button onClick={() => (window.location.href = "/")}>
             Back Home
           </Button>

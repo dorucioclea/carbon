@@ -25,7 +25,7 @@ export async function action(args: ActionFunctionArgs) {
   const { request, params } = args;
   assertIsPost(request);
 
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     create: "purchasing",
     role: "employee",
   });
@@ -68,7 +68,7 @@ export async function action(args: ActionFunctionArgs) {
       .toISOString()
       .slice(0, -5)}.pdf`;
 
-    const documentFilePath = `purchasing/external/${orderId}/${fileName}`;
+    const documentFilePath = `${companyId}/purchasing/external/${orderId}/${fileName}`;
 
     const documentFileUpload = await client.storage
       .from("private")
@@ -94,9 +94,10 @@ export async function action(args: ActionFunctionArgs) {
       size: Math.round(file.byteLength / 1024),
       sourceDocument: "Purchase Order",
       sourceDocumentId: orderId,
-      createdBy: userId,
       readGroups: [userId],
       writeGroups: [userId],
+      createdBy: userId,
+      companyId,
     });
 
     if (createDocument.error) {
@@ -138,7 +139,7 @@ export async function action(args: ActionFunctionArgs) {
           purchaseOrderLocations,
           buyer,
         ] = await Promise.all([
-          getCompany(client),
+          getCompany(client, companyId),
           getSupplierContact(client, supplierContact),
           getPurchaseOrder(client, orderId),
           getPurchaseOrderLines(client, orderId),
@@ -186,6 +187,7 @@ export async function action(args: ActionFunctionArgs) {
                 filename: fileName,
               },
             ],
+            companyId,
           },
         });
       } catch (err) {

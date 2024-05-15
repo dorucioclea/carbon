@@ -40,17 +40,21 @@ serve(async (req: Request) => {
       "yyyy-MM-dd"
     );
 
+    const companyId = purchaseInvoice.data.companyId;
+
     const [costLedgers, partSuppliers] = await Promise.all([
       client
         .from("costLedger")
         .select("*")
         .in("partId", partIds)
+        .eq("companyId", companyId)
         .gte("postingDate", dateOneYearAgo),
       client
         .from("partSupplier")
         .select("*")
         .eq("supplierId", purchaseInvoice.data?.supplierId ?? "")
-        .in("partId", partIds),
+        .in("partId", partIds)
+        .eq("companyId", companyId),
     ]);
 
     const partCostUpdates: Database["public"]["Tables"]["partCost"]["Update"][] =
@@ -111,6 +115,7 @@ serve(async (req: Request) => {
             conversionFactor: line.conversionFactor ?? 1,
             supplierUnitOfMeasureCode: line.purchaseUnitOfMeasureCode,
             createdBy: "system",
+            companyId,
           });
         }
       }
@@ -123,6 +128,7 @@ serve(async (req: Request) => {
             .updateTable("partCost")
             .set(partCostUpdate)
             .where("partId", "=", partCostUpdate.partId!)
+            .where("companyId", "=", companyId)
             .execute();
         }
       }

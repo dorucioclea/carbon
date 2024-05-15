@@ -1,6 +1,7 @@
 CREATE OR REPLACE VIEW "partQuantities" AS 
   SELECT 
     p."id" AS "partId", 
+    p."companyId",
     loc."id" AS "locationId",
     COALESCE(SUM(pl."quantity"), 0) AS "quantityOnHand",
     COALESCE(pol."quantityToReceive", 0) AS "quantityOnPurchaseOrder",
@@ -27,6 +28,7 @@ CREATE OR REPLACE VIEW "partQuantities" AS
         pol."locationId"
   ) pol ON pol."partId" = p."id" AND pol."locationId" = loc."id"
   GROUP BY 
-    p."id", 
+    p."id",
+    p."companyId",
     loc."id",
     pol."quantityToReceive"

@@ -32,6 +32,7 @@ export function useSalesOrderSidebar({
       count: lines,
       icon: LuList,
       shortcut: "Command+Shift+l",
+      role: ["employee", "customer"],
     },
     /*{
       name: "Shipment",

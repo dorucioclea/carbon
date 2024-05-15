@@ -87,6 +87,7 @@ const PartInventoryForm = ({
               onCreateOption={async (option) => {
                 const response = await supabase?.from("shelf").insert({
                   id: option,
+                  companyId: user.company.id,
                   locationId: initialValues.locationId,
                   createdBy: user.id,
                 });

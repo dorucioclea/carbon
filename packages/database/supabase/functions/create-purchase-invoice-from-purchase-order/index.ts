@@ -13,10 +13,11 @@ serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
-  const { id: purchaseOrderId, userId } = await req.json();
+  const { id: purchaseOrderId, companyId, userId } = await req.json();
 
   try {
     if (!purchaseOrderId) throw new Error("Payload is missing id");
+    if (!companyId) throw new Error("Payload is missing companyId");
     if (!userId) throw new Error("Payload is missing userId");
 
     const client = getSupabaseServiceRole(req.headers.get("Authorization"));
@@ -70,7 +71,11 @@ serve(async (req: Request) => {
     let purchaseInvoiceId = "";
 
     await db.transaction().execute(async (trx) => {
-      purchaseInvoiceId = await getNextSequence(trx, "purchaseInvoice");
+      purchaseInvoiceId = await getNextSequence(
+        trx,
+        "purchaseInvoice",
+        companyId
+      );
 
       const purchaseInvoice = await trx
         .insertInto("purchaseInvoice")
@@ -92,6 +97,7 @@ serve(async (req: Request) => {
           totalAmount: uninvoicedSubtotal,
           totalTax: 0,
           balance: uninvoicedSubtotal,
+          companyId,
           createdBy: userId,
         })
         .returning(["id"])
@@ -128,6 +134,7 @@ serve(async (req: Request) => {
             // TODO: currency code and exchange rate
             currencyCode: "USD",
             exchangeRate: 1,
+            companyId,
             createdBy: userId,
           });
         }

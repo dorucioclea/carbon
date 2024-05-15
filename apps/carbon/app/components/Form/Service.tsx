@@ -22,7 +22,7 @@ Service.displayName = "Service";
 
 export default Service;
 
-export const useServices = (serviceType: ServiceType) => {
+export const useServices = (serviceType?: ServiceType) => {
   const servicesFetcher =
     useFetcher<Awaited<ReturnType<typeof getServicesList>>>();
 

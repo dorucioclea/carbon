@@ -42,7 +42,7 @@ const SalesOrderLineForm = ({ initialValues }: SalesOrderLineFormProps) => {
   const permissions = usePermissions();
   const { supabase } = useSupabase();
   const navigate = useNavigate();
-  const { defaults } = useUser();
+  const { company, defaults } = useUser();
   const { orderId } = useParams();
 
   if (!orderId) throw new Error("orderId not found");
@@ -122,23 +122,26 @@ const SalesOrderLineForm = ({ initialValues }: SalesOrderLineFormProps) => {
   };
 
   const onPartChange = async (partId: string) => {
-    if (!supabase) return;
+    if (!supabase || !company.id) return;
     const [part, shelf, price] = await Promise.all([
       supabase
         .from("part")
         .select("name, unitOfMeasureCode")
         .eq("id", partId)
+        .eq("companyId", company.id)
         .single(),
       supabase
         .from("partInventory")
         .select("defaultShelfId")
         .eq("partId", partId)
+        .eq("companyId", company.id)
         .eq("locationId", locationId)
         .maybeSingle(),
       supabase
         .from("partUnitSalePrice")
         .select("unitSalePrice")
         .eq("partId", partId)
+        .eq("companyId", company.id)
         .single(),
     ]);
 
@@ -157,6 +160,7 @@ const SalesOrderLineForm = ({ initialValues }: SalesOrderLineFormProps) => {
       .from("service")
       .select("name")
       .eq("id", serviceId)
+      .eq("companyId", company.id)
       .single();
 
     setPartData({
@@ -179,6 +183,7 @@ const SalesOrderLineForm = ({ initialValues }: SalesOrderLineFormProps) => {
       .from("partInventory")
       .select("defaultShelfId")
       .eq("partId", partData.partId)
+      .eq("companyId", company.id)
       .eq("locationId", newLocation.value)
       .maybeSingle();
 
@@ -256,7 +261,7 @@ const SalesOrderLineForm = ({ initialValues }: SalesOrderLineFormProps) => {
               />
               {type !== "Comment" && (
                 <>
-                  <Number name="salesQuantity" label="Quantity" />
+                  <Number name="saleQuantity" label="Quantity" />
                   {/* 
                 // TODO: implement this and replace the UoM in PartForm */}
                   {/* <UnitOfMeasure name="unitOfMeasureCode" label="Unit of Measure" value={uom} /> */}

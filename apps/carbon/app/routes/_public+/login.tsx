@@ -65,7 +65,6 @@ export async function action({ request }: ActionFunctionArgs) {
     headers: {
       "Set-Cookie": await commitAuthSession(request, {
         authSession,
-        flashErrorMessage: null,
       }),
     },
   });

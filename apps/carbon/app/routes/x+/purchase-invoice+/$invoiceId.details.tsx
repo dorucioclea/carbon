@@ -83,8 +83,6 @@ export default function PurchaseInvoiceBasicRoute() {
     supplierId: purchaseInvoice.supplierId ?? "",
     supplierReference: purchaseInvoice.supplierReference ?? "",
     invoiceSupplierId: purchaseInvoice.invoiceSupplierId ?? "",
-    invoiceSupplierContactId: purchaseInvoice.invoiceSupplierContactId ?? "",
-    invoiceSupplierLocationId: purchaseInvoice.invoiceSupplierLocationId ?? "",
     paymentTermId: purchaseInvoice.paymentTermId ?? "",
     currencyCode: purchaseInvoice.currencyCode ?? "",
     dateIssued: purchaseInvoice.dateIssued ?? "",

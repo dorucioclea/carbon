@@ -31,8 +31,8 @@ import {
   getQuoteOperations,
   useQuotation,
 } from "~/modules/sales";
-import QuotationReleaseModal from "~/modules/sales/ui/Quotation/QuotationReleaseModal";
 import ConvertToSalesOrderModal from "~/modules/sales/ui/Quotation/ConvertToSalesOrderModal";
+import QuotationReleaseModal from "~/modules/sales/ui/Quotation/QuotationReleaseModal";
 
 import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
@@ -47,7 +47,7 @@ export const handle: Handle = {
 };
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "sales",
   });
 
@@ -69,9 +69,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     getQuoteAssemblies(client, id),
     getQuoteMaterials(client, id),
     getQuoteOperations(client, id),
-    getQuoteExternalDocuments(client, id),
-    getQuoteInternalDocuments(client, id),
-    getLocationsList(client),
+    getQuoteExternalDocuments(client, companyId, id),
+    getQuoteInternalDocuments(client, companyId, id),
+    getLocationsList(client, companyId),
   ]);
 
   if (quotation.error) {

@@ -17,7 +17,7 @@ export const handle: Handle = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "inventory",
   });
 
@@ -28,14 +28,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getGenericQueryFilters(searchParams);
 
   const [receipts, locations] = await Promise.all([
-    getReceipts(client, {
+    getReceipts(client, companyId, {
       search,
       limit,
       offset,
       sorts,
       filters,
     }),
-    getLocationsList(client),
+    getLocationsList(client, companyId),
   ]);
 
   if (receipts.error) {

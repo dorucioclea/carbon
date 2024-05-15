@@ -93,7 +93,7 @@ const EmployeeAbilityForm = ({
               <Employee
                 name="employeeId"
                 label="Employee"
-                readOnly={isEditing}
+                isReadOnly={isEditing}
               />
               <Select
                 name="trainingStatus"

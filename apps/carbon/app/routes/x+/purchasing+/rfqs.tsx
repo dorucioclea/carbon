@@ -19,7 +19,7 @@ export const handle: Handle = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "purchasing",
   });
 
@@ -31,7 +31,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getGenericQueryFilters(searchParams);
 
   const [requestForQuotes] = await Promise.all([
-    getRequestsForQuotes(client, {
+    getRequestsForQuotes(client, companyId, {
       search,
       limit,
       offset,

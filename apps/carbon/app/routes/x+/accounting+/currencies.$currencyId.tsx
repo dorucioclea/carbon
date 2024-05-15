@@ -34,7 +34,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     update: "accounting",
   });
 
@@ -51,6 +51,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const updateCurrency = await upsertCurrency(client, {
     id,
     ...data,
+    companyId,
     customFields: setCustomFields(formData),
     updatedBy: userId,
   });

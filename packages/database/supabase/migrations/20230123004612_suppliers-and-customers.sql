@@ -23,11 +23,14 @@ CREATE TABLE "contact" (
   "countryCode" INTEGER,
   "birthday" DATE,
   "notes" TEXT,
+  "companyId" TEXT NOT NULL,
 
   CONSTRAINT "contact_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "contact_countryCode_fkey" FOREIGN KEY ("countryCode") REFERENCES "country"("id") ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT "contact_countryCode_fkey" FOREIGN KEY ("countryCode") REFERENCES "country"("id") ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT "contact_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE INDEX "contact_companyId_idx" ON "contact" ("companyId");
 
 CREATE TABLE "address" (
   "id" TEXT NOT NULL DEFAULT xid(),
@@ -39,14 +42,19 @@ CREATE TABLE "address" (
   "countryCode" INTEGER,
   "phone" TEXT,
   "fax" TEXT,
+  "companyId" TEXT NOT NULL,
 
   CONSTRAINT "address_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "address_countryCode_fkey" FOREIGN KEY ("countryCode") REFERENCES "country"("id") ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT "address_countryCode_fkey" FOREIGN KEY ("countryCode") REFERENCES "country"("id") ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT "address_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE INDEX "address_companyId_idx" ON "address" ("companyId");
 
 CREATE TABLE "supplierStatus" (
     "id" TEXT NOT NULL DEFAULT xid(),
     "name" TEXT NOT NULL,
+    "companyId" TEXT NOT NULL,
     "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     "createdBy" TEXT NOT NULL,
     "updatedBy" TEXT,
@@ -54,15 +62,19 @@ CREATE TABLE "supplierStatus" (
     "customFields" JSONB,
 
     CONSTRAINT "supplierStatus_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "supplierStatus_name_unique" UNIQUE ("name"),
+    CONSTRAINT "supplierStatus_name_unique" UNIQUE ("name", "companyId"),
+    CONSTRAINT "supplierStatus_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT "supplierStatus_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT "supplierStatus_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL
 );
+
+CREATE INDEX "supplierStatus_companyId_fkey" ON "supplierStatus"("companyId");
 
 CREATE TABLE "supplierType" (
     "id" TEXT NOT NULL DEFAULT uuid_generate_v4(),
     "name" TEXT NOT NULL,
     "protected" BOOLEAN NOT NULL DEFAULT false,
+    "companyId" TEXT NOT NULL,
     "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     "createdBy" TEXT NOT NULL,
     "updatedBy" TEXT,
@@ -70,10 +82,13 @@ CREATE TABLE "supplierType" (
     "customFields" JSONB,
 
     CONSTRAINT "supplierType_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "supplierType_name_unique" UNIQUE ("name"),
+    CONSTRAINT "supplierType_name_unique" UNIQUE ("name", "companyId"),
+    CONSTRAINT "supplierType_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT "supplierType_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT "supplierType_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL
 );
+
+CREATE INDEX "supplierType_companyId_fkey" ON "supplierType"("companyId");
 
 CREATE TABLE "supplier" (
     "id" TEXT NOT NULL DEFAULT uuid_generate_v4(),
@@ -83,6 +98,8 @@ CREATE TABLE "supplier" (
     "taxId" TEXT,
     "accountManagerId" TEXT,
     "logo" TEXT,
+    "assignee" TEXT,
+    "companyId" TEXT NOT NULL,
     "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     "createdBy" TEXT,
     "updatedAt" TIMESTAMP WITH TIME ZONE,
@@ -93,10 +110,14 @@ CREATE TABLE "supplier" (
     CONSTRAINT "supplier_supplierTypeId_fkey" FOREIGN KEY ("supplierTypeId") REFERENCES "supplierType"("id") ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT "supplier_supplierStatusId_fkey" FOREIGN KEY ("supplierStatusId") REFERENCES "supplierStatus"("id") ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT "supplier_accountManagerId_fkey" FOREIGN KEY ("accountManagerId") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL,
+    CONSTRAINT "supplier_assignee_fkey" FOREIGN KEY ("assignee") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL,
+    CONSTRAINT "supplier_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT "supplier_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE,
     CONSTRAINT "supplier_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE,
-    CONSTRAINT "supplier_name_unique" UNIQUE ("name")
+    CONSTRAINT "supplier_name_unique" UNIQUE ("name", "companyId")
 );
+
+CREATE INDEX "supplier_companyId_fkey" ON "supplier"("companyId");
 
 ALTER publication supabase_realtime ADD TABLE "supplier";
 
@@ -126,22 +147,26 @@ CREATE TABLE "supplierContact" (
   CONSTRAINT "supplierContact_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL
 );
 
-CREATE INDEX "supplierContact_supplierId_index" ON "supplierContact"("supplierId");
+CREATE INDEX "supplierContact_supplierId_idx" ON "supplierContact"("supplierId");
 
 CREATE TABLE "supplierAccount" (
     "id" TEXT NOT NULL,
     "supplierId" TEXT NOT NULL,
+    "companyId" TEXT NOT NULL,
 
-    CONSTRAINT "supplierAccount_pkey" PRIMARY KEY ("id"),
+    CONSTRAINT "supplierAccount_pkey" PRIMARY KEY ("id", "companyId"),
     CONSTRAINT "supplierAccount_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "supplier"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "supplierAccount_id_fkey" FOREIGN KEY ("id") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "supplierAccount_id_fkey" FOREIGN KEY ("id") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "supplierAccount_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE INDEX "supplierAccount_supplierId_index" ON "supplierAccount"("supplierId");
+CREATE INDEX "supplierAccount_supplierId_idx" ON "supplierAccount"("supplierId");
+CREATE INDEX "supplierAccount_companyId_idx" ON "supplierAccount" ("companyId");
 
 CREATE TABLE "customerStatus" (
     "id" TEXT NOT NULL DEFAULT xid(),
     "name" TEXT NOT NULL,
+    "companyId" TEXT NOT NULL,
     "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     "createdBy" TEXT NOT NULL,
     "updatedBy" TEXT,
@@ -149,15 +174,19 @@ CREATE TABLE "customerStatus" (
     "customFields" JSONB,
 
     CONSTRAINT "customerStatus_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "customerStatus_name_unique" UNIQUE ("name"),
+    CONSTRAINT "customerStatus_name_unique" UNIQUE ("name", "companyId"),
+    CONSTRAINT "customerStatus_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT "customerStatus_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT "customerStatus_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL
 );
+
+CREATE INDEX "customerStatus_companyId_fkey" ON "customerStatus"("companyId");
 
 CREATE TABLE "customerType" (
     "id" TEXT NOT NULL DEFAULT uuid_generate_v4(),
     "name" TEXT NOT NULL,
     "protected" BOOLEAN NOT NULL DEFAULT false,
+    "companyId" TEXT NOT NULL,
     "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     "createdBy" TEXT NOT NULL,
     "updatedBy" TEXT,
@@ -165,10 +194,13 @@ CREATE TABLE "customerType" (
     "customFields" JSONB,
 
     CONSTRAINT "customerType_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "customerType_name_unique" UNIQUE ("name"),
+    CONSTRAINT "customerType_name_unique" UNIQUE ("name", "companyId"),
+    CONSTRAINT "customerType_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT "customerType_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT "customerType_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL
 );
+
+CREATE INDEX "customerType_companyId_fkey" ON "customerType"("companyId");
 
 CREATE TABLE "customer" (
     "id" TEXT NOT NULL DEFAULT uuid_generate_v4(),
@@ -178,6 +210,8 @@ CREATE TABLE "customer" (
     "taxId" TEXT,
     "accountManagerId" TEXT,
     "logo" TEXT,
+    "assignee" TEXT,
+    "companyId" TEXT NOT NULL,
     "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     "createdBy" TEXT,
     "updatedAt" TIMESTAMP WITH TIME ZONE,
@@ -187,11 +221,15 @@ CREATE TABLE "customer" (
     CONSTRAINT "customer_pkey" PRIMARY KEY ("id"),
     CONSTRAINT "customer_customerTypeId_fkey" FOREIGN KEY ("customerTypeId") REFERENCES "customerType"("id") ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT "customer_customerStatusId_fkey" FOREIGN KEY ("customerStatusId") REFERENCES "customerStatus"("id") ON UPDATE CASCADE ON DELETE SET NULL,
+    CONSTRAINT "customer_assignee_fkey" FOREIGN KEY ("assignee") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT "customer_accountManagerId_fkey" FOREIGN KEY ("accountManagerId") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL,
+    CONSTRAINT "customer_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT "customer_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT "customer_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL,
-    CONSTRAINT "customer_name_unique" UNIQUE ("name")
+    CONSTRAINT "customer_name_unique" UNIQUE ("name", "companyId")
 );
+
+CREATE INDEX "customer_companyId_fkey" ON "customer"("companyId");
 
 ALTER publication supabase_realtime ADD TABLE "customer";
 
@@ -221,17 +259,20 @@ CREATE TABLE "customerContact" (
   CONSTRAINT "customerContact_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON UPDATE CASCADE ON DELETE SET NULL
 );
 
-CREATE INDEX "customerContact_customerId_index" ON "customerContact"("customerId");
+CREATE INDEX "customerContact_customerId_idx" ON "customerContact"("customerId");
 
 CREATE TABLE "customerAccount" (
     "id" TEXT NOT NULL,
     "customerId" TEXT NOT NULL,
+    "companyId" TEXT NOT NULL,
 
-    CONSTRAINT "customerAccount_pkey" PRIMARY KEY ("id"),
+    CONSTRAINT "customerAccount_pkey" PRIMARY KEY ("id", "companyId"),
     CONSTRAINT "customerAccount_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "customer"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "customerAccount_id_fkey" FOREIGN KEY ("id") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "customerAccount_id_fkey" FOREIGN KEY ("id") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "customerAccount_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE INDEX "customerAccount_customerId_index" ON "customerAccount"("customerId");
+CREATE INDEX "customerAccount_customerId_idx" ON "customerAccount"("customerId");
+CREATE INDEX "customerAccount_companyId_idx" ON "customerAccount" ("companyId");
 
 

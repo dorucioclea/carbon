@@ -63,13 +63,13 @@ const ServicesTable = memo(
         },
         {
           accessorKey: "partGroup",
-          header: "Service Group",
+          header: "Part Group",
           cell: (item) => <Enumerable value={item.getValue<string>()} />,
           meta: {
             filter: {
               type: "static",
               options: partGroups.map(({ id, name }) => ({
-                value: id,
+                value: name,
                 label: <Enumerable value={name} />,
               })),
             },

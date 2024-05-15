@@ -27,7 +27,7 @@ import {
   TextArea,
   UnitOfMeasure,
 } from "~/components/Form";
-import { usePermissions } from "~/hooks";
+import { usePermissions, useUser } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import {
   partReplenishmentSystems,
@@ -43,6 +43,7 @@ type PartFormProps = {
 };
 
 const useNextPartIdShortcut = () => {
+  const { company } = useUser();
   const { supabase } = useSupabase();
   const [loading, setLoading] = useState<boolean>(false);
   const [partId, setPartId] = useState<string>("");
@@ -56,6 +57,7 @@ const useNextPartIdShortcut = () => {
         const { data } = await supabase
           ?.from("part")
           .select("id")
+          .eq("companyId", company.id)
           .ilike("id", `${prefix}%`)
           .order("id", { ascending: false })
           .limit(1)

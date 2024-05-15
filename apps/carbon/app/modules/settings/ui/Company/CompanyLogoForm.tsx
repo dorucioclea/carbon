@@ -24,7 +24,7 @@ const CompanyLogoForm = ({ company }: CompanyLogoFormProps) => {
 
       const imageUpload = await supabase.storage
         .from("public")
-        .upload(`logo.${fileExtension}`, logo, {
+        .upload(`${company.id}/logo.${fileExtension}`, logo, {
           cacheControl: "0",
           upsert: true,
         });
@@ -73,7 +73,7 @@ const CompanyLogoForm = ({ company }: CompanyLogoFormProps) => {
           src={company.logo}
         />
       ) : (
-        <Avatar name={company?.name} size="2xl" />
+        <Avatar name={company?.name ?? undefined} size="2xl" />
       )}
 
       <File accept="image/*" onChange={uploadImage}>

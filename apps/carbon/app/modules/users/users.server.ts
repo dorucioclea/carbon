@@ -1,38 +1,55 @@
 import type { Database, Json } from "@carbon/database";
 import { redis } from "@carbon/redis";
 import { redirect } from "@remix-run/node";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { PostgrestResponse, SupabaseClient } from "@supabase/supabase-js";
+import crypto from "crypto";
+import logger from "~/lib/logger";
 import { getSupabaseServiceRole } from "~/lib/supabase";
 import { getSupplierContact } from "~/modules/purchasing";
 import { getCustomerContact } from "~/modules/sales";
-import {
-  getPermissionsByEmployeeType,
-  type EmployeeRow,
-  type EmployeeTypePermission,
-  type Feature,
-  type Permission,
-  type User,
+import type {
+  CompanyPermission,
+  EmployeeRow,
+  EmployeeTypePermission,
+  Module,
+  Permission,
+  User,
 } from "~/modules/users";
+import { getPermissionsByEmployeeType } from "~/modules/users";
 import {
   deleteAuthAccount,
   sendInviteByEmail,
   sendMagicLink,
 } from "~/services/auth/auth.server";
 import { flash, requireAuthSession } from "~/services/session.server";
-import type { ListItem, Result } from "~/types";
+import type { Result } from "~/types";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
+import { insertEmployeeJob } from "../resources";
+
+export async function addUserToCompany(
+  client: SupabaseClient<Database>,
+  userToCompany: {
+    userId: string;
+    companyId: string;
+  }
+) {
+  return client.from("userToCompany").insert(userToCompany);
+}
 
 export async function createCustomerAccount(
   client: SupabaseClient<Database>,
   {
     id,
     customerId,
+    companyId,
   }: {
     id: string;
     customerId: string;
+    companyId: string;
   }
 ): Promise<Result> {
+  // TODO: convert to transaction and call this at the end of the transaction
   const customerContact = await getCustomerContact(client, id);
   if (
     customerContact.error ||
@@ -45,61 +62,90 @@ export async function createCustomerAccount(
 
   const { email, firstName, lastName } = customerContact.data.contact;
 
-  // TODO: convert to transaction and call this at the end of the transaction
-  const invitation = await sendInviteByEmail(email);
+  const user = await getUserByEmail(email);
+  if (user.data) {
+    // TODO: user already exists -- send company invite
+    // await addUserToCompany(client, { userId: user.data.id, companyId });
+    return error(
+      null,
+      "User already exists. Adding to team not implemented yet."
+    );
+  } else {
+    // user does not exist -- create user
+    const invitation = await sendInviteByEmail(email);
 
-  if (invitation.error)
-    return error(invitation.error.message, "Failed to send invitation email");
+    if (invitation.error)
+      return error(invitation.error.message, "Failed to send invitation email");
 
-  const userId = invitation.data.user.id;
+    const userId = invitation.data.user.id;
 
-  const claims = makeCustomerClaims();
-  const claimsUpdate = await setUserClaims(userId, {
-    role: "customer",
-    ...claims,
-  });
-  if (claimsUpdate.error) {
-    await deleteAuthAccount(userId);
-    return error(claimsUpdate.error, "Failed to set user claims");
+    const insertUser = await createUser(client, {
+      id: userId,
+      email,
+      firstName,
+      lastName,
+      avatarUrl: null,
+    });
+
+    if (insertUser.error)
+      return error(insertUser.error, "Failed to create a new user");
+
+    if (!insertUser.data)
+      return error(insertUser, "No data returned from create user");
+
+    const permissions = makeCustomerPermissions(companyId);
+    const supabaseAdmin = getSupabaseServiceRole();
+
+    const [
+      updateContact,
+      createCustomerAccount,
+      userToCompany,
+      claimsUpdate,
+      permissionsUpdate,
+    ] = await Promise.all([
+      client.from("customerContact").update({ userId }).eq("id", id),
+      insertCustomerAccount(client, {
+        id: userId,
+        customerId,
+        companyId,
+      }),
+      addUserToCompany(client, { userId, companyId }),
+      setUserClaims(supabaseAdmin, userId, {
+        role: "customer",
+      }),
+      setUserPermissions(supabaseAdmin, userId, permissions),
+    ]);
+
+    if (updateContact.error) {
+      await deleteAuthAccount(userId);
+      return error(updateContact.error, "Failed to update customer contact");
+    }
+
+    if (createCustomerAccount.error) {
+      await deleteAuthAccount(userId);
+      return error(
+        createCustomerAccount.error,
+        "Failed to create a customer account"
+      );
+    }
+
+    if (userToCompany.error) {
+      await deleteAuthAccount(userId);
+      return error(userToCompany.error, "Failed to add user to company");
+    }
+
+    if (claimsUpdate.error) {
+      await deleteAuthAccount(userId);
+      return error(claimsUpdate.error, "Failed to add user");
+    }
+
+    if (permissionsUpdate.error) {
+      await deleteAuthAccount(userId);
+      return error(permissionsUpdate.error, "Failed to add user permissions");
+    }
+
+    return success("Customer account created");
   }
-
-  const insertUser = await createUser(client, {
-    id: userId,
-    email,
-    firstName,
-    lastName,
-    avatarUrl: null,
-  });
-
-  if (insertUser.error)
-    return error(insertUser.error, "Failed to create a new user");
-
-  if (!insertUser.data)
-    return error(insertUser, "No data returned from create user");
-
-  const updateContact = await client
-    .from("customerContact")
-    .update({ userId })
-    .eq("id", id);
-  if (updateContact.error) {
-    await deleteAuthAccount(userId);
-    return error(updateContact.error, "Failed to update customer contact");
-  }
-
-  const generatedId = Array.isArray(insertUser.data)
-    ? insertUser.data[0].id
-    : // @ts-ignore
-      insertUser.data?.id!;
-
-  const createCustomerAccount = await insertCustomerAccount(client, {
-    id: generatedId,
-    customerId,
-  });
-
-  if (createCustomerAccount.error)
-    return error(createCustomerAccount.error, "Failed to create an employee");
-
-  return success("Customer account created");
 }
 
 export async function createEmployeeAccount(
@@ -109,11 +155,13 @@ export async function createEmployeeAccount(
     firstName,
     lastName,
     employeeType,
+    companyId,
   }: {
     email: string;
     firstName: string;
     lastName: string;
     employeeType: string;
+    companyId: string;
   }
 ): Promise<Result> {
   const employeeTypePermissions = await getPermissionsByEmployeeType(
@@ -126,45 +174,93 @@ export async function createEmployeeAccount(
       "Failed to get employee type permissions"
     );
 
-  // TODO: convert to transaction and call this at the end of the transaction
-  const invitation = await sendInviteByEmail(email);
+  const permissions = makePermissionsFromEmployeeType(employeeTypePermissions);
+  const supabaseAdmin = getSupabaseServiceRole();
 
-  if (invitation.error)
-    return error(invitation.error.message, "Failed to send invitation email");
+  const user = await getUserByEmail(email);
+  let userExists = false;
 
-  const userId = invitation.data.user.id;
+  let userId = "";
+  if (user.data) {
+    userExists = true;
+    userId = user.data.id;
+  } else {
+    const invitation = await sendInviteByEmail(email);
 
-  const claims = makeClaimsFromEmployeeType(employeeTypePermissions);
-  const claimsUpdate = await setUserClaims(userId, {
-    role: "employee",
-    ...claims,
-  });
-  if (claimsUpdate.error) {
-    await deleteAuthAccount(userId);
-    return error(claimsUpdate.error, "Failed to set user claims");
+    if (invitation.error)
+      return error(invitation.error.message, "Failed to send invitation email");
+
+    userId = invitation.data.user.id;
+
+    const insertUser = await createUser(client, {
+      id: userId,
+      email,
+      firstName,
+      lastName,
+      avatarUrl: null,
+    });
+
+    if (insertUser.error)
+      return error(insertUser.error, "Failed to create a new user");
+
+    if (!insertUser.data)
+      return error(insertUser, "No data returned from create user");
   }
 
-  const insertUser = await createUser(client, {
-    id: userId,
-    email,
-    firstName,
-    lastName,
-    avatarUrl: null,
-  });
+  const [
+    employeeInsert,
+    jobInsert,
+    userToCompany,
+    permissionsUpdate,
+    claimsUpdate,
+  ] = await Promise.all([
+    insertEmployee(client, {
+      id: userId,
+      employeeTypeId: employeeType,
+      companyId,
+    }),
+    insertEmployeeJob(client, {
+      id: userId,
+      companyId,
+    }),
+    addUserToCompany(client, { userId, companyId }),
+    setUserPermissions(supabaseAdmin, userId, permissions),
+    userExists
+      ? new Promise<PostgrestResponse<unknown>>((resolve) =>
+          // @ts-ignore
+          resolve({ data: null, error: null })
+        )
+      : setUserClaims(supabaseAdmin, userId, {
+          role: "employee",
+        }),
+  ]);
 
-  if (insertUser.error)
-    return error(insertUser.error, "Failed to create a new user");
+  if (employeeInsert.error) {
+    if (!userExists) await deleteAuthAccount(userId);
+    return error(employeeInsert.error, "Failed to create a employee account");
+  }
 
-  if (!insertUser.data)
-    return error(insertUser, "No data returned from create user");
+  if (jobInsert.error) {
+    if (!userExists) await deleteAuthAccount(userId);
+    return error(jobInsert.error, "Failed to create a job");
+  }
 
-  const createEmployee = await insertEmployee(client, {
-    id: insertUser.data[0].id,
-    employeeTypeId: employeeType,
-  });
+  if (userToCompany.error) {
+    if (!userExists) await deleteAuthAccount(userId);
+    return error(userToCompany.error, "Failed to add user to company");
+  }
 
-  if (createEmployee.error)
-    return error(createEmployee.error, "Failed to create an employee");
+  if (claimsUpdate.error) {
+    if (!userExists) await deleteAuthAccount(userId);
+    if (claimsUpdate.error) {
+      return error(claimsUpdate.error, "Failed to udpate user claims");
+    }
+  }
+
+  if (permissionsUpdate.error) {
+    if (!userExists) await deleteAuthAccount(userId);
+    return error(permissionsUpdate.error, "Failed to update user permissions");
+  }
 
   return success("Employee account created");
 }
@@ -174,11 +270,14 @@ export async function createSupplierAccount(
   {
     id,
     supplierId,
+    companyId,
   }: {
     id: string;
     supplierId: string;
+    companyId: string;
   }
 ): Promise<Result> {
+  // TODO: convert to transaction and call this at the end of the transaction
   const supplierContact = await getSupplierContact(client, id);
   if (
     supplierContact.error ||
@@ -191,56 +290,93 @@ export async function createSupplierAccount(
 
   const { email, firstName, lastName } = supplierContact.data.contact;
 
-  // TODO: convert to transaction and call this at the end of the transaction
-  const invitation = await sendInviteByEmail(email);
+  const user = await getUserByEmail(email);
+  if (user.data) {
+    // TODO: user already exists -- send company invite
+    // await addUserToCompany(client, { userId: user.data.id, companyId });
+    return error(
+      null,
+      "User already exists. Adding to team not implemented yet."
+    );
+  } else {
+    // user does not exist -- create user
+    const invitation = await sendInviteByEmail(email);
 
-  if (invitation.error)
-    return error(invitation.error.message, "Failed to send invitation email");
+    if (invitation.error)
+      return error(invitation.error.message, "Failed to send invitation email");
 
-  const userId = invitation.data.user.id;
+    const userId = invitation.data.user.id;
 
-  const claims = makeSupplierClaims();
-  const claimsUpdate = await setUserClaims(userId, {
-    role: "supplier",
-    ...claims,
-  });
-  if (claimsUpdate.error) {
-    await deleteAuthAccount(userId);
-    return error(claimsUpdate.error, "Failed to set user claims");
+    const insertUser = await createUser(client, {
+      id: userId,
+      email,
+      firstName,
+      lastName,
+      avatarUrl: null,
+    });
+
+    if (insertUser.error)
+      return error(insertUser.error, "Failed to create a new user");
+
+    if (!insertUser.data)
+      return error(insertUser, "No data returned from create user");
+
+    const supabaseAdmin = getSupabaseServiceRole();
+    const permissions = makeSupplierPermissions(companyId);
+
+    const [
+      updateContact,
+      createSupplierAccount,
+      userToCompany,
+      claimsUpdate,
+      permissionsUpdate,
+    ] = await Promise.all([
+      client.from("supplierContact").update({ userId }).eq("id", id),
+      insertSupplierAccount(client, {
+        id: insertUser.data[0].id,
+        supplierId,
+        companyId,
+      }),
+      addUserToCompany(client, { userId, companyId }),
+      setUserClaims(supabaseAdmin, userId, {
+        role: "supplier",
+      }),
+      setUserPermissions(supabaseAdmin, userId, permissions),
+    ]);
+
+    if (updateContact.error) {
+      await deleteAuthAccount(userId);
+      return error(updateContact.error, "Failed to update supplier contact");
+    }
+
+    if (createSupplierAccount.error) {
+      await deleteAuthAccount(userId);
+      return error(
+        createSupplierAccount.error,
+        "Failed to create a supplier account"
+      );
+    }
+
+    if (userToCompany.error) {
+      await deleteAuthAccount(userId);
+      return error(userToCompany.error, "Failed to add user to company");
+    }
+
+    if (claimsUpdate.error) {
+      await deleteAuthAccount(userId);
+      return error(claimsUpdate.error, "Failed to create user");
+    }
+
+    if (permissionsUpdate.error) {
+      await deleteAuthAccount(userId);
+      return error(
+        permissionsUpdate.error,
+        "Failed to create user permissions"
+      );
+    }
+
+    return success("Supplier account created");
   }
-
-  const insertUser = await createUser(client, {
-    id: userId,
-    email,
-    firstName,
-    lastName,
-    avatarUrl: null,
-  });
-
-  if (insertUser.error)
-    return error(insertUser.error, "Failed to create a new user");
-
-  if (!insertUser.data)
-    return error(insertUser, "No data returned from create user");
-
-  const updateContact = await client
-    .from("supplierContact")
-    .update({ userId })
-    .eq("id", id);
-  if (updateContact.error) {
-    await deleteAuthAccount(userId);
-    return error(updateContact.error, "Failed to update supplier contact");
-  }
-
-  const createSupplierAccount = await insertSupplierAccount(client, {
-    id: insertUser.data[0].id,
-    supplierId,
-  });
-
-  if (createSupplierAccount.error)
-    return error(createSupplierAccount.error, "Failed to create an employee");
-
-  return success("Supplier account created");
 }
 
 async function createUser(
@@ -262,12 +398,13 @@ export async function deactivateUser(
 ): Promise<Result> {
   const updateActiveStatus = await client
     .from("user")
-    .update({ active: false })
+    .update({ active: false, firstName: "Deactivate", lastName: "User" })
     .eq("id", userId);
   if (updateActiveStatus.error) {
     return error(updateActiveStatus.error, "Failed to deactivate user");
   }
-  const randomPassword = Math.random().toString(36).slice(-8);
+
+  const randomPassword = crypto.randomBytes(20).toString("hex");
   const updatePassword = await resetPassword(userId, randomPassword);
 
   if (updatePassword.error) {
@@ -298,7 +435,7 @@ export async function getCurrentUser(
   return user.data;
 }
 
-function getPermissionCacheKey(userId: string) {
+export function getPermissionCacheKey(userId: string) {
   return `permissions:${userId}`;
 }
 
@@ -316,12 +453,10 @@ export async function getUserByEmail(email: string) {
     .from("user")
     .select("*")
     .eq("email", email)
-    .single();
+    .maybeSingle();
 }
 
-export async function getUserClaims(request: Request) {
-  const { userId } = await requireAuthSession(request);
-
+export async function getUserClaims(userId: string) {
   let claims: {
     permissions: Record<string, Permission>;
     role: string | null;
@@ -336,16 +471,11 @@ export async function getUserClaims(request: Request) {
     if (!claims) {
       // TODO: remove service role from here, and move it up a level
       const rawClaims = await getClaims(getSupabaseServiceRole(), userId);
-
       if (rawClaims.error || rawClaims.data === null) {
-        throw redirect(
-          path.to.authenticatedRoot,
-          await flash(
-            request,
-            error(rawClaims.error, "Failed to get rawClaims")
-          )
-        );
+        logger.error(rawClaims);
+        throw new Error("Failed to get claims");
       }
+
       // convert rawClaims to permissions
       claims = makePermissionsFromClaims(rawClaims.data as Json[]);
 
@@ -353,10 +483,7 @@ export async function getUserClaims(request: Request) {
       await redis.set(getPermissionCacheKey(userId), JSON.stringify(claims));
 
       if (!claims) {
-        throw redirect(
-          path.to.authenticatedRoot,
-          await flash(request, error(rawClaims, "Failed to parse claims"))
-        );
+        throw new Error("Failed to get claims");
       }
     }
 
@@ -373,9 +500,15 @@ export async function getUserGroups(
 
 export async function getUserDefaults(
   client: SupabaseClient<Database>,
-  userId: string
+  userId: string,
+  companyId: string
 ) {
-  return client.from("userDefaults").select("*").eq("userId", userId).single();
+  return client
+    .from("userDefaults")
+    .select("*")
+    .eq("userId", userId)
+    .eq("companyId", companyId)
+    .maybeSingle();
 }
 
 async function insertCustomerAccount(
@@ -383,6 +516,7 @@ async function insertCustomerAccount(
   customerAccount: {
     id: string;
     customerId: string;
+    companyId: string;
   }
 ) {
   return client
@@ -404,6 +538,7 @@ async function insertSupplierAccount(
   supplierAccount: {
     id: string;
     supplierId: string;
+    companyId: string;
   }
 ) {
   return client
@@ -415,45 +550,40 @@ async function insertSupplierAccount(
 
 async function insertUser(
   client: SupabaseClient<Database>,
-  //TODO: fix this type
   user: Omit<User, "fullName" | "createdAt">
 ) {
   return client.from("user").insert([user]).select("*");
 }
 
-function makeClaimsFromEmployeeType({
+function makePermissionsFromEmployeeType({
   data,
 }: {
   data: {
-    view: boolean;
-    create: boolean;
-    update: boolean;
-    delete: boolean;
-    feature: ListItem | ListItem[] | null;
+    view: string[];
+    create: string[];
+    update: string[];
+    delete: string[];
+    module: string;
   }[];
 }) {
-  const claims: Record<string, boolean> = {};
+  const permissions: Record<string, string[]> = {};
 
   data.forEach((permission) => {
-    if (permission.feature === null || Array.isArray(permission.feature)) {
+    if (!permission.module) {
       throw new Error(
-        `TODO: permission.feature is an array or null for permission ${JSON.stringify(
-          permission,
-          null,
-          2
-        )}`
+        `Permission module is missing for permission ${JSON.stringify(data)}`
       );
     }
 
-    const module = permission.feature.name.toLowerCase();
+    const module = permission.module.toLowerCase();
 
-    claims[`${module}_view`] = permission.view;
-    claims[`${module}_create`] = permission.create;
-    claims[`${module}_update`] = permission.update;
-    claims[`${module}_delete`] = permission.delete;
+    permissions[`${module}_view`] = permission.view;
+    permissions[`${module}_create`] = permission.create;
+    permissions[`${module}_update`] = permission.update;
+    permissions[`${module}_delete`] = permission.delete;
   });
 
-  return claims;
+  return permissions;
 }
 
 function isClaimPermission(key: string, value: unknown) {
@@ -461,27 +591,32 @@ function isClaimPermission(key: string, value: unknown) {
   return (
     action !== undefined &&
     ["view", "create", "update", "delete"].includes(action) &&
-    typeof value === "boolean"
+    Array.isArray(value)
   );
 }
 
-function makeCustomerClaims() {
+function makeCustomerPermissions(companyId: string) {
   // TODO: this should be more dynamic
-  const claims: Record<string, boolean> = {
-    documents_view: true,
-    jobs_view: true,
-    sales_view: true,
-    parts_view: true,
+  const permissions: Record<string, string[]> = {
+    documents_view: [companyId],
+    documents_create: [companyId],
+    documents_udpate: [companyId],
+    documents_delete: [companyId],
+    jobs_view: [companyId],
+    sales_view: [companyId],
+    parts_view: [companyId],
   };
 
-  return claims;
+  return permissions;
 }
 
-export function makeEmptyPermissionsFromFeatures(data: Feature[]) {
-  return data.reduce<Record<string, { id: string; permission: Permission }>>(
-    (acc, module) => {
-      acc[module.name] = {
-        id: module.id,
+export function makeEmptyPermissionsFromModules(data: Module[]) {
+  return data.reduce<
+    Record<string, { name: string; permission: CompanyPermission }>
+  >((acc, m) => {
+    if (m.name) {
+      acc[m.name] = {
+        name: m.name.toLowerCase(),
         permission: {
           view: false,
           create: false,
@@ -489,15 +624,17 @@ export function makeEmptyPermissionsFromFeatures(data: Feature[]) {
           delete: false,
         },
       };
-      return acc;
-    },
-    {}
-  );
+    }
+    return acc;
+  }, {});
 }
 
-export function makePermissionsFromClaims(claims: Json[] | null) {
+export function makeCompanyPermissionsFromClaims(
+  claims: Json[] | null,
+  companyId: string
+) {
   if (typeof claims !== "object" || claims === null) return null;
-  let permissions: Record<string, Permission> = {};
+  let permissions: Record<string, CompanyPermission> = {};
   let role: string | null = null;
 
   Object.entries(claims).forEach(([key, value]) => {
@@ -512,18 +649,72 @@ export function makePermissionsFromClaims(claims: Json[] | null) {
         };
       }
 
+      if (!Array.isArray(value)) {
+        permissions[module] = {
+          view: false,
+          create: false,
+          update: false,
+          delete: false,
+        };
+      } else {
+        switch (action) {
+          case "view":
+            permissions[module]["view"] =
+              value.includes("0") || value.includes(companyId);
+            break;
+          case "create":
+            permissions[module]["create"] =
+              value.includes("0") || value.includes(companyId);
+            break;
+          case "update":
+            permissions[module]["update"] =
+              value.includes("0") || value.includes(companyId);
+            break;
+          case "delete":
+            permissions[module]["delete"] =
+              value.includes("0") || value.includes(companyId);
+            break;
+        }
+      }
+    }
+  });
+
+  if ("role" in claims) {
+    role = claims["role"] as string;
+  }
+
+  return { permissions, role };
+}
+
+export function makePermissionsFromClaims(claims: Json[] | null) {
+  if (typeof claims !== "object" || claims === null) return null;
+  let permissions: Record<string, Permission> = {};
+  let role: string | null = null;
+
+  Object.entries(claims).forEach(([key, value]) => {
+    if (isClaimPermission(key, value)) {
+      const [module, action] = key.split("_");
+      if (!(module in permissions)) {
+        permissions[module] = {
+          view: [],
+          create: [],
+          update: [],
+          delete: [],
+        };
+      }
+
       switch (action) {
         case "view":
-          permissions[module]["view"] = value as boolean;
+          permissions[module]["view"] = value as string[];
           break;
         case "create":
-          permissions[module]["create"] = value as boolean;
+          permissions[module]["create"] = value as string[];
           break;
         case "update":
-          permissions[module]["update"] = value as boolean;
+          permissions[module]["update"] = value as string[];
           break;
         case "delete":
-          permissions[module]["delete"] = value as boolean;
+          permissions[module]["delete"] = value as string[];
           break;
       }
     }
@@ -536,29 +727,36 @@ export function makePermissionsFromClaims(claims: Json[] | null) {
   return { permissions, role };
 }
 
-export function makePermissionsFromEmployeeType(
-  data: EmployeeTypePermission[]
+export function makeCompanyPermissionsFromEmployeeType(
+  data: EmployeeTypePermission[],
+  companyId: string
 ) {
-  const result: Record<string, { id: string; permission: Permission }> = {};
+  const result: Record<
+    string,
+    { name: string; permission: CompanyPermission }
+  > = {};
   if (!data) return result;
   data.forEach((permission) => {
-    if (Array.isArray(permission.feature) || !permission.feature) {
-      // hmm... TODO: handle this
+    if (!permission.module) {
       throw new Error(
-        `TODO: permission.Feature is an array or null for permission ${JSON.stringify(
-          permission,
-          null,
-          2
-        )}`
+        `Module is missing for permission ${JSON.stringify(permission)}`
       );
     } else {
-      result[permission.feature.name] = {
-        id: permission?.feature?.id!,
+      result[permission.module] = {
+        name: permission.module.toLowerCase(),
         permission: {
-          view: permission.view,
-          create: permission.create,
-          update: permission.update,
-          delete: permission.delete,
+          view:
+            permission.view.includes("0") ||
+            permission.view.includes(companyId),
+          create:
+            permission.create.includes("0") ||
+            permission.create.includes(companyId),
+          update:
+            permission.update.includes("0") ||
+            permission.update.includes(companyId),
+          delete:
+            permission.delete.includes("0") ||
+            permission.delete.includes(companyId),
         },
       };
     }
@@ -567,15 +765,18 @@ export function makePermissionsFromEmployeeType(
   return result;
 }
 
-function makeSupplierClaims() {
+function makeSupplierPermissions(companyId: string) {
   // TODO: this should be more dynamic
-  const claims: Record<string, boolean> = {
-    documents_view: true,
-    purchasing_view: true,
-    parts_view: true,
+  const permissions: Record<string, string[]> = {
+    documents_view: [companyId],
+    documents_create: [companyId],
+    documents_udpate: [companyId],
+    documents_delete: [companyId],
+    purchasing_view: [companyId],
+    parts_view: [companyId],
   };
 
-  return claims;
+  return permissions;
 }
 
 export async function resendInvite(
@@ -602,12 +803,49 @@ export async function resetPassword(userId: string, password: string) {
 }
 
 async function setUserClaims(
+  client: SupabaseClient<Database>,
   userId: string,
-  claims: Record<string, boolean | string>
+  claims: Record<string, string>
 ) {
-  return getSupabaseServiceRole().auth.admin.updateUserById(userId, {
-    app_metadata: claims,
+  const user = await client.auth.admin.getUserById(userId);
+  if (user.error) return user;
+
+  const currentClaims = user.data?.user.app_metadata ?? {};
+  const newClaims = { ...currentClaims, ...claims };
+
+  return client.auth.admin.updateUserById(userId, {
+    app_metadata: newClaims,
   });
+}
+
+async function setUserPermissions(
+  client: SupabaseClient<Database>,
+  userId: string,
+  permissions: Record<string, string[]>
+) {
+  const user = await client
+    .from("userPermission")
+    .select("permissions")
+    .eq("id", userId)
+    .maybeSingle();
+
+  const currentPermissions = (user.data?.permissions ?? {}) as Record<
+    string,
+    string[]
+  >;
+  const newPermissions = { ...currentPermissions };
+
+  Object.entries(permissions).forEach(([key, value]) => {
+    if (key in newPermissions) {
+      newPermissions[key] = [...newPermissions[key], ...value];
+    } else {
+      newPermissions[key] = value;
+    }
+  });
+
+  return client
+    .from("userPermission")
+    .upsert({ id: userId, permissions: newPermissions });
 }
 
 export async function updateEmployee(
@@ -616,20 +854,22 @@ export async function updateEmployee(
     id,
     employeeType,
     permissions,
+    companyId,
   }: {
     id: string;
     employeeType: string;
-    permissions: Record<string, Permission>;
+    permissions: Record<string, CompanyPermission>;
+    companyId: string;
   }
 ): Promise<Result> {
   const updateEmployeeEmployeeType = await client
     .from("employee")
-    .upsert([{ id, employeeTypeId: employeeType }]);
+    .upsert([{ id, companyId, employeeTypeId: employeeType }]);
 
   if (updateEmployeeEmployeeType.error)
     return error(updateEmployeeEmployeeType.error, "Failed to update employee");
 
-  return updatePermissions(client, { id, permissions });
+  return updatePermissions(client, { id, permissions, companyId });
 }
 
 export async function updatePermissions(
@@ -637,40 +877,135 @@ export async function updatePermissions(
   {
     id,
     permissions,
+    companyId,
     addOnly = false,
-  }: { id: string; permissions: Record<string, Permission>; addOnly?: boolean }
+  }: {
+    id: string;
+    permissions: Record<string, CompanyPermission>;
+    companyId: string;
+    addOnly?: boolean;
+  }
 ): Promise<Result> {
   if (await client.rpc("is_claims_admin")) {
     const claims = await getClaims(client, id);
 
     if (claims.error) return error(claims.error, "Failed to get claims");
 
-    const currentClaims =
+    const updatedPermissions = (
       typeof claims.data !== "object" ||
       Array.isArray(claims.data) ||
       claims.data === null
         ? {}
-        : claims.data;
+        : claims.data
+    ) as Record<string, string[]>;
 
-    const newClaims: Record<string, boolean> = {};
-    Object.entries(permissions).forEach(([name, permission]) => {
-      const module = name.toLowerCase();
-      if (!addOnly || permission.view)
-        newClaims[`${module}_view`] = permission.view;
-      if (!addOnly || permission.create)
-        newClaims[`${module}_create`] = permission.create;
-      if (!addOnly || permission.update)
-        newClaims[`${module}_update`] = permission.update;
-      if (!addOnly || permission.delete)
-        newClaims[`${module}_delete`] = permission.delete;
+    // add any missing claims to the current claims
+    Object.keys(permissions).forEach((name) => {
+      if (!(`${name}_view` in updatedPermissions)) {
+        updatedPermissions[`${name}_view`] = [];
+      }
+      if (!(`${name}_create` in updatedPermissions)) {
+        updatedPermissions[`${name}_create`] = [];
+      }
+      if (!(`${name}_update` in updatedPermissions)) {
+        updatedPermissions[`${name}_update`] = [];
+      }
+      if (!(`${name}_delete` in updatedPermissions)) {
+        updatedPermissions[`${name}_delete`] = [];
+      }
     });
 
-    const claimsUpdate = await setUserClaims(id, {
-      ...(currentClaims as Record<string, boolean>),
-      ...(newClaims as Record<string, boolean>),
-    });
-    if (claimsUpdate.error)
-      return error(claimsUpdate.error, "Failed to update claims");
+    if (addOnly) {
+      Object.entries(permissions).forEach(([name, permission]) => {
+        const module = name.toLowerCase();
+        if (
+          permission.view &&
+          !updatedPermissions[`${module}_view`]?.includes(companyId)
+        ) {
+          updatedPermissions[`${module}_view`].push(companyId);
+        }
+        if (
+          permission.create &&
+          !updatedPermissions[`${module}_create`]?.includes(companyId)
+        ) {
+          updatedPermissions[`${module}_create`].push(companyId);
+        }
+        if (
+          permission.update &&
+          !updatedPermissions[`${module}_update`]?.includes(companyId)
+        ) {
+          updatedPermissions[`${module}_update`].push(companyId);
+        }
+        if (
+          permission.delete &&
+          !updatedPermissions[`${module}_delete`]?.includes(companyId)
+        ) {
+          updatedPermissions[`${module}_delete`].push(companyId);
+        }
+      });
+    } else {
+      Object.entries(permissions).forEach(([name, permission]) => {
+        const module = name.toLowerCase();
+        if (permission.view) {
+          if (!updatedPermissions[`${module}_view`]?.includes(companyId)) {
+            updatedPermissions[`${module}_view`] = [
+              ...updatedPermissions[`${module}_view`],
+              companyId,
+            ];
+          }
+        } else {
+          updatedPermissions[`${module}_view`] = (
+            updatedPermissions[`${module}_view`] as string[]
+          ).filter((c: string) => c !== companyId);
+        }
+
+        if (permission.create) {
+          if (!updatedPermissions[`${module}_create`]?.includes(companyId)) {
+            updatedPermissions[`${module}_create`] = [
+              ...updatedPermissions[`${module}_create`],
+              companyId,
+            ];
+          }
+        } else {
+          updatedPermissions[`${module}_create`] = (
+            updatedPermissions[`${module}_create`] as string[]
+          ).filter((c: string) => c !== companyId);
+        }
+
+        if (permission.update) {
+          if (!updatedPermissions[`${module}_update`]?.includes(companyId)) {
+            updatedPermissions[`${module}_update`] = [
+              ...updatedPermissions[`${module}_update`],
+              companyId,
+            ];
+          }
+        } else {
+          updatedPermissions[`${module}_update`] = (
+            updatedPermissions[`${module}_update`] as string[]
+          ).filter((c: string) => c !== companyId);
+        }
+
+        if (permission.delete) {
+          if (!updatedPermissions[`${module}_delete`]?.includes(companyId)) {
+            updatedPermissions[`${module}_delete`] = [
+              ...updatedPermissions[`${module}_delete`],
+              companyId,
+            ];
+          }
+        } else {
+          updatedPermissions[`${module}_delete`] = (
+            updatedPermissions[`${module}_delete`] as string[]
+          ).filter((c: string) => c !== companyId);
+        }
+      });
+    }
+
+    const permissionsUpdate = await getSupabaseServiceRole()
+      .from("userPermission")
+      .update({ permissions: updatedPermissions })
+      .eq("id", id);
+    if (permissionsUpdate.error)
+      return error(permissionsUpdate.error, "Failed to update claims");
 
     await redis.del(getPermissionCacheKey(id));
 

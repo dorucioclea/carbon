@@ -28,7 +28,7 @@ function Hero() {
       <div className="my-12 sm:my-36 flex flex-col space-y-8 max-w-2xl mx-auto text-center">
         <div className="text-center mb-4">
           <div className="fancy-button rounded-full w-fit mx-auto relative">
-            <Link href="https://www.loom.com/share/7b2dccab3d404b84aa8f08e5bfa21d16?sid=251f4f0e-4d04-4ec2-bb60-7376454e3172">
+            <Link href="https://www.loom.com/share/7eb03a5e4d4d4836b34f173805fb7403?sid=7ed308d0-8d59-4230-a3f1-137aae3c24da">
               <Button
                 className="border-border rounded-full"
                 variant="secondary"
@@ -138,7 +138,7 @@ const features = [
       "Built on best open-source technologies for incredible performance and security.",
   },
   {
-    name: "Permissive License",
+    name: "Self-Hostable",
     icon: HiCode,
     description:
       "Unlike other open-source ERPs, you can use Carbon to build your own proprietary systems.",
@@ -152,7 +152,7 @@ const features = [
   {
     name: "Realtime",
     icon: BsLightningCharge,
-    description: "All data can be updated in realtime across applications.",
+    description: "All data can be accessed in realtime across applications.",
   },
   {
     name: "Manufacturing",
@@ -160,10 +160,9 @@ const features = [
     description: "Carbon has first-class support for American manufacturing.",
   },
   {
-    name: "Single Tenant",
+    name: "Multi-Company",
     icon: HiFingerPrint,
-    description:
-      "You're not sharing databases with other companies. Your database is yours. Take it anytime.",
+    description: "Manage mutliple companies with ease, all in one place.",
   },
 ] as const;
 

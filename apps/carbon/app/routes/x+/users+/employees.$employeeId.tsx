@@ -3,6 +3,8 @@ import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import { getSupabaseServiceRole } from "~/lib/supabase";
+import type { CompanyPermission } from "~/modules/users";
 import {
   EmployeePermissionsForm,
   employeeValidator,
@@ -12,7 +14,7 @@ import {
 } from "~/modules/users";
 import {
   getClaims,
-  makePermissionsFromClaims,
+  makeCompanyPermissionsFromClaims,
   updateEmployee,
 } from "~/modules/users/users.server";
 import { requirePermissions } from "~/services/auth/auth.server";
@@ -22,7 +24,7 @@ import { path } from "~/utils/path";
 import { error } from "~/utils/result";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { companyId } = await requirePermissions(request, {
     view: "users",
     role: "employee",
   });
@@ -30,10 +32,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const { employeeId } = params;
   if (!employeeId) throw notFound("employeeId not found");
 
+  const client = getSupabaseServiceRole();
   const [rawClaims, employee, employeeTypes] = await Promise.all([
     getClaims(client, employeeId),
-    getEmployee(client, employeeId),
-    getEmployeeTypes(client),
+    getEmployee(client, employeeId, companyId),
+    getEmployeeTypes(client, companyId),
   ]);
 
   if (rawClaims.error || employee.error || rawClaims.data === null) {
@@ -48,7 +51,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       )
     );
   }
-  const claims = makePermissionsFromClaims(rawClaims.data as Json[]);
+  const claims = makeCompanyPermissionsFromClaims(
+    rawClaims.data as Json[],
+    companyId
+  );
 
   if (claims === null) {
     redirect(
@@ -66,7 +72,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     update: "users",
   });
 
@@ -79,7 +85,8 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   const { id, employeeType, data } = validation.data;
-  const permissions = JSON.parse(data);
+  const permissions = JSON.parse(data) as Record<string, CompanyPermission>;
+
   if (
     !Object.values(permissions).every(
       (permission) => userPermissionsValidator.safeParse(permission).success
@@ -95,6 +102,7 @@ export async function action({ request }: ActionFunctionArgs) {
     id,
     employeeType,
     permissions,
+    companyId,
   });
 
   throw redirect(path.to.employeeAccounts, await flash(request, result));
@@ -104,20 +112,16 @@ export default function UsersEmployeeRoute() {
   const { permissions, employee, employeeTypes } =
     useLoaderData<typeof loader>();
 
-  if (Array.isArray(employee?.user) || Array.isArray(employee?.employeeType)) {
-    throw new Error("Expected single user and employee type");
-  }
-
   const initialValues = {
     id: employee?.id || "",
-    employeeType: employee?.employeeType?.id || "",
+    employeeType: employee?.employeeTypeId,
     permissions: permissions || {},
   };
 
   return (
     <EmployeePermissionsForm
       key={initialValues.id}
-      name={`${employee?.user?.firstName} ${employee?.user?.lastName}`}
+      name={employee?.name || ""}
       employeeTypes={employeeTypes}
       // @ts-ignore
       initialValues={initialValues}

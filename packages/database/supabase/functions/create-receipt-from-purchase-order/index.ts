@@ -19,6 +19,7 @@ serve(async (req: Request) => {
     return new Response("ok", { headers: corsHeaders });
   }
   const {
+    companyId,
     locationId,
     purchaseOrderId,
     receiptId: existingReceiptId,
@@ -28,6 +29,7 @@ serve(async (req: Request) => {
   try {
     if (!purchaseOrderId) throw new Error("Payload is missing purchaseOrderId");
     if (!userId) throw new Error("Payload is missing userId");
+    if (!companyId) throw new Error("Payload is missing companyId");
 
     const client = getSupabaseServiceRole(req.headers.get("Authorization"));
 
@@ -79,6 +81,7 @@ serve(async (req: Request) => {
 
         acc.push({
           lineId: d.id,
+          companyId: companyId,
           partId: d.partId,
           orderQuantity: d.purchaseQuantity * (d.conversionFactor ?? 1),
           outstandingQuantity: outstandingQuantity * (d.conversionFactor ?? 1),
@@ -120,7 +123,7 @@ serve(async (req: Request) => {
           .where("receiptId", "=", receiptId)
           .execute();
       } else {
-        receiptIdReadable = await getNextSequence(trx, "receipt");
+        receiptIdReadable = await getNextSequence(trx, "receipt", companyId);
         const newReceipt = await trx
           .insertInto("receipt")
           .values({
@@ -128,6 +131,7 @@ serve(async (req: Request) => {
             sourceDocument: "Purchase Order",
             sourceDocumentId: purchaseOrder.data.id,
             sourceDocumentReadableId: purchaseOrder.data.purchaseOrderId,
+            companyId: companyId,
             locationId: locationId,
             createdBy: userId,
           })

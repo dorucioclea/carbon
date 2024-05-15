@@ -17,7 +17,7 @@ export const handle: Handle = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "inventory",
     role: "employee",
   });
@@ -29,14 +29,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getGenericQueryFilters(searchParams);
 
   const [shippingMethods] = await Promise.all([
-    getShippingMethods(client, {
+    getShippingMethods(client, companyId, {
       search,
       limit,
       offset,
       sorts,
       filters,
     }),
-    getAccountsList(client),
+    getAccountsList(client, companyId),
   ]);
 
   if (shippingMethods.error) {

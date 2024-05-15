@@ -11,7 +11,7 @@ import { getCompany } from "~/modules/settings";
 import { requirePermissions } from "~/services/auth/auth.server";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "sales",
   });
 
@@ -19,7 +19,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!id) throw new Error("Could not find id");
 
   const [company, quote, quoteLines, quoteLocations] = await Promise.all([
-    getCompany(client),
+    getCompany(client, companyId),
     getQuote(client, id),
     getQuoteLines(client, id),
     getQuoteCustomerDetails(client, id),

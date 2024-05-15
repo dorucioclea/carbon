@@ -11,7 +11,7 @@ import { getCompany } from "~/modules/settings";
 import { requirePermissions } from "~/services/auth/auth.server";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "purchasing",
   });
 
@@ -20,7 +20,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const [company, purchaseOrder, purchaseOrderLines, purchaseOrderLocations] =
     await Promise.all([
-      getCompany(client),
+      getCompany(client, companyId),
       getPurchaseOrder(client, orderId),
       getPurchaseOrderLines(client, orderId),
       getPurchaseOrderLocations(client, orderId),

@@ -4,7 +4,7 @@ import { getAccountsList } from "~/modules/accounting";
 import { requirePermissions } from "~/services/auth/auth.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const authorized = await requirePermissions(request, {});
+  const { client, companyId } = await requirePermissions(request, {});
 
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.search);
@@ -12,7 +12,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const classes = searchParams.getAll("class");
 
   const incomeBalance = searchParams.get("incomeBalance");
-  const result = await getAccountsList(authorized.client, {
+  const result = await getAccountsList(client, companyId, {
     type,
     incomeBalance,
     classes,

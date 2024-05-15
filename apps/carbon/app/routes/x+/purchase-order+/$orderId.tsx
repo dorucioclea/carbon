@@ -24,7 +24,7 @@ export const handle: Handle = {
 };
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "purchasing",
   });
 
@@ -40,9 +40,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   ] = await Promise.all([
     getPurchaseOrder(client, orderId),
     getPurchaseOrderLines(client, orderId),
-    getPurchaseOrderExternalDocuments(client, orderId),
-    getPurchaseOrderInternalDocuments(client, orderId),
-    getLocationsList(client),
+    getPurchaseOrderExternalDocuments(client, companyId, orderId),
+    getPurchaseOrderInternalDocuments(client, companyId, orderId),
+    getLocationsList(client, companyId),
   ]);
 
   if (purchaseOrder.error) {

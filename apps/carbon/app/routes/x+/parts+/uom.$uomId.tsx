@@ -16,7 +16,7 @@ import { getParams, path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "parts",
     role: "employee",
   });
@@ -24,7 +24,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const { uomId } = params;
   if (!uomId) throw notFound("uomId not found");
 
-  const unitOfMeasure = await getUnitOfMeasure(client, uomId);
+  const unitOfMeasure = await getUnitOfMeasure(client, uomId, companyId);
 
   return json({
     unitOfMeasure: unitOfMeasure?.data ?? null,

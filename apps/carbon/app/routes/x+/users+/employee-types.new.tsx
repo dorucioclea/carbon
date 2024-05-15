@@ -2,15 +2,16 @@ import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import type { CompanyPermission } from "~/modules/users";
 import {
   EmployeeTypeForm,
   employeeTypePermissionsValidator,
   employeeTypeValidator,
-  getFeatures,
+  getModules,
   insertEmployeeType,
   upsertEmployeeTypePermissions,
 } from "~/modules/users";
-import { makeEmptyPermissionsFromFeatures } from "~/modules/users/users.server";
+import { makeEmptyPermissionsFromModules } from "~/modules/users/users.server";
 import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
 import { assertIsPost } from "~/utils/http";
@@ -22,22 +23,22 @@ export async function loader({ request }: LoaderFunctionArgs) {
     create: "users",
   });
 
-  const features = await getFeatures(client);
-  if (features.error || features.data === null) {
+  const modules = await getModules(client);
+  if (modules.error || modules.data === null) {
     throw redirect(
       path.to.employeeTypes,
-      await flash(request, error(features.error, "Failed to get features"))
+      await flash(request, error(modules.error, "Failed to get modules"))
     );
   }
 
   return json({
-    permissions: makeEmptyPermissionsFromFeatures(features.data),
+    permissions: makeEmptyPermissionsFromModules(modules.data),
   });
 }
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     create: "users",
   });
 
@@ -51,7 +52,10 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const { name, data } = validation.data;
 
-  const permissions = JSON.parse(data);
+  const permissions = JSON.parse(data) as {
+    name: string;
+    permission: CompanyPermission;
+  }[];
   const jsonValidation =
     employeeTypePermissionsValidator.safeParse(permissions);
   if (jsonValidation.success === false) {
@@ -66,6 +70,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const createEmployeeType = await insertEmployeeType(client, {
     name,
+    companyId,
   });
   if (createEmployeeType.error) {
     return json(
@@ -90,6 +95,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const insertEmployeeTypePermissions = await upsertEmployeeTypePermissions(
     client,
     employeeTypeId,
+    companyId,
     permissions
   );
 

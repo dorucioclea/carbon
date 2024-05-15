@@ -25,16 +25,15 @@ export const handle: Handle = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "accounting",
   });
 
-  // the ABCs of accounting
   const [accounts, baseCurrency] = await Promise.all([
-    getAccountsList(client, {
+    getAccountsList(client, companyId, {
       type: "Posting",
     }),
-    getBaseCurrency(client),
+    getBaseCurrency(client, companyId),
   ]);
 
   if (accounts.error) {

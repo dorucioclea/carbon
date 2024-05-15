@@ -9,7 +9,7 @@ import { error, success } from "~/utils/result";
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client, userId } = await requirePermissions(request, {});
+  const { client, companyId, userId } = await requirePermissions(request, {});
   const formData = await request.formData();
 
   const documentPath = formData.get("path");
@@ -38,6 +38,7 @@ export async function action({ request }: ActionFunctionArgs) {
     readGroups: [userId],
     writeGroups: [userId],
     createdBy: userId,
+    companyId,
   });
   if (createDocument.error) {
     throw redirect(

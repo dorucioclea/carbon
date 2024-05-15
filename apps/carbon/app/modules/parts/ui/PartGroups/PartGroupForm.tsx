@@ -9,9 +9,12 @@ import {
   ModalDrawerProvider,
   ModalDrawerTitle,
   VStack,
+  toast,
 } from "@carbon/react";
 import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
+import type { PostgrestResponse } from "@supabase/supabase-js";
+import { useEffect } from "react";
 import type { z } from "zod";
 import {
   CustomFormFields,
@@ -38,12 +41,25 @@ const PartGroupForm = ({
   onClose,
 }: PartGroupFormProps) => {
   const permissions = usePermissions();
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<PostgrestResponse<{ id: string; name: string }>>();
 
   const isEditing = initialValues.id !== undefined;
   const isDisabled = isEditing
     ? !permissions.can("update", "parts")
     : !permissions.can("create", "parts");
+
+  useEffect(() => {
+    if (type !== "modal") return;
+
+    if (fetcher.state === "loading" && fetcher.data?.data) {
+      onClose?.();
+      toast.success(`Created supplier status`);
+    } else if (fetcher.state === "idle" && fetcher.data?.error) {
+      toast.error(
+        `Failed to create supplier status: ${fetcher.data.error.message}`
+      );
+    }
+  }, [fetcher.data, fetcher.state, onClose, type]);
 
   return (
     <ModalDrawerProvider type={type}>

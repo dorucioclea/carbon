@@ -29,6 +29,7 @@ const ProfilePhotoForm = ({ user }: ProfilePhotoFormProps) => {
         });
 
       if (imageUpload.error) {
+        console.error(imageUpload.error);
         toast.error("Failed to upload image");
       }
 

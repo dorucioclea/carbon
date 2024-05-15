@@ -19,7 +19,7 @@ import { error } from "~/utils/result";
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     create: "sales",
   });
 
@@ -30,7 +30,7 @@ export async function action({ request }: ActionFunctionArgs) {
     return validationError(validation.error);
   }
 
-  const nextSequence = await getNextSequence(client, "salesOrder", userId);
+  const nextSequence = await getNextSequence(client, "salesOrder", companyId);
   if (nextSequence.error) {
     throw redirect(
       path.to.newSalesOrder,
@@ -41,16 +41,19 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 
+  const { id, salesOrderId, ...data } = validation.data;
+
   const createSalesOrder = await upsertSalesOrder(client, {
-    ...validation.data,
     salesOrderId: nextSequence.data,
+    ...data,
+    companyId,
     createdBy: userId,
     customFields: setCustomFields(formData),
   });
 
   if (createSalesOrder.error || !createSalesOrder.data?.[0]) {
     // TODO: this should be done as a transaction
-    await rollbackNextSequence(client, "salesOrder", userId);
+    await rollbackNextSequence(client, "salesOrder", companyId);
     throw redirect(
       path.to.salesOrders,
       await flash(

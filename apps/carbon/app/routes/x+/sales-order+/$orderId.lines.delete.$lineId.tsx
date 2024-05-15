@@ -73,7 +73,7 @@ export default function DeleteSalesOrderLineRoute() {
       action={path.to.deleteSalesOrderLine(orderId, lineId)}
       name="Sales Order Line"
       text={`Are you sure you want to delete the sales order line for ${
-        salesOrderLine.salesQuantity ?? 0
+        salesOrderLine.saleQuantity ?? 0
       } ${salesOrderLine.description ?? ""}? This cannot be undone.`}
       onCancel={onCancel}
     />

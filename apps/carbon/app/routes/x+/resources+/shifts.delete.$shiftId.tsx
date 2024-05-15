@@ -67,15 +67,13 @@ export default function DeleteShiftRoute() {
   if (!shiftId) throw notFound("shiftId not found");
 
   const onCancel = () => navigate(path.to.shifts);
-  if (Array.isArray(shift.location))
-    throw new Error("Shift location is an array");
 
   return (
     <ConfirmDelete
       action={path.to.deleteShift(shiftId)}
-      name={shift.name}
+      name={shift.name ?? "Shift"}
       text={`Are you sure you want to delete the shift: ${shift.name} from ${
-        shift.location?.name ?? "unknown location"
+        shift.locationName ?? "unknown location"
       }? This cannot be undone.`}
       onCancel={onCancel}
     />

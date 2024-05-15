@@ -22,10 +22,10 @@ export const handle: Handle = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client, userId } = await requirePermissions(request, {});
+  const { client, companyId, userId } = await requirePermissions(request, {});
 
   const [privateAttributes] = await Promise.all([
-    getPrivateAttributes(client, userId),
+    getPrivateAttributes(client, userId, companyId),
   ]);
 
   if (privateAttributes.error) {

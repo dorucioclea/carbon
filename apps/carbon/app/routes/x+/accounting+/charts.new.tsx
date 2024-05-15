@@ -29,7 +29,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     create: "accounting",
   });
 
@@ -44,6 +44,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const insertAccount = await upsertAccount(client, {
     ...data,
+    companyId,
     customFields: setCustomFields(formData),
     createdBy: userId,
   });

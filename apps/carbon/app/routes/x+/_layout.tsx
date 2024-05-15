@@ -6,7 +6,7 @@ import NProgress from "nprogress";
 import { useEffect } from "react";
 import { IconSidebar, Topbar } from "~/components/Layout";
 import { SupabaseProvider, getSupabase } from "~/lib/supabase";
-import { getCompany, getIntegrations } from "~/modules/settings";
+import { getCompanies, getCompanyIntegrations } from "~/modules/settings";
 import { RealtimeDataProvider } from "~/modules/shared";
 import { getCustomFieldsSchemas } from "~/modules/shared/shared.server";
 import {
@@ -38,29 +38,38 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { accessToken, expiresAt, expiresIn, userId } =
+  const { accessToken, companyId, expiresAt, expiresIn, userId } =
     await requireAuthSession(request, { verify: true });
 
   // share a client between requests
   const client = getSupabase(accessToken);
 
   // parallelize the requests
-  const [company, customFields, integrations, user, claims, groups, defaults] =
-    await Promise.all([
-      getCompany(client),
-      getCustomFieldsSchemas(client, {}),
-      getIntegrations(client),
-      getUser(client, userId),
-      getUserClaims(request),
-      getUserGroups(client, userId),
-      getUserDefaults(client, userId),
-    ]);
+  const [
+    companies,
+    customFields,
+    integrations,
+    user,
+    claims,
+    groups,
+    defaults,
+  ] = await Promise.all([
+    getCompanies(client, userId),
+    getCustomFieldsSchemas(client, { companyId }),
+    getCompanyIntegrations(client, companyId),
+    getUser(client, userId),
+    getUserClaims(userId),
+    getUserGroups(client, userId),
+    getUserDefaults(client, userId, companyId),
+  ]);
 
   if (!claims || user.error || !user.data || !groups.data) {
     await destroyAuthSession(request);
   }
 
-  const requiresOnboarding = !company.data?.name;
+  const company = companies.data?.find((c) => c.companyId === companyId);
+
+  const requiresOnboarding = !companies.data?.[0]?.name;
   if (requiresOnboarding) {
     throw redirect(path.to.onboarding.root);
   }
@@ -71,19 +80,21 @@ export async function loader({ request }: LoaderFunctionArgs) {
       expiresIn,
       expiresAt,
     },
-    company: company.data,
+    company,
+    companies: companies.data ?? [],
     customFields: customFields.data ?? [],
-    integrations: integrations.data ?? [],
-    user: user.data,
-    groups: groups.data,
     defaults: defaults.data,
+    integrations: integrations.data ?? [],
+    groups: groups.data,
     permissions: claims?.permissions,
     role: claims?.role,
+    user: user.data,
   });
 }
 
 export default function AuthenticatedRoute() {
   const { session } = useLoaderData<typeof loader>();
+
   const transition = useNavigation();
 
   /* NProgress */
@@ -119,8 +130,8 @@ export default function AuthenticatedRoute() {
                 </div>
               </div>
             </div>
-            <Toaster position="bottom-right" />
           </div>
+          <Toaster richColors position="bottom-right" />
         </TooltipProvider>
       </RealtimeDataProvider>
     </SupabaseProvider>

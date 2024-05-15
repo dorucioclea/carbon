@@ -2,10 +2,10 @@ import type { Database, Json } from "@carbon/database";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { z } from "zod";
+import { getEmployeeJob } from "~/modules/resources";
 import type { GenericQueryFilters } from "~/utils/query";
 import { setGenericQueryFilters } from "~/utils/query";
 import { sanitize } from "~/utils/supabase";
-import { getEmployeeJob } from "~/modules/resources";
 import type {
   customerContactValidator,
   customerPaymentValidator,
@@ -19,11 +19,57 @@ import type {
   quotationOperationValidator,
   quotationPricingValidator,
   quotationValidator,
-  salesOrderShipmentValidator,
   salesOrderLineValidator,
   salesOrderPaymentValidator,
+  salesOrderShipmentValidator,
   salesOrderValidator,
 } from "./sales.models";
+
+export async function closeSalesOrder(
+  client: SupabaseClient<Database>,
+  salesOrderId: string,
+  userId: string
+) {
+  return client
+    .from("salesOrder")
+    .update({
+      closed: true,
+      closedAt: today(getLocalTimeZone()).toString(),
+      closedBy: userId,
+    })
+    .eq("id", salesOrderId)
+    .select("id")
+    .single();
+}
+
+export async function convertQuoteToOrder(
+  client: SupabaseClient<Database>,
+  quoteId: string,
+  userId: string
+) {
+  const quoteUpdate = await client
+    .from("quote")
+    .update({
+      status: "Ordered",
+      quoteDate: today(getLocalTimeZone()).toString(),
+      updatedAt: today(getLocalTimeZone()).toString(),
+      updatedBy: userId,
+    })
+    .eq("id", quoteId);
+
+  if (quoteUpdate.error) {
+    return quoteUpdate;
+  }
+
+  return client
+    .from("quoteLine")
+    .update({
+      status: "Complete",
+      updatedAt: today(getLocalTimeZone()).toString(),
+      updatedBy: userId,
+    })
+    .eq("quoteId", quoteId);
+}
 
 export async function deleteCustomerContact(
   client: SupabaseClient<Database>,
@@ -96,6 +142,20 @@ export async function deleteQuoteOperation(
   quoteOperationId: string
 ) {
   return client.from("quoteOperation").delete().eq("id", quoteOperationId);
+}
+
+export async function deleteSalesOrder(
+  client: SupabaseClient<Database>,
+  salesOrderId: string
+) {
+  return client.from("salesOrder").delete().eq("id", salesOrderId);
+}
+
+export async function deleteSalesOrderLine(
+  client: SupabaseClient<Database>,
+  salesOrderLineId: string
+) {
+  return client.from("salesOrderLine").delete().eq("id", salesOrderLineId);
 }
 
 export async function getCustomer(
@@ -179,13 +239,17 @@ export async function getCustomerShipping(
 
 export async function getCustomers(
   client: SupabaseClient<Database>,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
   }
 ) {
-  let query = client.from("customers").select("*", {
-    count: "exact",
-  });
+  let query = client
+    .from("customers")
+    .select("*", {
+      count: "exact",
+    })
+    .eq("companyId", companyId);
 
   if (args.search) {
     query = query.ilike("name", `%${args.search}%`);
@@ -197,8 +261,15 @@ export async function getCustomers(
   return query;
 }
 
-export async function getCustomersList(client: SupabaseClient<Database>) {
-  return client.from("customer").select("id, name").order("name");
+export async function getCustomersList(
+  client: SupabaseClient<Database>,
+  companyId: string
+) {
+  return client
+    .from("customer")
+    .select("id, name")
+    .eq("companyId", companyId)
+    .order("name");
 }
 
 export async function getCustomerStatus(
@@ -214,11 +285,13 @@ export async function getCustomerStatus(
 
 export async function getCustomerStatuses(
   client: SupabaseClient<Database>,
+  companyId: string,
   args?: GenericQueryFilters & { search: string | null }
 ) {
   let query = client
     .from("customerStatus")
-    .select("id, name, customFields", { count: "exact" });
+    .select("id, name, customFields", { count: "exact" })
+    .eq("companyId", companyId);
 
   if (args?.search) {
     query = query.ilike("name", `%${args.search}%`);
@@ -234,9 +307,14 @@ export async function getCustomerStatuses(
 }
 
 export async function getCustomerStatusesList(
-  client: SupabaseClient<Database>
+  client: SupabaseClient<Database>,
+  companyId: string
 ) {
-  return client.from("customerStatus").select("id, name").order("name");
+  return client
+    .from("customerStatus")
+    .select("id, name")
+    .eq("companyId", companyId)
+    .order("name");
 }
 
 export async function getCustomerType(
@@ -252,9 +330,13 @@ export async function getCustomerType(
 
 export async function getCustomerTypes(
   client: SupabaseClient<Database>,
+  companyId: string,
   args?: GenericQueryFilters & { search: string | null }
 ) {
-  let query = client.from("customerType").select("*", { count: "exact" });
+  let query = client
+    .from("customerType")
+    .select("*", { count: "exact" })
+    .eq("companyId", companyId);
 
   if (args?.search) {
     query = query.ilike("name", `%${args.search}%`);
@@ -269,8 +351,15 @@ export async function getCustomerTypes(
   return query;
 }
 
-export async function getCustomerTypesList(client: SupabaseClient<Database>) {
-  return client.from("customerType").select("id, name").order("name");
+export async function getCustomerTypesList(
+  client: SupabaseClient<Database>,
+  companyId: string
+) {
+  return client
+    .from("customerType")
+    .select("id, name")
+    .eq("companyId", companyId)
+    .order("name");
 }
 
 export async function getQuote(
@@ -282,11 +371,15 @@ export async function getQuote(
 
 export async function getQuotes(
   client: SupabaseClient<Database>,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
   }
 ) {
-  let query = client.from("quotes").select("*", { count: "exact" });
+  let query = client
+    .from("quotes")
+    .select("*", { count: "exact" })
+    .eq("companyId", companyId);
 
   if (args.search) {
     query = query.or(
@@ -331,16 +424,22 @@ export async function getQuoteAssemblies(
 
 export async function getQuoteExternalDocuments(
   client: SupabaseClient<Database>,
+  companyId: string,
   quoteId: string
 ) {
-  return client.storage.from("private").list(`quote/external/${quoteId}`);
+  return client.storage
+    .from("private")
+    .list(`${companyId}/quote/external/${quoteId}`);
 }
 
 export async function getQuoteInternalDocuments(
   client: SupabaseClient<Database>,
+  companyId: string,
   quoteId: string
 ) {
-  return client.storage.from("private").list(`quote/internal/${quoteId}`);
+  return client.storage
+    .from("private")
+    .list(`${companyId}/quote/internal/${quoteId}`);
 }
 
 export async function getQuoteLine(
@@ -449,13 +548,16 @@ export async function insertCustomerContact(
   client: SupabaseClient<Database>,
   customerContact: {
     customerId: string;
+    companyId: string;
     contact: z.infer<typeof customerContactValidator>;
     customFields?: Json;
   }
 ) {
   const insertContact = await client
     .from("contact")
-    .insert([customerContact.contact])
+    .insert([
+      { ...customerContact.contact, companyId: customerContact.companyId },
+    ])
     .select("id")
     .single();
   if (insertContact.error) {
@@ -484,6 +586,7 @@ export async function insertCustomerLocation(
   client: SupabaseClient<Database>,
   customerLocation: {
     customerId: string;
+    companyId: string;
     address: {
       addressLine1?: string;
       addressLine2?: string;
@@ -497,7 +600,9 @@ export async function insertCustomerLocation(
 ) {
   const insertAddress = await client
     .from("address")
-    .insert([customerLocation.address])
+    .insert([
+      { ...customerLocation.address, companyId: customerLocation.companyId },
+    ])
     .select("id")
     .single();
   if (insertAddress.error) {
@@ -594,39 +699,11 @@ export async function releaseQuote(
     .eq("quoteId", quoteId);
 }
 
-export async function convertQuoteToOrder(
-  client: SupabaseClient<Database>,
-  quoteId: string,
-  userId: string
-) {
-  const quoteUpdate = await client
-    .from("quote")
-    .update({
-      status: "Ordered",
-      quoteDate: today(getLocalTimeZone()).toString(),
-      updatedAt: today(getLocalTimeZone()).toString(),
-      updatedBy: userId,
-    })
-    .eq("id", quoteId);
-
-  if (quoteUpdate.error) {
-    return quoteUpdate;
-  }
-
-  return client
-    .from("quoteLine")
-    .update({
-      status: "Complete",
-      updatedAt: today(getLocalTimeZone()).toString(),
-      updatedBy: userId,
-    })
-    .eq("quoteId", quoteId);
-}
-
 export async function upsertCustomer(
   client: SupabaseClient<Database>,
   customer:
     | (Omit<z.infer<typeof customerValidator>, "id"> & {
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -736,6 +813,7 @@ export async function upsertCustomerStatus(
   client: SupabaseClient<Database>,
   customerStatus:
     | (Omit<z.infer<typeof customerStatusValidator>, "id"> & {
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -759,6 +837,7 @@ export async function upsertCustomerType(
   client: SupabaseClient<Database>,
   customerType:
     | (Omit<z.infer<typeof customerTypeValidator>, "id"> & {
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -803,6 +882,7 @@ export async function upsertQuote(
   quote:
     | (Omit<z.infer<typeof quotationValidator>, "id" | "quoteId"> & {
         quoteId: string;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -832,6 +912,7 @@ export async function upsertQuoteAssembly(
     | (Omit<z.infer<typeof quotationAssemblyValidator>, "id"> & {
         quoteId: string;
         quoteLineId: string;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -862,6 +943,7 @@ export async function upsertQuoteLine(
   client: SupabaseClient<Database>,
   quotationLine:
     | (Omit<z.infer<typeof quotationLineValidator>, "id"> & {
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -903,6 +985,7 @@ export async function upsertQuoteMaterial(
         quoteId: string;
         quoteLineId: string;
         quoteOperationId: string;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -936,6 +1019,7 @@ export async function upsertQuoteOperation(
     | (Omit<z.infer<typeof quotationOperationValidator>, "id"> & {
         quoteId: string;
         quoteLineId: string;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -962,51 +1046,24 @@ export async function upsertQuoteOperation(
     .single();
 }
 
-export async function closeSalesOrder(
-  client: SupabaseClient<Database>,
-  salesOrderId: string,
-  userId: string
-) {
-  return client
-    .from("salesOrder")
-    .update({
-      closed: true,
-      closedAt: today(getLocalTimeZone()).toString(),
-      closedBy: userId,
-    })
-    .eq("id", salesOrderId)
-    .select("id")
-    .single();
-}
-
-export async function deleteSalesOrder(
-  client: SupabaseClient<Database>,
-  salesOrderId: string
-) {
-  return client.from("salesOrder").delete().eq("id", salesOrderId);
-}
-
-export async function deleteSalesOrderLine(
-  client: SupabaseClient<Database>,
-  salesOrderLineId: string
-) {
-  return client.from("salesOrderLine").delete().eq("id", salesOrderLineId);
-}
-
 export async function getSalesOrderExternalDocuments(
   client: SupabaseClient<Database>,
-  salesOrderId: string
-) {
-  return client.storage.from("private").list(`sales/external/${salesOrderId}`);
-}
-
-/*export async function getSalesOrderInternalDocuments(
-  client: SupabaseClient<Database>,
+  companyId: string,
   salesOrderId: string
 ) {
   return client.storage
     .from("private")
-    .list(`sales/internal/${salesOrderId}`);
+    .list(`${companyId}/sales/external/${salesOrderId}`);
+}
+
+/*export async function getSalesOrderInternalDocuments(
+  client: SupabaseClient<Database>,
+  companyId: string,
+  salesOrderId: string
+) {
+  return client.storage
+    .from("private")
+    .list(`${companyId}/sales/internal/${salesOrderId}`);
 }*/
 
 export async function getSalesOrder(
@@ -1018,13 +1075,17 @@ export async function getSalesOrder(
 
 export async function getSalesOrders(
   client: SupabaseClient<Database>,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
     status: string | null;
     customerId: string | null;
   }
 ) {
-  let query = client.from("salesOrders").select("*", { count: "exact" });
+  let query = client
+    .from("salesOrders")
+    .select("*", { count: "exact" })
+    .eq("companyId", companyId);
 
   if (args.search) {
     query = query.or(
@@ -1077,6 +1138,10 @@ export async function getSalesOrderShipment(
     .single();
 }*/
 
+export async function getSalesOrderCustomers(client: SupabaseClient<Database>) {
+  return client.from("salesOrderCustomers").select("id, name");
+}
+
 export async function getSalesOrderLines(
   client: SupabaseClient<Database>,
   salesOrderId: string
@@ -1099,8 +1164,16 @@ export async function getSalesOrderLine(
     .single();
 }
 
-export async function getSalesOrderCustomers(client: SupabaseClient<Database>) {
-  return client.from("salesOrderCustomers").select("id, name");
+export async function insertSalesOrderLines(
+  client: SupabaseClient<Database>,
+  salesOrderLines:
+    | (Omit<z.infer<typeof salesOrderLineValidator>, "id"> & {
+        companyId: string;
+        createdBy: string;
+        customFields?: Json;
+      })[]
+) {
+  return client.from("salesOrderLine").insert(salesOrderLines).select("id");
 }
 
 export async function releaseSalesOrder(
@@ -1111,7 +1184,7 @@ export async function releaseSalesOrder(
   return client
     .from("salesOrder")
     .update({
-      status: "To Receive and Invoice",
+      status: "Confirmed",
       updatedAt: today(getLocalTimeZone()).toString(),
       updatedBy: userId,
     })
@@ -1145,6 +1218,7 @@ export async function upsertSalesOrder(
   salesOrder:
     | (Omit<z.infer<typeof salesOrderValidator>, "id" | "salesOrderId"> & {
         salesOrderId: string;
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -1163,10 +1237,10 @@ export async function upsertSalesOrder(
       .select("id, salesOrderId");
   }
 
-  const [customerPayment, customerShipping, customer] = await Promise.all([
+  const [customerPayment, customerShipping, employee] = await Promise.all([
     getCustomerPayment(client, salesOrder.customerId),
     getCustomerShipping(client, salesOrder.customerId),
-    getEmployeeJob(client, salesOrder.createdBy),
+    getEmployeeJob(client, salesOrder.createdBy, salesOrder.companyId),
   ]);
 
   if (customerPayment.error) return customerPayment;
@@ -1182,7 +1256,7 @@ export async function upsertSalesOrder(
 
   const { shippingMethodId, shippingTermId } = customerShipping.data;
 
-  const locationId = customer?.data?.locationId ?? null;
+  const locationId = employee?.data?.locationId ?? null;
 
   const order = await client
     .from("salesOrder")
@@ -1200,6 +1274,7 @@ export async function upsertSalesOrder(
         locationId: locationId,
         shippingMethodId: shippingMethodId,
         shippingTermId: shippingTermId,
+        companyId: salesOrder.companyId,
       },
     ]),
     client.from("salesOrderPayment").insert([
@@ -1210,6 +1285,7 @@ export async function upsertSalesOrder(
         invoiceCustomerContactId: invoiceCustomerContactId,
         invoiceCustomerLocationId: invoiceCustomerLocationId,
         paymentTermId: paymentTermId,
+        companyId: salesOrder.companyId,
       },
     ]),
   ]);
@@ -1258,6 +1334,7 @@ export async function upsertSalesOrderLine(
   client: SupabaseClient<Database>,
   salesOrderLine:
     | (Omit<z.infer<typeof salesOrderLineValidator>, "id"> & {
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -1280,25 +1357,6 @@ export async function upsertSalesOrderLine(
     .insert([salesOrderLine])
     .select("id")
     .single();
-}
-
-export async function insertSalesOrderLines(
-  client: SupabaseClient<Database>,
-  salesOrderLines:
-    | (Omit<z.infer<typeof salesOrderLineValidator>, "id"> & {
-        createdBy: string;
-        customFields?: Json;
-      })[]
-    | (Omit<z.infer<typeof salesOrderLineValidator>, "id"> & {
-        id: string;
-        updatedBy: string;
-        customFields?: Json;
-      })[]
-) {
-  return client
-    .from("salesOrderLine")
-    .insert([...salesOrderLines])
-    .select("id");
 }
 
 export async function upsertSalesOrderPayment(

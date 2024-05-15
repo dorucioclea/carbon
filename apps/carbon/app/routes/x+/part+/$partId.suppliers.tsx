@@ -8,14 +8,16 @@ import { path } from "~/utils/path";
 import { error } from "~/utils/result";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "parts",
   });
 
   const { partId } = params;
   if (!partId) throw new Error("Could not find partId");
 
-  const [partSuppliers] = await Promise.all([getPartSuppliers(client, partId)]);
+  const [partSuppliers] = await Promise.all([
+    getPartSuppliers(client, partId, companyId),
+  ]);
 
   if (partSuppliers.error) {
     throw redirect(

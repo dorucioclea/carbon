@@ -31,6 +31,8 @@ CREATE TABLE "purchaseInvoice" (
   "totalAmount" NUMERIC(10, 2) NOT NULL DEFAULT 0,
   "totalTax" NUMERIC(10, 2) NOT NULL DEFAULT 0,
   "balance" NUMERIC(10, 2) NOT NULL DEFAULT 0,
+  "assignee" TEXT,
+  "companyId" TEXT NOT NULL,
   "customFields" JSONB,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
@@ -43,16 +45,17 @@ CREATE TABLE "purchaseInvoice" (
   CONSTRAINT "purchaseInvoice_invoiceSupplierLocationId_fkey" FOREIGN KEY ("invoiceSupplierLocationId") REFERENCES "supplierLocation" ("id"),
   CONSTRAINT "purchaseInvoice_invoiceSupplierContactId_fkey" FOREIGN KEY ("invoiceSupplierContactId") REFERENCES "supplierContact" ("id"),
   CONSTRAINT "purchaseInvoice_paymentTermId_fkey" FOREIGN KEY ("paymentTermId") REFERENCES "paymentTerm" ("id"),
-  CONSTRAINT "purchaseInvoice_currencyCode_fkey" FOREIGN KEY ("currencyCode") REFERENCES "currency" ("code"),
+  CONSTRAINT "purchaseInvoice_currencyCode_fkey" FOREIGN KEY ("currencyCode", "companyId") REFERENCES "currency" ("code", "companyId"),
+  CONSTRAINT "purchaseInvoice_assignee_fkey" FOREIGN KEY ("assignee") REFERENCES "user" ("id") ON UPDATE CASCADE ON DELETE SET NULL,
+  CONSTRAINT "purchaseInvoice_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "purchaseInvoice_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id"),
   CONSTRAINT "purchaseInvoice_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id")
 );
 
-CREATE INDEX "purchaseInvoice_invoiceId_idx" ON "purchaseInvoice" ("invoiceId");
-CREATE INDEX "purchaseInvoice_status_idx" ON "purchaseInvoice" ("status");
-CREATE INDEX "purchaseInvoice_supplierId_idx" ON "purchaseInvoice" ("supplierId");
-CREATE INDEX "purchaseInvoice_dateDue_idx" ON "purchaseInvoice" ("dateDue");
-CREATE INDEX "purchaseInvoice_datePaid_idx" ON "purchaseInvoice" ("datePaid");
+CREATE INDEX "purchaseInvoice_invoiceId_idx" ON "purchaseInvoice" ("invoiceId", "companyId");
+CREATE INDEX "purchaseInvoice_status_idx" ON "purchaseInvoice" ("status", "companyId");
+CREATE INDEX "purchaseInvoice_supplierId_idx" ON "purchaseInvoice" ("supplierId", "companyId");
+CREATE INDEX "purchaseInvoice_companyId_idx" ON "purchaseInvoice" ("companyId");
 
 ALTER publication supabase_realtime ADD TABLE "purchaseInvoice";
 
@@ -61,29 +64,29 @@ ALTER TABLE "purchaseInvoice" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees with invoicing_view can view AP invoices" ON "purchaseInvoice"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('invoicing_view')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('invoicing_view', "companyId")
   );
 
 CREATE POLICY "Employees with invoicing_create can insert AP invoices" ON "purchaseInvoice"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('invoicing_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('invoicing_create', "companyId")
 );
 
 CREATE POLICY "Employees with invoicing_update can update AP invoices" ON "purchaseInvoice"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('invoicing_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('invoicing_update', "companyId")
   );
 
 CREATE POLICY "Employees with invoicing_delete can delete AP invoices" ON "purchaseInvoice"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('invoicing_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('invoicing_delete', "companyId")
   );
 
 
@@ -103,8 +106,8 @@ ALTER TABLE "purchaseInvoiceStatusHistory" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees with invoicing_view can view AP invoices status history" ON "purchaseInvoiceStatusHistory"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('invoicing_view')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('invoicing_view', get_company_id_from_foreign_key("invoiceId", 'purchaseInvoice'))
   );
 
 
@@ -134,7 +137,9 @@ CREATE TABLE "purchaseInvoiceLine" (
   "totalAmount" NUMERIC(10, 2) GENERATED ALWAYS AS ("quantity" * "unitPrice") STORED,
   "currencyCode" TEXT NOT NULL,
   "exchangeRate" NUMERIC(10, 4) NOT NULL DEFAULT 1,
-  "unitOfMeasureCode" TEXT,
+  "inventoryUnitOfMeasureCode" TEXT,
+  "purchaseUnitOfMeasureCode" TEXT,
+  "companyId" TEXT NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
@@ -185,17 +190,21 @@ CREATE TABLE "purchaseInvoiceLine" (
   CONSTRAINT "purchaseInvoiceLines_invoiceId_fkey" FOREIGN KEY ("invoiceId") REFERENCES "purchaseInvoice" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT "purchaseInvoiceLines_purchaseOrderId_fkey" FOREIGN KEY ("purchaseOrderId") REFERENCES "purchaseOrder" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "purchaseInvoiceLines_purchaseOrderLineId_fkey" FOREIGN KEY ("purchaseOrderLineId") REFERENCES "purchaseOrderLine" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
-  CONSTRAINT "purchaseInvoiceLines_partId_fkey" FOREIGN KEY ("partId") REFERENCES "part" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
-  CONSTRAINT "purchaseInvoiceLines_serviceId_fkey" FOREIGN KEY ("serviceId") REFERENCES "service" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT "purchaseInvoiceLines_partId_fkey" FOREIGN KEY ("partId", "companyId") REFERENCES "part" ("id", "companyId") ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT "purchaseInvoiceLines_serviceId_fkey" FOREIGN KEY ("serviceId", "companyId") REFERENCES "service" ("id", "companyId") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "purchaseInvoiceLines_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "location" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "purchaseInvoiceLines_shelfId_fkey" FOREIGN KEY ("shelfId", "locationId") REFERENCES "shelf" ("id", "locationId") ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT "purchaseInvoiceLines_accountNumber_fkey" FOREIGN KEY ("accountNumber") REFERENCES "account" ("number") ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT "purchaseInvoiceLines_accountNumber_fkey" FOREIGN KEY ("accountNumber", "companyId") REFERENCES "account" ("number", "companyId") ON UPDATE CASCADE ON DELETE RESTRICT,
   -- CONSTRAINT "purchaseInvoiceLines_assetId_fkey" FOREIGN KEY ("assetId") REFERENCES "fixedAsset" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
-  CONSTRAINT "purchaseInvoiceLines_currencyCode_fkey" FOREIGN KEY ("currencyCode") REFERENCES "currency" ("code") ON UPDATE CASCADE ON DELETE RESTRICT,
-  CONSTRAINT "purchaseInvoiceLines_unitOfMeasureCode_fkey" FOREIGN KEY ("unitOfMeasureCode") REFERENCES "unitOfMeasure" ("code") ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT "purchaseInvoiceLines_currencyCode_fkey" FOREIGN KEY ("currencyCode", "companyId") REFERENCES "currency" ("code", "companyId") ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT "purchaseInvoiceLines_inventoryUnitOfMeasureCode_fkey" FOREIGN KEY ("inventoryUnitOfMeasureCode", "companyId") REFERENCES "unitOfMeasure" ("code", "companyId") ON UPDATE CASCADE ON DELETE SET NULL,
+  CONSTRAINT "purchaseInvoiceLines_purchaseUnitOfMeasureCode_fkey" FOREIGN KEY ("purchaseUnitOfMeasureCode", "companyId") REFERENCES "unitOfMeasure" ("code", "companyId") ON UPDATE CASCADE ON DELETE SET NULL,
+  CONSTRAINT "purchaseInvoiceLines_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "purchaseInvoiceLines_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "purchaseInvoiceLines_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON UPDATE CASCADE ON DELETE RESTRICT
 );
+
+CREATE INDEX "purchaseInvoiceLine_invoiceId_idx" ON "purchaseInvoiceLine" ("invoiceId");
 
 ALTER publication supabase_realtime ADD TABLE "purchaseInvoiceLine";
 
@@ -204,29 +213,29 @@ ALTER TABLE "purchaseInvoiceLine" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees with invoicing_view can view AP invoice lines" ON "purchaseInvoiceLine"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('invoicing_view')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('invoicing_view', "companyId")
   );
 
 CREATE POLICY "Employees with invoicing_create can insert AP invoice lines" ON "purchaseInvoiceLine"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('invoicing_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('invoicing_create', "companyId")
 );
 
 CREATE POLICY "Employees with invoicing_update can update AP invoice lines" ON "purchaseInvoiceLine"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('invoicing_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('invoicing_update', "companyId")
   );
 
 CREATE POLICY "Employees with invoicing_delete can delete AP invoice lines" ON "purchaseInvoiceLine"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('invoicing_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('invoicing_delete', "companyId")
   );
 
 CREATE TABLE "purchaseInvoicePriceChange" (
@@ -250,8 +259,8 @@ ALTER TABLE "purchaseInvoicePriceChange" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees with invoicing_view can view AP invoice price changes" ON "purchaseInvoicePriceChange"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('invoicing_view')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('invoicing_view', get_company_id_from_foreign_key("invoiceId", 'purchaseInvoice'))
   );
 
 CREATE OR REPLACE FUNCTION "purchaseInvoiceLine_update_price_change"()
@@ -293,6 +302,7 @@ CREATE TABLE "purchasePayment" (
   "currencyCode" TEXT NOT NULL,
   "exchangeRate" NUMERIC(10, 4) NOT NULL DEFAULT 1,
   "totalAmount" NUMERIC(10, 2) NOT NULL DEFAULT 0,
+  "companyId" TEXT NOT NULL,
   "createdBy" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   "updatedBy" TEXT,
@@ -301,41 +311,43 @@ CREATE TABLE "purchasePayment" (
 
   CONSTRAINT "purchasePayment_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "purchasePayment_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "supplier" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
-  CONSTRAINT "purchasePayment_currencyCode_fkey" FOREIGN KEY ("currencyCode") REFERENCES "currency" ("code") ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT "purchasePayment_currencyCode_fkey" FOREIGN KEY ("currencyCode", "companyId") REFERENCES "currency" ("code", "companyId") ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT "purchasePayment_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT "purchasePayment_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "purchasePayment_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON UPDATE CASCADE ON DELETE RESTRICT
 );
+
+CREATE INDEX "purchasePayment_companyId_idx" ON "purchasePayment" ("companyId");
 
 ALTER TABLE "purchasePayment" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Employees with invoicing_view can view AP payments" ON "purchasePayment"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('invoicing_view')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('invoicing_view', "companyId")
   );
 
 CREATE POLICY "Employees with invoicing_create can insert AP payments" ON "purchasePayment"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('invoicing_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('invoicing_create', "companyId")
 );
 
 CREATE POLICY "Employees with invoicing_update can update AP payments" ON "purchasePayment"
   FOR UPDATE
   USING (
-    "paymentDate" IS NULL
-    AND coalesce(get_my_claim('invoicing_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('invoicing_update', "companyId")
   );
 
 CREATE POLICY "Employees with invoicing_delete can delete AP payments" ON "purchasePayment"
   FOR DELETE
   USING (
-    "paymentDate" IS NULL
-    AND coalesce(get_my_claim('invoicing_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    "paymentDate" IS NULL AND
+    has_role('employee') AND
+    has_company_permission('invoicing_delete', "companyId")
   );
 
 CREATE TABLE "purchaseInvoicePaymentRelation" (
@@ -353,8 +365,8 @@ ALTER TABLE "purchaseInvoicePaymentRelation" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees with invoicing_view can view AP invoice/payment relations" ON "purchaseInvoicePaymentRelation"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('invoicing_view')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('invoicing_view', get_company_id_from_foreign_key("invoiceId", 'purchaseInvoice'))
   );
 
 
@@ -379,6 +391,7 @@ CREATE OR REPLACE VIEW "purchaseInvoices" AS
     pi."totalAmount",
     pi."totalTax",
     pi."balance",
+    pi."companyId",
     pi."createdBy",
     pi."createdAt",
     pi."updatedBy",

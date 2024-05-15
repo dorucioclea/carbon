@@ -12,25 +12,24 @@ import { useState } from "react";
 import type { z } from "zod";
 import {
   Boolean,
-  Combobox,
   CustomFormFields,
   Input,
   InputControlled,
+  PartGroup,
   Select,
   Submit,
   TextArea,
 } from "~/components/Form";
-import { usePermissions, useRouteData } from "~/hooks";
+import { usePermissions, useUser } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import { serviceType, serviceValidator } from "~/modules/parts";
-import type { ListItem } from "~/types";
-import { path } from "~/utils/path";
 
 type ServiceFormProps = {
   initialValues: z.infer<typeof serviceValidator>;
 };
 
 const useNextServiceIdShortcut = () => {
+  const { company } = useUser();
   const { supabase } = useSupabase();
   const [loading, setLoading] = useState<boolean>(false);
   const [serviceId, setServiceId] = useState<string>("");
@@ -44,6 +43,7 @@ const useNextServiceIdShortcut = () => {
         const { data } = await supabase
           ?.from("service")
           .select("id")
+          .eq("companyId", company.id)
           .ilike("id", `${prefix}%`)
           .order("id", { ascending: false })
           .limit(1)
@@ -77,18 +77,9 @@ const useNextServiceIdShortcut = () => {
 
 const ServiceForm = ({ initialValues }: ServiceFormProps) => {
   const { serviceId, onServiceIdChange, loading } = useNextServiceIdShortcut();
-  const sharedData = useRouteData<{
-    partGroups: ListItem[];
-  }>(path.to.serviceRoot);
 
   const permissions = usePermissions();
   const isEditing = initialValues.id !== undefined;
-
-  const partGroupOptions =
-    sharedData?.partGroups.map((partGroup) => ({
-      label: partGroup.name,
-      value: partGroup.id,
-    })) ?? [];
 
   const serviceTypeOptions =
     serviceType.map((type) => ({
@@ -132,11 +123,7 @@ const ServiceForm = ({ initialValues }: ServiceFormProps) => {
               />
             )}
             <Input name="name" label="Name" />
-            <Combobox
-              name="partGroupId"
-              label="Part Group"
-              options={partGroupOptions}
-            />
+            <PartGroup name="partGroupId" label="Part Group" />
             <TextArea name="description" label="Description" />
 
             <Select

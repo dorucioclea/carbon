@@ -17,18 +17,20 @@ serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
-  const { locationId, userId } = await req.json();
+  const { companyId, locationId, userId } = await req.json();
 
   let receiptId;
   try {
     if (!userId) throw new Error("Payload is missing userId");
+    if (!companyId) throw new Error("Payload is missing companyId");
 
     await db.transaction().execute(async (trx) => {
-      receiptId = await getNextSequence(trx, "receipt");
+      receiptId = await getNextSequence(trx, "receipt", companyId);
       const newReceipt = await trx
         .insertInto("receipt")
         .values({
           receiptId,
+          companyId: companyId,
           locationId: locationId,
           createdBy: userId,
         })

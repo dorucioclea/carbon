@@ -8,8 +8,40 @@ import { interpolateSequenceDate } from "~/utils/string";
 import { sanitize } from "~/utils/supabase";
 import type { companyValidator, sequenceValidator } from "./settings.models";
 
-export async function getCompany(client: SupabaseClient<Database>) {
-  const company = await client.from("company").select("*").single();
+export async function getCompanies(
+  client: SupabaseClient<Database>,
+  userId: string
+) {
+  const companies = await client
+    .from("companies")
+    .select("*")
+    .eq("userId", userId)
+    .order("name");
+
+  if (companies.error) {
+    return companies;
+  }
+
+  return {
+    data: companies.data.map((company) => ({
+      ...company,
+      logo: company.logo
+        ? `${SUPABASE_API_URL}/storage/v1/object/public/public/${company.logo}`
+        : null,
+    })),
+    error: null,
+  };
+}
+
+export async function getCompany(
+  client: SupabaseClient<Database>,
+  companyId: string
+) {
+  const company = await client
+    .from("company")
+    .select("*")
+    .eq("id", companyId)
+    .single();
   if (company.error) {
     return company;
   }
@@ -25,11 +57,22 @@ export async function getCompany(client: SupabaseClient<Database>) {
   };
 }
 
+export async function getCompanyIntegrations(
+  client: SupabaseClient<Database>,
+  companyId: string
+) {
+  return client
+    .from("companyIntegration")
+    .select("*")
+    .eq("companyId", companyId);
+}
+
 export async function getCurrentSequence(
   client: SupabaseClient<Database>,
-  table: string
+  table: string,
+  companyId: string
 ) {
-  const sequence = await getSequence(client, table);
+  const sequence = await getSequence(client, table, companyId);
   if (sequence.error) {
     return sequence;
   }
@@ -55,20 +98,30 @@ export async function getCustomField(
 
 export async function getCustomFields(
   client: SupabaseClient<Database>,
-  id: string
+  table: string,
+  companyId: string
 ) {
-  return client.from("customFieldTables").select("*").eq("id", id).single();
+  return client
+    .from("customFieldTables")
+    .select("*")
+    .eq("table", table)
+    .eq("companyId", companyId)
+    .single();
 }
 
 export async function getCustomFieldsTables(
   client: SupabaseClient<Database>,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
   }
 ) {
-  let query = client.from("customFieldTables").select("*", {
-    count: "exact",
-  });
+  let query = client
+    .from("customFieldTables")
+    .select("*", {
+      count: "exact",
+    })
+    .eq("companyId", companyId);
 
   if (args.search) {
     query = query.ilike("name", `%${args.search}%`);
@@ -82,20 +135,26 @@ export async function getCustomFieldsTables(
 
 export async function getIntegration(
   client: SupabaseClient<Database>,
-  id: string
+  id: string,
+  companyId: string
 ) {
   return client
-    .from("integration")
+    .from("integrations")
     .select("*")
     .eq("id", id)
+    .eq("companyId", companyId)
     .eq("visible", true)
     .single();
 }
 
-export async function getIntegrations(client: SupabaseClient<Database>) {
+export async function getIntegrations(
+  client: SupabaseClient<Database>,
+  companyId: string
+) {
   return client
-    .from("integration")
+    .from("integrations")
     .select("*")
+    .eq("companyId", companyId)
     .eq("visible", true)
     .order("title");
 }
@@ -103,9 +162,9 @@ export async function getIntegrations(client: SupabaseClient<Database>) {
 export async function getNextSequence(
   client: SupabaseClient<Database>,
   table: string,
-  userId: string
+  companyId: string
 ) {
-  const sequence = await getSequence(client, table);
+  const sequence = await getSequence(client, table, companyId);
   if (sequence.error) {
     return sequence;
   }
@@ -117,9 +176,9 @@ export async function getNextSequence(
   const derivedPrefix = interpolateSequenceDate(prefix);
   const derivedSuffix = interpolateSequenceDate(suffix);
 
-  const update = await updateSequence(client, table, {
+  const update = await updateSequence(client, table, companyId, {
     next: nextValue,
-    updatedBy: userId,
+    updatedBy: "system",
   });
 
   if (update.error) {
@@ -134,20 +193,30 @@ export async function getNextSequence(
 
 export async function getSequence(
   client: SupabaseClient<Database>,
-  table: string
+  table: string,
+  companyId: string
 ) {
-  return client.from("sequence").select("*").eq("table", table).single();
+  return client
+    .from("sequence")
+    .select("*")
+    .eq("table", table)
+    .eq("companyId", companyId)
+    .single();
 }
 
 export async function getSequences(
   client: SupabaseClient<Database>,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
   }
 ) {
-  let query = client.from("sequence").select("*", {
-    count: "exact",
-  });
+  let query = client
+    .from("sequence")
+    .select("*", {
+      count: "exact",
+    })
+    .eq("companyId", companyId);
 
   if (args.search) {
     query = query.ilike("name", `%${args.search}%`);
@@ -161,24 +230,30 @@ export async function getSequences(
 
 export async function getSequencesList(
   client: SupabaseClient<Database>,
-  table: string
+  table: string,
+  companyId: string
 ) {
-  return client.from("sequence").select("id").eq("table", table).order("table");
+  return client
+    .from("sequence")
+    .select("id")
+    .eq("table", table)
+    .eq("companyId", companyId)
+    .order("table");
 }
 
 export async function insertCompany(
   client: SupabaseClient<Database>,
   company: z.infer<typeof companyValidator>
 ) {
-  return client.from("company").insert(company);
+  return client.from("company").insert(company).select("id").single();
 }
 
 export async function rollbackNextSequence(
   client: SupabaseClient<Database>,
   table: string,
-  userId: string
+  companyId: string
 ) {
-  const sequence = await getSequence(client, table);
+  const sequence = await getSequence(client, table, companyId);
   if (sequence.error) {
     return sequence;
   }
@@ -187,36 +262,51 @@ export async function rollbackNextSequence(
 
   const nextValue = next - 1;
 
-  return await updateSequence(client, table, {
+  return await updateSequence(client, table, companyId, {
     next: nextValue,
-    updatedBy: userId,
+    updatedBy: "system",
+  });
+}
+
+export async function seedCompany(
+  client: SupabaseClient<Database>,
+  companyId: string,
+  userId: string
+) {
+  return client.functions.invoke("seed-company", {
+    body: {
+      companyId,
+      userId,
+    },
   });
 }
 
 export async function updateCompany(
   client: SupabaseClient<Database>,
+  companyId: string,
   company: Partial<z.infer<typeof companyValidator>> & {
     updatedBy: string;
   }
 ) {
-  return client.from("company").update(sanitize(company)).eq("id", true);
+  return client.from("company").update(sanitize(company)).eq("id", companyId);
 }
 
-export async function updateIntegration(
+export async function upsertIntegration(
   client: SupabaseClient<Database>,
   update: {
     id: string;
     active: boolean;
     metadata: Json;
+    companyId: string;
     updatedBy: string;
   }
 ) {
-  const { id, ...data } = update;
-  return client.from("integration").update(data).eq("id", id);
+  return client.from("companyIntegration").upsert([update]);
 }
 
 export async function updateLogo(
   client: SupabaseClient<Database>,
+  companyId: string,
   logo: string | null
 ) {
   return client
@@ -226,15 +316,20 @@ export async function updateLogo(
         logo,
       })
     )
-    .eq("id", true);
+    .eq("id", companyId);
 }
 
 export async function updateSequence(
   client: SupabaseClient<Database>,
   table: string,
+  companyId: string,
   sequence: Partial<z.infer<typeof sequenceValidator>> & {
     updatedBy: string;
   }
 ) {
-  return client.from("sequence").update(sanitize(sequence)).eq("table", table);
+  return client
+    .from("sequence")
+    .update(sanitize(sequence))
+    .eq("companyId", companyId)
+    .eq("table", table);
 }

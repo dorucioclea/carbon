@@ -16,7 +16,7 @@ import { error } from "~/utils/result";
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     create: "purchasing",
   });
 
@@ -29,7 +29,11 @@ export async function action({ request }: ActionFunctionArgs) {
     return validationError(validation.error);
   }
 
-  const nextSequence = await getNextSequence(client, "requestForQuote", userId);
+  const nextSequence = await getNextSequence(
+    client,
+    "requestForQuote",
+    companyId
+  );
   if (nextSequence.error) {
     throw redirect(
       path.to.newRequestForQuote,
@@ -43,13 +47,14 @@ export async function action({ request }: ActionFunctionArgs) {
   const createRequestForQuote = await upsertRequestForQuote(client, {
     ...validation.data,
     requestForQuoteId: nextSequence.data,
+    companyId,
     createdBy: userId,
     customFields: setCustomFields(formData),
   });
 
   if (createRequestForQuote.error || !createRequestForQuote.data?.[0]) {
     // TODO: this should be done as a transaction
-    await rollbackNextSequence(client, "requestForQuote", userId);
+    await rollbackNextSequence(client, "requestForQuote", companyId);
     throw redirect(
       path.to.requestForQuotes,
       await flash(

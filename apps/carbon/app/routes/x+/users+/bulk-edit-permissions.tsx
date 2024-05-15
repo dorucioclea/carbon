@@ -2,9 +2,9 @@ import { validationError, validator } from "@carbon/remix-validated-form";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import type { z } from "zod";
-import type { permissionsUpdateSchema } from "~/jobs/update-permissions.server";
+import type { permissionsUpdateSchema } from "~/jobs.server/update-permissions.server";
+
 import { triggerClient } from "~/lib/trigger.server";
-import type { Permission } from "~/modules/users";
 import {
   bulkPermissionsValidator,
   userPermissionsValidator,
@@ -17,7 +17,7 @@ import { error, success } from "~/utils/result";
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  await requirePermissions(request, {
+  const { companyId } = await requirePermissions(request, {
     update: "users",
   });
 
@@ -31,7 +31,15 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const { editType, userIds, data } = validation.data;
   const addOnly = editType === "add";
-  const permissions: Record<string, Permission> = JSON.parse(data);
+  const permissions: Record<
+    string,
+    {
+      view: boolean;
+      create: boolean;
+      update: boolean;
+      delete: boolean;
+    }
+  > = JSON.parse(data);
 
   if (
     !Object.values(permissions).every(
@@ -53,6 +61,7 @@ export async function action({ request }: ActionFunctionArgs) {
       id,
       permissions,
       addOnly,
+      companyId,
     },
   }));
 

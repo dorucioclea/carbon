@@ -13,22 +13,43 @@ ON storage.objects FOR SELECT USING (
 CREATE POLICY "Employees with settings_create can insert into the public bucket"
 ON storage.objects FOR INSERT WITH CHECK (
     bucket_id = 'public'
-    AND (auth.role() = 'authenticated')
-    AND coalesce(get_my_claim('settings_create')::boolean,false)
+    AND has_role('employee')
+    AND (
+        '0' = ANY(
+            get_permission_companies('settings_create')
+        ) OR 
+        (storage.foldername(name))[1] = ANY(
+            get_permission_companies('settings_create')
+        )
+    )
 );
 
 CREATE POLICY "Employees with settings_update can update the public bucket"
 ON storage.objects FOR UPDATE USING (
     bucket_id = 'public'
-    AND (auth.role() = 'authenticated')
-    AND coalesce(get_my_claim('settings_update')::boolean,false)
+    AND has_role('employee')
+    AND (
+        '0' = ANY(
+            get_permission_companies('settings_create')
+        ) OR
+        (storage.foldername(name))[1] = ANY(
+            get_permission_companies('settings_update')
+        )
+    )
 );
 
 CREATE POLICY "Employees with settings_delete can delete from public bucket"
 ON storage.objects FOR DELETE USING (
     bucket_id = 'public'
-    AND (auth.role() = 'authenticated')
-    AND coalesce(get_my_claim('settings_delete')::boolean,false)
+    AND has_role('employee')
+    AND (
+        '0' = ANY(
+            get_permission_companies('settings_create')
+        ) OR
+        (storage.foldername(name))[1] = ANY(
+            get_permission_companies('settings_delete')
+        )
+    )
 );
 
 CREATE POLICY "Anyone can view avatars"

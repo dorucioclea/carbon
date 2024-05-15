@@ -25,7 +25,7 @@ export async function action(args: ActionFunctionArgs) {
   const { request, params } = args;
   assertIsPost(request);
 
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     create: "sales",
     role: "employee",
   });
@@ -62,7 +62,7 @@ export async function action(args: ActionFunctionArgs) {
       .toISOString()
       .slice(0, -5)}.pdf`;
 
-    const documentFilePath = `quote/internal/${id}/${fileName}`;
+    const documentFilePath = `${companyId}/quote/internal/${id}/${fileName}`;
 
     const documentFileUpload = await client.storage
       .from("private")
@@ -88,9 +88,10 @@ export async function action(args: ActionFunctionArgs) {
       size: Math.round(file.byteLength / 1024),
       sourceDocument: "Quote",
       sourceDocumentId: id,
-      createdBy: userId,
       readGroups: [userId],
       writeGroups: [userId],
+      createdBy: userId,
+      companyId,
     });
 
     if (createDocument.error) {
@@ -126,7 +127,7 @@ export async function action(args: ActionFunctionArgs) {
 
         const [company, customer, customerContact, quoteLines, user] =
           await Promise.all([
-            getCompany(client),
+            getCompany(client, companyId),
             getCustomer(client, quote.data.customerId!),
             getCustomerContact(client, customerContactId),
             getQuoteLines(client, id),
@@ -172,6 +173,7 @@ export async function action(args: ActionFunctionArgs) {
                 filename: fileName,
               },
             ],
+            companyId,
           },
         });
       } catch (err) {

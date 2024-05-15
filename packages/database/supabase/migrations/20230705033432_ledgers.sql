@@ -14,15 +14,14 @@ CREATE TYPE "month" AS ENUM (
 );
 
 CREATE TABLE "fiscalYearSettings" (
-  "id" BOOLEAN NOT NULL DEFAULT TRUE,
+  "companyId" TEXT NOT NULL,
   "startMonth" "month" NOT NULL DEFAULT 'January',
   "taxStartMonth" "month" NOT NULL DEFAULT 'January',
   "updatedBy" TEXT NOT NULL,
 
-  CONSTRAINT "fiscalYearSettings_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "fiscalYearSettings_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
-  CONSTRAINT "fiscalYear_id_check" CHECK (id = TRUE),
-  CONSTRAINT "fiscalYear_id_unique" UNIQUE ("id")
+  CONSTRAINT "fiscalYearSettings_pkey" PRIMARY KEY ("companyId"),
+  CONSTRAINT "fiscalYearSettings_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "fiscalYearSettings_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
 );
 
 CREATE TYPE "accountingPeriodStatus" AS ENUM (
@@ -35,6 +34,7 @@ CREATE TABLE "accountingPeriod" (
   "startDate" DATE NOT NULL,
   "endDate" DATE NOT NULL,
   "status" "accountingPeriodStatus" NOT NULL DEFAULT 'Inactive',
+  "companyId" TEXT NOT NULL,
   "closedAt" TIMESTAMP WITH TIME ZONE,
   "closedBy" TEXT,
   "createdBy" TEXT NOT NULL,
@@ -43,22 +43,29 @@ CREATE TABLE "accountingPeriod" (
   "updatedAt" TIMESTAMP WITH TIME ZONE,
 
   CONSTRAINT "accountingPeriod_pkey" PRIMARY KEY ("id"),
+  CONSTRAINt "accountingPeriod_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "accountingPeriod_closedBy_fkey" FOREIGN KEY ("closedBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "accountingPeriod_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "accountingPeriod_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
 );
 
+CREATE INDEX "accountingPeriod_companyId_idx" ON "accountingPeriod" ("companyId");
+
 CREATE TABLE "journal" (
   "id" SERIAL,
   "description" TEXT,
   "accountingPeriodId" TEXT,
+  "companyId" TEXT NOT NULL,
   "postingDate" DATE NOT NULL DEFAULT CURRENT_DATE,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   "customFields" JSONB,
 
   CONSTRAINT "journal_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "journal_accountPeriodId_fkey" FOREIGN KEY ("accountingPeriodId") REFERENCES "accountingPeriod" ("id") ON DELETE RESTRICT
+  CONSTRAINT "journal_accountPeriodId_fkey" FOREIGN KEY ("accountingPeriodId") REFERENCES "accountingPeriod" ("id") ON DELETE RESTRICT,
+  CONSTRAINT "journal_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE INDEX "journal_companyId_idx" ON "journal" ("companyId");
 
 ALTER publication supabase_realtime ADD TABLE "journal";
 
@@ -70,16 +77,16 @@ ALTER TABLE "journal" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees with accounting_view can view journals" ON "journal"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('accounting_view')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('accounting_view', "companyId")
   );
   
 
 CREATE POLICY "Employees with accounting_create can insert journals" ON "journal"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('accounting_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('accounting_create', "companyId")
 );
 
 
@@ -104,33 +111,36 @@ CREATE TABLE "journalLine" (
   "journalLineReference" TEXT NOT NULL,
   "documentLineReference" TEXT,
   "accrual" BOOLEAN NOT NULL DEFAULT false,
+  "companyId" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   "customFields" JSONB,
 
   CONSTRAINT "journalLine_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "journalLine_accountNumber_fkey" FOREIGN KEY ("accountNumber") REFERENCES "account"("number") ON UPDATE CASCADE ON DELETE SET NULL
+  CONSTRAINT "journalLine_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE   CASCADE,
+  CONSTRAINT "journalLine_accountNumber_fkey" FOREIGN KEY ("accountNumber", "companyId") REFERENCES "account"("number", "companyId") ON UPDATE CASCADE ON DELETE SET NULL
 );
 
-CREATE INDEX "journalLine_accountNumber_idx" ON "journalLine" ("accountNumber");
+CREATE INDEX "journalLine_accountNumber_idx" ON "journalLine" ("accountNumber", "companyId");
+CREATE INDEX "journalLine_companyId_idx" ON "journalLine" ("companyId");
 
 ALTER TABLE "journalLine" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Employees with accounting_view can view journal lines" ON "journalLine"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('accounting_view')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('accounting_view', "companyId")
   );
   
 
 CREATE POLICY "Employees with accounting_create can insert journal lines" ON "journalLine"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('accounting_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('accounting_create', "companyId")
 );
 
--- delete and update are not availble for journal lines
+-- delete and update are not available for journal lines
 
 CREATE TYPE "partLedgerType" AS ENUM (
   'Purchase',
@@ -187,37 +197,24 @@ CREATE TABLE "costLedger" (
   "quantity" NUMERIC(12, 4) NOT NULL DEFAULT 0,
   "cost" NUMERIC(19, 4) NOT NULL DEFAULT 0,
   "costPostedToGL" NUMERIC(19, 4) NOT NULL DEFAULT 0,
+  "companyId" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 
-  CONSTRAINT "costLedger_pkey" PRIMARY KEY ("id")
+  CONSTRAINT "costLedger_pkey" PRIMARY KEY ("id"),
+  CONSTRAINT "costLedger_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE INDEX "costLedger_partId_idx" ON "costLedger" ("partId");
+CREATE INDEX "costLedger_companyId_idx" ON "costLedger" ("companyId");
 
 ALTER TABLE "costLedger" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Employees with accounting_view can view the value ledger" ON "costLedger"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('accounting_view')::boolean, false) = true AND
-    (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('accounting_view', "companyId")
   );
-
--- CREATE TABLE "costLedgerJournalLineRelation" (
---   "costLedgerId" TEXT NOT NULL,
---   "journalLineId" TEXT NOT NULL,
-
---   CONSTRAINT "costLedgerJournalLineRelation_pkey" PRIMARY KEY ("costLedgerId", "journalLineId"),
---   CONSTRAINT "costLedgerJournalLineRelation_costLedgerId_fkey" FOREIGN KEY ("costLedgerId") REFERENCES "costLedger"("id"),
---   CONSTRAINT "costLedgerJournalLineRelation_journalLineId_fkey" FOREIGN KEY ("journalLineId") REFERENCES "journalLine"("id")
--- );
-
--- ALTER TABLE "costLedgerJournalLineRelation" ENABLE ROW LEVEL SECURITY;
-
--- CREATE POLICY "Employees with accounting_view can view the value ledger/general ledger relations" ON "costLedgerJournalLineRelation"
---   FOR SELECT
---   USING (
---     coalesce(get_my_claim('accounting_view')::boolean, false) = true AND
---     (get_my_claim('role'::text)) = '"employee"'::jsonb
---   );
 
 
 CREATE TABLE "partLedger" (
@@ -232,12 +229,14 @@ CREATE TABLE "partLedger" (
   "locationId" TEXT,
   "shelfId" TEXT,
   "quantity" NUMERIC(12, 4) NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 
   CONSTRAINT "partLedger_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "partLedger_partId_fkey" FOREIGN KEY ("partId") REFERENCES "part"("id") ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT "partLedger_partId_fkey" FOREIGN KEY ("partId", "companyId") REFERENCES "part"("id", "companyId") ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT "partLedger_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "location"("id") ON UPDATE CASCADE ON DELETE SET NULL,
-  CONSTRAINT "partLedger_shelfId_fkey" FOREIGN KEY ("shelfId", "locationId") REFERENCES "shelf"("id", "locationId") ON UPDATE CASCADE ON DELETE SET NULL
+  CONSTRAINT "partLedger_shelfId_fkey" FOREIGN KEY ("shelfId", "locationId") REFERENCES "shelf"("id", "locationId") ON UPDATE CASCADE ON DELETE SET NULL,
+  CONSTRAINT "partLeger_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 ALTER TABLE "partLedger" ENABLE ROW LEVEL SECURITY;
@@ -245,11 +244,11 @@ ALTER TABLE "partLedger" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Certain employees can view the parts ledger" ON "partLedger"
   FOR SELECT
   USING (
+    has_role('employee') AND
     (
-      coalesce(get_my_claim('accounting_view')::boolean, false) = true OR
-      coalesce(get_my_claim('parts_view')::boolean, false) = true
+      has_company_permission('accounting_view', "companyId") OR
+      has_company_permission('parts_view', "companyId")
     )
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
   );
 
 CREATE TYPE "supplierLedgerDocumentType" AS ENUM (
@@ -270,12 +269,26 @@ CREATE TABLE "supplierLedger" (
   "externalDocumentId" TEXT,
   "supplierId" TEXT NOT NULL,
   "amount" NUMERIC(19, 4) NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
 
   CONSTRAINT "supplierLedger_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "supplierLedger_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "supplier"("id") ON UPDATE CASCADE ON DELETE CASCADE
+  CONSTRAINT "supplierLedger_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "supplier"("id") ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT "supplierLedger_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+ALTER TABLE "supplierLedger" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Certain employees can view the parts ledger" ON "supplierLedger"
+  FOR SELECT
+  USING (
+    has_role('employee') AND
+    (
+      has_company_permission('invoicing_view', "companyId") OR
+      has_company_permission('purchasing_view', "companyId") OR
+      has_company_permission('accounting_view', "companyId")
+    )
+  );
 
 CREATE OR REPLACE FUNCTION "journalLinesByAccountNumber" (
   from_date DATE DEFAULT (now() - INTERVAL '100 year'),
@@ -283,6 +296,7 @@ CREATE OR REPLACE FUNCTION "journalLinesByAccountNumber" (
 ) 
 RETURNS TABLE (
   "number" TEXT,
+  "companyId" TEXT,
   "balance" NUMERIC(19, 4),
   "balanceAtDate" NUMERIC(19, 4),
   "netChange" NUMERIC(19, 4)
@@ -292,13 +306,14 @@ AS $$
     RETURN QUERY
       SELECT 
         a."number",
+        a."companyId",
         SUM(jl."amount") AS "balance",
         SUM(CASE WHEN j."postingDate" <= to_date THEN jl."amount" ELSE 0 END) AS "balanceAtDate",
         SUM(CASE WHEN j."postingDate" >= from_date AND j."postingDate" <= to_date THEN jl."amount" ELSE 0 END) AS "netChange"
       FROM "account" a
       LEFT JOIN "journalLine" jl ON jl."accountNumber" = a."number"
       INNER JOIN "journal" j ON j."id" = jl."journalId"
-      GROUP BY a."number";
+      GROUP BY a."number", a."companyId";
   END;
 $$;
 

@@ -1,7 +1,7 @@
 import { toast } from "@carbon/react";
 import { useFetcher } from "@remix-run/react";
 import { useCallback } from "react";
-import { usePermissions } from "~/hooks";
+import { usePermissions, useUser } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import type { PurchaseOrderAttachment } from "~/modules/purchasing/types";
 
@@ -14,6 +14,7 @@ export const usePurchaseOrderDocuments = ({ isExternal, orderId }: Props) => {
   const fetcher = useFetcher();
   const permissions = usePermissions();
   const { supabase } = useSupabase();
+  const { id: companyId } = useUser();
 
   const canDelete = permissions.can("delete", "purchasing"); // TODO: or is document owner
 
@@ -24,11 +25,11 @@ export const usePurchaseOrderDocuments = ({ isExternal, orderId }: Props) => {
 
   const getPath = useCallback(
     (attachment: PurchaseOrderAttachment) => {
-      return `purchasing/${isExternal ? "external" : "internal"}/${orderId}/${
-        attachment.name
-      }`;
+      return `/${companyId}/purchasing/${
+        isExternal ? "external" : "internal"
+      }/${orderId}/${attachment.name}`;
     },
-    [isExternal, orderId]
+    [companyId, isExternal, orderId]
   );
 
   const deleteAttachment = useCallback(

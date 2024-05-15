@@ -29,7 +29,7 @@ import {
   Part,
   Submit,
 } from "~/components/Form";
-import { usePermissions, useRouteData, useUrlParams } from "~/hooks";
+import { usePermissions, useRouteData, useUrlParams, useUser } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import type { Quotation } from "~/modules/sales";
 import { quotationAssemblyValidator } from "~/modules/sales";
@@ -46,6 +46,7 @@ const QuotationAssemblyForm = ({
 }: QuotationAssemblyFormProps) => {
   const navigate = useNavigate();
   const permissions = usePermissions();
+  const { company } = useUser();
   const { supabase } = useSupabase();
 
   const { id: quoteId, lineId } = useParams();
@@ -68,12 +69,13 @@ const QuotationAssemblyForm = ({
   });
 
   const onPartChange = async (partId: string) => {
-    if (!supabase) return;
+    if (!supabase || !company.id) return;
     const [part] = await Promise.all([
       supabase
         .from("part")
         .select("name, replenishmentSystem, unitOfMeasureCode")
         .eq("id", partId)
+        .eq("companyId", company.id)
         .single(),
     ]);
 

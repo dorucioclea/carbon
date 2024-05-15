@@ -4,7 +4,7 @@ import { getAccountCategoriesList } from "~/modules/accounting";
 import { requirePermissions } from "~/services/auth/auth.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const authorized = await requirePermissions(request, {});
+  const { client, companyId } = await requirePermissions(request, {});
 
-  return json(await getAccountCategoriesList(authorized.client));
+  return json(await getAccountCategoriesList(client, companyId));
 }

@@ -23,7 +23,7 @@ export const handle: Handle = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: ["accounting", "purchasing"],
   });
 
@@ -33,14 +33,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getGenericQueryFilters(searchParams);
 
   const [purchasingGroups, partGroups, supplierTypes] = await Promise.all([
-    getPurchasingPostingGroups(client, {
+    getPurchasingPostingGroups(client, companyId, {
       limit,
       offset,
       sorts,
       filters,
     }),
-    getPartGroupsList(client),
-    getSupplierTypesList(client),
+    getPartGroupsList(client, companyId),
+    getSupplierTypesList(client, companyId),
   ]);
   if (purchasingGroups.error) {
     throw redirect(

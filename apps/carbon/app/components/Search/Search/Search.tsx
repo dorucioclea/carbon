@@ -31,6 +31,7 @@ import { LuSearch } from "react-icons/lu";
 import { PiShareNetworkFill } from "react-icons/pi";
 import { RxMagnifyingGlass } from "react-icons/rx";
 import { useModules } from "~/components/Layout/Navigation/useModules";
+import { useUser } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import { useAccountSubmodules } from "~/modules/account";
 import { useAccountingSubmodules } from "~/modules/accounting";
@@ -61,6 +62,7 @@ const SearchModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
+  const { company } = useUser();
   const { supabase } = useSupabase();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -90,6 +92,8 @@ const SearchModal = ({
 
   const getSearchResults = useCallback(
     async (q: string) => {
+      if (!supabase || !company.id) return;
+
       setLoading(true);
       const tokens = q.split(" ");
       const search =
@@ -101,6 +105,7 @@ const SearchModal = ({
         ?.from("search")
         .select()
         .textSearch("fts", `*${search}:*`)
+        .eq("companyId", company.id)
         .limit(20);
 
       if (result?.data) {
@@ -110,7 +115,7 @@ const SearchModal = ({
       }
       setLoading(false);
     },
-    [supabase]
+    [company.id, supabase]
   );
 
   useEffect(() => {
@@ -270,7 +275,7 @@ const SearchButton = () => {
       <Button
         leftIcon={<LuSearch />}
         variant="secondary"
-        className="w-[200px] px-2 text-muted-foreground "
+        className="w-[145px] px-2 text-muted-foreground "
         onClick={searchModal.onOpen}
       >
         <HStack className="w-full">

@@ -1,6 +1,7 @@
 CREATE TABLE "group" (
   "id" TEXT NOT NULL DEFAULT uuid_generate_v4(),
   "name" TEXT NOT NULL,
+  "companyId" TEXT,
   "isIdentityGroup" BOOLEAN NOT NULL DEFAULT false,
   "isEmployeeTypeGroup" BOOLEAN NOT NULL DEFAULT false,
   "isCustomerOrgGroup" BOOLEAN NOT NULL DEFAULT false,
@@ -10,8 +11,11 @@ CREATE TABLE "group" (
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   
-  CONSTRAINT "group_pkey" PRIMARY KEY ("id")
+  CONSTRAINT "group_pkey" PRIMARY KEY ("id"),
+  CONSTRAINT "group_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE INDEX "group_companyId_idx" ON "group" ("companyId");
 
 CREATE TABLE "membership" (
   "id" SERIAL NOT NULL,
@@ -42,14 +46,16 @@ CREATE INDEX index_membership_memberUserId ON "membership" ("memberUserId");
 CREATE FUNCTION public.create_employee_type_group()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public."group" ("id", "name", "isEmployeeTypeGroup")
-  VALUES (new.id, new.name, TRUE);
+  INSERT INTO public."group" ("id", "name", "isEmployeeTypeGroup", "companyId")
+  VALUES (new.id, new.name, TRUE, new."companyId");
 
   INSERT INTO public."membership"("groupId", "memberGroupId")
-  VALUES ('00000000-0000-0000-0000-000000000000', new.id);
+  VALUES ('00000000-0000-' || substring(new."companyId"::text, 1, 4) || '-' || substring(new."companyId"::text, 5, 4) || '-' || substring(new."companyId"::text, 9, 12), new.id);
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+
 
 CREATE FUNCTION public.update_employee_type_group()
 RETURNS TRIGGER AS $$
@@ -131,6 +137,7 @@ CREATE OR REPLACE VIEW "groupMembers" AS
   SELECT
     gm.id,
     g.name,
+    g."companyId",
     g."isIdentityGroup",
     g."isEmployeeTypeGroup",
     g."isCustomerOrgGroup",
@@ -153,6 +160,7 @@ CREATE RECURSIVE VIEW groups_recursive
 (
   "groupId", 
   "name",
+  "companyId",
   "parentId",
   "isIdentityGroup",
   "isEmployeeTypeGroup",
@@ -164,7 +172,8 @@ CREATE RECURSIVE VIEW groups_recursive
 ) AS 
   SELECT 
     "groupId", 
-    "name", 
+    "name",
+    "companyId", 
     NULL AS "parentId", 
     "isIdentityGroup", 
     "isEmployeeTypeGroup",
@@ -178,6 +187,7 @@ CREATE RECURSIVE VIEW groups_recursive
   SELECT 
     g2."groupId", 
     g2.name, 
+    g2."companyId",
     g1."groupId" AS "parentId", 
     g1."isIdentityGroup", 
     g2."isEmployeeTypeGroup",  
@@ -198,6 +208,7 @@ CREATE OR REPLACE VIEW "groups" AS
     "isSupplierOrgGroup",
     "isSupplierTypeGroup",
     "name", 
+    "companyId",
     "parentId", 
     coalesce(jsonb_agg("user") filter (where "user" is not null), '[]') as users
   FROM groups_recursive 
@@ -205,6 +216,7 @@ CREATE OR REPLACE VIEW "groups" AS
   GROUP BY 
     "groupId", 
     "name", 
+    "companyId",
     "parentId", 
     "isEmployeeTypeGroup", 
     "isCustomerOrgGroup",
@@ -221,6 +233,7 @@ CREATE OR REPLACE FUNCTION groups_query(
 RETURNS TABLE (
   "id" TEXT,
   "name" TEXT,
+  "companyId" TEXT,
   "parentId" TEXT,
   "isEmployeeTypeGroup" BOOLEAN,
   "isCustomerOrgGroup" BOOLEAN,
@@ -241,6 +254,7 @@ AS $$
       SELECT 
       g."id",
       g."name",
+      g."companyId",
       g."parentId",
       g."isEmployeeTypeGroup",
       g."isCustomerOrgGroup",
@@ -266,6 +280,7 @@ CREATE OR REPLACE FUNCTION groups_for_user(uid text) RETURNS TEXT[]
       SELECT g1."groupId", g1."memberGroupId", g1."memberUserId" FROM "membership" g1
       INNER JOIN "groupsForUser" g2 ON g2."groupId" = g1."memberGroupId"
     ) SELECT array_agg("groupId") INTO retval AS groups FROM "groupsForUser";
+    
     RETURN retval;
   END;
 $$;
@@ -289,11 +304,11 @@ $$;
 CREATE FUNCTION public.create_customer_type_group()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public."group" ("id", "name", "isCustomerTypeGroup")
-  VALUES (new.id, new.name, TRUE);
+  INSERT INTO public."group" ("id", "name", "isCustomerTypeGroup", "companyId")
+  VALUES (new.id, new.name, TRUE, new."companyId");
 
   INSERT INTO public."membership"("groupId", "memberGroupId")
-  VALUES ('11111111-1111-1111-1111-111111111111', new.id);
+  VALUES ('11111111-1111-' || substring(new."companyId"::text, 1, 4) || '-' || substring(new."companyId"::text, 5, 4) || '-' || substring(new."companyId"::text, 9, 12), new.id);
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -301,11 +316,11 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE FUNCTION public.create_supplier_type_group()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public."group" ("id", "name", "isSupplierTypeGroup")
-  VALUES (new.id, new.name, TRUE);
+  INSERT INTO public."group" ("id", "name", "isSupplierTypeGroup", "companyId")
+  VALUES (new.id, new.name, TRUE, new."companyId");
 
   INSERT INTO public."membership"("groupId", "memberGroupId")
-  VALUES ('22222222-2222-2222-2222-222222222222', new.id);
+  VALUES ('22222222-2222-'  || substring(new."companyId"::text, 1, 4) || '-' || substring(new."companyId"::text, 5, 4) || '-' || substring(new."companyId"::text, 9, 12), new.id);
 
   RETURN new;
 END;
@@ -314,8 +329,8 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE FUNCTION public.create_customer_org_group()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public."group" ("id", "name", "isCustomerOrgGroup")
-  VALUES (new.id, new.name, TRUE);
+  INSERT INTO public."group" ("id", "name", "isCustomerOrgGroup", "companyId")
+  VALUES (new.id, new.name, TRUE, new."companyId");
 
   IF new."customerTypeId" IS NOT NULL THEN
     INSERT INTO public."membership"("groupId", "memberGroupId")
@@ -329,8 +344,8 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE FUNCTION public.create_supplier_org_group()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public."group" ("id", "name", "isSupplierOrgGroup")
-  VALUES (new.id, new.name, TRUE);
+  INSERT INTO public."group" ("id", "name", "isSupplierOrgGroup", "companyId")
+  VALUES (new.id, new.name, TRUE, new."companyId");
 
   IF new."supplierTypeId" IS NOT NULL THEN
     INSERT INTO public."membership"("groupId", "memberGroupId")

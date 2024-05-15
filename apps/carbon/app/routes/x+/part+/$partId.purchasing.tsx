@@ -4,7 +4,7 @@ import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import {
   PartPurchasingForm,
-  getPartPurchasing,
+  getPartReplenishment,
   partPurchasingValidator,
   upsertPartPurchasing,
 } from "~/modules/parts";
@@ -15,14 +15,14 @@ import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "parts",
   });
 
   const { partId } = params;
   if (!partId) throw new Error("Could not find partId");
 
-  const partPurchasing = await getPartPurchasing(client, partId);
+  const partPurchasing = await getPartReplenishment(client, partId, companyId);
 
   if (partPurchasing.error) {
     throw redirect(

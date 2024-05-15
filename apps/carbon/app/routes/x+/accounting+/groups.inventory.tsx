@@ -23,7 +23,7 @@ export const handle: Handle = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: ["accounting", "inventory"],
   });
 
@@ -34,14 +34,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getGenericQueryFilters(searchParams);
 
   const [inventoryGroups, partGroups, locations] = await Promise.all([
-    getInventoryPostingGroups(client, {
+    getInventoryPostingGroups(client, companyId, {
       limit,
       offset,
       sorts,
       filters,
     }),
-    getPartGroupsList(client),
-    getLocationsList(client),
+    getPartGroupsList(client, companyId),
+    getLocationsList(client, companyId),
   ]);
   if (inventoryGroups.error) {
     throw redirect(

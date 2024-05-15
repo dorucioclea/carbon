@@ -6,7 +6,7 @@ import { flash } from "~/services/session.server";
 import { error } from "~/utils/result";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const authorized = await requirePermissions(request, {
+  const { client } = await requirePermissions(request, {
     view: "accounting",
   });
 
@@ -20,7 +20,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     });
 
   const subcategories = await getAccountSubcategoriesByCategory(
-    authorized.client,
+    client,
     accountCategoryId
   );
   if (subcategories.error) {

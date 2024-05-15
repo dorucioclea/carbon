@@ -76,23 +76,19 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function ShiftRoute() {
   const { shift } = useLoaderData<typeof loader>();
 
-  if (Array.isArray(shift?.location)) {
-    throw new Error("Shift location is an array");
-  }
-
   const initialValues = {
-    id: shift.id,
-    name: shift.name,
-    startTime: shift.startTime,
-    endTime: shift.endTime,
-    locationId: shift.locationId,
-    monday: shift.monday,
-    tuesday: shift.tuesday,
-    wednesday: shift.wednesday,
-    thursday: shift.thursday,
-    friday: shift.friday,
-    saturday: shift.saturday,
-    sunday: shift.sunday,
+    id: shift.id ?? "",
+    name: shift.name ?? "",
+    startTime: shift.startTime ?? "",
+    endTime: shift.endTime ?? "",
+    locationId: shift.locationId ?? "",
+    monday: shift.monday ?? false,
+    tuesday: shift.tuesday ?? false,
+    wednesday: shift.wednesday ?? false,
+    thursday: shift.thursday ?? false,
+    friday: shift.friday ?? false,
+    saturday: shift.saturday ?? false,
+    sunday: shift.sunday ?? false,
     ...getCustomFields(shift.customFields),
   };
 

@@ -4,7 +4,7 @@ import { getLocationsList } from "~/modules/resources";
 import { requirePermissions } from "~/services/auth/auth.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const authorized = await requirePermissions(request, {});
+  const { client, companyId } = await requirePermissions(request, {});
 
-  return json(await getLocationsList(authorized.client));
+  return json(await getLocationsList(client, companyId));
 }

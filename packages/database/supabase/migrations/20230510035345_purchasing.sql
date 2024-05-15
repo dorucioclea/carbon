@@ -12,6 +12,7 @@ CREATE TABLE "paymentTerm" (
   "discountPercentage" NUMERIC(10,5) NOT NULL DEFAULT 0,
   "calculationMethod" "paymentTermCalculationMethod" NOT NULL DEFAULT 'Net',
   "active" BOOLEAN NOT NULL DEFAULT TRUE,
+  "companyId" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
@@ -19,10 +20,13 @@ CREATE TABLE "paymentTerm" (
   "customFields" JSONB,
 
   CONSTRAINT "paymentTerm_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "paymentTerm_name_key" UNIQUE ("name", "active"),
+  CONSTRAINT "paymentTerm_name_key" UNIQUE ("name", "companyId", "active"),
+  CONSTRAINT "paymentTerm_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT "paymentTerm_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "paymentTerm_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
 );
+
+CREATE INDEX "paymentTerm_name_idx" ON "paymentTerm" ("companyId");
 
 ALTER TABLE "paymentTerm" ENABLE ROW LEVEL SECURITY;
 
@@ -30,35 +34,35 @@ CREATE POLICY "Certain employees can view payment terms" ON "paymentTerm"
   FOR SELECT
   USING (
     (
-      coalesce(get_my_claim('accounting_view')::boolean, false) = true OR
-      coalesce(get_my_claim('parts_view')::boolean, false) = true OR
-      coalesce(get_my_claim('resources_view')::boolean, false) = true OR
-      coalesce(get_my_claim('sales_view')::boolean, false) = true OR
-      coalesce(get_my_claim('purchasing_view')::boolean, false) = true
+      has_company_permission('accounting_view', "companyId") = true OR
+      has_company_permission('parts_view', "companyId") = true OR
+      has_company_permission('resources_view', "companyId") = true OR
+      has_company_permission('sales_view', "companyId") = true OR
+      has_company_permission('purchasing_view', "companyId") = true
     )
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    AND has_role('employee')
   );
   
 
 CREATE POLICY "Employees with accounting_create can insert payment terms" ON "paymentTerm"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('accounting_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_company_permission('accounting_create', "companyId") 
+    AND has_role('employee')
 );
 
 CREATE POLICY "Employees with accounting_update can update payment terms" ON "paymentTerm"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('accounting_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_company_permission('accounting_update', "companyId") = true 
+    AND has_role('employee')
   );
 
 CREATE POLICY "Employees with accounting_delete can delete payment terms" ON "paymentTerm"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('accounting_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_company_permission('accounting_delete', "companyId") = true 
+    AND has_role('employee')
   );
   
 
@@ -77,6 +81,7 @@ CREATE TABLE "shippingMethod" (
   "carrierAccountId" TEXT,
   "trackingUrl" TEXT,
   "active" BOOLEAN NOT NULL DEFAULT TRUE,
+  "companyId" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
@@ -84,64 +89,103 @@ CREATE TABLE "shippingMethod" (
   "customFields" JSONB,
 
   CONSTRAINT "shippingMethod_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "shippingMethod_name_key" UNIQUE ("name"),
-  CONSTRAINT "shippingMethod_carrierAccountId_fkey" FOREIGN KEY ("carrierAccountId") REFERENCES "account" ("number") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "shippingMethod_name_key" UNIQUE ("name", "companyId"),
+  CONSTRAINT "shippingMethod_carrierAccountId_fkey" FOREIGN KEY ("carrierAccountId", "companyId") REFERENCES "account" ("number", "companyId") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "shippingMethod_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "shippingMethod_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "shippingMethod_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
 );
 
-CREATE INDEX "shippingMethod_name_idx" ON "shippingMethod" ("name");
-
+CREATE INDEX "shippingMethod_name_idx" ON "shippingMethod" ("name", "companyId");
+CREATE INDEX "shippingMethod_companyId_idx" ON "shippingMethod" ("companyId");
 
 CREATE POLICY "Certain employees can view shipping methods" ON "shippingMethod"
   FOR SELECT
   USING (
     (
-      coalesce(get_my_claim('accounting_view')::boolean, false) = true OR
-      coalesce(get_my_claim('inventory_view')::boolean, false) = true OR
-      coalesce(get_my_claim('parts_view')::boolean, false) = true OR
-      coalesce(get_my_claim('purchasing_view')::boolean, false) = true OR
-      coalesce(get_my_claim('sales_view')::boolean, false) = true
+      has_company_permission('accounting_view', "companyId") OR
+      has_company_permission('inventory_view', "companyId") OR
+      has_company_permission('parts_view', "companyId") OR
+      has_company_permission('purchasing_view', "companyId") OR
+      has_company_permission('sales_view', "companyId")
     )
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    AND has_role('employee')
   );
   
 
 CREATE POLICY "Employees with inventory_create can insert shipping methods" ON "shippingMethod"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('inventory_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_company_permission('inventory_create', "companyId")
+    AND has_role('employee')
 );
 
 CREATE POLICY "Employees with inventory_update can update shipping methods" ON "shippingMethod"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('inventory_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_company_permission('inventory_update', "companyId")
+    AND has_role('employee')
   );
 
 CREATE POLICY "Employees with inventory_delete can delete shipping methods" ON "shippingMethod"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('inventory_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_company_permission('inventory_delete', "companyId")
+    AND has_role('employee')
   );
 
 CREATE TABLE "shippingTerm" (
   "id" TEXT NOT NULL DEFAULT xid(),
   "name" TEXT NOT NULL,
   "active" BOOLEAN NOT NULL DEFAULT TRUE,
+  "companyId" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
 
   CONSTRAINT "shippingTerm_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "shippingTerm_name_key" UNIQUE ("name"),
+  CONSTRAINT "shippingTerm_name_key" UNIQUE ("name", "companyId"),
+  CONSTRAINT "shippingTerm_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "shippingTerm_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "shippingTerm_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
 );
+
+ALTER TABLE "shippingTerm" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Certain employees can view shipping terms" ON "shippingTerm"
+  FOR SELECT
+  USING (
+    (
+      has_company_permission('accounting_view', "companyId") OR
+      has_company_permission('inventory_view', "companyId") OR
+      has_company_permission('parts_view', "companyId") OR
+      has_company_permission('purchasing_view', "companyId") OR
+      has_company_permission('sales_view', "companyId")
+    )
+    AND has_role('employee')
+  );
+
+CREATE POLICY "Employees with inventory_create can insert shipping terms" ON "shippingTerm"
+  FOR INSERT
+  WITH CHECK (   
+    has_company_permission('inventory_create', "companyId")
+    AND has_role('employee')
+);
+
+CREATE POLICY "Employees with inventory_update can update shipping terms" ON "shippingTerm"
+  FOR UPDATE
+  USING (
+    has_company_permission('inventory_update', "companyId")
+    AND has_role('employee')
+  );
+
+CREATE POLICY "Employees with inventory_delete can delete shipping terms" ON "shippingTerm"
+  FOR DELETE
+  USING (
+    has_company_permission('inventory_delete', "companyId")
+    AND has_role('employee')
+  );
 
 
 CREATE TYPE "purchaseOrderType" AS ENUM (
@@ -172,6 +216,8 @@ CREATE TABLE "purchaseOrder" (
   "supplierLocationId" TEXT,
   "supplierContactId" TEXT,
   "supplierReference" TEXT,
+  "assignee" TEXT,
+  "companyId" TEXT NOT NULL,
   "closedAt" DATE,
   "closedBy" TEXT,
   "customFields" JSONB,
@@ -181,19 +227,22 @@ CREATE TABLE "purchaseOrder" (
   "updatedBy" TEXT,
 
   CONSTRAINT "purchaseOrder_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "purchaseOrder_purchaseOrderId_key" UNIQUE ("purchaseOrderId"),
+  CONSTRAINT "purchaseOrder_purchaseOrderId_key" UNIQUE ("purchaseOrderId", "companyId"),
   CONSTRAINT "purchaseOrder_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "supplier" ("id") ON DELETE CASCADE,
   CONSTRAINT "purchaseOrder_supplierLocationId_fkey" FOREIGN KEY ("supplierLocationId") REFERENCES "supplierLocation" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT "purchaseOrder_supplierContactId_fkey" FOREIGN KEY ("supplierContactId") REFERENCES "supplierContact" ("id") ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT "purchaseOrder_assignee_fkey" FOREIGN KEY ("assignee") REFERENCES "user" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT "purchaseOrder_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT "purchaseOrder_closedBy_fkey" FOREIGN KEY ("closedBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "purchaseOrder_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "purchaseOrder_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
 );
 
-CREATE INDEX "purchaseOrder_purchaseOrderId_idx" ON "purchaseOrder" ("purchaseOrderId");
-CREATE INDEX "purchaseOrder_supplierId_idx" ON "purchaseOrder" ("supplierId");
-CREATE INDEX "purchaseOrder_supplierContactId_idx" ON "purchaseOrder" ("supplierContactId");
-CREATE INDEX "purchaseOrder_status_idx" ON "purchaseOrder" ("status");
+CREATE INDEX "purchaseOrder_purchaseOrderId_idx" ON "purchaseOrder" ("purchaseOrderId", "companyId");
+CREATE INDEX "purchaseOrder_supplierId_idx" ON "purchaseOrder" ("supplierId", "companyId");
+CREATE INDEX "purchaseOrder_supplierContactId_idx" ON "purchaseOrder" ("supplierContactId", "companyId");
+CREATE INDEX "purchaseOrder_status_idx" ON "purchaseOrder" ("status", "companyId");
+CREATE INDEX "purchaseOrder_companyId_idx" ON "purchaseOrder" ("companyId");
 
 CREATE TYPE "purchaseOrderLineType" AS ENUM (
   'Comment',
@@ -215,6 +264,20 @@ CREATE TABLE "purchaseOrderStatusHistory" (
   CONSTRAINT "purchaseOrderStatusHistory_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT
 );
 
+ALTER TABLE "purchaseOrderStatusHistory" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view purchase order status history" ON "purchaseOrderStatusHistory" 
+  FOR SELECT USING (
+    has_company_permission('purchasing_view', get_company_id_from_foreign_key("purchaseOrderId", 'purchaseOrder'))
+  );
+
+CREATE POLICY "Users can insert purchase order status history" ON "purchaseOrderStatusHistory"
+  FOR INSERT WITH CHECK (
+    has_company_permission('purchasing_update', get_company_id_from_foreign_key("purchaseOrderId", 'purchaseOrder'))
+  );
+
+
+
 
 CREATE TABLE "purchaseOrderLine" (
   "id" TEXT NOT NULL DEFAULT xid(),
@@ -231,13 +294,15 @@ CREATE TABLE "purchaseOrderLine" (
   "quantityToInvoice" NUMERIC(9,2) GENERATED ALWAYS AS (CASE WHEN "purchaseOrderLineType" = 'Comment' THEN 0 ELSE GREATEST(("purchaseQuantity" - "quantityInvoiced"), 0) END) STORED,
   "quantityInvoiced" NUMERIC(9,2) DEFAULT 0,
   "unitPrice" NUMERIC(9,2),
-  "unitOfMeasureCode" TEXT,
+  "inventoryUnitOfMeasureCode" TEXT,
+  "purchaseUnitOfMeasureCode" TEXT,
   "locationId" TEXT,
   "shelfId" TEXT,
   "setupPrice" NUMERIC(9,2),
   "receivedComplete" BOOLEAN NOT NULL DEFAULT FALSE,
   "invoicedComplete" BOOLEAN NOT NULL DEFAULT FALSE,
   "requiresInspection" BOOLEAN NOT NULL DEFAULT FALSE,
+  "companyId" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
@@ -286,15 +351,19 @@ CREATE TABLE "purchaseOrderLine" (
 
   CONSTRAINT "purchaseOrderLine_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "purchaseOrderLine_purchaseOrderId_fkey" FOREIGN KEY ("purchaseOrderId") REFERENCES "purchaseOrder" ("id") ON DELETE CASCADE,
-  CONSTRAINT "purchaseOrderLine_partId_fkey" FOREIGN KEY ("partId") REFERENCES "part" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT "purchaseOrderLine_serviceId_fkey" FOREIGN KEY ("serviceId") REFERENCES "service" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT "purchaseOrderLine_accountNumber_fkey" FOREIGN KEY ("accountNumber") REFERENCES "account" ("number") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "purchaseOrderLine_partId_fkey" FOREIGN KEY ("partId", "companyId") REFERENCES "part" ("id", "companyId") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "purchaseOrderLine_serviceId_fkey" FOREIGN KEY ("serviceId", "companyId") REFERENCES "service" ("id", "companyId") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "purchaseOrderLine_accountNumber_fkey" FOREIGN KEY ("accountNumber", "companyId") REFERENCES "account" ("number", "companyId") ON DELETE CASCADE ON UPDATE CASCADE,
   -- TODO: Add assetId foreign key
   CONSTRAINT "purchaseOrderLine_shelfId_fkey" FOREIGN KEY ("shelfId", "locationId") REFERENCES "shelf" ("id", "locationId") ON DELETE CASCADE,
-  CONSTRAINT "purchaseOrderLine_unitOfMeasureCode_fkey" FOREIGN KEY ("unitOfMeasureCode") REFERENCES "unitOfMeasure" ("code") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "purchaseOrderLine_inventoryUnitOfMeasureCode_fkey" FOREIGN KEY ("inventoryUnitOfMeasureCode", "companyId") REFERENCES "unitOfMeasure" ("code", "companyId") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "purchaseOrderLine_purchaseUnitOfMeasureCode_fkey" FOREIGN KEY ("purchaseUnitOfMeasureCode", "companyId") REFERENCES "unitOfMeasure" ("code", "companyId") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "purchaseOrderLine_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT,
   CONSTRAINT "purchaseOrderLine_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
 );
+
+CREATE INDEX "purchaseOrderLine_purchaseOrderId_idx" ON "purchaseOrderLine" ("purchaseOrderId");
+CREATE INDEX "purchaseOrderLine_companyId_idx" ON "purchaseOrderLine" ("companyId");
 
 ALTER publication supabase_realtime ADD TABLE "purchaseOrderLine";
 
@@ -306,6 +375,7 @@ CREATE TABLE "purchaseOrderPayment" (
   "paymentTermId" TEXT,
   "paymentComplete" BOOLEAN NOT NULL DEFAULT FALSE,
   "currencyCode" TEXT NOT NULL DEFAULT 'USD',
+  "companyId" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
   "customFields" JSONB,
@@ -316,12 +386,11 @@ CREATE TABLE "purchaseOrderPayment" (
   CONSTRAINT "purchaseOrderPayment_invoiceSupplierLocationId_fkey" FOREIGN KEY ("invoiceSupplierLocationId") REFERENCES "supplierLocation" ("id") ON DELETE CASCADE,
   CONSTRAINT "purchaseOrderPayment_invoiceSupplierContactId_fkey" FOREIGN KEY ("invoiceSupplierContactId") REFERENCES "supplierContact" ("id") ON DELETE CASCADE,
   CONSTRAINT "purchaseOrderPayment_paymentTermId_fkey" FOREIGN KEY ("paymentTermId") REFERENCES "paymentTerm" ("id") ON DELETE CASCADE,
-  CONSTRAINT "purchaseOrderPayment_currencyCode_fkey" FOREIGN KEY ("currencyCode") REFERENCES "currency" ("code") ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT "purchaseOrderPayment_currencyCode_fkey" FOREIGN KEY ("currencyCode", "companyId") REFERENCES "currency" ("code", "companyId") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE INDEX "purchaseOrderPayment_invoiceSupplierId_idx" ON "purchaseOrderPayment" ("invoiceSupplierId");
-CREATE INDEX "purchaseOrderPayment_invoiceSupplierLocationId_idx" ON "purchaseOrderPayment" ("invoiceSupplierLocationId");
-CREATE INDEX "purchaseOrderPayment_invoiceSupplierContactId_idx" ON "purchaseOrderPayment" ("invoiceSupplierContactId");
+CREATE INDEX "purchaseOrderPayment_companyId_idx" ON "purchaseOrderPayment" ("companyId");
 
 CREATE TABLE "purchaseOrderDelivery" (
   "id" TEXT NOT NULL,
@@ -336,6 +405,7 @@ CREATE TABLE "purchaseOrderDelivery" (
   "dropShipment" BOOLEAN NOT NULL DEFAULT FALSE,
   "customerId" TEXT,
   "customerLocationId" TEXT,
+  "companyId" TEXT NOT NULL,
   "updatedBy" TEXT,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "customFields" JSONB,
@@ -349,6 +419,8 @@ CREATE TABLE "purchaseOrderDelivery" (
   CONSTRAINT "purchaseOrderDelivery_customerLocationId_fkey" FOREIGN KEY ("customerLocationId") REFERENCES "customerLocation" ("id") ON DELETE CASCADE,
   CONSTRAINT "purchaseOrderDelivery_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT
 );
+
+CREATE INDEX "purchaseOrderDelivery_companyId_idx" ON "purchaseOrderDelivery" ("companyId");
 
 CREATE TYPE "purchaseOrderTransactionType" AS ENUM (
   'Edit',
@@ -373,6 +445,19 @@ CREATE TABLE "purchaseOrderTransaction" (
 
 CREATE INDEX "purchaseOrderTransaction_purchaseOrderId_idx" ON "purchaseOrderTransaction" ("purchaseOrderId");
 CREATE INDEX "purchaseOrderTransaction_userId_idx" ON "purchaseOrderTransaction" ("userId");
+
+ALTER TABLE "purchaseOrderTransaction" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Employees with purchasing_view can view purchase order transactions" ON "purchaseOrderTransaction" 
+  FOR SELECT USING (
+    has_role('employee') AND
+    has_company_permission('purchasing_view', get_company_id_from_foreign_key("purchaseOrderId", 'purchaseOrder'))
+  );
+
+CREATE POLICY "User with purchasing_update can insert purchase order transactions" ON "purchaseOrderTransaction" 
+  FOR INSERT WITH CHECK (
+    has_company_permission('purchasing_update', get_company_id_from_foreign_key("purchaseOrderId", 'purchaseOrder'))
+  );
 
 CREATE TABLE "purchaseOrderFavorite" (
   "purchaseOrderId" TEXT NOT NULL,
@@ -438,7 +523,8 @@ CREATE OR REPLACE VIEW "purchaseOrders" AS
 CREATE OR REPLACE VIEW "purchaseOrderSuppliers" AS
   SELECT DISTINCT
     s."id",
-    s."name"
+    s."name",
+    s."companyId"
   FROM "supplier" s
   INNER JOIN "purchaseOrder" p ON p."supplierId" = s."id";
   

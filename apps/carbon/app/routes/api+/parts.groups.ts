@@ -4,7 +4,7 @@ import { getPartGroupsList } from "~/modules/parts";
 import { requirePermissions } from "~/services/auth/auth.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const authorized = await requirePermissions(request, {});
+  const { client, companyId } = await requirePermissions(request, {});
 
-  return json(await getPartGroupsList(authorized.client));
+  return json(await getPartGroupsList(client, companyId));
 }

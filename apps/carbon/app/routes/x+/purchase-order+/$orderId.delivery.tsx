@@ -14,14 +14,14 @@ import {
 } from "~/modules/purchasing";
 import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
+import type { ListItem } from "~/types";
 import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
-import type { ListItem } from "~/types";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "purchasing",
   });
 
@@ -31,8 +31,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const [purchaseOrderDelivery, shippingMethods, shippingTerms] =
     await Promise.all([
       getPurchaseOrderDelivery(client, orderId),
-      getShippingMethodsList(client),
-      getShippingTermsList(client),
+      getShippingMethodsList(client, companyId),
+      getShippingTermsList(client, companyId),
     ]);
 
   if (purchaseOrderDelivery.error) {

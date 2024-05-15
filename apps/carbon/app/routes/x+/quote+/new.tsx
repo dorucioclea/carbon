@@ -17,7 +17,7 @@ import { error } from "~/utils/result";
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     create: "sales",
   });
 
@@ -28,7 +28,7 @@ export async function action({ request }: ActionFunctionArgs) {
     return validationError(validation.error);
   }
 
-  const nextSequence = await getNextSequence(client, "quote", userId);
+  const nextSequence = await getNextSequence(client, "quote", companyId);
   if (nextSequence.error) {
     throw redirect(
       path.to.newQuote,
@@ -41,6 +41,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const createQuotation = await upsertQuote(client, {
     ...validation.data,
+    companyId,
     quoteId: nextSequence.data,
     createdBy: userId,
     customFields: setCustomFields(formData),
@@ -48,7 +49,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   if (createQuotation.error || !createQuotation.data?.[0]) {
     // TODO: this should be done as a transaction
-    await rollbackNextSequence(client, "quote", userId);
+    await rollbackNextSequence(client, "quote", companyId);
     throw redirect(
       path.to.quotes,
       await flash(

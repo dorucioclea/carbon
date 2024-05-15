@@ -3,7 +3,7 @@ import type {
   getCustomers,
   getEmployees,
   getEmployeeTypes,
-  getFeatures,
+  getModules,
   getPermissionsByEmployeeType,
   getSuppliers,
   getUsers,
@@ -27,13 +27,14 @@ export type EmployeeType = NonNullable<
   Awaited<ReturnType<typeof getEmployeeTypes>>["data"]
 >[number];
 
-export type Feature = NonNullable<
-  Awaited<ReturnType<typeof getFeatures>>["data"]
+export type Module = NonNullable<
+  Awaited<ReturnType<typeof getModules>>["data"]
 >[number];
 
 export type Group = {
   data: {
     id: string;
+    companyId: string;
     isEmployeeTypeGroup: boolean;
     isCustomerOrgGroup: boolean;
     isCustomerTypeGroup: boolean;
@@ -45,11 +46,18 @@ export type Group = {
   children: Group[];
 };
 
-export type Permission = {
+export type CompanyPermission = {
   view: boolean;
   create: boolean;
   update: boolean;
   delete: boolean;
+};
+
+export type Permission = {
+  view: string[];
+  create: string[];
+  update: string[];
+  delete: string[];
 };
 
 export type Supplier = NonNullable<

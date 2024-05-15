@@ -14,7 +14,7 @@ import { ValidatedForm } from "@carbon/remix-validated-form";
 import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { Employees, Hidden, Radios, Submit } from "~/components/Form";
-import type { Permission } from "~/modules/users";
+import type { CompanyPermission } from "~/modules/users";
 import { bulkPermissionsValidator } from "~/modules/users";
 import { path } from "~/utils/path";
 import PermissionCheckboxes from "../components/Permission";
@@ -30,11 +30,11 @@ const BulkEditPermissions = ({
   isOpen,
   onClose,
 }: BulkEditPermissionsProps) => {
-  const [permissions, setPermissions] = useState<Record<string, Permission>>(
-    {}
-  );
+  const [permissions, setPermissions] = useState<
+    Record<string, CompanyPermission>
+  >({});
 
-  const updatePermissions = (module: string, permission: Permission) => {
+  const updatePermissions = (module: string, permission: CompanyPermission) => {
     setPermissions((prevPermissions) => ({
       ...prevPermissions,
       [module]: permission,
@@ -45,8 +45,8 @@ const BulkEditPermissions = ({
     permissions: Record<
       string,
       {
-        id: string;
-        permission: Permission;
+        name: string;
+        permission: CompanyPermission;
       }
     >;
   }>();
@@ -57,7 +57,7 @@ const BulkEditPermissions = ({
 
   useEffect(() => {
     if (emptyPermissionsFetcher.data) {
-      let emptyPermissions: Record<string, Permission> = {};
+      let emptyPermissions: Record<string, CompanyPermission> = {};
       Object.entries(emptyPermissionsFetcher.data.permissions).forEach(
         ([module, data]) => {
           emptyPermissions[module] = data.permission;

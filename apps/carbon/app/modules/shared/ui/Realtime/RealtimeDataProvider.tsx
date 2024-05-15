@@ -1,5 +1,6 @@
 import idb from "localforage";
 import { useEffect } from "react";
+import { useUser } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import { useCustomers, useParts, usePeople, useSuppliers } from "~/stores";
 import type { Part } from "~/stores/parts";
@@ -10,6 +11,9 @@ let hydratedFromServer = false;
 
 const RealtimeDataProvider = ({ children }: { children: React.ReactNode }) => {
   const { supabase, accessToken } = useSupabase();
+  const {
+    company: { id: companyId },
+  } = useUser();
 
   const [, setParts] = useParts();
   const [, setSuppliers] = useSuppliers();
@@ -41,12 +45,25 @@ const RealtimeDataProvider = ({ children }: { children: React.ReactNode }) => {
       supabase
         .from("part")
         .select("id, name, replenishmentSystem")
+        .eq("companyId", companyId)
         .eq("active", true)
         .eq("blocked", false)
         .order("name"),
-      supabase.from("supplier").select("id, name").order("name"),
-      supabase.from("customer").select("id, name").order("name"),
-      supabase.from("employees").select("id, name, avatarUrl").order("name"),
+      supabase
+        .from("supplier")
+        .select("id, name")
+        .eq("companyId", companyId)
+        .order("name"),
+      supabase
+        .from("customer")
+        .select("id, name")
+        .eq("companyId", companyId)
+        .order("name"),
+      supabase
+        .from("employees")
+        .select("id, name, avatarUrl")
+        .eq("companyId", companyId)
+        .order("name"),
     ]);
 
     if (parts.error || suppliers.error || customers.error || people.error) {
@@ -63,6 +80,7 @@ const RealtimeDataProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
+    if (!companyId) return;
     hydrate();
 
     if (!supabase || !accessToken) return;
@@ -77,6 +95,8 @@ const RealtimeDataProvider = ({ children }: { children: React.ReactNode }) => {
           table: "part",
         },
         (payload) => {
+          if ("companyId" in payload.new && payload.new.companyId !== companyId)
+            return;
           switch (payload.eventType) {
             case "INSERT":
               const { new: inserted } = payload;
@@ -125,6 +145,8 @@ const RealtimeDataProvider = ({ children }: { children: React.ReactNode }) => {
           table: "customer",
         },
         (payload) => {
+          if ("companyId" in payload.new && payload.new.companyId !== companyId)
+            return;
           switch (payload.eventType) {
             case "INSERT":
               const { new: inserted } = payload;
@@ -173,9 +195,12 @@ const RealtimeDataProvider = ({ children }: { children: React.ReactNode }) => {
           table: "supplier",
         },
         (payload) => {
+          if ("companyId" in payload.new && payload.new.companyId !== companyId)
+            return;
           switch (payload.eventType) {
             case "INSERT":
               const { new: inserted } = payload;
+
               setSuppliers((suppliers) =>
                 [
                   ...suppliers,
@@ -221,12 +246,15 @@ const RealtimeDataProvider = ({ children }: { children: React.ReactNode }) => {
           table: "employee",
         },
         async (payload) => {
+          if ("companyId" in payload.new && payload.new.companyId !== companyId)
+            return;
           // TODO: there's a cleaner way of doing this, but since customers and suppliers
           // are also in the users table, we can't automatically add/update/delete them
           // from our list of employees. So for now we just refetch.
           const { data } = await supabase
             .from("employees")
             .select("id, name, avatarUrl")
+            .eq("companyId", companyId)
             .order("name");
           if (data) {
             // @ts-ignore
@@ -240,7 +268,7 @@ const RealtimeDataProvider = ({ children }: { children: React.ReactNode }) => {
       if (channel) supabase?.removeChannel(channel);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [supabase, accessToken]);
+  }, [supabase, accessToken, companyId]);
 
   return <>{children}</>;
 };

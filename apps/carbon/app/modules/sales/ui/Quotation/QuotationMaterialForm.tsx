@@ -23,7 +23,7 @@ import {
   Part,
   Submit,
 } from "~/components/Form";
-import { usePermissions, useRouteData } from "~/hooks";
+import { usePermissions, useRouteData, useUser } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import type { Quotation } from "~/modules/sales";
 import { quotationMaterialValidator } from "~/modules/sales";
@@ -38,6 +38,7 @@ const QuotationMaterialForm = ({
 }: QuotationMaterialFormProps) => {
   const permissions = usePermissions();
   const { supabase } = useSupabase();
+  const { company } = useUser();
   const navigate = useNavigate();
 
   const { id, lineId, operationId } = useParams();
@@ -72,17 +73,19 @@ const QuotationMaterialForm = ({
   const onClose = () => navigate(-1);
 
   const onPartChange = async (partId: string) => {
-    if (!supabase) return;
+    if (!supabase || !company.id) return;
     const [part, cost] = await Promise.all([
       supabase
         .from("part")
         .select("name, unitOfMeasureCode")
         .eq("id", partId)
+        .eq("companyId", company.id)
         .single(),
       supabase
         .from("partCost")
         .select("unitCost")
         .eq("partId", partId)
+        .eq("companyId", company.id)
         .single(),
     ]);
 

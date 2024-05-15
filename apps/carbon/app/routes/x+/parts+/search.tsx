@@ -10,7 +10,7 @@ import { getGenericQueryFilters } from "~/utils/query";
 import { error } from "~/utils/result";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "parts",
   });
 
@@ -23,7 +23,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getGenericQueryFilters(searchParams);
 
   const [parts, partGroups] = await Promise.all([
-    getParts(client, {
+    getParts(client, companyId, {
       search,
       supplierId,
       limit,
@@ -31,7 +31,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       sorts,
       filters,
     }),
-    getPartGroupsList(client),
+    getPartGroupsList(client, companyId),
   ]);
 
   if (parts.error) {

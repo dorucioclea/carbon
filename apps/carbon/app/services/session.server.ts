@@ -5,7 +5,6 @@ import { getCurrentPath, isGet, makeRedirectToFromHere } from "~/utils/http";
 import {
   NODE_ENV,
   REFRESH_ACCESS_TOKEN_THRESHOLD,
-  SESSION_ERROR_KEY,
   SESSION_KEY,
   SESSION_MAX_AGE,
   SESSION_SECRET,
@@ -33,7 +32,7 @@ async function assertAuthSession(
 
 const sessionStorage = createCookieSessionStorage({
   cookie: {
-    name: "__authSession",
+    name: "carbon",
     httpOnly: true,
     path: "/",
     sameSite: "lax",
@@ -46,10 +45,8 @@ export async function commitAuthSession(
   request: Request,
   {
     authSession,
-    flashErrorMessage,
   }: {
     authSession?: AuthSession | null;
-    flashErrorMessage?: string | null;
   } = {}
 ) {
   const session = await getSession(request);
@@ -60,14 +57,13 @@ export async function commitAuthSession(
     session.set(SESSION_KEY, authSession);
   }
 
-  session.flash(SESSION_ERROR_KEY, flashErrorMessage);
-
   return sessionStorage.commitSession(session, { maxAge: SESSION_MAX_AGE });
 }
 
 export async function destroyAuthSession(request: Request) {
   const session = await getSession(request);
 
+  // when we change to throw redirect, or callback stops working
   return redirect(path.to.login, {
     headers: {
       "Set-Cookie": await sessionStorage.destroySession(session),
@@ -147,7 +143,8 @@ export async function refreshAuthSession(
   const authSession = await getAuthSession(request);
 
   const refreshedAuthSession = await refreshAccessToken(
-    authSession?.refreshToken
+    authSession?.refreshToken,
+    authSession?.companyId
   );
 
   if (!refreshedAuthSession) {
@@ -159,7 +156,6 @@ export async function refreshAuthSession(
       headers: {
         "Set-Cookie": await commitAuthSession(request, {
           authSession: null,
-          flashErrorMessage: "fail-refresh-auth-session",
         }),
       },
     });
@@ -180,4 +176,23 @@ export async function refreshAuthSession(
 
   // we can't redirect because we are in an action, so, deal with it and don't forget to handle session commit 👮‍♀️
   return refreshedAuthSession;
+}
+
+export async function updateCompanySession(
+  request: Request,
+  companyId: string
+) {
+  const session = await getSession(request);
+  const authSession = await getAuthSession(request);
+
+  // allow user session to be null.
+  // useful you want to clear session and display a message explaining why
+  if (authSession !== undefined) {
+    session.set(SESSION_KEY, {
+      ...authSession,
+      companyId,
+    });
+  }
+
+  return sessionStorage.commitSession(session, { maxAge: SESSION_MAX_AGE });
 }

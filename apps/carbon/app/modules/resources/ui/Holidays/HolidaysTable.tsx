@@ -1,4 +1,5 @@
 import { Enumerable, MenuIcon, MenuItem } from "@carbon/react";
+import { formatDate } from "@carbon/utils";
 import { useNavigate } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useMemo } from "react";
@@ -21,12 +22,10 @@ const HolidaysTable = memo(({ data, count, years }: HolidaysTableProps) => {
   const permissions = usePermissions();
   const [params] = useUrlParams();
 
-
   const customColumns = useCustomColumns<(typeof data)[number]>("holiday");
 
   const columns = useMemo<ColumnDef<(typeof data)[number]>[]>(() => {
-    return [
-
+    const defaultColumns: ColumnDef<(typeof data)[number]>[] = [
       {
         accessorKey: "name",
         header: "Holiday",
@@ -53,12 +52,11 @@ const HolidaysTable = memo(({ data, count, years }: HolidaysTableProps) => {
       {
         accessorKey: "date",
         header: "Date",
-        cell: (item) => item.getValue(),
+        cell: (item) => formatDate(item.getValue<string>()),
       },
     ];
     return [...defaultColumns, ...customColumns];
   }, [customColumns, years]);
-
 
   const renderContextMenu = useCallback(
     (row: (typeof data)[number]) => {

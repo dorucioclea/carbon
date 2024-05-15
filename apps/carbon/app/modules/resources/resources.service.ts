@@ -142,6 +142,7 @@ export async function deleteWorkCellType(
 
 export async function getAbilities(
   client: SupabaseClient<Database>,
+  companyId: string,
   args: GenericQueryFilters & { search: string | null }
 ) {
   let query = client
@@ -149,6 +150,7 @@ export async function getAbilities(
     .select(`*, employeeAbility(user(id, fullName, avatarUrl))`, {
       count: "exact",
     })
+    .eq("companyId", companyId)
     .eq("active", true)
     .eq("employeeAbility.active", true)
     .eq("employeeAbility.user.active", true);
@@ -163,8 +165,15 @@ export async function getAbilities(
   return query;
 }
 
-export async function getAbilitiesList(client: SupabaseClient<Database>) {
-  return client.from("ability").select(`id, name`).order("name");
+export async function getAbilitiesList(
+  client: SupabaseClient<Database>,
+  companyId: string
+) {
+  return client
+    .from("ability")
+    .select(`id, name`)
+    .eq("companyId", companyId)
+    .order("name");
 }
 
 export async function getAbility(
@@ -200,6 +209,7 @@ export async function getAttribute(
 
 async function getAttributes(
   client: SupabaseClient<Database>,
+  companyId: string,
   userIds: string[]
 ) {
   return client
@@ -213,6 +223,7 @@ async function getAttributes(
         )
       )`
     )
+    .eq("companyId", companyId)
     .eq("userAttribute.active", true)
     .in("userAttribute.userAttributeValue.userId", [userIds])
     .order("sortOrder", { foreignTable: "userAttribute", ascending: true });
@@ -220,6 +231,7 @@ async function getAttributes(
 
 export async function getAttributeCategories(
   client: SupabaseClient<Database>,
+  companyId: string,
   args?: { search: string | null } & GenericQueryFilters
 ) {
   let query = client
@@ -227,6 +239,7 @@ export async function getAttributeCategories(
     .select("*, userAttribute(id, name, attributeDataType(id))", {
       count: "exact",
     })
+    .eq("companyId", companyId)
     .eq("active", true)
     .eq("userAttribute.active", true);
 
@@ -282,9 +295,14 @@ export async function getContractor(
 
 export async function getContractors(
   client: SupabaseClient<Database>,
+  companyId: string,
   args?: GenericQueryFilters & { search: string | null }
 ) {
-  let query = client.from("contractors").select("*").eq("active", true);
+  let query = client
+    .from("contractors")
+    .select("*")
+    .eq("companyId", companyId)
+    .eq("active", true);
 
   if (args?.search) {
     query = query.or(
@@ -310,11 +328,15 @@ export async function getDepartment(
 
 export async function getDepartments(
   client: SupabaseClient<Database>,
+  companyId: string,
   args?: GenericQueryFilters & { search: string | null }
 ) {
-  let query = client.from("department").select(`*, department(id, name)`, {
-    count: "exact",
-  });
+  let query = client
+    .from("department")
+    .select(`*, department(id, name)`, {
+      count: "exact",
+    })
+    .eq("companyId", companyId);
 
   if (args?.search) {
     query = query.ilike("name", `%${args.search}%`);
@@ -329,8 +351,15 @@ export async function getDepartments(
   return query;
 }
 
-export async function getDepartmentsList(client: SupabaseClient<Database>) {
-  return client.from("department").select(`id, name`).order("name");
+export async function getDepartmentsList(
+  client: SupabaseClient<Database>,
+  companyId: string
+) {
+  return client
+    .from("department")
+    .select(`id, name`)
+    .eq("companyId", companyId)
+    .order("name");
 }
 
 export async function getEmployeeAbility(
@@ -360,19 +389,27 @@ export async function getEmployeeAbilities(
 
 export async function getEmployeeJob(
   client: SupabaseClient<Database>,
-  employeeId: string
+  employeeId: string,
+  companyId: string
 ) {
-  return client.from("employeeJob").select("*").eq("id", employeeId).single();
+  return client
+    .from("employeeJob")
+    .select("*")
+    .eq("id", employeeId)
+    .eq("companyId", companyId)
+    .single();
 }
 
 export async function getEmployeeSummary(
   client: SupabaseClient<Database>,
-  employeeId: string
+  employeeId: string,
+  companyId: string
 ) {
   return client
     .from("employeeSummary")
     .select("*")
     .eq("id", employeeId)
+    .eq("companyId", companyId)
     .single();
 }
 
@@ -404,6 +441,7 @@ export async function getEquipmentType(
 
 export async function getEquipmentTypes(
   client: SupabaseClient<Database>,
+  companyId: string,
   args?: { search: string | null } & GenericQueryFilters
 ) {
   let query = client
@@ -411,6 +449,7 @@ export async function getEquipmentTypes(
     .select("*, equipment(id, name)", {
       count: "exact",
     })
+    .eq("companyId", companyId)
     .eq("active", true)
     .eq("equipment.active", true);
 
@@ -427,8 +466,15 @@ export async function getEquipmentTypes(
   return query;
 }
 
-export async function getEquipmentTypesList(client: SupabaseClient<Database>) {
-  return client.from("equipmentType").select("id, name").order("name");
+export async function getEquipmentTypesList(
+  client: SupabaseClient<Database>,
+  companyId: string
+) {
+  return client
+    .from("equipmentType")
+    .select("id, name")
+    .eq("companyId", companyId)
+    .order("name");
 }
 
 export async function getHoliday(
@@ -440,11 +486,15 @@ export async function getHoliday(
 
 export async function getHolidays(
   client: SupabaseClient<Database>,
+  companyId: string,
   args?: GenericQueryFilters & { search: string | null }
 ) {
-  let query = client.from("holiday").select("*", {
-    count: "exact",
-  });
+  let query = client
+    .from("holiday")
+    .select("*", {
+      count: "exact",
+    })
+    .eq("companyId", companyId);
 
   if (args?.search) {
     query = query.ilike("name", `%${args.search}%`);
@@ -459,8 +509,11 @@ export async function getHolidays(
   return query;
 }
 
-export function getHolidayYears(client: SupabaseClient<Database>) {
-  return client.from("holidayYears").select("year");
+export function getHolidayYears(
+  client: SupabaseClient<Database>,
+  companyId: string
+) {
+  return client.from("holidayYears").select("year").eq("companyId", companyId);
 }
 
 export async function getLocation(
@@ -472,9 +525,13 @@ export async function getLocation(
 
 export async function getLocations(
   client: SupabaseClient<Database>,
+  companyId: string,
   args?: GenericQueryFilters & { search: string | null }
 ) {
-  let query = client.from("location").select("*", { count: "exact" });
+  let query = client
+    .from("location")
+    .select("*", { count: "exact" })
+    .eq("companyId", companyId);
 
   if (args?.search) {
     query = query.ilike("name", `%${args.search}%`);
@@ -489,8 +546,15 @@ export async function getLocations(
   return query;
 }
 
-export async function getLocationsList(client: SupabaseClient<Database>) {
-  return client.from("location").select(`id, name`).order("name");
+export async function getLocationsList(
+  client: SupabaseClient<Database>,
+  companyId: string
+) {
+  return client
+    .from("location")
+    .select(`id, name`)
+    .eq("companyId", companyId)
+    .order("name");
 }
 
 export async function getPartnerBySupplierId(
@@ -519,9 +583,14 @@ export async function getPartner(
 
 export async function getPartners(
   client: SupabaseClient<Database>,
+  companyId: string,
   args?: GenericQueryFilters & { search: string | null }
 ) {
-  let query = client.from("partners").select("*").eq("active", true);
+  let query = client
+    .from("partners")
+    .select("*")
+    .eq("companyId", companyId)
+    .eq("active", true);
 
   if (args?.search) {
     query = query.ilike("supplierName", `%${args.search}%`);
@@ -557,30 +626,26 @@ type Person = Employee & {
 
 export async function getPeople(
   client: SupabaseClient<Database>,
+  companyId: string,
   args: GenericQueryFilters & {
     search: string | null;
   }
 ) {
-  const employees = await getEmployees(client, args);
+  const employees = await getEmployees(client, companyId, args);
   if (employees.error) return employees;
 
   if (!employees.data) throw new Error("Failed to get employee data");
 
-  const userIds = employees.data.map((employee) => {
-    if (!employee.user || Array.isArray(employee.user))
-      throw new Error("employee.user is an array");
-    // @ts-ignore
-    return employee.user?.id;
-  });
+  const userIds = employees.data.reduce<string[]>((acc, employee) => {
+    if (employee.id) acc.push(employee.id);
+    return acc;
+  }, []);
 
-  const attributeCategories = await getAttributes(client, userIds);
+  const attributeCategories = await getAttributes(client, companyId, userIds);
   if (attributeCategories.error) return attributeCategories;
 
   const people: Person[] = employees.data.map((employee) => {
-    if (!employee.user || Array.isArray(employee.user))
-      throw new Error("employee.user is an array");
-    // @ts-ignore
-    const userId = employee.user?.id;
+    const userId = employee.id;
 
     const employeeAttributes =
       attributeCategories.data.reduce<PersonAttributes>((acc, category) => {
@@ -651,6 +716,7 @@ export async function getShift(
 
 export async function getShifts(
   client: SupabaseClient<Database>,
+  companyId: string,
   args: GenericQueryFilters & { search: string | null }
 ) {
   let query = client
@@ -658,6 +724,7 @@ export async function getShifts(
     .select("*", {
       count: "exact",
     })
+    .eq("companyId", companyId)
     .eq("active", true);
 
   if (args?.search) {
@@ -729,6 +796,7 @@ export async function getWorkCellType(
 
 export async function getWorkCellTypes(
   client: SupabaseClient<Database>,
+  companyId: string,
   args?: { search: string | null } & GenericQueryFilters
 ) {
   let query = client
@@ -736,6 +804,7 @@ export async function getWorkCellTypes(
     .select("*, workCell(id, name)", {
       count: "exact",
     })
+    .eq("companyId", companyId)
     .eq("active", true)
     .eq("workCell.active", true);
 
@@ -752,8 +821,15 @@ export async function getWorkCellTypes(
   return query;
 }
 
-export async function getWorkCellTypesList(client: SupabaseClient<Database>) {
-  return client.from("workCellType").select("id, name").order("name");
+export async function getWorkCellTypesList(
+  client: SupabaseClient<Database>,
+  companyId: string
+) {
+  return client
+    .from("workCellType")
+    .select("id, name")
+    .eq("companyId", companyId)
+    .order("name");
 }
 
 export async function insertAbility(
@@ -767,6 +843,7 @@ export async function insertAbility(
       }[];
     };
     shadowWeeks: number;
+    companyId: string;
     createdBy: string;
   }
 ) {
@@ -825,6 +902,7 @@ export async function insertAttributeCategory(
   attributeCategory: {
     name: string;
     public: boolean;
+    companyId: string;
     createdBy: string;
   }
 ) {
@@ -839,7 +917,8 @@ export async function insertEmployeeJob(
   client: SupabaseClient<Database>,
   job: {
     id: string;
-    locationId: string;
+    companyId: string;
+    locationId?: string;
   }
 ) {
   return client.from("employeeJob").insert(job).select("*").single();
@@ -916,6 +995,22 @@ export async function updateAttributeSortOrder(
   return Promise.all(updatePromises);
 }
 
+export async function updateEmployeeJob(
+  client: SupabaseClient<Database>,
+  employeeId: string,
+  employeeJob: z.infer<typeof employeeJobValidator> & {
+    companyId: string;
+    updatedBy: string;
+    customFields?: Json;
+  }
+) {
+  return client
+    .from("employeeJob")
+    .update(sanitize(employeeJob))
+    .eq("id", employeeId)
+    .eq("companyId", employeeJob.companyId);
+}
+
 export async function upsertContractor(
   client: SupabaseClient<Database>,
   contractorWithAbilities:
@@ -923,6 +1018,7 @@ export async function upsertContractor(
         id: string;
         hoursPerWeek?: number;
         abilities: string[];
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       }
@@ -975,6 +1071,7 @@ export async function upsertDepartment(
   client: SupabaseClient<Database>,
   department:
     | (Omit<z.infer<typeof departmentValidator>, "id"> & {
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -1030,23 +1127,11 @@ export async function upsertEmployeeAbility(
     .single();
 }
 
-export async function upsertEmployeeJob(
-  client: SupabaseClient<Database>,
-  employeeId: string,
-  employeeJob: z.infer<typeof employeeJobValidator> & {
-    updatedBy: string;
-    customFields?: Json;
-  }
-) {
-  return client
-    .from("employeeJob")
-    .upsert([{ id: employeeId, ...sanitize(employeeJob) }]);
-}
-
 export async function upsertEquipment(
   client: SupabaseClient<Database>,
   equipment:
     | (Omit<z.infer<typeof equipmentValidator>, "id"> & {
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -1068,6 +1153,7 @@ export async function upsertEquipmentType(
   client: SupabaseClient<Database>,
   equipmentType:
     | (Omit<z.infer<typeof equipmentTypeValidator>, "id"> & {
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -1092,6 +1178,7 @@ export async function upsertHoliday(
   client: SupabaseClient<Database>,
   holiday:
     | (Omit<z.infer<typeof holidayValidator>, "id"> & {
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -1111,6 +1198,7 @@ export async function upsertLocation(
   client: SupabaseClient<Database>,
   location:
     | (Omit<z.infer<typeof locationValidator>, "id"> & {
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -1133,6 +1221,7 @@ export async function upsertPartner(
   client: SupabaseClient<Database>,
   partner:
     | (Omit<z.infer<typeof partnerValidator>, "supplierId"> & {
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -1157,6 +1246,7 @@ export async function upsertShift(
   shift:
     | (Omit<z.infer<typeof shiftValidator>, "id"> & {
         createdBy: string;
+        companyId: string;
         customFields?: Json;
       })
     | (Omit<z.infer<typeof shiftValidator>, "id"> & {
@@ -1175,6 +1265,7 @@ export async function upsertWorkCell(
   client: SupabaseClient<Database>,
   workCell:
     | (Omit<z.infer<typeof workCellValidator>, "id"> & {
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })
@@ -1197,6 +1288,7 @@ export async function upsertWorkCellType(
   client: SupabaseClient<Database>,
   workCellType:
     | (Omit<z.infer<typeof workCellTypeValidator>, "id"> & {
+        companyId: string;
         createdBy: string;
         customFields?: Json;
       })

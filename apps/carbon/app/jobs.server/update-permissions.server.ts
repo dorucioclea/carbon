@@ -18,6 +18,7 @@ export const permissionsUpdateSchema = z.object({
       delete: z.boolean(),
     })
   ),
+  companyId: z.string(),
 });
 
 const job = triggerClient.defineJob({

@@ -24,7 +24,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     create: "parts",
   });
 
@@ -37,11 +37,11 @@ export async function action({ request }: ActionFunctionArgs) {
     return validationError(validation.error);
   }
 
-  const { name, code } = validation.data;
+  const { id, ...data } = validation.data;
 
   const insertUnitOfMeasure = await upsertUnitOfMeasure(client, {
-    name,
-    code,
+    ...data,
+    companyId,
     createdBy: userId,
     customFields: setCustomFields(formData),
   });

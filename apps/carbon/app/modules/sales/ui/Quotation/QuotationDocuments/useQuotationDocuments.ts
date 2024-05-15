@@ -1,7 +1,7 @@
 import { toast } from "@carbon/react";
 import { useFetcher } from "@remix-run/react";
 import { useCallback } from "react";
-import { usePermissions } from "~/hooks";
+import { usePermissions, useUser } from "~/hooks";
 import { useSupabase } from "~/lib/supabase";
 import type { QuotationAttachment } from "~/modules/sales/types";
 
@@ -13,6 +13,7 @@ type Props = {
 export const useQuotationDocuments = ({ isExternal, id }: Props) => {
   const fetcher = useFetcher();
   const permissions = usePermissions();
+  const { company } = useUser();
   const { supabase } = useSupabase();
 
   const canDelete = permissions.can("delete", "sales"); // TODO: or is document owner
@@ -24,11 +25,11 @@ export const useQuotationDocuments = ({ isExternal, id }: Props) => {
 
   const getPath = useCallback(
     (attachment: QuotationAttachment) => {
-      return `quote/${isExternal ? "external" : "internal"}/${id}/${
-        attachment.name
-      }`;
+      return `${company.id}/quote/${
+        isExternal ? "external" : "internal"
+      }/${id}/${attachment.name}`;
     },
-    [isExternal, id]
+    [company.id, isExternal, id]
   );
 
   const deleteAttachment = useCallback(

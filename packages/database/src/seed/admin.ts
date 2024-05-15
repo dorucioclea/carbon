@@ -1,5 +1,3 @@
-import { possibleFeatures } from "./features";
-
 const admin = {
   email: "admin@carbon.us.org",
   password: "carbon",
@@ -7,16 +5,15 @@ const admin = {
   lastName: "Admin",
 };
 
-const claims: Record<string, boolean | string> = {
+const ALL_TEAMS_ID = "0";
+
+const claims: Record<string, string> = {
   role: "employee",
 };
 
-possibleFeatures.forEach((name) => {
-  const moduleName = name.toLowerCase();
-  claims[`${moduleName}_view`] = true;
-  claims[`${moduleName}_create`] = true;
-  claims[`${moduleName}_update`] = true;
-  claims[`${moduleName}_delete`] = true;
-});
+const permissions: Record<string, string[]> = {
+  settings_update: [ALL_TEAMS_ID],
+  users_update: [ALL_TEAMS_ID],
+};
 
-export { admin, claims };
+export { admin, claims, permissions };

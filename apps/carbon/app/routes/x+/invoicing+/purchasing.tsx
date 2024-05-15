@@ -19,7 +19,7 @@ export const handle: Handle = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "invoicing",
   });
 
@@ -32,7 +32,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getGenericQueryFilters(searchParams);
 
   const [purchaseInvoices] = await Promise.all([
-    getPurchaseInvoices(client, {
+    getPurchaseInvoices(client, companyId, {
       search,
       supplierId,
       limit,
@@ -47,7 +47,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       path.to.invoicing,
       await flash(
         request,
-        error(purchaseInvoices.error, "Failed to fetch purchas orders")
+        error(purchaseInvoices.error, "Failed to fetch purchase invoices")
       )
     );
   }

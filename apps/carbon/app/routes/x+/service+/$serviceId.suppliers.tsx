@@ -8,7 +8,7 @@ import { path } from "~/utils/path";
 import { error } from "~/utils/result";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "parts",
   });
 
@@ -16,7 +16,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!serviceId) throw new Error("Could not find serviceId");
 
   const [serviceSuppliers] = await Promise.all([
-    getServiceSuppliers(client, serviceId),
+    getServiceSuppliers(client, serviceId, companyId),
   ]);
 
   if (serviceSuppliers.error) {

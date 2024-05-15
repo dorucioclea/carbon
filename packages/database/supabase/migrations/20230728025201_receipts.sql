@@ -29,6 +29,8 @@ CREATE TABLE "receipt" (
   "status" "receiptStatus" NOT NULL DEFAULT 'Draft',
   "postingDate" DATE,
   "invoiced" BOOLEAN DEFAULT FALSE,
+  "assignee" TEXT,
+  "companyId" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
@@ -36,46 +38,51 @@ CREATE TABLE "receipt" (
   "customFields" JSONB,
 
   CONSTRAINT "receipt_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "receipt_receiptId_key" UNIQUE ("receiptId"),
+  CONSTRAINT "receipt_receiptId_key" UNIQUE ("receiptId", "companyId"),
   CONSTRAINT "receipt_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "location" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT "receipt_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "supplier" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "receipt_assignee_fkey" FOREIGN KEY ("assignee") REFERENCES "user" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT "receipt_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "receipt_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "receipt_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-CREATE INDEX "receipt_receiptId_idx" ON "receipt" ("receiptId");
-CREATE INDEX "receipt_status_idx" ON "receipt" ("status");
-CREATE INDEX "receipt_locationId_idx" ON "receipt" ("locationId");
-CREATE INDEX "receipt_sourceDocumentId_idx" ON "receipt" ("sourceDocumentId");
-CREATE INDEX "receipt_supplierId_idx" ON "receipt" ("supplierId");
+CREATE INDEX "receipt_receiptId_idx" ON "receipt" ("receiptId", "companyId");
+CREATE INDEX "receipt_status_idx" ON "receipt" ("status", "companyId");
+CREATE INDEX "receipt_locationId_idx" ON "receipt" ("locationId", "companyId");
+CREATE INDEX "receipt_sourceDocumentId_idx" ON "receipt" ("sourceDocumentId", "companyId");
+CREATE INDEX "receipt_supplierId_idx" ON "receipt" ("supplierId", "companyId");
+CREATE INDEX "receipt_companyId_idx" ON "receipt" ("companyId");
 
 ALTER TABLE "receipt" ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Employees with inventory_view can view receipts" ON "receipt"
   FOR SELECT
-  USING (coalesce(get_my_claim('inventory_view')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb);
+  USING (
+    has_role('employee') AND
+    has_company_permission('inventory_view', "companyId")
+  );
   
 
 CREATE POLICY "Employees with inventory_create can insert receipts" ON "receipt"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('inventory_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('inventory_create', "companyId")
 );
 
 CREATE POLICY "Employees with inventory_update can update receipts" ON "receipt"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('inventory_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('inventory_update', "companyId")
   );
 
 CREATE POLICY "Employees with inventory_delete can delete receipts" ON "receipt"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('inventory_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('inventory_delete', "companyId")
   );
 
 ALTER publication supabase_realtime ADD TABLE "receipt";
@@ -92,6 +99,7 @@ CREATE TABLE "receiptLine" (
   "shelfId" TEXT,
   "unitOfMeasure" TEXT NOT NULL,
   "unitPrice" NUMERIC(18, 4) NOT NULL,
+  "companyId" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
@@ -99,7 +107,7 @@ CREATE TABLE "receiptLine" (
 
   CONSTRAINT "receiptLine_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "receiptLine_receiptId_fkey" FOREIGN KEY ("receiptId") REFERENCES "receipt" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT "receiptLine_partId_fkey" FOREIGN KEY ("partId") REFERENCES "part" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "receiptLine_partId_fkey" FOREIGN KEY ("partId", "companyId") REFERENCES "part" ("id", "companyId") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "receiptLine_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "location" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT "receiptLine_shelfId_fkey" FOREIGN KEY ("shelfId", "locationId") REFERENCES "shelf" ("id", "locationId") ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT "receiptLine_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -115,30 +123,30 @@ ALTER TABLE "receiptLine" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Employees with inventory_view can view receipt lines" ON "receiptLine"
   FOR SELECT
   USING (
-    coalesce(get_my_claim('inventory_view')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('inventory_view', "companyId")
   );
   
 
 CREATE POLICY "Employees with inventory_create can insert receipt lines" ON "receiptLine"
   FOR INSERT
   WITH CHECK (   
-    coalesce(get_my_claim('inventory_create')::boolean,false) 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('inventory_create', "companyId")
 );
 
 CREATE POLICY "Employees with inventory_update can update receipt lines" ON "receiptLine"
   FOR UPDATE
   USING (
-    coalesce(get_my_claim('inventory_update')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('inventory_update', "companyId")
   );
 
 CREATE POLICY "Employees with inventory_delete can delete receipt lines" ON "receiptLine"
   FOR DELETE
   USING (
-    coalesce(get_my_claim('inventory_delete')::boolean, false) = true 
-    AND (get_my_claim('role'::text)) = '"employee"'::jsonb
+    has_role('employee') AND
+    has_company_permission('inventory_delete', "companyId")
   );
 
 CREATE OR REPLACE VIEW "receipts" WITH(SECURITY_INVOKER=true) AS

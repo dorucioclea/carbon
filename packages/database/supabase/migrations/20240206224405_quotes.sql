@@ -16,7 +16,7 @@ CREATE TABLE "quote" (
   "quoteId" TEXT NOT NULL,
   "revisionId" INTEGER NOT NULL DEFAULT 0,
   "ownerId" TEXT NOT NULL,
-  "name" TEXT NOT NULL,
+  "name" TEXT,
   "status" "quoteStatus" NOT NULL DEFAULT 'Draft',
   "quoteDate" DATE,
   "expirationDate" DATE,
@@ -26,27 +26,32 @@ CREATE TABLE "quote" (
   "customerContactId" TEXT,
   "customerReference" TEXT,
   "locationId" TEXT,
+  "assignee" TEXT,
   "customFields" JSONB,
+  "companyId" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
 
   CONSTRAINT "quote_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "quote_quoteId_key" UNIQUE ("quoteId"),
+  CONSTRAINT "quote_quoteId_key" UNIQUE ("quoteId", "companyId"),
   CONSTRAINT "quote_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "quote_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "customer" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "quote_customerLocationId_fkey" FOREIGN KEY ("customerLocationId") REFERENCES "customerLocation" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "quote_customerContactId_fkey" FOREIGN KEY ("customerContactId") REFERENCES "customerContact" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "quote_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "location" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT "quote_assignee_fkey" FOREIGN KEY ("assignee") REFERENCES "user" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT "quote_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "quote_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "quote_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-CREATE INDEX "quote_quoteId_idx" ON "quote" ("quoteId");
-CREATE INDEX "quote_ownerId_idx" ON "quote" ("ownerId");
-CREATE INDEX "quote_customerId_idx" ON "quote" ("customerId");
-CREATE INDEX "quote_locationId_idx" ON "quote" ("locationId");
+CREATE INDEX "quote_quoteId_idx" ON "quote" ("quoteId", "companyId");
+CREATE INDEX "quote_ownerId_idx" ON "quote" ("ownerId", "companyId");
+CREATE INDEX "quote_customerId_idx" ON "quote" ("customerId", "companyId");
+CREATE INDEX "quote_locationId_idx" ON "quote" ("locationId", "companyId");
+CREATE INDEX "quote_companyId_idx" ON "quote" ("companyId");
 
 CREATE TYPE "quoteLineStatus" AS ENUM (
   'Draft',
@@ -65,6 +70,7 @@ CREATE TABLE "quoteLine" (
   "customerPartRevision" TEXT,
   "replenishmentSystem" TEXT,
   "unitOfMeasureCode" TEXT,
+  "companyId" TEXT NOT NULL,
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
   "updatedBy" TEXT,
@@ -72,46 +78,14 @@ CREATE TABLE "quoteLine" (
 
   CONSTRAINT "quoteLine_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "quoteLine_quoteId_fkey" FOREIGN KEY ("quoteId") REFERENCES "quote" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT "quoteLine_partId_fkey" FOREIGN KEY ("partId") REFERENCES "part" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-  
+  CONSTRAINT "quoteLine_partId_fkey" FOREIGN KEY ("partId", "companyId") REFERENCES "part" ("id", "companyId") ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT "quoteLine_unitOfMeasureCode_fkey" FOREIGN KEY ("unitOfMeasureCode", "companyId") REFERENCES "unitOfMeasure" ("code", "companyId") ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT "quoteLine_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "quoteLine_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "quoteLine_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 CREATE INDEX "quoteLine_quoteId_idx" ON "quoteLine" ("quoteId");
-
-CREATE TABLE "quoteLineQuantity" (
-  "id" TEXT NOT NULL DEFAULT xid(),
-  "quoteId" TEXT NOT NULL,
-  "quoteLineId" TEXT NOT NULL,
-  "quantity" NUMERIC(10, 2) NOT NULL DEFAULT 0,
-  "scrapPercentage" NUMERIC(5, 2) NOT NULL DEFAULT 0,
-  "setupHours" NUMERIC(10, 2) NOT NULL DEFAULT 0,
-  "productionHours" NUMERIC(10, 2) NOT NULL DEFAULT 0,
-  "materialCost" NUMERIC(10, 2) NOT NULL DEFAULT 0,
-  "laborCost" NUMERIC(10, 2) NOT NULL DEFAULT 0,
-  "overheadCost" NUMERIC(10, 2) NOT NULL DEFAULT 0,
-  "additionalCost" NUMERIC(10, 2) NOT NULL DEFAULT 0,
-  "discountPercentage" NUMERIC(5, 2) NOT NULL DEFAULT 0,
-  "markupPercentage" NUMERIC(5, 2) NOT NULL DEFAULT 0,
-  "unitCostBase" NUMERIC(10, 2) NOT NULL DEFAULT 0,
-  "unitTaxAmount" NUMERIC(10, 2) NOT NULL DEFAULT 0,
-  "extendedCost" NUMERIC(10, 2) NOT NULL DEFAULT 0,
-  "leadTime" NUMERIC (5,2) NOT NULL DEFAULT 0,
-  "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  "createdBy" TEXT NOT NULL,
-  "updatedAt" TIMESTAMP WITH TIME ZONE,
-  "updatedBy" TEXT,
-
-  CONSTRAINT "quoteLineQuantity_pkey" PRIMARY KEY ("id"),
-  CONSTRAINT "quoteLineQuantity_quoteLineId_fkey" FOREIGN KEY ("quoteLineId") REFERENCES "quoteLine" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT "quoteLineQuantity_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT "quoteLineQuantity_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
-);
-
-ALTER publication supabase_realtime ADD TABLE "quoteLineQuantity";
-
-CREATE INDEX "quoteLineQuantity_quoteLineId_idx" ON "quoteLineQuantity" ("quoteLineId");
 
 CREATE TABLE "quoteAssembly" (
   "id" TEXT NOT NULL DEFAULT xid(),
@@ -122,6 +96,7 @@ CREATE TABLE "quoteAssembly" (
   "description" TEXT,
   "unitOfMeasureCode" TEXT,
   "quantityPerParent" NUMERIC(10, 2) NOT NULL DEFAULT 0,
+  "companyId" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
@@ -132,6 +107,9 @@ CREATE TABLE "quoteAssembly" (
   CONSTRAINT "quoteAssembly_quoteId_fkey" FOREIGN KEY ("quoteId") REFERENCES "quote" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "quoteAssembly_quoteLineId_fkey" FOREIGN KEY ("quoteLineId") REFERENCES "quoteLine" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "quoteAssembly_parentAssemblyId_fkey" FOREIGN KEY ("parentAssemblyId") REFERENCES "quoteAssembly" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT "quoteAssembly_partId_fkey" FOREIGN KEY ("partId", "companyId") REFERENCES "part" ("id", "companyId") ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT "quoteAssembly_unitOfMeasureCode_fkey" FOREIGN KEY ("unitOfMeasureCode", "companyId") REFERENCES "unitOfMeasure" ("code", "companyId") ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT "quoteAssembly_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "quoteAssembly_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "quoteAssembly_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -154,6 +132,7 @@ CREATE TABLE "quoteOperation" (
   "quotingRate" NUMERIC(10,4) NOT NULL DEFAULT 0,
   "laborRate" NUMERIC(10,4) NOT NULL DEFAULT 0,
   "overheadRate" NUMERIC(10,4) NOT NULL DEFAULT 0,
+  "companyId" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
@@ -166,6 +145,7 @@ CREATE TABLE "quoteOperation" (
   CONSTRAINT "quoteOperation_quoteAssemblyId_fkey" FOREIGN KEY ("quoteAssemblyId") REFERENCES "quoteAssembly" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "quoteOperation_workCellTypeId_fkey" FOREIGN KEY ("workCellTypeId") REFERENCES "workCellType" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "quoteOperation_equipmentTypeId_fkey" FOREIGN KEY ("equipmentTypeId") REFERENCES "equipmentType" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT "quoteOperation_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "quoteOperation_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "quoteOperation_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -184,6 +164,7 @@ CREATE TABLE "quoteMaterial" (
   "quantity" NUMERIC(10, 2) NOT NULL DEFAULT 0,
   "unitOfMeasureCode" TEXT,
   "unitCost" NUMERIC(10, 2) NOT NULL DEFAULT 0,
+  "companyId" TEXT NOT NULL,
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   "createdBy" TEXT NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE,
@@ -194,7 +175,9 @@ CREATE TABLE "quoteMaterial" (
   CONSTRAINT "quoteMaterial_quoteId_fkey" FOREIGN KEY ("quoteId") REFERENCES "quote" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "quoteMaterial_quoteLineId_fkey" FOREIGN KEY ("quoteLineId") REFERENCES "quoteLine" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT "quoteMaterial_quoteOperationId_fkey" FOREIGN KEY ("quoteOperationId") REFERENCES "quoteOperation" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT "quoteMaterial_partId_fkey" FOREIGN KEY ("partId") REFERENCES "part" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT "quoteMaterial_partId_fkey" FOREIGN KEY ("partId", "companyId") REFERENCES "part" ("id", "companyId") ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT "quoteMaterial_unitOfMeasureCode_fkey" FOREIGN KEY ("unitOfMeasureCode", "companyId") REFERENCES "unitOfMeasure" ("code", "companyId") ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT "quoteMaterial_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "company" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "quoteMaterial_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT "quoteMaterial_updatedBy_fkey" FOREIGN KEY ("updatedBy") REFERENCES "user" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -250,6 +233,7 @@ CREATE OR REPLACE VIEW "quotes" WITH(SECURITY_INVOKER=true) AS
   q."createdBy",
   q."ownerId",
   q."customFields",
+  q."companyId",
   uo."fullName" AS "ownerFullName",
   uo."avatarUrl" AS "ownerAvatar",
   c."name" AS "customerName",

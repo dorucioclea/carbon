@@ -8,7 +8,7 @@ import { path } from "~/utils/path";
 import { error } from "~/utils/result";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     create: "inventory",
   });
 
@@ -18,7 +18,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     undefined;
   const sourceDocumentId = url.searchParams.get("sourceDocumentId") ?? "";
 
-  const defaults = await getUserDefaults(client, userId);
+  const defaults = await getUserDefaults(client, userId, companyId);
 
   const serviceRole = getSupabaseServiceRole();
   switch (sourceDocument) {
@@ -27,6 +27,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         id: string;
       }>("create-receipt-from-purchase-order", {
         body: {
+          companyId,
           locationId: defaults.data?.locationId,
           purchaseOrderId: sourceDocumentId,
           receiptId: undefined,
@@ -49,6 +50,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         id: string;
       }>("create-receipt-default", {
         body: {
+          companyId,
           locationId: defaults.data?.locationId,
           userId: userId,
         },

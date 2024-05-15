@@ -100,6 +100,8 @@ export const path = {
       generatePath(`${x}/accounting/charts/${id}`),
     chartOfAccounts: `${x}/accounting/charts`,
     company: `${x}/settings/company`,
+    companySwitch: (companyId: string) =>
+      generatePath(`${x}/settings/company/switch/${companyId}`),
     contractor: (id: string) =>
       generatePath(`${x}/resources/contractors/${id}`),
     contractors: `${x}/resources/contractors`,
@@ -282,6 +284,7 @@ export const path = {
     newAttributeForCategory: (id: string) =>
       generatePath(`${x}/resources/attributes/list/${id}/new`),
     newChartOfAccount: `${x}/accounting/charts/new`,
+    newCompany: `${x}/settings/company/new`,
     newContractor: `${x}/resources/contractors/new`,
     newCurrency: `${x}/accounting/currencies/new`,
     newCustomer: `${x}/customer/new`,
@@ -468,7 +471,7 @@ export const path = {
     requestForQuoteFavorite: `${x}/purchasing/rfqs/favorite`,
     requestForQuotes: `${x}/purchasing/rfqs`,
     resendInvite: `${x}/users/resend-invite`,
-    resetPassord: "/reset-password",
+    resetPassword: "/reset-password",
     resources: `${x}/resources`,
     root: "/",
     routings: `${x}/parts/routing`,

@@ -67,7 +67,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     quoteId,
     quoteLineId,
     ...data,
-    createdBy: userId,
+    updatedBy: userId,
     customFields: setCustomFields(formData),
   });
 

@@ -14,14 +14,14 @@ import {
 } from "~/modules/sales";
 import { requirePermissions } from "~/services/auth/auth.server";
 import { flash } from "~/services/session.server";
+import type { ListItem } from "~/types";
 import { getCustomFields, setCustomFields } from "~/utils/form";
 import { assertIsPost } from "~/utils/http";
 import { path } from "~/utils/path";
 import { error, success } from "~/utils/result";
-import type { ListItem } from "~/types";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "sales",
   });
 
@@ -31,8 +31,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const [salesOrderShipment, shippingMethods, shippingTerms] =
     await Promise.all([
       getSalesOrderShipment(client, orderId),
-      getShippingMethodsList(client),
-      getShippingTermsList(client),
+      getShippingMethodsList(client, companyId),
+      getShippingTermsList(client, companyId),
     ]);
 
   if (salesOrderShipment.error) {
@@ -127,7 +127,7 @@ export default function SalesOrderShipmentRoute() {
     trackingNumber: salesOrderShipment.trackingNumber ?? "",
     receiptRequestedDate: salesOrderShipment.receiptRequestedDate ?? "",
     receiptPromisedDate: salesOrderShipment.receiptPromisedDate ?? "",
-    shipmentDate: salesOrderShipment.shipmentDate ?? "",
+    deliveryDate: salesOrderShipment.deliveryDate ?? "",
     notes: salesOrderShipment.notes ?? "",
     dropShipment: salesOrderShipment.dropShipment ?? false,
     customerId: salesOrderShipment.customerId ?? "",

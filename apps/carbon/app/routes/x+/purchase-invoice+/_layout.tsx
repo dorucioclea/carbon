@@ -17,10 +17,12 @@ export const handle: Handle = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     view: "invoicing",
   });
-  const [paymentTerms] = await Promise.all([getPaymentTermsList(client)]);
+  const [paymentTerms] = await Promise.all([
+    getPaymentTermsList(client, companyId),
+  ]);
 
   return {
     paymentTerms: paymentTerms.data ?? [],

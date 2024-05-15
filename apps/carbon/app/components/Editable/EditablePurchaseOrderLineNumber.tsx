@@ -21,6 +21,7 @@ const EditablePurchaseOrderLineNumber =
       services: { label: string; value: string }[];
       accounts: { label: string; value: string }[];
       defaultLocationId: string | null;
+      supplerId: string;
       userId: string;
     }
   ) =>
@@ -31,7 +32,7 @@ const EditablePurchaseOrderLineNumber =
     onError,
     onUpdate,
   }: EditableTableCellComponentProps<PurchaseOrderLine>) => {
-    const { client, parts, services, accounts, userId } = options;
+    const { client, parts, services, accounts, supplerId, userId } = options;
     const selectOptions =
       row.purchaseOrderLineType === "Part"
         ? parts
@@ -74,37 +75,56 @@ const EditablePurchaseOrderLineNumber =
 
     const onPartChange = async (partId: string) => {
       if (!client) throw new Error("Supabase client not found");
-      const [part, shelf, cost] = await Promise.all([
+      const [part, partSupplier, inventory] = await Promise.all([
         client
           .from("part")
-          .select("name, unitOfMeasureCode")
+          .select(
+            `
+            name, unitOfMeasureCode, 
+            partCost(unitCost), 
+            partReplenishment(purchasingUnitOfMeasureCode, conversionFactor, purchasingLeadTime)
+          `
+          )
           .eq("id", partId)
+          .eq("companyId", row.companyId!)
           .single(),
+        client
+          .from("partSupplier")
+          .select("*")
+          .eq("partId", partId)
+          .eq("companyId", row.companyId!)
+          .eq("supplierId", supplerId)
+          .maybeSingle(),
         client
           .from("partInventory")
           .select("defaultShelfId")
           .eq("partId", partId)
-          .eq("locationId", options.defaultLocationId!)
-          .single(),
-        client
-          .from("partCost")
-          .select("unitCost")
-          .eq("partId", partId)
-          .single(),
+          .eq("companyId", row.companyId!)
+          .eq("locationId", row.locationId!)
+          .maybeSingle(),
       ]);
 
-      if (part.error) {
+      const partCost = part?.data?.partCost?.[0];
+      const partReplenishment = part?.data?.partReplenishment?.[0];
+
+      if (part.error || partSupplier.error || inventory.error) {
         onError();
         return;
       }
 
       onUpdate({
         partId: partId,
-        description: part.data?.name,
-        unitOfMeasureCode: part.data?.unitOfMeasureCode ?? null,
         locationId: options.defaultLocationId,
-        shelfId: shelf.data?.defaultShelfId ?? null,
-        unitPrice: cost.data?.unitCost ?? null,
+        description: part.data?.name ?? "",
+        purchaseQuantity: partSupplier?.data?.minimumOrderQuantity ?? 1,
+        unitPrice: partSupplier?.data?.unitPrice ?? partCost?.unitCost ?? 0,
+        purchaseUnitOfMeasureCode:
+          partReplenishment?.purchasingUnitOfMeasureCode ??
+          part.data?.unitOfMeasureCode ??
+          "EA",
+
+        conversionFactor: partReplenishment?.conversionFactor ?? 1,
+        shelfId: inventory.data?.defaultShelfId ?? "",
       });
 
       try {
@@ -112,13 +132,17 @@ const EditablePurchaseOrderLineNumber =
           .from("purchaseOrderLine")
           .update({
             partId: partId,
-            assetId: null,
-            accountNumber: null,
-            description: part.data?.name,
-            unitOfMeasureCode: part.data?.unitOfMeasureCode ?? null,
             locationId: options.defaultLocationId,
-            shelfId: shelf.data?.defaultShelfId ?? null,
-            unitPrice: cost.data?.unitCost,
+            description: part.data?.name ?? "",
+            purchaseQuantity: partSupplier?.data?.minimumOrderQuantity ?? 1,
+            unitPrice: partSupplier?.data?.unitPrice ?? partCost?.unitCost ?? 0,
+            purchaseUnitOfMeasureCode:
+              partReplenishment?.purchasingUnitOfMeasureCode ??
+              part.data?.unitOfMeasureCode ??
+              "EA",
+
+            conversionFactor: partReplenishment?.conversionFactor ?? 1,
+            shelfId: inventory.data?.defaultShelfId ?? null,
             updatedBy: userId,
           })
           .eq("id", row.id!);
@@ -146,6 +170,7 @@ const EditablePurchaseOrderLineNumber =
       onUpdate({
         serviceId: serviceId,
         description: service.data?.name,
+        purchaseUnitOfMeasureCode: "EA",
       });
 
       try {
@@ -153,6 +178,8 @@ const EditablePurchaseOrderLineNumber =
           .from("purchaseOrderLine")
           .update({
             serviceId: serviceId,
+            description: service.data?.name,
+            purchaseUnitOfMeasureCode: "EA",
             updatedBy: userId,
           })
           .eq("id", row.id!);
